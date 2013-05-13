@@ -6,7 +6,7 @@
 
 -Gordon Gekko
 
-Gekko is *going to be* a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in node, it will feature multiple trading methods.
+Gekko is *going to be* a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in node, it will feature multiple trading methods using technical analysis.
 
 ## Credits
 
