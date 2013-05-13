@@ -1,8 +1,8 @@
 # Gekko
 
-![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
-
 *The point is ladies and gentlemen that greed, for lack of a better word, is good.*
+
+![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
 
 -Gordon Gekko
 
