@@ -1,6 +1,9 @@
+// set up events so this method can communicate 
+// with Gekko
 var EventEmitter = require('events').EventEmitter;
 module.exports = new EventEmitter();
 
+// helpers
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
