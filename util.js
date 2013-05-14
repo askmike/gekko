@@ -1,4 +1,3 @@
-// at this point we assume that config has been set.
 var moment = require('moment');
 var config;
 var util = {
