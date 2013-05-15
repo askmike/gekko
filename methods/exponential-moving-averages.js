@@ -14,11 +14,10 @@ var candles = {
   shortEMAs: []
 };
 
-var getPrice = function(i, cb) {
-  if(typeof i === 'function')
-    cb = i, i = 1;
-
-  var current = config.candles + 1 - i;
+// Fetch the price of all remaining candles and calculate 
+// the short & long EMA and the difference for these candles.
+var getCandles = function(next) {
+  var current = config.candles - candles.prices.length;
   var since = util.toMicro(util.intervalsAgo( current ));
 
   mtgox.fetchTrades(since, function(err, trades) {
@@ -30,43 +29,34 @@ var getPrice = function(i, cb) {
     });
 
     candles.prices.push( util.average(sample) );
+    calcEMA('shortEMA');
+    calcEMA('longEMA');
 
-    // recurse without hammering mtgox (to hard)
-    if(i < config.candles)
-      return setTimeout(getPrice, 150, ++i, cb);
+    // recurse if we don't have all candles
+    if(current < config.candles)
+      return getCandles(cb);
     
-    // done with fetching all prices
-    cb();
+    next();
   });
 }
 
-var calcEMA = function(period) {
-  //    calculation:
+var calcEMA = function(type) {
+  //    calculation (based on candle/day):
   //  EMA = Price(t) * k + EMA(y) * (1 – k)
   //  t = today, y = yesterday, N = number of days in EMA, k = 2/(N+1)
-  var k = 2 / (period + 1);
-  var emas = [], i = 0, ema;
+  var k = 2 / (config[type] + 1);
+  var emas = [], i = 0, ema, y;
 
-  // first candle
-  var y = candles.prices[0];
-  emas.push( y );
+  var current = candles.prices.length;
 
-  while(++i < config.candles) {
-    ema = candles.prices[i] * k + y * (1 - k);
-    emas.push(ema);
-    y = ema;
-  }
+  if(current === 1)
+    // we don't have any 'yesterday'
+    y = candles.prices[0];
+  else
+    y = candles[type + 's'][current];
 
-  return emas;
-}
-
-var calc = function() {
-  candles.shortEMAs = calcEMA(config.shortEMA);
-  candles.longEMAs = calcEMA(config.longEMA);
-
-  console.log('long', config.longEMA, candles.longEMAs);
-  console.log('short', config.shortEMA, candles.shortEMAs);
-  console.log('price', candles.prices);
+  ema = candles.prices[i] * k + y * (1 - k);
+  candles[type + 's'].push(ema);
 }
 
 var init = function(c, m) {
@@ -74,8 +64,9 @@ var init = function(c, m) {
   mtgox = m;
   util.set(c);
 
-  // fetch all prices and calculate when done
-  getPrice(calc);
+  // fetch and calculate all prices
+  var done = function() { console.log('done', candles); };
+  getCandles(done);
 }
 
 module.exports.on('init', init);
