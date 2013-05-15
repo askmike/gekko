@@ -1,4 +1,4 @@
-// set up events so this method can communicate with Gekko
+// set up events so this method can talk with Gekko
 var EventEmitter = require('events').EventEmitter;
 module.exports = new EventEmitter();
 
@@ -23,7 +23,7 @@ var getCandles = function(next) {
   mtgox.fetchTrades(util.toMicro(at), function(err, trades) {
     if (err) throw err;
 
-    // create a sample out of trades who where executed between 
+    // create a sample out of trades who were executed between 
     // since and (since + sampleSize in minutes)
     var treshold = at.add('minutes', config.sampleSize);
     // TODO: optimize so that we stop searching when first hit 
