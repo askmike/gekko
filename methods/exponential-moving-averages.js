@@ -18,10 +18,9 @@ var candles = {
 // the short & long EMA and the difference for these candles.
 var getCandles = function(next) {
   var current = config.candles - candles.prices.length;
-  var at = util.intervalsAgo(current)
-  var since = util.toMicro(at);
+  var at = util.intervalsAgo(current);
 
-  mtgox.fetchTrades(since, function(err, trades) {
+  mtgox.fetchTrades(util.toMicro(at), function(err, trades) {
     if (err) throw err;
 
     // create a sample out of trades who where executed between 
@@ -40,8 +39,15 @@ var getCandles = function(next) {
     calcEMA('shortEMA');
     calcEMA('longEMA');
 
+    var i = candles.prices.length - 1;
+    console.log('yay new candle!', { 
+      price: candles.prices[i],
+      short: candles.shortEMAs[i],
+      long: candles.longEMAs[i],
+    });
+
     // recurse if we don't have all candles
-    if(current < config.candles)
+    if(current)
       return getCandles(next);
     
     next();
