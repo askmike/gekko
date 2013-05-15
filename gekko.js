@@ -29,16 +29,20 @@ var util = require('./util.js');
 
 var config = {
   interval: 60, // in minutes
-  shortEMA: 9,
-  longEMA: 14
+  shortEMA: 10,
+  longEMA: 21,
+  candles: 5,
+  tradesPerPrice: 20
 }
 
-// implement a trading method to create a consultant, we pass
-// it a config and a public mtgox object which the method can
-// use to get data on past trades..
-var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').join('-')  + '.js');
+// implement a trading method to create a consultant, we pass it a config and a 
+// public mtgox object which the method can use to get data on past trades..
+var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').join('-') + '.js');
 consultant.emit('init', config, publicMtgox);
 
-// whenever the consultant advices to sell or buy
-// we can act on the information
+// whenever the consultant advices to sell or buy we can act on the information
 consultant.on('advice', console.log);
+
+var mtgoxConfig = require('./config.js');
+// console.log(mtgoxConfig);
+

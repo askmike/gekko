@@ -31,4 +31,4 @@ Gekko runs on [nodejs](http://nodejs.org/), the easiest way to install it is usi
 ## Credits
 
 * The title is inspired by [Bateman](https://github.com/fearofcode/bateman).
-* This project is inspired by the [GoxTradingBot](https://github.com/TobbeLino/GoxTradingBotTobli) Chrome plugin.
+* This project is inspired by the [GoxTradingBot](https://github.com/virtimus/GoxTradingBot/) Chrome plugin.
