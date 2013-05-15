@@ -28,6 +28,13 @@ Gekko runs on [nodejs](http://nodejs.org/), the easiest way to install it is usi
 
     npm install gekko
 
+## TODO
+
+* Create a working Exponential moving average algorithm.
+* Add the ability to use different exchanges (such as [btc-e](https://npmjs.org/package/btc-e)).
+* Add an option to run the bot without buying or selling, but merely gather statistics.
+* Figure out a way to calculate the succes rate of a method based on historical data.
+
 ## Credits
 
 * The title is inspired by [Bateman](https://github.com/fearofcode/bateman).
