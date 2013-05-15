@@ -46,12 +46,14 @@ var calcEMA = function(period) {
   //  t = today, y = yesterday, N = number of days in EMA, k = 2/(N+1)
   var k = 2 / (period + 1);
   var emas = [], i = 0, ema;
-  var y = candles.prices[ i ];
+
   // first candle
+  var y = candles.prices[0];
   emas.push( y );
+
   while(++i < config.candles) {
-    ema = candles.prices[i] * k + y * ( 1 - k);
-    emas.push( ema );
+    ema = candles.prices[i] * k + y * (1 - k);
+    emas.push(ema);
     y = ema;
   }
 

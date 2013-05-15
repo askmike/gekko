@@ -42,7 +42,3 @@ consultant.emit('init', config, publicMtgox);
 
 // whenever the consultant advices to sell or buy we can act on the information
 consultant.on('advice', console.log);
-
-var mtgoxConfig = require('./config.js');
-// console.log(mtgoxConfig);
-
