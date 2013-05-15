@@ -32,7 +32,7 @@ var config = {
   shortEMA: 10,
   longEMA: 21,
   candles: 5,
-  tradesPerPrice: 20
+  sampleSize: 0.01 // in minutes
 }
 
 // implement a trading method to create a consultant, we pass it a config and a 

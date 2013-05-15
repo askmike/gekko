@@ -11,7 +11,7 @@ var util = {
     return moment.format('X') * 1000 * 1000;
   },
   intervalsAgo: function(amount) {
-    return moment().subtract('m', config.interval * amount);
+    return moment().subtract('minutes', config.interval * amount);
   },
   average: function(list) {
     if(!_.isArray(list))
