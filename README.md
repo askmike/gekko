@@ -18,9 +18,9 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 ## Disclaimer
 
-*USE AT YOUR OWN RISK!*
+Use at you own risk.
 
-## How do I install it?
+## Install
 
 *Gekko is currently not at a working stage yet.*
 

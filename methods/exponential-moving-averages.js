@@ -59,7 +59,7 @@ var getCandles = function(next) {
 //  t = today, y = yesterday, N = number of days in EMA, k = 2/(N+1)
 var calcEMA = function(type) {
   var k = 2 / (config[type] + 1);
-  var ema, y, i = 0;
+  var ema, y;
 
   var current = candles.prices.length;
 
@@ -69,7 +69,7 @@ var calcEMA = function(type) {
   else
     y = candles[type + 's'][current - 1];
 
-  ema = candles.prices[i] * k + y * (1 - k);
+  ema = candles.prices[current] * k + y * (1 - k);
   candles[type + 's'].push(ema);
 }
 
