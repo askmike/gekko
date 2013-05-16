@@ -11,7 +11,8 @@ var mtgox, config;
 var candles = {
   prices: [],
   longEMAs: [],
-  shortEMAs: []
+  shortEMAs: [],
+  difs: []
 };
 
 // Fetch the price of all remaining candles and calculate 
@@ -20,17 +21,23 @@ var getCandles = function(next) {
   var current = config.candles - candles.prices.length;
   var at = util.intervalsAgo(current);
 
-  mtgox.fetchTrades(util.toMicro(at), function(err, trades) {
+  var since = current ? util.toMicro(at) : null;
+  mtgox.fetchTrades(since, function(err, trades) {
     if (err) throw err;
+    if(trades.data.length === 0) throw 'exchange responded with zero trades';
 
     // create a sample out of trades who were executed between 
-    // since and (since + sampleSize in minutes)
-    var treshold = at.add('minutes', config.sampleSize);
-    // TODO: optimize so that we stop searching when first hit 
-    // above treshold is found
+    // the first date and (first date + [sampleSize])
+    var treshold = moment.unix(trades.data[0].date).add('minutes', config.sampleSize);
+    var overTreshold = false;
     var sample = _.filter(trades.data, function(trade) {
-      return moment.unix(trade.date) < treshold;
+      if(overTreshold || moment.unix(trade.date) < treshold)
+        return true;
+      
+      overTreshold = true;
+      return false; 
     });
+
     var prices = _.map(sample, function(trade) {
       return parseFloat(trade.price);
     });
@@ -38,13 +45,7 @@ var getCandles = function(next) {
     candles.prices.push( util.average(prices) );
     calcEMA('shortEMA');
     calcEMA('longEMA');
-
-    var i = candles.prices.length - 1;
-    console.log('yay new candle!', { 
-      price: candles.prices[i],
-      short: candles.shortEMAs[i],
-      long: candles.longEMAs[i],
-    });
+    calcEMAdif();
 
     // recurse if we don't have all candles
     if(current)
@@ -56,21 +57,30 @@ var getCandles = function(next) {
 
 //    calculation (based on candle/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
-//  t = today, y = yesterday, N = number of days in EMA, k = 2/(N+1)
+//  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
 var calcEMA = function(type) {
   var k = 2 / (config[type] + 1);
   var ema, y;
 
   var current = candles.prices.length;
-
   if(current === 1)
     // we don't have any 'yesterday'
     y = candles.prices[0];
   else
-    y = candles[type + 's'][current - 1];
+    y = candles[type + 's'][current - 2];
 
-  ema = candles.prices[current] * k + y * (1 - k);
+  ema = candles.prices[current - 1] * k + y * (1 - k);
   candles[type + 's'].push(ema);
+}
+
+// @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
+var calcEMAdif = function() {
+  var current = candles.prices.length - 1;
+  var shortEMA = candles.shortEMAs[current];
+  var longEMA = candles.longEMAs[current];
+
+  var dif = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
+  candles.difs.push(dif); 
 }
 
 var init = function(c, m) {
