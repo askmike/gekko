@@ -24,9 +24,9 @@ Use at you own risk.
 
 *Gekko is currently not at a working stage yet.*
 
-Gekko runs on [nodejs](http://nodejs.org/), the easiest way to install it is using [npm](http://npmjs.org). When you got both of those you can run this command in your terminal to fetch all of Gekko's files:
+Gekko runs on [nodejs](http://nodejs.org/), once you have that running you can either download all files in [a zip](https://github.com/askmike/gekko/archive/master.zip) or clone the repository via git:
 
-    npm install gekko
+    git clone git://github.com/askmike/gekko.git
 
 ## TODO
 
