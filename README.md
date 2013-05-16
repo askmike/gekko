@@ -18,7 +18,7 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 ## Disclaimer
 
-Use at you own risk.
+Use Gekko at you own risk.
 
 ## Install
 
