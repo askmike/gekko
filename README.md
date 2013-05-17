@@ -16,9 +16,7 @@ I'm developing Gekko fully open source in the hope of getting feedback from folk
 
 As this is a learning experience for me all feedback is extremely appreciated. If you don't want to contribute to the code you can always just send me an [email](mailto:mike@mvr.me).
 
-## Disclaimer
-
-Use Gekko at you own risk.
+*Use Gekko at you own risk.*
 
 ## Install
 
