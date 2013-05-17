@@ -15,21 +15,22 @@ var candles = {
   difs: []
 };
 
-// Fetch the price of all remaining candles and calculate 
+// fetch the price of all remaining candles and calculate 
 // the short & long EMA and the difference for these candles.
 var getCandles = function(next) {
   var current = config.candles - candles.prices.length;
   var at = util.intervalsAgo(current);
 
+  // get the date of the candle we are fetching
   var since = current ? util.toMicro(at) : null;
   mtgox.fetchTrades(since, function(err, trades) {
     if (err) throw err;
-    if(trades.data.length === 0) throw 'exchange responded with zero trades';
+    if (trades.data.length === 0) throw 'exchange responded with zero trades';
 
-    // create a sample out of trades who were executed between 
-    // the first date and (first date + [sampleSize])
+    // treshold is the addition of the date of the first trade and the sampleSize
     var treshold = moment.unix(trades.data[0].date).add('minutes', config.sampleSize);
     var overTreshold = false;
+    // create a sample of trades that happened before the treshold
     var sample = _.filter(trades.data, function(trade) {
       if(overTreshold || moment.unix(trade.date) < treshold)
         return true;
@@ -47,10 +48,12 @@ var getCandles = function(next) {
     calcEMA('longEMA');
     calcEMAdif();
 
-    // recurse if we don't have all candles
+    // recurse if we don't have all candles yet
     if(current)
       return getCandles(next);
     
+    // else we're done
+    module.exports.emit('watching');
     next();
   });
 }
