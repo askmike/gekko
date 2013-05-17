@@ -36,6 +36,11 @@ var tradeConfig = {
   debug: false // for additional logging
 };
 
+// helpers
+var moment = require('moment');
+var _ = require('underscore');
+var util = require('./util.js');
+
 console.log(
   [
     '',
@@ -51,11 +56,6 @@ var MtGoxClient = require("mtgox-apiv2");
 // create a public mtgox object which can retrieve 
 // open trade information from the API.
 var publicMtgox = new MtGoxClient('~', '~');
-
-// helpers
-var moment = require('moment');
-var _ = require('underscore');
-var util = require('./util.js');
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades..
