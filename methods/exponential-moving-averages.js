@@ -1,3 +1,20 @@
+/*
+  
+  This method uses `Exponential Moving Average` to determine the current trend the
+  market is in (either up or down). Using this information it will suggest to ride
+  the trend.
+
+  @link http://en.wikipedia.org/wiki/Exponential_moving_average#Exponential_moving_average
+
+  This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo.
+
+  @link https://bitcointalk.org/index.php?topic=60501.0
+
+
+      Method state: ALPHA: need to test
+
+ */
+
 // set up events so this method can talk with Gekko
 var EventEmitter = require('events').EventEmitter;
 module.exports = new EventEmitter();
@@ -8,82 +25,181 @@ var _ = require('underscore');
 var util = require('../util.js');
 
 var mtgox, config;
-var candles = {
-  prices: [],
-  longEMAs: [],
-  shortEMAs: [],
-  difs: []
-};
+// this array stores _all_ price data
+var candles = [];
+
+var log = function(m) {
+  config.debug && console.log('(DEBUG) ', util.now(), m);
+}
 
 // fetch the price of all remaining candles and calculate 
 // the short & long EMA and the difference for these candles.
-var getCandles = function(next) {
-  var current = config.candles - candles.prices.length;
-  var at = util.intervalsAgo(current);
+var getCandles = function(callback) {
+  var current = config.candles - candles.length;
+  var candleTime = util.intervalsAgo(current);
 
   // get the date of the candle we are fetching
-  var since = current ? util.toMicro(at) : null;
+  var since = current ? util.toMicro(candleTime) : null;
   mtgox.fetchTrades(since, function(err, trades) {
     if (err) throw err;
-    if (trades.data.length === 0) throw 'exchange responded with zero trades';
+    log('fetched mtgox');
 
-    // treshold is the addition of the date of the first trade and the sampleSize
-    var treshold = moment.unix(trades.data[0].date).add('minutes', config.sampleSize);
-    var overTreshold = false;
-    // create a sample of trades that happened before the treshold
-    var sample = _.filter(trades.data, function(trade) {
-      if(overTreshold || moment.unix(trade.date) < treshold)
+    trades = trades.data;
+    if (trades.length === 0) throw 'exchange responded with zero trades';
+
+    // if we are fetching the last candle we are interested 
+    // in the most recent prices of the batch instead of the
+    // most dated ones
+    var price = calculatePrice(trades, !current);
+    calculateCandle(price);
+    
+    // check if the fetched trades can be used to 
+    // calculate remaining candles
+    var outOfTrades = false, nextTreshold;
+    while(!outOfTrades && current > 1) {
+      nextTreshold = util.intervalsAgo(current - 1);
+
+      outOfTrades = _.every(trades, function(trade, i) {
+        // if next treshold is in this batch
+        if(moment.unix(trade.date) > nextTreshold) {
+          trades.splice(0, i);
+          return false;
+        }
         return true;
-      
-      overTreshold = true;
-      return false; 
-    });
+      });
 
-    var prices = _.map(sample, function(trade) {
-      return parseFloat(trade.price);
-    });
-
-    candles.prices.push( util.average(prices) );
-    calcEMA('shortEMA');
-    calcEMA('longEMA');
-    calcEMAdif();
+      if(!outOfTrades) {
+        price = calculatePrice(trades);
+        calculateCandle(price);
+        current -= 1;
+      }
+    }
 
     // recurse if we don't have all candles yet
     if(current)
-      return getCandles(next);
+      return getCandles(callback);
     
-    // else we're done
-    module.exports.emit('watching');
-    next();
+    // we're done
+    module.exports.emit('monitoring');
+    callback();
   });
+}
+
+// calculate the average trade price out of a sample of trades.
+// The sample consists of all trades that are between the oldest 
+// dated trade up to (oldest + sampleSize).
+// 
+// if newestFirst is true we are instead interested in the most 
+// recent trades up to (newest - sampleSize)
+var calculatePrice = function(trades, newestFirst) {
+  if(newestFirst)
+    return calculateNewestPrice(trades.reverse());
+
+  // treshold is the date of oldest trade in addition to the sampleSize
+  var treshold = moment.unix(trades[0].date).add('seconds', config.sampleSize);
+
+  // create a sample of trades that happened before the treshold
+  var sample = [];
+  _.every(trades, function(trade) {
+    if(moment.unix(trade.date) > treshold)
+      return false;
+
+    var price = parseFloat(trade.price);
+    sample.push(price);
+    return true;
+  });
+
+  return util.average(sample);
+}
+var calculateNewestPrice = function(trades) {
+  var treshold = moment.unix(trades[0].date).subtract('seconds', config.sampleSize);
+
+  // create a sample of trades that happened after the treshold
+  var sample = [];
+  _.every(trades, function(trade) {
+    if(moment.unix(trade.date) < treshold)
+      return false;
+
+    var price = parseFloat(trade.price);
+    sample.push(price);
+    return true;
+  });
+
+  return util.average(sample);
+}
+
+
+// add a price and calculate the EMAs and
+// the diff for that price
+var calculateCandle = function(price) {
+  log('calculated new candle: ' + (config.candles - candles.length));
+  var candle = {
+    price: price,
+    shortEMA: false,
+    longEMA: false,
+    diff: false
+  };
+
+  candles.push(candle);
+  calculateEMA('shortEMA');
+  calculateEMA('longEMA');
+  calculateEMAdiff();
 }
 
 //    calculation (based on candle/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
-var calcEMA = function(type) {
+var calculateEMA = function(type) {
   var k = 2 / (config[type] + 1);
   var ema, y;
 
-  var current = candles.prices.length;
+  var current = candles.length;
+
   if(current === 1)
     // we don't have any 'yesterday'
-    y = candles.prices[0];
+    y = candles[0].price;
   else
-    y = candles[type + 's'][current - 2];
+    y = candles[current - 2][type];
 
-  ema = candles.prices[current - 1] * k + y * (1 - k);
-  candles[type + 's'].push(ema);
+  ema = candles[current - 1].price * k + y * (1 - k);
+  candles[current - 1][type] = ema;
 }
 
 // @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
-var calcEMAdif = function() {
-  var current = candles.prices.length - 1;
-  var shortEMA = candles.shortEMAs[current];
-  var longEMA = candles.longEMAs[current];
+var calculateEMAdiff = function() {
+  var candle = _.last(candles);
+  var shortEMA = candle.shortEMA;
+  var longEMA = candle.longEMA;
 
-  var dif = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
-  candles.difs.push(dif); 
+  var diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
+  candles[ candles.length - 1 ].diff = diff;
+}
+
+var advice = function() {
+  // get the latest candle
+  var candle = _.last(candles);
+  var diff = candle.diff.toFixed(3);
+
+  if(candle.diff > config.buyTreshold) {
+    log('we are currently in uptrend (' + diff + ')');
+    module.exports.emit('advice', 'BUY', '@ ' + candle.price);
+  } else if(candle.diff < config.sellTreshold) {
+    log('we are currently in a downtrend  (' + diff + ')');
+    module.exports.emit('advice', 'SELL', '@ ' + candle.price);
+  } else {
+    log('we are currently not in an up or down trend  (' + diff + ')');
+    module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+  }
+}
+
+var refresh = function() {
+  log('refreshing');
+
+  // remove the oldest candle
+  candles.splice(0, 1);
+
+  // get new candle
+  getCandles(advice);
 }
 
 var init = function(c, m) {
@@ -91,9 +207,8 @@ var init = function(c, m) {
   mtgox = m;
   util.set(c);
 
-  // fetch and calculate all prices
-  var done = function() { console.log('done', candles); };
-  getCandles(done);
+  getCandles(advice);
+  setInterval(refresh, util.minToMs( config.interval) );
 }
 
 module.exports.on('init', init);

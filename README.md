@@ -6,7 +6,7 @@
 
 -Gordon Gekko
 
-Gekko is *going to be* a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in node, it will feature multiple trading methods using technical analysis.
+Gekko is a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in node, it will feature multiple trading methods using technical analysis.
 
 ## What?
 
@@ -33,7 +33,6 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 ## TODO
 
-* Create a working Exponential moving average algorithm.
 * Add the ability to use different exchanges (such as [btc-e](https://npmjs.org/package/btc-e)).
 * Add an option to run the bot without buying or selling, but merely gather statistics.
 * Figure out a way to calculate the succes rate of a method based on historical data.
