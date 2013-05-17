@@ -29,12 +29,23 @@ var tradeConfig = {
   // max difference between first and last
   // trade to base price calculation on
   sampleSize: 10, // in seconds
-  // the difference between the  EMAs (to 
-  // act as act triggers)
+  // the difference between the EMAs (to 
+  // act as triggers)
   sellTreshold: -0.25,
   buyTreshold: 0.25,
   debug: false // for additional logging
 };
+
+console.log(
+  [
+    '',
+    util.now(),
+    '',
+    'I\'m gonna make you rich, Bud Fox.',
+    'Let me show you some ' + tradingMethod + '.',
+    ''
+  ].join('\n')
+);
 
 var MtGoxClient = require("mtgox-apiv2");
 // create a public mtgox object which can retrieve 
@@ -50,17 +61,6 @@ var util = require('./util.js');
 // public mtgox object which the method can use to get data on past trades..
 var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').join('-') + '.js');
 consultant.emit('init', tradeConfig, publicMtgox);
-
-console.log(
-  [
-    '',
-    util.now(),
-    '',
-    'I\'m gonna make you rich, Bud Fox.',
-    'Let me show you some ' + tradingMethod + '.',
-    ''
-  ].join('\n')
-);
 
 // whenever the consultant advices to sell or buy we can act on the information
 var info = function(a, b) {
