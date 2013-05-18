@@ -6,7 +6,7 @@
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in node, it will feature multiple trading methods using technical analysis.
+Gekko is a Bitcoin trading bot for [Mt. Gox](http://mtgox.com) written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA).
 
 ## What?
 
@@ -20,8 +20,6 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 ## Install
 
-*Gekko is currently not at a working stage yet.*
-
 Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/master.zip) or clone the repository via git:
 
     git clone git://github.com/askmike/gekko.git
@@ -31,17 +29,33 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
+To change the settings, open up `gekko.js` and edit [line 18 to 37](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L37) to change the parameters.
+
+*If you want to enable real trading (disabled by default) you should comment out [line 72 to 83](https://github.com/askmike/gekko/blob/master/gekko.js#L72-L83) of `gekko.js` and fill in your API keys (Gekko only needs trade rights)*
+
+To run the bot you just have to start Gekko:
+
+    node gekko
+
+If you installed the bot via git you can easily fetch the latest updates by running:
+
+    git pull
+
+
 ## TODO
 
 * Add the ability to use different exchanges (such as [btc-e](https://npmjs.org/package/btc-e)).
-* Add an option to run the bot without buying or selling, but merely gather statistics.
-* Figure out a way to calculate the succes rate of a method based on historical data.
+* Add a way to report about profits.
+* Figure out a way to calculate the succes rate of a method (or it's parameters) based on historical data.
 
 ## Credits
 
 * The title is inspired by [Bateman](https://github.com/fearofcode/bateman).
-* This project is inspired by the [GoxTradingBot](https://github.com/virtimus/GoxTradingBot/) Chrome plugin.
+* This project is inspired by the [GoxTradingBot](https://github.com/virtimus/GoxTradingBot/) Chrome plugin (though no code is taken from it).
 
+## Final
+
+If Gekko helped you in any way, you can always leave me a tip at (BTC) 1KyQdQ9ctjCrGjGRCWSBhPKcj5omy4gv5S
 
 ## License
 

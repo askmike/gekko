@@ -96,7 +96,7 @@ var calculatePrice = function(trades, newestFirst) {
     return calculateNewestPrice(trades.reverse());
 
   // treshold is the date of oldest trade in addition to the sampleSize
-  var treshold = moment.unix(trades[0].date).add('seconds', config.sampleSize);
+  var treshold = moment.unix(_.first(trades).date).add('seconds', config.sampleSize);
 
   // create a sample of trades that happened before the treshold
   var sample = [];
@@ -112,7 +112,7 @@ var calculatePrice = function(trades, newestFirst) {
   return util.average(sample);
 }
 var calculateNewestPrice = function(trades) {
-  var treshold = moment.unix(trades[0].date).subtract('seconds', config.sampleSize);
+  var treshold = moment.unix(_.first(trades).date).subtract('seconds', config.sampleSize);
 
   // create a sample of trades that happened after the treshold
   var sample = [];
@@ -177,16 +177,17 @@ var calculateEMAdiff = function() {
 
 var advice = function() {
   var candle = _.last(candles);
-  var diff = candle.diff.toFixed(3);
+  var diff = candle.diff.toFixed(3)
+  var logPrice = '@ ' + candle.price.toFixed(3) + ' (' + diff + ')';
 
   if(candle.diff > config.buyTreshold) {
     log('we are currently in uptrend (' + diff + ')');
 
     if(currentTrend !== 'up') {
       currentTrend = 'up';
-      module.exports.emit('advice', 'BUY', '@ ' + candle.price);
+      module.exports.emit('advice', 'BUY', logPrice);
     } else {
-      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+      module.exports.emit('advice', 'HOLD', logPrice);
     }
 
   } else if(candle.diff < config.sellTreshold) {
@@ -194,9 +195,9 @@ var advice = function() {
 
     if(currentTrend !== 'down') {
       currentTrend = 'down';
-      module.exports.emit('advice', 'SELL', '@ ' + candle.price);
+      module.exports.emit('advice', 'SELL', logPrice);
     } else {
-      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+      module.exports.emit('advice', 'HOLD', logPrice);
     }
 
   } else {
@@ -204,7 +205,7 @@ var advice = function() {
 
     if(currentTrend !== 'none') {
       currentTrend = 'none';
-      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+      module.exports.emit('advice', 'HOLD', logPrice);
     }
 
   }
