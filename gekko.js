@@ -20,18 +20,14 @@ var tradeConfig = {
   // timeframe per candle
   interval: 60, // in minutes
   // EMA weight (α)
-  // the higher the weight, the more smooth
-  // (and delayed) the line 
+  // the higher the weight, the more smooth (and delayed) the line 
   shortEMA: 10,
   longEMA: 21,
-  // amount of samples to remember
-  // and base initial EMAs on
+  // amount of samples to remember and base initial EMAs on
   candles: 20,
-  // max difference between first and last
-  // trade to base price calculation on
+  // max difference between first and last trade to base price calculation on
   sampleSize: 10, // in seconds
-  // the difference between the EMAs (to 
-  // act as triggers)
+  // the difference between the EMAs (to act as triggers)
   sellTreshold: -0.25,
   buyTreshold: 0.25,
   debug: false // for additional logging
@@ -70,16 +66,11 @@ consultant.on('advice', inform);
 
 /*
 console.log(util.now(), 'real trading ACTIVE');
-var publicKey = 'your public key';
-var privateKey = 'your private key';
-var mtgox = new MtGoxClient(publicKey, privateKey);
-
-var act = function(what) {
-  console.log(util.now(), 'NOW going to', what);
-  if(what === 'BUY')
-    mtgox.add('bid', 1000);
-  if(what === 'SELL')
-    mtgox.add('ask', 1000);
-}
-consultant.on('advice', act);
+var exchange = 'BTCe'; // either 'BTCe' or 'MtGox'
+var key = 'your API key';
+var secret = 'your API secret';
+// implement a trader for an exchange which will act (buy or sell) on the advice
+var Trader = require('./exchanges/' + exchange.toLowerCase() + '.js');
+var trader = new Trader(key, secret);
+consultant.on('advice', trader.trade);
 */
