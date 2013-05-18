@@ -10,7 +10,7 @@ Gekko is a Bitcoin trading bot for popular exchanges written in javascript runni
 
 Gekko currently supports automatic trading at the following exchanges:
 * [Mt. Gox](https://mtgox.com/)
-* [BTC-e](https://btc-e.com/)
+* [BTC-e](https://btc-e.com/) (Alpha stage)
 
 ## What?
 
@@ -33,7 +33,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
-To change the settings, open up `gekko.js` and edit [line 18 to 38](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L38) to change the parameters.
+To change the settings, open up `gekko.js` and edit [line 19 to 33](https://github.com/askmike/gekko/blob/master/gekko.js#L19-L33) to change the parameters.
 
 If you want to enable real trading* (disabled by default) you should comment out [line 67 to 76](https://github.com/askmike/gekko/blob/master/gekko.js#L67-L76) of `gekko.js` and fill in your API keys (Gekko only needs trade rights).
 
@@ -56,7 +56,7 @@ If you started Gekko it will remain open in your terminal and log out new inform
 
     (ADVICE) 2013-05-18 17:37:56 HOLD @ 122.596 (-0.140)
 
-After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L38)) Gekko will fetch new trade data and advice on what to do:
+After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L21)) Gekko will fetch new trade data and advice on what to do:
 
 * HOLD means don't do anything, we are either not in a trend or the trend has not changed since last check.
 * BUY means the trend has changed to an uptrend, advice is to buy now so we can sell at the end of the trend.
