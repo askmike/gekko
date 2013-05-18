@@ -24,7 +24,7 @@ var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
 
-var mtgox, config;
+var mtgox, config, currentTrend;
 // this array stores _all_ price data
 var candles = [];
 
@@ -176,19 +176,37 @@ var calculateEMAdiff = function() {
 }
 
 var advice = function() {
-  // get the latest candle
   var candle = _.last(candles);
   var diff = candle.diff.toFixed(3);
 
   if(candle.diff > config.buyTreshold) {
     log('we are currently in uptrend (' + diff + ')');
-    module.exports.emit('advice', 'BUY', '@ ' + candle.price);
+
+    if(lastTrend !== 'up') {
+      lastTrend = 'up';
+      module.exports.emit('advice', 'BUY', '@ ' + candle.price);
+    } else {
+      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+    }
+
   } else if(candle.diff < config.sellTreshold) {
     log('we are currently in a downtrend  (' + diff + ')');
-    module.exports.emit('advice', 'SELL', '@ ' + candle.price);
+
+    if(lastTrend !== 'down') {
+      lastTrend = 'down';
+      module.exports.emit('advice', 'SELL', '@ ' + candle.price);
+    } else {
+      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+    }
+
   } else {
     log('we are currently not in an up or down trend  (' + diff + ')');
-    module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+
+    if(lastTrend !== 'none') {
+      lastTrend = 'none';
+      module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
+    }
+
   }
 }
 
