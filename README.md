@@ -29,9 +29,9 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
-To change the settings, open up `gekko.js` and edit [line 18 to 37](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L37) to change the parameters.
+To change the settings, open up `gekko.js` and edit [line 18 to 38](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L38) to change the parameters.
 
-*If you want to enable real trading (disabled by default) you should comment out [line 72 to 83](https://github.com/askmike/gekko/blob/master/gekko.js#L72-L83) of `gekko.js` and fill in your API keys (Gekko only needs trade rights)*
+*If you want to enable real trading (disabled by default) you should comment out [line 71 to 85](https://github.com/askmike/gekko/blob/master/gekko.js#L71-L85) of `gekko.js` and fill in your API keys (Gekko only needs trade rights)*
 
 To run the bot you just have to start Gekko:
 
@@ -41,6 +41,31 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
     git pull
 
+## What is Gekko doing?
+
+If you started Gekko it will remain open in your terminal and log out new information, for example:
+
+    start time:  2013-05-18 17:37:38
+
+    I'm gonna make you rich, Bud Fox.
+    Let me show you some Exponential Moving Averages.
+
+    (ADVICE) 2013-05-18 17:37:56 HOLD @ 122.596 (-0.140)
+
+After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L18-L38)) Gekko will fetch new trade data and advice on what to do:
+
+* HOLD means don't do anything, we are either not in a trend or the trend has not changed since last check.
+* BUY means the trend has changed to an uptrend, advice is to buy now so we can sell at the end of the trend.
+* SELL means the trend has chacnged to a downtrend, advice is to sell now so we can buy back at the end of the trend.
+
+After every line of advice we can see the current price Gekko calculated and the difference in EMAs, this makes it easier to understand the advice.
+
+If you configured Gekko to automatically sell on this information it will also log:
+
+* NOW going to BUY, when it is buying BTC.
+* NOW going to SELL, when it is selling BTC.
+
+It will try to buy/sell 1000 BTC, Mt. Gox changes this in to all the funds on your account (unless you're pretty rich).
 
 ## TODO
 

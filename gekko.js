@@ -42,7 +42,7 @@ var moment = require('moment');
 var _ = require('underscore');
 var util = require('./util.js');
 
-console.log('\n' + util.now());
+console.log('\nstart time: ', util.now());
 console.log('\nI\'m gonna make you rich, Bud Fox.');
 console.log('Let me show you some ' + tradingMethod + '.\n');
 
@@ -69,6 +69,7 @@ consultant.on('advice', inform);
 // fill in you public and private key from mtgox and uncomment to enable
 
 /*
+console.log(util.now(), 'real trading ACTIVE');
 var publicKey = 'your public key';
 var privateKey = 'your private key';
 var mtgox = new MtGoxClient(publicKey, privateKey);
