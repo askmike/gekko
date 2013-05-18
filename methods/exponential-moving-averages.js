@@ -36,9 +36,9 @@ var log = function(m) {
 // the short & long EMA and the difference for these candles.
 var getCandles = function(callback) {
   var current = config.candles - candles.length;
+  // get the date of the candle we are fetching
   var candleTime = util.intervalsAgo(current);
 
-  // get the date of the candle we are fetching
   var since = current ? util.toMicro(candleTime) : null;
   mtgox.fetchTrades(since, function(err, trades) {
     if (err) throw err;
