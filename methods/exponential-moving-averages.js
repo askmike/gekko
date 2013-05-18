@@ -182,8 +182,8 @@ var advice = function() {
   if(candle.diff > config.buyTreshold) {
     log('we are currently in uptrend (' + diff + ')');
 
-    if(lastTrend !== 'up') {
-      lastTrend = 'up';
+    if(currentTrend !== 'up') {
+      currentTrend = 'up';
       module.exports.emit('advice', 'BUY', '@ ' + candle.price);
     } else {
       module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
@@ -192,8 +192,8 @@ var advice = function() {
   } else if(candle.diff < config.sellTreshold) {
     log('we are currently in a downtrend  (' + diff + ')');
 
-    if(lastTrend !== 'down') {
-      lastTrend = 'down';
+    if(currentTrend !== 'down') {
+      currentTrend = 'down';
       module.exports.emit('advice', 'SELL', '@ ' + candle.price);
     } else {
       module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
@@ -202,8 +202,8 @@ var advice = function() {
   } else {
     log('we are currently not in an up or down trend  (' + diff + ')');
 
-    if(lastTrend !== 'none') {
-      lastTrend = 'none';
+    if(currentTrend !== 'none') {
+      currentTrend = 'none';
       module.exports.emit('advice', 'HOLD', '@ ' + candle.price);
     }
 
