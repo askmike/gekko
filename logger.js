@@ -11,34 +11,42 @@ module.exports.inform = function(what, price, meta) {
 // this function calculates Gekko's profit in %.
 
 // virtual balance
-var currentBTC = 1;
-var currentUSD = 100;
+var start = {
+  btc: 1,
+  usd: 100,
+  balance: false
+}
+var current = {
+  btc: start.btc,
+  usd: start.usd,
+  balance: false
+}
 // start value in BTC
-var startBalance = false;
 var trades = 0;
 module.exports.trackProfits = function(what, price, meta) {
-  if(!startBalance)
-    startBalance = currentUSD / price + currentBTC;
+  if(!start.balance)
+    // first time calculate the virtual account balance
+    start.balance = price * start.btc + start.usd;
 
   // virtually trade all USD to BTC at the current MtGox price
   if(what === 'BUY') {
-    // var fee = currentUSD / price * 0.006;
-    var btc = currentUSD / price;
-    currentBTC += currentUSD / price;
-    currentUSD = 0;
+    var btc = current.usd / price;
+    current.btc += current.usd / price;
+    current.usd = 0;
     trades++;
   }
 
-  // virtually trade all USD to BTC at the current MtGox price
+  // virtually trade all BTC to USD at the current MtGox price
   if(what === 'SELL') {
-    currentUSD += currentBTC * price;
-    currentBTC = 0;
+    current.usd += current.btc * price;
+    current.btc = 0;
     trades++;
   }
 
-  // current value in BTC
-  var currentBalance = currentUSD / price + currentBTC;
-  var profit = currentBalance / startBalance * 100 - 100;
+  // calculate the account balance in USD
+  current.balance = price * current.btc + current.usd;
+  // compare with start.balance
+  var profit = current.balance / start.balance * 100 - 100;
 
   console.log(
     '(PROFIT REPORT)',
