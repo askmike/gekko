@@ -59,7 +59,7 @@ If you started Gekko it will remain open in your terminal and log out new inform
     (ADVICE) 2013-05-19 23:18:14 HOLD @ 122.596 (-0.140)
     (PROFIT REPORT) 2013-05-19 23:18:14 0.000 % profit (in 0 trades)
 
-After the first fetching, every new candle interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js.js#L9)) Gekko will fetch new trade data, advice on what to do and give a profit report:
+After the first fetching, every new candle interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js#L9)) Gekko will fetch new trade data, advice on what to do and give a profit report:
 
 ### Advice
 
@@ -86,9 +86,8 @@ It will try to buy/sell 1000 BTC, Mt. Gox changes this in to all the funds on yo
 
 ## TODO
 
-* Add the ability to use different exchanges (such as [btc-e](https://npmjs.org/package/btc-e)).
-* Add a way to report about profits.
-* Figure out a way to calculate the succes rate of a method (or it's parameters) based on historical data.
+* Create an easy way to backtest historical data and determine the effectiveness of different paramters.
+* Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor) and [campBX](https://npmjs.org/package/campbx)).
 
 ## Credits
 
