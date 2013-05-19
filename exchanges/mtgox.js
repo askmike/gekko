@@ -7,7 +7,6 @@ var trader = function(key, secret) {
   this.name = 'Mt. Gox';
 
   this.mtgox = new MtGoxClient(this.key, this.secret);
-  console.log(util.now(), 'initialized ' + this.name + ' trader');
 }
 
 trader.prototype.trade = function(what) {

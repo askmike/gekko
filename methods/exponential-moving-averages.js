@@ -28,8 +28,9 @@ var mtgox, config, currentTrend;
 // this array stores _all_ price data
 var candles = [];
 
+var debug;
 var log = function(m) {
-  config.debug && console.log('(DEBUG) ', util.now(), m);
+  debug && console.log('(DEBUG) ', util.now(), m);
 }
 
 // fetch the price of all remaining candles and calculate 
@@ -192,9 +193,10 @@ var refresh = function() {
   getCandles(advice);
 }
 
-var init = function(c, m) {
+var init = function(c, m, d) {
   config = c;
   mtgox = m;
+  debug = d;
   util.set(c);
 
   getCandles(advice);

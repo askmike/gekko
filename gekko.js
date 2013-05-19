@@ -15,23 +15,8 @@
   it's working.
 
 */
-var tradingMethod = 'Exponential Moving Averages';
-var tradeConfig = {
-  // timeframe per candle
-  interval: 1, // in minutes
-  // EMA weight (α)
-  // the higher the weight, the more smooth (and delayed) the line 
-  shortEMA: 10,
-  longEMA: 21,
-  // amount of samples to remember and base initial EMAs on
-  candles: 100,
-  // max difference between first and last trade to base price calculation on
-  sampleSize: 10, // in seconds
-  // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.025,
-  buyTreshold: 0.025,
-  debug: true // for additional logging
-};
+
+var config = require('./config.js');
 
 // helpers
 var moment = require('moment');
@@ -40,7 +25,7 @@ var util = require('./util.js');
 
 console.log('\nstart time: ', util.now());
 console.log('\nI\'m gonna make you rich, Bud Fox.');
-console.log('Let me show you some ' + tradingMethod + '.\n');
+console.log('Let me show you some ' + config.tradingMethod + '.\n');
 
 var MtGoxClient = require("mtgox-apiv2");
 // create a public mtgox object which can retrieve 
@@ -49,8 +34,8 @@ var publicMtgox = new MtGoxClient('~', '~');
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
-var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').join('-') + '.js');
-consultant.emit('init', tradeConfig, publicMtgox);
+var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-') + '.js');
+consultant.emit('init', config.tradeConfig, publicMtgox, config.debug);
 
 // whenever the consultant advices to sell or buy we can act on the information
 
@@ -58,19 +43,15 @@ var logger = require('./logger.js');
 consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 
-//    DANGER ZONE
-//    
-// enable real trading BTC for real USD
-// 
-// fill in you public and private key from mtgox and uncomment to enable
+var exchanges = ['MtGox', 'BTCe'];
 
-/*
-console.log(util.now(), 'real trading ACTIVE');
-var exchange = 'BTCe'; // either 'BTCe' or 'MtGox'
-var key = 'your API key';
-var secret = 'your API secret';
-// implement a trader for an exchange which will act (buy or sell) on the advice
-var Trader = require('./exchanges/' + exchange.toLowerCase() + '.js');
-var trader = new Trader(key, secret);
-consultant.on('advice', trader.trade);
-*/
+_.each(config.traders, function(conf) {
+  if(_.indexOf(exchanges, conf.exchange) === -1)
+    throw 'unkown exchange';
+
+  console.log(util.now(), 'real trading at', conf.exchange, 'ACTIVE');
+  var Trader = require('./exchanges/' + conf.exchange.toLowerCase() + '.js');
+  var trader = new Trader(conf.key, conf.secret);
+  consultant.on('advice', trader.trade);
+});
+
