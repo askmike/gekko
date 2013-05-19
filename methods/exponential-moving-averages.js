@@ -92,42 +92,15 @@ var getCandles = function(callback) {
 // if newestFirst is true we are instead interested in the most 
 // recent trades up to (newest - sampleSize)
 var calculatePrice = function(trades, newestFirst) {
-  if(newestFirst)
-    return calculateNewestPrice(trades.reverse());
+  if(newestFirst) {
+    trades = trades.reverse();
+    var treshold = moment.unix(_.first(trades).date).subtract('seconds', config.sampleSize);
+    return util.calculatePriceSinceTreshold(trades, treshold);
+  }
 
-  // treshold is the date of oldest trade in addition to the sampleSize
   var treshold = moment.unix(_.first(trades).date).add('seconds', config.sampleSize);
-
-  // create a sample of trades that happened before the treshold
-  var sample = [];
-  _.every(trades, function(trade) {
-    if(moment.unix(trade.date) > treshold)
-      return false;
-
-    var price = parseFloat(trade.price);
-    sample.push(price);
-    return true;
-  });
-
-  return util.average(sample);
+  return util.calculatePriceTillTreshold(trades, treshold);
 }
-var calculateNewestPrice = function(trades) {
-  var treshold = moment.unix(_.first(trades).date).subtract('seconds', config.sampleSize);
-
-  // create a sample of trades that happened after the treshold
-  var sample = [];
-  _.every(trades, function(trade) {
-    if(moment.unix(trade.date) < treshold)
-      return false;
-
-    var price = parseFloat(trade.price);
-    sample.push(price);
-    return true;
-  });
-
-  return util.average(sample);
-}
-
 
 // add a price and calculate the EMAs and
 // the diff for that price

@@ -21,6 +21,8 @@ trader.prototype.trade = function(what) {
   var devNull = function() {};
 
   this.getAveragePrice(function(price) {
+    // the BTC-e API won't handle precision numbers
+    price = price.toFixed(3);
     console.log(util.now(), 'NOW going to', what, '@', this.name);  
     if(what === 'BUY')
       this.btce.trade('btc_usd', 'buy', price, 1000, devNull);
@@ -33,30 +35,14 @@ trader.prototype.trade = function(what) {
 // the price in this exchange because the prices per exchange can differ.
 trader.prototype.getAveragePrice = function(callback) {
   var process = function(err, trades) {
-    var price = this.calculateAveragePrice(trades);
+    var treshold = moment.unix(_.first(trades).date).subtract('seconds', 20);
+    var price = calculatePriceSinceTreshold(treshold, trades);
     callback(price);
   }
   callback = _.bind(callback, this);
   process = _.bind(process, this);
 
   this.btce.trades('btc_usd', process);
-}
-
-// get the average price of all trades that happened within 20 seconds of the most 
-// recent trade.
-trader.prototype.calculateAveragePrice = function(trades) {
-  var sample = [];
-  var treshold = moment.unix(_.first(trades).date).subtract('seconds', 20);
-  _.every(trades, function(trade) {
-    if(moment.unix(trade.date) < treshold)
-      return false
-
-    var price = parseFloat(trade.price);
-    sample.push(price);
-    return true;
-  });
-
-  return util.average(sample).toFixed(3);
 }
 
 module.exports = trader;
