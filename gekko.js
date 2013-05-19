@@ -18,7 +18,7 @@
 var tradingMethod = 'Exponential Moving Averages';
 var tradeConfig = {
   // timeframe per candle
-  interval: 60, // in minutes
+  interval: 1, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line 
   shortEMA: 10,
@@ -28,9 +28,9 @@ var tradeConfig = {
   // max difference between first and last trade to base price calculation on
   sampleSize: 10, // in seconds
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.25,
-  buyTreshold: 0.25,
-  debug: false // for additional logging
+  sellTreshold: -0.025,
+  buyTreshold: 0.025,
+  debug: true // for additional logging
 };
 
 // helpers
@@ -53,10 +53,10 @@ var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').j
 consultant.emit('init', tradeConfig, publicMtgox);
 
 // whenever the consultant advices to sell or buy we can act on the information
-var inform = function(what, price, meta) {
-  console.log('(ADVICE)', util.now(), what, meta);
-}
-consultant.on('advice', inform);
+
+var logger = require('./logger.js');
+consultant.on('advice', logger.inform);
+consultant.on('advice', logger.trackProfits);
 
 //    DANGER ZONE
 //    
