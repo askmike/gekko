@@ -25,7 +25,7 @@ var util = {
   },
   // calculate the average trade price out of a sample of trades.
   // The sample consists of all trades that happened after the treshold.
-  calculatePriceSinceTreshold: function(trades, treshold) {
+  calculatePriceSince: function(treshold, trades) {
     var sample = [];
     _.every(trades, function(trade) {
       if(moment.unix(trade.date) < treshold)
@@ -40,7 +40,7 @@ var util = {
   },
   // calculate the average trade price out of a sample of trades.
   // The sample consists of all trades that happened before the treshold.
-  calculatePriceTillTreshold: function(trades, treshold) {
+  calculatePriceTill: function(treshold, trades) {
     var sample = [];
     _.every(trades, function(trade) {
       if(moment.unix(trade.date) > treshold)

@@ -95,11 +95,11 @@ var calculatePrice = function(trades, newestFirst) {
   if(newestFirst) {
     trades = trades.reverse();
     var treshold = moment.unix(_.first(trades).date).subtract('seconds', config.sampleSize);
-    return util.calculatePriceSinceTreshold(trades, treshold);
+    return util.calculatePriceSince(treshold, trades);
   }
 
   var treshold = moment.unix(_.first(trades).date).add('seconds', config.sampleSize);
-  return util.calculatePriceTillTreshold(trades, treshold);
+  return util.calculatePriceTill(treshold, trades);
 }
 
 // add a price and calculate the EMAs and

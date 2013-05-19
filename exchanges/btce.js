@@ -36,7 +36,7 @@ trader.prototype.trade = function(what) {
 trader.prototype.getAveragePrice = function(callback) {
   var process = function(err, trades) {
     var treshold = moment.unix(_.first(trades).date).subtract('seconds', 20);
-    var price = calculatePriceSinceTreshold(treshold, trades);
+    var price = util.calculatePriceSince(treshold, trades);
     callback(price);
   }
   callback = _.bind(callback, this);
