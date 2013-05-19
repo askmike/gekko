@@ -35,9 +35,9 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
-To change the settings, open up `gekko.js` and edit [line 19 to 34](https://github.com/askmike/gekko/blob/master/gekko.js#L19-L34) to change the parameters.
+To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters.
 
-If you want to enable real trading (disabled by default) you should comment out [line 67 to 76](https://github.com/askmike/gekko/blob/master/gekko.js#L67-L76) of `gekko.js` and fill in your exchange and API keys (Gekko only needs trade rights).
+If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/gekko.js#L30-L43) and fill in your exchange and API keys (Gekko only needs trade rights).
 
 To run the bot you just have to start Gekko:
 
@@ -51,20 +51,31 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
 If you started Gekko it will remain open in your terminal and log out new information, for example:
 
-    start time:  2013-05-18 17:37:38
+    start time:  2013-05-19 23:17:38
 
     I'm gonna make you rich, Bud Fox.
     Let me show you some Exponential Moving Averages.
 
-    (ADVICE) 2013-05-18 17:37:56 HOLD @ 122.596 (-0.140)
+    (ADVICE) 2013-05-19 23:18:14 HOLD @ 122.596 (-0.140)
+    (PROFIT REPORT) 2013-05-19 23:18:14 0.000 % profit (in 0 trades)
 
-After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L21)) Gekko will fetch new trade data and advice on what to do:
+After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L21)) Gekko will fetch new trade data, advice on what to do and give a profit report:
+
+### Advice
 
 * HOLD means don't do anything, we are either not in a trend or the trend has not changed since last check.
 * BUY means the trend has changed to an uptrend, advice is to buy now so we can sell at the end of the trend.
 * SELL means the trend has chacnged to a downtrend, advice is to sell now so we can buy back at the end of the trend.
 
 After every line of advice we can see the current price Gekko calculated and the difference in EMAs, this makes it easier to understand the advice.
+
+### Profit report
+
+The profit report will log out Gekko's profit since it started, this is done using a buy and sell simulations (regardless if you have automatic trading enabled or not). **The profit does not take fees into account.**
+
+*If Gekko logs 20% that means that if you would have had automatic trading enabled on an exchange account with a balance of 1BTC, you would now have 1.2BTC (minus the exchange fees for the trades).*
+
+### Buying and selling
 
 If you configured Gekko to automatically sell on this information it will also log:
 
