@@ -59,7 +59,7 @@ If you started Gekko it will remain open in your terminal and log out new inform
     (ADVICE) 2013-05-19 23:18:14 HOLD @ 122.596 (-0.140)
     (PROFIT REPORT) 2013-05-19 23:18:14 0.000 % profit (in 0 trades)
 
-After the first fetching, every new candle interval (in the [tradeConfig](https://github.com/askmike/gekko/blob/master/gekko.js#L21)) Gekko will fetch new trade data, advice on what to do and give a profit report:
+After the first fetching, every new candle interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js.js#L9)) Gekko will fetch new trade data, advice on what to do and give a profit report:
 
 ### Advice
 

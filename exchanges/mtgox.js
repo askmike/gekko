@@ -1,10 +1,13 @@
 var MtGoxClient = require("mtgox-apiv2");
 var util = require('../util.js');
+var _ = require('underscore');
 
 var trader = function(key, secret) {
   this.key = key;
   this.secret = secret;
   this.name = 'Mt. Gox';
+
+  _.bindAll(this);
 
   this.mtgox = new MtGoxClient(this.key, this.secret);
 }
