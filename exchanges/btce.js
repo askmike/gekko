@@ -9,6 +9,8 @@ var trader = function(key, secret) {
   this.secret = secret;
   this.name = 'BTC-E';
 
+  _.bindAll(this);
+
   this.btce = new BTCE(this.key, this.secret);
   console.log(util.now(), 'initialized ' + this.name + ' trader');
 }

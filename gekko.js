@@ -24,7 +24,7 @@ var tradeConfig = {
   shortEMA: 10,
   longEMA: 21,
   // amount of samples to remember and base initial EMAs on
-  candles: 20,
+  candles: 100,
   // max difference between first and last trade to base price calculation on
   sampleSize: 10, // in seconds
   // the difference between the EMAs (to act as triggers)
@@ -53,7 +53,7 @@ var consultant = require('./methods/' + tradingMethod.toLowerCase().split(' ').j
 consultant.emit('init', tradeConfig, publicMtgox);
 
 // whenever the consultant advices to sell or buy we can act on the information
-var inform = function(what, meta) {
+var inform = function(what, price, meta) {
   console.log('(ADVICE)', util.now(), what, meta);
 }
 consultant.on('advice', inform);
