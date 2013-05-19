@@ -24,7 +24,7 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 ## Install
 
-Windows users? Here is a [step by step guide](http://askmike.org/stuff/installing_gekko_on_windows.html) on how to get Gekko running.
+Windows users? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running.
 
 Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/master.zip) or clone the repository via git:
 
