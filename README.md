@@ -8,6 +8,14 @@
 
 Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA).
 
+## Main features
+
+Gekko uses technical analysis (only EMA at this moment) to determine when to enter or leave the market, at such a moment it can:
+
+* Advice on what you should do.
+* Calculate the profits of all the advices so far.
+* Automatically trade.
+
 Gekko currently supports automatic trading at the following exchanges:
 * [Mt. Gox](https://mtgox.com/)
 * [BTC-e](https://btc-e.com/) (alpha stage)
@@ -37,7 +45,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters.
 
-If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/gekko.js#L30-L43) and fill in your exchange and API keys (Gekko only needs trade rights).
+If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L30-L43) and fill in your exchange and API keys (Gekko only needs trade rights).
 
 To run the bot you just have to start Gekko:
 
