@@ -95,7 +95,9 @@ It will try to buy/sell 1000 BTC, Mt. Gox changes this in to all the funds on yo
 ## TODO
 
 * Create an easy way to backtest historical data and determine the effectiveness of different paramters.
+* Make the trend watching exchange (and currency if applicable) configurable.
 * Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor) and [campBX](https://npmjs.org/package/campbx)).
+* Store trade history in levelDB.
 
 ## Credits
 
