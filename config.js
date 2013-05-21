@@ -3,8 +3,16 @@ var config = {};
 // Gekko currently only supports Exponential Moving Averages
 config.tradingMethod =  'Exponential Moving Averages';
 
+// On trades at which exchange should Gekko base its analysis on?
+config.watch =  {
+  exchange: 'mtgox', // either 'BTCe' or 'MtGox'
+
+  // if you filled in BTCe uncomment and fill in the following
+  // currency: 'USD' // either USD, EUR or RUR
+} 
+
 // Exponential Moving Averages settings:
-config.tradeConfig = {
+config.EMA = {
   // timeframe per candle
   interval: 60, // in minutes
   // EMA weight (α)
@@ -20,26 +28,31 @@ config.tradeConfig = {
   buyTreshold: 0.25
 };
 
-config.debug = false // for additional logging
+config.debug = false; // for additional logging
 
 //    DANGER ZONE
 //    
 // enable real trading BTC for real USD
 // 
-// fill in you public and private key from mtgox / btc-e and uncomment to enable
-/*
+// fill in you public and private key from mtgox or btc-e, if you enable 
+// btc-e also set a currency.
+// 
+// == if you set enabled to true Gekko will trade! ==
 config.traders = [
   {
-    exchange: 'MtGox', // either 'BTCe' or 'MtGox'
+    exchange: 'MtGox',
     key: '',
-    secret: ''
+    secret: '',
+    enabled: false
   },
-  // {
-  //   exchange: 'BTCe', // either 'BTCe' or 'MtGox'
-  //   key: '',
-  //   secret: ''
-  // }
+  {
+    exchange: 'BTCe',
+    key: '',
+    secret: '',
+    currency: 'USD', // either USD, EUR or RUR
+    enabled: false
+  }
 ];
-*/
+
 
 module.exports = config;

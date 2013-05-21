@@ -1,21 +1,22 @@
 {
-    "name": "gekko",
-    "version": "0.0.1",
-    "description": "A bitcoin trading bot for trading at Mt. Gox",
-    "keywords": [
-        "mtgox",
-        "bitcoin"
-    ],
-    "author": "Mike van Rossum <mike@mvr.me>",
-    "dependencies": {
-        "mtgox-apiv2": "1.0.1",
-        "underscore": "1.4.4",
-        "moment": "2.0.0",
-        "btc-e": "0.0.9"
-    },
-    "engines": { "node": "0.10" },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/askmike/gekko.git"
-    }
+  "name": "gekko",
+  "version": "0.0.1",
+  "description": "A bitcoin trading bot for trading at Mt. Gox",
+  "keywords": [
+    "mtgox",
+    "bitcoin"
+  ],
+  "author": "Mike van Rossum <mike@mvr.me>",
+  "dependencies": {
+    "mtgox-apiv2": "1.0.1",
+    "underscore": "1.4.4",
+    "moment": "2.0.0",
+    "btc-e": "0.0.9",
+    "bitcoincharts": "0.0.4"
+  },
+  "engines": { "node": "0.10" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/askmike/gekko.git"
+  }
 }

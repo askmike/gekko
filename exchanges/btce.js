@@ -4,9 +4,10 @@ var moment = require('moment');
 var util = require('../util.js');
 var _ = require('underscore');
 
-var trader = function(key, secret) {
-  this.key = key;
-  this.secret = secret;
+var trader = function(config) {
+  this.key = config.key;
+  this.secret = config.secret;
+  this.pair = 'btc_' + config.currency.toLowerCase();
   this.name = 'BTC-E';
 
   _.bindAll(this);
@@ -26,9 +27,9 @@ trader.prototype.trade = function(what) {
     price = price.toFixed(3);
     console.log(util.now(), 'NOW going to', what, '@', this.name);  
     if(what === 'BUY')
-      this.btce.trade('btc_usd', 'buy', price, 1000, devNull);
+      this.btce.trade(this.pair, 'buy', price, 1000, devNull);
     if(what === 'SELL')
-      this.btce.trade('btc_usd', 'sell', price, 1000, devNull);
+      this.btce.trade(this.pair, 'sell', price, 1000, devNull);
   });
 }
 

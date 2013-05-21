@@ -24,9 +24,10 @@ var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
 
-var mtgox, config, currentTrend;
+var watcher, config, currentTrend;
 // this array stores _all_ price data
 var candles = [];
+var amount;
 
 var debug;
 var log = function(m) {
@@ -36,14 +37,18 @@ var log = function(m) {
 // fetch the price of all remaining candles and calculate 
 // the short & long EMA and the difference for these candles.
 var getCandles = function(callback) {
-  var current = config.candles - candles.length;
+  var current = amount - candles.length;
   // get the date of the candle we are fetching
   var candleTime = util.intervalsAgo(current);
 
-  var since = current ? util.toMicro(candleTime) : null;
-  mtgox.fetchTrades(since, function(err, trades) {
+  if(current)
+    var since = candleTime;
+  else
+    // if this is the last candle just fetch the latest trades
+    var since = null;
+  watcher.getTrades(since, function(err, trades) {
     if (err) throw err;
-    log('fetched mtgox');
+    log('fetched exchange');
 
     trades = trades.data;
     if (trades.length === 0) throw 'exchange responded with zero trades';
@@ -70,14 +75,14 @@ var getCandles = function(callback) {
       });
 
       if(!outOfTrades) {
-        price = calculatePrice(trades);
-        calculateCandle(price);
         current -= 1;
+        price = calculatePrice(trades, !(current - 1));
+        calculateCandle(price);
       }
     }
 
     // recurse if we don't have all candles yet
-    if(current)
+    if(current > 1)
       return getCandles(callback);
     
     // we're done
@@ -106,7 +111,6 @@ var calculatePrice = function(trades, newestFirst) {
 // add a price and calculate the EMAs and
 // the diff for that price
 var calculateCandle = function(price) {
-  log('calculated new candle: ' + (config.candles - candles.length));
   var candle = {
     price: price,
     shortEMA: false,
@@ -118,6 +122,14 @@ var calculateCandle = function(price) {
   calculateEMA('shortEMA');
   calculateEMA('longEMA');
   calculateEMAdiff();
+  log(
+    'calculated new candle: ' + 
+    (amount - candles.length) + 
+    '\tprice: ' + 
+    _.last(candles).price.toFixed(3) + 
+    '\tdiff: ' +
+    _.last(candles).diff.toFixed(3)
+  );
 }
 
 //    calculation (based on candle/day):
@@ -193,11 +205,12 @@ var refresh = function() {
   getCandles(advice);
 }
 
-var init = function(c, m, d) {
+var init = function(c, w, d) {
   config = c;
-  mtgox = m;
+  watcher = w;
   debug = d;
   util.set(c);
+  amount = config.candles + 1;
 
   getCandles(advice);
   setInterval(refresh, util.minToMs( config.interval) );

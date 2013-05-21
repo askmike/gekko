@@ -27,15 +27,23 @@ console.log('\nstart time: ', util.now());
 console.log('\nI\'m gonna make you rich, Bud Fox.');
 console.log('Let me show you some ' + config.tradingMethod + '.\n');
 
-var MtGoxClient = require("mtgox-apiv2");
-// create a public mtgox object which can retrieve 
-// open trade information from the API
-var publicMtgox = new MtGoxClient('~', '~');
+// create a public exchange object which can retrieve trade information
+var provider = config.watch.exchange.toLowerCase();
+if(provider === 'btce') {
+  if(!config.watch.currency)
+    throw 'need to set watcher currency';
+  // we can't fetch historical data from btce directly so we use bitcoincharts
+  // @link http://bitcoincharts.com/about/markets-api/
+  var market = provider;
+  provider = 'bitcoincharts';
+}
+var DataProvider = require('./exchanges/' + provider + '.js');
+var watcher = new DataProvider(market, config.watch.currency, config);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
 var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-') + '.js');
-consultant.emit('init', config.tradeConfig, publicMtgox, config.debug);
+consultant.emit('init', config.EMA, watcher, config.debug);
 
 // whenever the consultant advices to sell or buy we can act on the information
 
@@ -43,15 +51,21 @@ var logger = require('./logger.js');
 consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 
-var exchanges = ['MtGox', 'BTCe'];
+var exchanges = ['mtgox', 'btce'];
 
 _.each(config.traders, function(conf) {
-  if(_.indexOf(exchanges, conf.exchange) === -1)
+  if(!conf.enabled)
+    return;
+
+  if(!conf.key || !conf.secret)
+    throw 'missing key or secret!';
+
+  if(_.indexOf(exchanges, conf.exchange.toLowerCase()) === -1)
     throw 'unkown exchange';
 
   console.log(util.now(), 'real trading at', conf.exchange, 'ACTIVE');
   var Trader = require('./exchanges/' + conf.exchange.toLowerCase() + '.js');
-  var trader = new Trader(conf.key, conf.secret);
+  var trader = new Trader(conf);
   consultant.on('advice', trader.trade);
 });
 

@@ -2,9 +2,11 @@ var MtGoxClient = require("mtgox-apiv2");
 var util = require('../util.js');
 var _ = require('underscore');
 
-var trader = function(key, secret) {
-  this.key = key;
-  this.secret = secret;
+var trader = function(config) {
+  if(_.isObject(config)) {
+    this.key = config.key;
+    this.secret = config.secret;
+  }
   this.name = 'Mt. Gox';
 
   _.bindAll(this);
@@ -21,6 +23,12 @@ trader.prototype.trade = function(what) {
     this.mtgox.add('bid', 1000);
   if(what === 'SELL')
     this.mtgox.add('ask', 1000);
+}
+
+trader.prototype.getTrades = function(since, callback) {
+  if(since)
+    since = util.toMicro(since);
+  this.mtgox.fetchTrades(since, callback)
 }
 
 module.exports = trader;

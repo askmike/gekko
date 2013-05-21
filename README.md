@@ -45,7 +45,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters.
 
-If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L30-L43) and fill in your exchange and API keys (Gekko only needs trade rights).
+If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L33-L55) and fill in your exchange and API keys (Gekko only needs trade rights).
 
 To run the bot you just have to start Gekko:
 
@@ -67,7 +67,7 @@ If you started Gekko it will remain open in your terminal and log out new inform
     (ADVICE) 2013-05-19 23:18:14 HOLD @ 122.596 (-0.140)
     (PROFIT REPORT) 2013-05-19 23:18:14 0.000 % profit (in 0 trades)
 
-After the first fetching, every new candle interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js#L9)) Gekko will fetch new trade data, advice on what to do and give a profit report:
+After the first fetching, every new interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js#L17)) Gekko will fetch new trade data, advice on what to do and give a profit report:
 
 ### Advice
 
@@ -90,12 +90,11 @@ If you configured Gekko to automatically sell on this information it will also l
 * NOW going to BUY, when it is buying BTC.
 * NOW going to SELL, when it is selling BTC.
 
-It will try to buy/sell 1000 BTC, Mt. Gox changes this in to all the funds on your account (unless you're pretty rich).
+It will try to buy/sell 1000 BTC, Mt. Gox and BTC-e change this in to all the funds on your account (unless you're pretty rich).
 
 ## TODO
 
 * Create an easy way to backtest historical data and determine the effectiveness of different paramters.
-* Make the trend watching exchange (and currency if applicable) configurable.
 * Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx) and Bitstamp).
 * Store trade history in levelDB.
 * Make a mail option to mail to/from a specific email address everytime Gekko has new advice.
