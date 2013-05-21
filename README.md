@@ -45,7 +45,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters.
 
-If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L33-L55) and fill in your exchange and API keys (Gekko only needs trade rights).
+If you want to enable real trading (disabled by default) you should remove the comments in the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L48-L62) and fill in your exchange and API keys (Gekko only needs trade rights).
 
 To run the bot you just have to start Gekko:
 

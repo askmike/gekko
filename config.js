@@ -28,7 +28,14 @@ config.EMA = {
   buyTreshold: 0.25
 };
 
-config.debug = false; // for additional logging
+config.debug = false; // for additional logging / debugging
+
+// want Gekko to send a mail on buy or sell advice?
+config.mail = {
+  enabled: false,
+  email: '', // only works for gmail or google apps accounts at the moment
+  // we also need you password but we'll ask it when you start Gekko
+}
 
 //    DANGER ZONE
 //    
@@ -37,7 +44,7 @@ config.debug = false; // for additional logging
 // fill in you public and private key from mtgox or btc-e, if you enable 
 // btc-e also set a currency.
 // 
-// == if you set enabled to true Gekko will trade! ==
+// == if you set `enabled` to true Gekko will trade automatically! ==
 config.traders = [
   {
     exchange: 'MtGox',

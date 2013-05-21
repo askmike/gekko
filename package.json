@@ -12,7 +12,9 @@
     "underscore": "1.4.4",
     "moment": "2.0.0",
     "btc-e": "0.0.9",
-    "bitcoincharts": "0.0.4"
+    "bitcoincharts": "0.0.4",
+    "emailjs": "0.3.4",
+    "prompt-lite": "0.1.1"
   },
   "engines": { "node": "0.10" },
   "repository": {
