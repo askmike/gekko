@@ -30,20 +30,13 @@ config.EMA = {
 
 config.debug = false; // for additional logging / debugging
 
-// want Gekko to send a mail on buy or sell advice?
-config.mail = {
-  enabled: false,
-  email: '', // only works for gmail or google apps accounts at the moment
-  // we also need you password but we'll ask it when you start Gekko
-}
-
 //    DANGER ZONE
 //    
 // enable real trading BTC for real USD
-// 
+//
 // fill in you public and private key from mtgox or btc-e, if you enable 
 // btc-e also set a currency.
-// 
+//
 // == if you set `enabled` to true Gekko will trade automatically! ==
 config.traders = [
   {
@@ -60,6 +53,21 @@ config.traders = [
     enabled: false
   }
 ];
+// want Gekko to send a mail on buy or sell advice?
+config.mail = {
+  enabled: false,
+  email: '', // only works for Gmail or Google apps accounts at the moment
 
+  // You don't have to set your password here, if you leave it blank we will ask it 
+  // when Gekko's starts.
+  //
+  // NOTE: Gekko is an open source project < https://github.com/askmike/gekko >,
+  // make sure you looked at the code or trust the maintainer of this bot when you
+  // fill in your email and password.
+  //
+  // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT 
+  // garantuee that your email address & password are safe!
+  password: ''
+}
 
 module.exports = config;

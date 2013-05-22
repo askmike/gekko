@@ -52,8 +52,8 @@ var logger = require('./logger.js');
 consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 
+// automatically trade
 var exchanges = ['mtgox', 'btce'];
-
 _.each(config.traders, function(conf) {
   if(!conf.enabled)
     return;
@@ -72,23 +72,9 @@ _.each(config.traders, function(conf) {
 
 // mail advice
 if(config.mail.enabled && config.mail.email) {
-  // ask for the mail password
-  var prompt = require('prompt-lite');
-  prompt.start();
-  console.log('You configured Gekko to mail you advice, Gekko needs your email password to send emails (to you).');
-  console.log([
-    'Gekko is an opensource project < http://github.com/askmike/gekko >, ', 
-    'you can take my word but always check the code yourself.',
-    '\n\n\tWARNING: If you have not downloaded Gekko from the github page above we ',
-    'CANNOT garantuee that your email address & password are safe.\n',
-    '\tWARNING: If you have not downloaded Gekko from the github page above we ',
-    'CANNOT garantuee that your email address & password are safe!\n'
-  ].join(''));
-  prompt.get({name: 'password', hidden: true}, function(err, result) {
-    console.log('\nGot it.');
-    var mailer = require('./mailer.js');
-    config.mail.password = result.password;
-    mailer.init(config.mail);
+  var mailer = require('./mailer.js');
+  mailer.init(config.mail, function() {
     consultant.on('advice', mailer.send);
-  });  
+    mailer.send('SELL', 100, 'SADA');
+  });
 };
