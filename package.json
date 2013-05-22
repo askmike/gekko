@@ -1,9 +1,10 @@
 {
   "name": "gekko",
   "version": "0.0.1",
-  "description": "A bitcoin trading bot for trading at Mt. Gox",
+  "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
-    "mtgox",
+    "trading",
+    "algo trading",
     "bitcoin"
   ],
   "author": "Mike van Rossum <mike@mvr.me>",
@@ -14,7 +15,8 @@
     "btc-e": "0.0.9",
     "bitcoincharts": "0.0.4",
     "emailjs": "0.3.4",
-    "prompt-lite": "0.1.1"
+    "prompt-lite": "0.1.1",
+    "bitbox-rest-client": "~0.0.8"
   },
   "engines": { "node": "0.10" },
   "repository": {

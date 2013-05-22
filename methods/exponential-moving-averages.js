@@ -47,11 +47,13 @@ var getCandles = function(callback) {
     // if this is the last candle just fetch the latest trades
     var since = null;
   watcher.getTrades(since, function(err, trades) {
-    if (err) throw err;
+    if (err)
+      return serverError();
     log('fetched exchange');
 
     trades = trades.data;
-    if (trades.length === 0) throw 'exchange responded with zero trades';
+    if (!trades || trades.length === 0)
+      return serverError();
 
     // if we are fetching the last candle we are interested 
     // in the most recent prices of the batch instead of the
@@ -215,5 +217,10 @@ var init = function(c, w, d) {
   getCandles(advice);
   setInterval(refresh, util.minToMs( config.interval) );
 }
+
+var serverError = function() {
+  console.log('(PROBLEM)', util.now(), 'Server responded with an error or no data, sleeping.');
+  setTimeout(getCandles, util.minToMs(1));
+};
 
 module.exports.on('init', init);
