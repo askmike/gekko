@@ -75,6 +75,5 @@ if(config.mail.enabled && config.mail.email) {
   var mailer = require('./mailer.js');
   mailer.init(config.mail, function() {
     consultant.on('advice', mailer.send);
-    mailer.send('SELL', 100, 'SADA');
   });
 };
