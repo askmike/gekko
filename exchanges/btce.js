@@ -4,7 +4,7 @@ var moment = require('moment');
 var util = require('../util.js');
 var _ = require('underscore');
 
-var trader = function(config) {
+var Trader = function(config) {
   this.key = config.key;
   this.secret = config.secret;
   this.pair = 'btc_' + config.currency.toLowerCase();
@@ -15,7 +15,7 @@ var trader = function(config) {
   this.btce = new BTCE(this.key, this.secret);
 }
 
-trader.prototype.trade = function(what) {
+Trader.prototype.trade = function(what) {
   if(what !== 'BUY' && what !== 'SELL')
     return;
 
@@ -35,7 +35,7 @@ trader.prototype.trade = function(what) {
 
 // we can't place an order against market price at BTC-e so we have to calculate
 // the price in this exchange because the prices per exchange can differ.
-trader.prototype.getAveragePrice = function(callback) {
+Trader.prototype.getAveragePrice = function(callback) {
   var process = function(err, trades) {
     var treshold = moment.unix(_.first(trades).date).subtract('seconds', 20);
     var price = util.calculatePriceSince(treshold, trades);
@@ -47,4 +47,4 @@ trader.prototype.getAveragePrice = function(callback) {
   this.btce.trades('btc_usd', process);
 }
 
-module.exports = trader;
+module.exports = Trader;

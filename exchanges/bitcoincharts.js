@@ -3,7 +3,7 @@ var util = require('../util.js');
 var moment = require('moment');
 var _ = require('underscore');
 
-var watcher = function(market, currency, config) {
+var Watcher = function(market, currency, config) {
   this.symbol = market + currency;
   this.name = 'bitcoincharts';
   this.config = config;
@@ -13,7 +13,7 @@ var watcher = function(market, currency, config) {
   this.bitcoinCharts = new BitcoinCharts();
 }
 
-watcher.prototype.getTrades = function(since, callback) {
+Watcher.prototype.getTrades = function(since, callback) {
   var params = { symbol: this.symbol };
   if(since)
     // we don't want to hammer bitcoincharts,
@@ -37,4 +37,4 @@ watcher.prototype.getTrades = function(since, callback) {
   });
 }
 
-module.exports = watcher;
+module.exports = Watcher;

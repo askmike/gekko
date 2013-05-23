@@ -74,6 +74,8 @@ _.each(config.traders, function(conf) {
 if(config.mail.enabled && config.mail.email) {
   var mailer = require('./mailer.js');
   mailer.init(config.mail, function() {
+    consultant.emit('start');
     consultant.on('advice', mailer.send);
   });
-};
+} else 
+  consultant.emit('start');

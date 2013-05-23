@@ -5,7 +5,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 
 // On trades at which exchange should Gekko base its analysis on?
 config.watch =  {
-  exchange: 'mtgox', // either 'BTCe' or 'MtGox'
+  exchange: 'MtGox', // either 'BTCe' or 'MtGox'
 
   // if you filled in BTCe uncomment and fill in the following
   // currency: 'USD' // either USD, EUR or RUR
@@ -14,7 +14,7 @@ config.watch =  {
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 60, // in minutes
+  interval: 1, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line 
   shortEMA: 10,

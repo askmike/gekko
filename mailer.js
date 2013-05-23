@@ -1,4 +1,4 @@
-var email   = require("emailjs");
+var email = require("emailjs");
 var moment = require('moment');
 var util = require('./util.js');
 var server, config;

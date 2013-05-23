@@ -213,8 +213,10 @@ var init = function(c, w, d) {
   util.set(c);
   amount = config.candles + 1;
 
-  getCandles(advice);
-  setInterval(refresh, util.minToMs( config.interval) );
+  module.exports.on('start', function() {
+    getCandles(advice);
+    setInterval(refresh, util.minToMs( config.interval) );
+  });
 }
 
 var serverError = function() {
