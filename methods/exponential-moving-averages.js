@@ -191,7 +191,6 @@ var advice = function() {
 
   } else {
     log('we are currently not in an up or down trend  (' + diff + ')');
-    currentTrend = 'none';
     module.exports.emit('advice', 'HOLD', price, message);
 
   }
