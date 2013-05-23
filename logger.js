@@ -1,52 +1,71 @@
 var util = require('./util.js');
+var _ = require('underscore');
+
+var Logger = function(config) {
+  this.reportInBTC = config.reportInBTC;
+
+  // virtual balance
+  this.start = {
+    btc: config.simulationBalance.btc,
+    usd: config.simulationBalance.foreign,
+    balance: false
+  }
+  this.current = {
+    btc: this.start.btc,
+    usd: this.start.usd,
+    balance: false
+  }
+  this.trades = 0;
+
+  _.bindAll(this);
+
+}
 
 // log advice to stdout
-module.exports.inform = function(what, price, meta) {
+Logger.prototype.inform = function(what, price, meta) {
   console.log('(ADVICE)', util.now(), what, meta);
 }
 
 
 // after every succesfull trend ride we end up with more BTC than we started with, 
 // this function calculates Gekko's profit in %.
-
-// virtual balance
-var start = {
-  btc: 1,
-  usd: 100,
-  balance: false
-}
-var current = {
-  btc: start.btc,
-  usd: start.usd,
-  balance: false
-}
-var trades = 0;
-module.exports.trackProfits = function(what, price, meta) {
+Logger.prototype.trackProfits = function(what, price, meta) {
   // first time calculate the virtual account balance
-  if(!start.balance)
-    start.balance = price * start.btc + start.usd;
+  if(!this.start.balance) {
+    if(this.reportInBTC)
+      this.start.balance = this.start.btc + this.start.usd / price;
+    else
+      this.start.balance = this.start.usd + price * this.start.btc;
+  }
 
   // virtually trade all USD to BTC at the current MtGox price
   if(what === 'BUY') {
-    current.btc += current.usd / price;
-    current.usd = 0;
-    trades++;
+    this.current.btc += this.current.usd / price;
+    this.current.usd = 0;
+    this.trades++;
   }
 
   // virtually trade all BTC to USD at the current MtGox price
   if(what === 'SELL') {
-    current.usd += current.btc * price;
-    current.btc = 0;
-    trades++;
+    this.current.usd += this.current.btc * price;
+    this.current.btc = 0;
+    this.trades++;
   }
 
-  current.balance = price * current.btc + current.usd;
-  var profit = current.balance / start.balance * 100 - 100;
+  if(this.reportInBTC)
+    this.current.balance = this.current.btc + this.current.usd / price;
+  else
+    this.current.balance = this.current.usd + price * this.current.btc;
+
+  
+  var profit = this.current.balance / this.start.balance * 100 - 100;
 
   console.log(
     '(PROFIT REPORT)',
     util.now(),
     profit.toFixed(3) + '% profit',
-    '(in ' + trades + ' trades)'
+    '(in ' + this.trades + ' trades)'
   );
 }
+
+module.exports = Logger;

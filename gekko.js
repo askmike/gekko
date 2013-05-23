@@ -15,7 +15,6 @@
   it's working.
 
 */
-
 var config = require('./config.js');
 
 // helpers
@@ -48,7 +47,8 @@ consultant.emit('init', config.EMA, watcher, config.debug);
 // whenever the consultant advices to sell or buy we can act on the information
 
 // log advice
-var logger = require('./logger.js');
+var Logger = require('./logger.js');
+var logger = new Logger(config.profitCalculator);
 consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 

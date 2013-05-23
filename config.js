@@ -28,8 +28,6 @@ config.EMA = {
   buyTreshold: 0.25
 };
 
-config.debug = false; // for additional logging / debugging
-
 //    DANGER ZONE
 //    
 // enable real trading BTC for real USD
@@ -53,6 +51,20 @@ config.traders = [
     enabled: false
   }
 ];
+
+// do you want Gekko to calculate the profit of its own advice?
+// This is done via a simulation and has nothing to do with auto trading
+config.profitCalculator = {
+  enabled: true,
+  // in what currency do you want Gekko to report?
+  // Either BTC or the currency the watcher is monitoring
+  reportInBTC: false,
+  simulationBalance: {
+    btc: 1,
+    foreign: 100, // foreign is the currency of the price reported by watcher
+  }
+}
+
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {
   enabled: false,
@@ -69,5 +81,7 @@ config.mail = {
   // garantuee that your email address & password are safe!
   password: ''
 }
+
+config.debug = false; // for additional logging / debugging
 
 module.exports = config;
