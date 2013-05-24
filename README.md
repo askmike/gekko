@@ -19,6 +19,7 @@ Gekko uses technical analysis (only EMA at this moment) to determine when to ent
 Gekko currently supports automatic trading at the following exchanges:
 * [Mt. Gox](https://mtgox.com/)
 * [BTC-e](https://btc-e.com/) (alpha stage)
+* [Bitstamp](https://bitstamp.net) (alpha stage)
 
 ## What?
 
