@@ -53,7 +53,7 @@ consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 
 // automatically trade
-var exchanges = ['mtgox', 'btce'];
+var exchanges = ['mtgox', 'btce', 'bitstamp'];
 _.each(config.traders, function(conf) {
   if(!conf.enabled)
     return;

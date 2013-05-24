@@ -5,7 +5,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 
 // On trades at which exchange should Gekko base its analysis on?
 config.watch =  {
-  exchange: 'MtGox', // either 'BTCe' or 'MtGox'
+  exchange: 'MtGox', // either 'BTCe', 'MtGox' or 'Bitstamp'
 
   // if you filled in BTCe uncomment and fill in the following
   // currency: 'USD' // either USD, EUR or RUR
@@ -14,7 +14,7 @@ config.watch =  {
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 1, // in minutes
+  interval: 60, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line 
   shortEMA: 10,
@@ -49,6 +49,12 @@ config.traders = [
     secret: '',
     currency: 'USD', // either USD, EUR or RUR
     enabled: false
+  },
+  {
+    exchange: 'Bitstamp',
+    user: '',
+    password: '',
+    enabled: false
   }
 ];
 
@@ -59,6 +65,7 @@ config.profitCalculator = {
   // in what currency do you want Gekko to report?
   // Either BTC or the currency the watcher is monitoring
   reportInBTC: false,
+  // start balance, on what the current balance is compared with
   simulationBalance: {
     btc: 1,
     foreign: 100, // foreign is the currency of the price reported by watcher

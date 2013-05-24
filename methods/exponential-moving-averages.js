@@ -50,7 +50,6 @@ var getCandles = function(callback) {
     if (err)
       return serverError();
     log('fetched exchange');
-
     trades = trades.data;
     if (!trades || trades.length === 0)
       return serverError();

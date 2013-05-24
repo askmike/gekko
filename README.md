@@ -45,7 +45,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters.
 
-If you want to enable real trading (disabled by default) head to the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L39-L53) and fill in your exchange, API keys and enable (Gekko only needs trade rights).
+If you want to enable real trading (disabled by default) head to the [danger zone of config.js](https://github.com/askmike/gekko/blob/master/config.js#L39-L59) and fill in your exchange, API keys and enable (Gekko only needs trade rights).
 
 To run the bot you just have to start Gekko:
 
@@ -95,7 +95,8 @@ It will try to buy/sell 1000 BTC, Mt. Gox and BTC-e change this in to all the fu
 ## TODO
 
 * Create an easy way to backtest historical data and determine the effectiveness of different paramters.
-* Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx) and Bitstamp).
+* Keep record of balance and check wether auto orders are going through on markets without MKT orders (BTC-e and Bitstamp).
+* Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx)).
 * Store trade history in levelDB.
 * Add money management (so that the bot will only spend a start amount of X and the profits on top of X).
 
