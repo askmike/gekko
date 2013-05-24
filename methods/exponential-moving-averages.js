@@ -46,6 +46,7 @@ var getCandles = function(callback) {
   else
     // if this is the last candle just fetch the latest trades
     var since = null;
+  log('fetching exchange...');
   watcher.getTrades(since, function(err, trades) {
     if (err)
       return serverError();

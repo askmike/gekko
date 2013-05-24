@@ -58,11 +58,18 @@ _.each(config.traders, function(conf) {
   if(!conf.enabled)
     return;
 
-  if(!conf.key || !conf.secret)
-    throw 'missing key or secret!';
+  conf.exchange = conf.exchange.toLowerCase()
 
-  if(_.indexOf(exchanges, conf.exchange.toLowerCase()) === -1)
+  if(_.indexOf(exchanges, conf.exchange) === -1)
     throw 'unkown exchange';
+
+  if(conf.exchange === 'bitstamp') {
+    if(!conf.user || !conf.password)
+      throw 'missing user or password!';
+  } else {
+    if(!conf.key || !conf.secret)
+      throw 'missing key or secret!';
+  }
 
   console.log(util.now(), 'real trading at', conf.exchange, 'ACTIVE');
   var Trader = require('./exchanges/' + conf.exchange.toLowerCase() + '.js');
