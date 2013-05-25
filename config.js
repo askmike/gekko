@@ -20,7 +20,7 @@ config.EMA = {
   shortEMA: 10,
   longEMA: 21,
   // amount of samples to remember and base initial EMAs on
-  candles: 100,
+  ticks: 100,
   // max difference between first and last trade to base price calculation on
   sampleSize: 10, // in seconds
   // the difference between the EMAs (to act as triggers)

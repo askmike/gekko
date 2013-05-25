@@ -30,20 +30,20 @@ var log = require('../log.js');
 
 var watcher, currentTrend;
 // this array stores _all_ price data
-var candles = [];
+var ticks = [];
 var amount;
 
-// fetch the price of all remaining candles and calculate 
-// the short & long EMA and the difference for these candles.
-var getCandles = function(callback) {
-  var current = amount - candles.length;
-  // get the date of the candle we are fetching
-  var candleTime = util.intervalsAgo(current);
+// fetch the price of all remaining ticks and calculate 
+// the short & long EMA and the difference for these ticks.
+var getTicks = function(callback) {
+  var current = amount - ticks.length;
+  // get the date of the tick we are fetching
+  var tickTime = util.intervalsAgo(current);
 
   if(current)
-    var since = candleTime;
+    var since = tickTime;
   else
-    // if this is the last candle just fetch the latest trades
+    // if this is the last tick just fetch the latest trades
     var since = null;
   log.debug('fetching exchange...');
   watcher.getTrades(since, function(err, trades) {
@@ -56,14 +56,14 @@ var getCandles = function(callback) {
 
     log.debug('fetched exchange');
 
-    // if we are fetching the last candle we are interested 
+    // if we are fetching the last tick we are interested 
     // in the most recent prices of the batch instead of the
     // most dated ones
     var price = calculatePrice(trades, !current);
-    calculateCandle(price);
+    calculateTick(price);
     
     // check if the fetched trades can be used to 
-    // calculate remaining candles
+    // calculate remaining ticks
     var outOfTrades = false, nextTreshold;
     while(!outOfTrades && current > 1) {
       nextTreshold = util.intervalsAgo(current - 1);
@@ -80,13 +80,13 @@ var getCandles = function(callback) {
       if(!outOfTrades) {
         current -= 1;
         price = calculatePrice(trades, !(current - 1));
-        calculateCandle(price);
+        calculateTick(price);
       }
     }
 
-    // recurse if we don't have all candles yet
+    // recurse if we don't have all ticks yet
     if(current > 1)
-      return getCandles(callback);
+      return getTicks(callback);
     
     // we're done
     module.exports.emit('monitoring');
@@ -113,64 +113,65 @@ var calculatePrice = function(trades, newestFirst) {
 
 // add a price and calculate the EMAs and
 // the diff for that price
-var calculateCandle = function(price) {
-  var candle = {
+var calculateTick = function(price) {
+  var tick = {
     price: price,
     shortEMA: false,
     longEMA: false,
     diff: false
   };
 
-  candles.push(candle);
+  ticks.push(tick);
+
   calculateEMA('shortEMA');
   calculateEMA('longEMA');
   calculateEMAdiff();
   log.debug(
-    'calculated new candle: ' + 
-    (amount - candles.length) + 
+    'calculated new tick: ' + 
+    (amount - ticks.length) + 
     '\tprice: ' + 
-    _.last(candles).price.toFixed(3) + 
+    _.last(ticks).price.toFixed(3) + 
     '\tdiff: ' +
-    _.last(candles).diff.toFixed(3)
+    _.last(ticks).diff.toFixed(3)
   );
 }
 
-//    calculation (based on candle/day):
+//    calculation (based on tick/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
 var calculateEMA = function(type) {
   var k = 2 / (EMAsettings[type] + 1);
   var ema, y;
 
-  var current = candles.length;
+  var current = ticks.length;
 
   if(current === 1)
     // we don't have any 'yesterday'
-    y = candles[0].price;
+    y = _.first(ticks).price;
   else
-    y = candles[current - 2][type];
-
-  ema = candles[current - 1].price * k + y * (1 - k);
-  candles[current - 1][type] = ema;
+    y = ticks[current - 2][type];
+  
+  ema = _.last(ticks).price * k + y * (1 - k);
+  ticks[current - 1][type] = ema;
 }
 
 // @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
 var calculateEMAdiff = function() {
-  var candle = _.last(candles);
-  var shortEMA = candle.shortEMA;
-  var longEMA = candle.longEMA;
+  var tick = _.last(ticks);
+  var shortEMA = tick.shortEMA;
+  var longEMA = tick.longEMA;
 
   var diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
-  candles[ candles.length - 1 ].diff = diff;
+  ticks[ ticks.length - 1 ].diff = diff;
 }
 
 var advice = function() {
-  var candle = _.last(candles);
-  var diff = candle.diff.toFixed(3);
-  var price = candle.price.toFixed(3);
+  var tick = _.last(ticks);
+  var diff = tick.diff.toFixed(3);
+  var price = tick.price.toFixed(3);
   var message = '@ ' + price + ' (' + diff + ')';
 
-  if(candle.diff > EMAsettings.buyTreshold) {
+  if(tick.diff > EMAsettings.buyTreshold) {
     log.debug('we are currently in uptrend (' + diff + ')');
 
     if(currentTrend !== 'up') {
@@ -180,7 +181,7 @@ var advice = function() {
       module.exports.emit('advice', 'HOLD', price, message);
     }
 
-  } else if(candle.diff < EMAsettings.sellTreshold) {
+  } else if(tick.diff < EMAsettings.sellTreshold) {
     log.debug('we are currently in a downtrend  (' + diff + ')');
 
     if(currentTrend !== 'down') {
@@ -200,26 +201,27 @@ var advice = function() {
 var refresh = function() {
   log.info('refreshing');
 
-  // remove the oldest candle
-  candles.splice(0, 1);
+  // remove the oldest tick
+  ticks.splice(0, 1);
 
-  // get new candle
-  getCandles(advice);
+  // get new tick
+  getTicks(advice);
 }
 
 var init = function(w) {
   watcher = w;
-  amount = EMAsettings.candles + 1;
+  amount = EMAsettings.ticks + 1;
 
   module.exports.on('start', function() {
-    getCandles(advice);
+    log.info('Calculating EMA on historical data...')
+    getTicks(advice);
     setInterval(refresh, util.minToMs( EMAsettings.interval) );
   });
 }
 
 var serverError = function() {
   log.error('Server responded with an error or no data, sleeping.');
-  setTimeout(getCandles, util.minToMs(1));
+  setTimeout(getTicks, util.minToMs(1));
 };
 
 module.exports.on('init', init);
