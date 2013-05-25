@@ -1,8 +1,9 @@
 /*
   
-  This method uses `Exponential Moving Average` to determine the current trend the
-  market is in (either up or down). Using this information it will suggest to ride
-  the trend.
+  This method uses `Exponential Moving Average crossovers` to determine the current trend the
+  market is in. Using this information it will suggest to ride the trend. Note that this is
+  not MACD because it just checks whether the longEMA and shortEMA are [threshold]% removed
+  from eachother.
 
   @link http://en.wikipedia.org/wiki/Exponential_moving_average#Exponential_moving_average
 
