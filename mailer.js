@@ -1,6 +1,7 @@
 var email = require("emailjs");
 var moment = require('moment');
 var util = require('./util.js');
+var log = require('./log.js');
 var server, config;
 
 module.exports.init = function(conf, callback) {
@@ -8,7 +9,7 @@ module.exports.init = function(conf, callback) {
 
   var setupMail = function(err, result) {
     if(result) {
-      console.log('\n' + util.now(), 'Got it.');
+      log.info('Got it.');
       config.password = result.password;
     }
 
@@ -19,7 +20,7 @@ module.exports.init = function(conf, callback) {
       ssl: true
     });
 
-    console.log(util.now(), 'Setup email adviser.');
+    log.debug('Setup email adviser.');
     callback();
   }
 
@@ -27,13 +28,15 @@ module.exports.init = function(conf, callback) {
     // ask for the mail password
     var prompt = require('prompt-lite');
     prompt.start();
-    console.log('You configured Gekko to mail you advice, Gekko needs your email password to send emails (to you).');
-    console.log([
-      'Gekko is an opensource project < http://github.com/askmike/gekko >, ', 
-      'you can take my word but always check the code yourself.',
-      '\n\n\tWARNING: If you have not downloaded Gekko from the github page above we\n',
-      '\tCANNOT garantuee that your email address & password are safe!\n'
-    ].join(''));
+    var warning = [
+      '\n\n\tYou configured Gekko to mail you advice, Gekko needs your email',
+      'password to send emails (to you). Gekko is an opensource project',
+      '[ http://github.com/askmike/gekko ], you can take my word but always',
+      'check the code yourself.',
+      '\n\n\tWARNING: If you have not downloaded Gekko from the github page above we',
+      'CANNOT garantuee that your email address & password are safe!\n'
+    ].join('\n\t');
+    log.warn(warning);
     prompt.get({name: 'password', hidden: true}, setupMail);
   } else {
     setupMail(false, false);
@@ -42,9 +45,9 @@ module.exports.init = function(conf, callback) {
 
 var send = function(err) {
   if(err)
-    console.log(util.now(), 'ERROR SENDING MAIL', err);
+    log.warn('ERROR SENDING MAIL', err);
   else
-    console.log(util.now(), 'Send advice via email.');
+    log.info('Send advice via email.');
 }
 
 module.exports.send = function(what, price, meta) {

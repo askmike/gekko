@@ -18,7 +18,7 @@ Trader.prototype.trade = function(what) {
   if(what !== 'BUY' && what !== 'SELL')
     return;
 
-  console.log(util.now(), 'NOW going to', what, '@', this.name);
+  log.info('NOW going to', what, '@', this.name);
   if(what === 'BUY')
     this.mtgox.add('bid', 1000);
   if(what === 'SELL')

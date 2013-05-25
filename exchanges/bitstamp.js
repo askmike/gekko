@@ -24,7 +24,7 @@ Trader.prototype.trade = function(what) {
   var devNull = function() {};
 
   var act = function() {
-    console.log(util.now(), 'NOW going to', what, '@', this.name);  
+    log.info('NOW going to', what, '@', this.name);  
     if(what === 'BUY') {
       this.price = (this.price * 1.001).toFixed(2);
       var amount = this.balance.usd_balance / this.price * 0.995;

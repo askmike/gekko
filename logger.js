@@ -1,5 +1,6 @@
 var util = require('./util.js');
 var _ = require('underscore');
+var log = require('./log.js');
 
 var Logger = function(config) {
   this.reportInBTC = config.reportInBTC;
@@ -21,9 +22,9 @@ var Logger = function(config) {
 
 }
 
-// log advice to stdout
+// log advice
 Logger.prototype.inform = function(what, price, meta) {
-  console.log('(ADVICE)', util.now(), what, meta);
+  log.info('ADVICE is to', what, meta);
 }
 
 
@@ -60,9 +61,8 @@ Logger.prototype.trackProfits = function(what, price, meta) {
   
   var profit = this.current.balance / this.start.balance * 100 - 100;
 
-  console.log(
+  log.info(
     '(PROFIT REPORT)',
-    util.now(),
     profit.toFixed(3) + '% profit',
     '(in ' + this.trades + ' trades)'
   );

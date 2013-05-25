@@ -25,7 +25,7 @@ Trader.prototype.trade = function(what) {
   this.getAveragePrice(function(price) {
     // the BTC-e API won't handle precision numbers
     price = price.toFixed(3);
-    console.log(util.now(), 'NOW going to', what, '@', this.name);  
+    log.info('NOW going to', what, '@', this.name);  
     if(what === 'BUY')
       this.btce.trade(this.pair, 'buy', price, 1000, devNull);
     if(what === 'SELL')

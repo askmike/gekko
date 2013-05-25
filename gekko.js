@@ -21,10 +21,10 @@ var config = require('./config.js');
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('./util.js');
+var log = require('./log.js');
 
-console.log('\nstart time: ', util.now());
-console.log('\nI\'m gonna make you rich, Bud Fox.');
-console.log('Let me show you some ' + config.tradingMethod + '.\n');
+log.info('I\'m gonna make you rich, Bud Fox.');
+log.info('Let me show you some ' + config.tradingMethod + '.');
 
 // create a public exchange object which can retrieve trade information
 var provider = config.watch.exchange.toLowerCase();
@@ -37,12 +37,12 @@ if(provider === 'btce') {
   provider = 'bitcoincharts';
 }
 var DataProvider = require('./exchanges/' + provider + '.js');
-var watcher = new DataProvider(market, config.watch.currency, config);
+var watcher = new DataProvider(market, config.watch.currency);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
 var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-') + '.js');
-consultant.emit('init', config.EMA, watcher, config.debug);
+consultant.emit('init', watcher, config.debug);
 
 // whenever the consultant advices to sell or buy we can act on the information
 
@@ -71,7 +71,7 @@ _.each(config.traders, function(conf) {
       throw 'missing key or secret!';
   }
 
-  console.log(util.now(), 'real trading at', conf.exchange, 'ACTIVE');
+  log.info('real trading at', conf.exchange, 'ACTIVE');
   var Trader = require('./exchanges/' + conf.exchange.toLowerCase() + '.js');
   var trader = new Trader(conf);
   consultant.on('advice', trader.trade);

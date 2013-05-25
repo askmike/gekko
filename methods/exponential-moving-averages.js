@@ -11,7 +11,7 @@
   @link https://bitcointalk.org/index.php?topic=60501.0
 
 
-      Method state: ALPHA: need to test
+      Method state: BETA
 
  */
 
@@ -19,20 +19,19 @@
 var EventEmitter = require('events').EventEmitter;
 module.exports = new EventEmitter();
 
+var config = require('../config.js');
+var EMAsettings = config.EMA;
+
 // helpers
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
+var log = require('../log.js');
 
-var watcher, config, currentTrend;
+var watcher, currentTrend;
 // this array stores _all_ price data
 var candles = [];
 var amount;
-
-var debug;
-var log = function(m) {
-  debug && console.log('(DEBUG) ', util.now(), m);
-}
 
 // fetch the price of all remaining candles and calculate 
 // the short & long EMA and the difference for these candles.
@@ -46,14 +45,16 @@ var getCandles = function(callback) {
   else
     // if this is the last candle just fetch the latest trades
     var since = null;
-  log('fetching exchange...');
+  log.debug('fetching exchange...');
   watcher.getTrades(since, function(err, trades) {
     if (err)
       return serverError();
-    log('fetched exchange');
+
     trades = trades.data;
     if (!trades || trades.length === 0)
       return serverError();
+
+    log.debug('fetched exchange');
 
     // if we are fetching the last candle we are interested 
     // in the most recent prices of the batch instead of the
@@ -102,11 +103,11 @@ var getCandles = function(callback) {
 var calculatePrice = function(trades, newestFirst) {
   if(newestFirst) {
     trades = trades.reverse();
-    var treshold = moment.unix(_.first(trades).date).subtract('seconds', config.sampleSize);
+    var treshold = moment.unix(_.first(trades).date).subtract('seconds', EMAsettings.sampleSize);
     return util.calculatePriceSince(treshold, trades);
   }
 
-  var treshold = moment.unix(_.first(trades).date).add('seconds', config.sampleSize);
+  var treshold = moment.unix(_.first(trades).date).add('seconds', EMAsettings.sampleSize);
   return util.calculatePriceTill(treshold, trades);
 }
 
@@ -124,7 +125,7 @@ var calculateCandle = function(price) {
   calculateEMA('shortEMA');
   calculateEMA('longEMA');
   calculateEMAdiff();
-  log(
+  log.debug(
     'calculated new candle: ' + 
     (amount - candles.length) + 
     '\tprice: ' + 
@@ -138,7 +139,7 @@ var calculateCandle = function(price) {
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
 var calculateEMA = function(type) {
-  var k = 2 / (config[type] + 1);
+  var k = 2 / (EMAsettings[type] + 1);
   var ema, y;
 
   var current = candles.length;
@@ -169,8 +170,8 @@ var advice = function() {
   var price = candle.price.toFixed(3);
   var message = '@ ' + price + ' (' + diff + ')';
 
-  if(candle.diff > config.buyTreshold) {
-    log('we are currently in uptrend (' + diff + ')');
+  if(candle.diff > EMAsettings.buyTreshold) {
+    log.debug('we are currently in uptrend (' + diff + ')');
 
     if(currentTrend !== 'up') {
       currentTrend = 'up';
@@ -179,8 +180,8 @@ var advice = function() {
       module.exports.emit('advice', 'HOLD', price, message);
     }
 
-  } else if(candle.diff < config.sellTreshold) {
-    log('we are currently in a downtrend  (' + diff + ')');
+  } else if(candle.diff < EMAsettings.sellTreshold) {
+    log.debug('we are currently in a downtrend  (' + diff + ')');
 
     if(currentTrend !== 'down') {
       currentTrend = 'down';
@@ -190,14 +191,14 @@ var advice = function() {
     }
 
   } else {
-    log('we are currently not in an up or down trend  (' + diff + ')');
+    log.debug('we are currently not in an up or down trend  (' + diff + ')');
     module.exports.emit('advice', 'HOLD', price, message);
 
   }
 }
 
 var refresh = function() {
-  log('refreshing');
+  log.info('refreshing');
 
   // remove the oldest candle
   candles.splice(0, 1);
@@ -206,21 +207,18 @@ var refresh = function() {
   getCandles(advice);
 }
 
-var init = function(c, w, d) {
-  config = c;
+var init = function(w) {
   watcher = w;
-  debug = d;
-  util.set(c);
-  amount = config.candles + 1;
+  amount = EMAsettings.candles + 1;
 
   module.exports.on('start', function() {
     getCandles(advice);
-    setInterval(refresh, util.minToMs( config.interval) );
+    setInterval(refresh, util.minToMs( EMAsettings.interval) );
   });
 }
 
 var serverError = function() {
-  console.log('(PROBLEM)', util.now(), 'Server responded with an error or no data, sleeping.');
+  log.error('Server responded with an error or no data, sleeping.');
   setTimeout(getCandles, util.minToMs(1));
 };
 
