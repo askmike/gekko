@@ -14,14 +14,14 @@ Besides this javascript file a new object needs to be added to `gekko/config.js`
 
 Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in the `checkExchange` method in `gekko/portfolioManager.js`. As described in the comments.
 
-## Expectations of the portfolio manager.
+## Portfolio manager's expectations
 
 *If this documentation is not clear it please look at the 3 examples in `gekko/exchanges/`.*
 
 The portfolio manager implements an exchange like so:
 
     var Exchange = require('./exchanges/' + [exchange slug]);
-    this.exchange = new Exchange('key', 'secret');
+    this.exchange = new Exchange({key: '', secret: ''});
 
 It will run the following methods on the exchange object:
 
@@ -37,19 +37,19 @@ The callback needs to have the parameters of `err` and `ticker`. Ticker needs to
 
 The callback needs to have the parameters of `err` and `portfolio`. Portfolio needs to be an array of all currencies and assets combined in the form of objects, an example object looks like `{name: 'BTC', amount: 1.42131}` (name needs to be an uppercase string, amount is a float).
 
-### Sell
+### sell
 
     this.exchange.sell(amount, price, callback);
 
 This should create a sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `object`. Object should describe how the portfolio manager can check if the order went through, **this is not used at this moment**.
 
-### Buy
+### buy
 
     this.exchange.buy(amount, price, callback);
 
 This should create a buy order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `object`. Object should describe how the portfolio manager can check if the order went through, **this is not used at this moment**.
 
-## Expectations of the trading method.
+## Trading method's expectations
 
 The trading method analyzes exchange data to determine what to do. The trading method will also implement an exchange and run one method to fetch data:
 
