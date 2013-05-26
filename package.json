@@ -9,14 +9,14 @@
   ],
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
-    "mtgox-apiv2": "1.0.1",
-    "underscore": "1.4.4",
-    "moment": "2.0.0",
-    "btc-e": "0.0.9",
-    "bitcoincharts": "0.0.4",
-    "emailjs": "0.3.4",
-    "prompt-lite": "0.1.1",
-    "bitstamp": "0.0.2"
+    "mtgox-apiv2": "1.0.x",
+    "underscore": "1.4.x",
+    "moment": "2.0.x",
+    "btc-e": "0.0.x",
+    "bitcoincharts": "0.0.x",
+    "emailjs": "0.3.x",
+    "prompt-lite": "0.1.x",
+    "bitstamp": "0.0.x"
   },
   "engines": { "node": "0.10.x" },
   "repository": {
