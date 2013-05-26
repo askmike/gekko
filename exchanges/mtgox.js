@@ -1,6 +1,7 @@
 var MtGoxClient = require("mtgox-apiv2");
 var util = require('../util.js');
 var _ = require('underscore');
+var log = require('../log.js');
 
 var Trader = function(config) {
   if(_.isObject(config)) {
