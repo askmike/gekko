@@ -21,7 +21,8 @@ Watcher.prototype.getTrades = function(since, callback) {
     params.start = since.format('X');
   
   this.bitcoinCharts.trades(params, function(err, data) {
-    if(err) throw err;
+    if(err) return callback(err);
+    if(!data.length) return callback(true);
 
     // normalize the data
     var trades = [];

@@ -222,7 +222,7 @@ var init = function(w) {
 
 var serverError = function() {
   log.error('Server responded with an error or no data, sleeping.');
-  setTimeout(getTicks, util.minToMs(1));
+  setTimeout(getTicks, util.minToMs(1), advice);
 };
 
 module.exports.on('init', init);
