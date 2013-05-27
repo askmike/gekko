@@ -2,6 +2,7 @@ var Bitstamp = require("bitstamp");
 var util = require('../util.js');
 var _ = require('underscore');
 var moment = require('moment');
+var log = require('../log.js');
 
 var Trader = function(config) {
   if(_.isObject(config)) {
