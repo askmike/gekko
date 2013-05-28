@@ -6,9 +6,8 @@ config.tradingMethod =  'Exponential Moving Averages';
 // On trades at which exchange should Gekko base its analysis on?
 config.watch =  {
   exchange: 'MtGox', // either 'BTCe', 'MtGox' or 'Bitstamp'
-
-  // if you filled in BTCe uncomment and fill in the following
-  // currency: 'USD' // either USD, EUR or RUR
+  currency: 'USD',
+  asset: 'BTC'
 } 
 
 // Exponential Moving Averages settings:
@@ -32,8 +31,10 @@ config.EMA = {
 //    
 // enable real trading BTC for real USD
 //
-// fill in you public and private key from mtgox or btc-e, if you enable 
-// btc-e also set a currency.
+// Information about all settings can be found in the Configuring Gekko
+// documentation.
+//
+// https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
 //
 // == if you set `enabled` to true Gekko will trade automatically! ==
 config.traders = [
@@ -41,19 +42,24 @@ config.traders = [
     exchange: 'MtGox',
     key: '',
     secret: '',
+    currency: 'USD', // You probably want this the same as in the watcher
+    asset: 'BTC',
     enabled: false
   },
   {
     exchange: 'BTCe',
     key: '',
     secret: '',
-    currency: 'USD', // either USD, EUR or RUR
+    currency: 'USD',
+    asset: 'BTC',
     enabled: false
   },
   {
     exchange: 'Bitstamp',
     user: '',
     password: '',
+    currency: 'USD',
+    asset: 'BTC',
     enabled: false
   }
 ];

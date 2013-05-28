@@ -91,7 +91,7 @@ var getTicks = function(callback) {
     
     // we're done
     module.exports.emit('monitoring');
-    callback();
+    if(callback) callback();
   });
 }
 
@@ -222,7 +222,7 @@ var init = function(w) {
 
 var serverError = function() {
   log.error('Server responded with an error or no data, sleeping.');
-  setTimeout(getTicks, util.minToMs(1), advice);
+  setTimeout(refresh, util.minToMs(0.5), advice);
 };
 
 module.exports.on('init', init);

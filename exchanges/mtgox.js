@@ -7,12 +7,38 @@ var Trader = function(config) {
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
+    this.currency = config.currency || 'USD';
+
+    this.checkCurrency(this.currency);
+
+    this.pair = 'BTC' + this.currency;
   }
   this.name = 'Mt. Gox';
 
   _.bindAll(this);
 
-  this.mtgox = new MtGoxClient(this.key, this.secret);
+  this.mtgox = new MtGoxClient(this.key, this.secret, this.pair);
+}
+
+Trader.prototype.checkCurrency = function(currency) {
+  var supported = [
+    'USD',
+    'EUR',
+    'GBP',
+    'AUD',
+    'CAD',
+    'CHF',
+    'CNY',
+    'DKK',
+    'HKD',
+    'PLN',
+    'RUB',
+    'SGD',
+    'THB'
+  ];
+
+  if(_.indexOf(supported, currency) === -1)
+    throw 'The currency ' + currency + ' is not supported by Gekko at this moment.';
 }
 
 Trader.prototype.trade = function(what) {
