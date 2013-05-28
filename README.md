@@ -56,6 +56,23 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
     git pull && npm update
 
+### Running headless
+
+If you wish to run gekko headlessly on your server you could use [nohup](http://linux.die.net/man/1/nohup) with output redirection or [screen](http://www.gnu.org/software/screen/manual/screen.html)
+
+
+#### With [nohup](http://linux.die.net/man/1/nohup)
+
+    nohup node gekko &> output.log &
+
+#### With [screen](http://www.gnu.org/software/screen/manual/screen.html)
+
+    screen -S gekko-seesion
+    node gekko
+
+Then just detach your session with &lt;Ctrl&gt;+&lt;a&gt; followed by &lt;Ctrl&gt;+&lt;d&gt;
+
+
 ## What is Gekko doing?
 
 If you started Gekko it will remain open in your terminal and log out new information, for example:
