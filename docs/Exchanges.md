@@ -31,23 +31,39 @@ It will run the following methods on the exchange object:
 
 The callback needs to have the parameters of `err` and `ticker`. Ticker needs to be an object with atleast the `bid` and `ask` property in float.
 
+### getFee
+
+    this.exchange.getFee(callback)
+
+The callback needs to have the parameters of `err` and `fee`. Fee is a float that represents the amount the exchange takes out of the orders Gekko places. If an exchange has a fee of 0.2% this should be `0.0002`.
+
 ### getPortfolio
 
     this.exchange.getPortfolio(callback)
 
-The callback needs to have the parameters of `err` and `portfolio`. Portfolio needs to be an array of all currencies and assets combined in the form of objects, an example object looks like `{name: 'BTC', amount: 1.42131}` (name needs to be an uppercase string, amount is a float).
-
-### sell
-
-    this.exchange.sell(amount, price, callback);
-
-This should create a sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `object`. Object should describe how the portfolio manager can check if the order went through, **this is not used at this moment**.
+The callback needs to have the parameters of `err` and `portfolio`. Portfolio needs to be an array of all currencies and assets combined in the form of objects, an example object looks like `{name: 'BTC', amount: 1.42131}` (name needs to be an uppercase string, amount needs to be a float).
 
 ### buy
 
     this.exchange.buy(amount, price, callback);
 
-This should create a buy order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `object`. Object should describe how the portfolio manager can check if the order went through, **this is not used at this moment**.
+### sell
+
+    this.exchange.sell(amount, price, callback);
+
+This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `order`. The order needs to be something that can be fed back to the exchange to see wether the order has been filled or not.
+
+### checkOrder
+
+    this.exchange.checkOrder(order, callback);
+
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not.
+
+### cancelOrder
+
+    this.exchange.checkOrder(order, callback);
+
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled.
 
 ## Trading method's expectations
 
