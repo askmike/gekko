@@ -52,7 +52,7 @@ To run the bot you just have to start Gekko:
 
     node gekko
 
-You can also run Gekko silently, for examples on how to do this check out the [running gekko linux](https://github.com/askmike/gekko/blob/master/docs/gekko_on_linux.md) documentation.
+You can also run Gekko silently, for examples on how to do this check out the [running gekko headless](https://github.com/askmike/gekko/blob/master/docs/Running_gekko_headless.md) documentation.
 
 If you installed the bot via git you can easily fetch the latest updates by running:
 
