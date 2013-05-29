@@ -37,7 +37,7 @@ if(provider === 'btce') {
   provider = 'bitcoincharts';
 }
 var DataProvider = require('./exchanges/' + provider + '.js');
-var watcher = new DataProvider(market, config.watch.currency);
+var watcher = new DataProvider(config.watch);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
