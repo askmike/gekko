@@ -231,12 +231,12 @@ Manager.prototype.noteOrder = function(order) {
   setTimeout(this.checkOrder, util.minToMs(0.5));
 }
 
-// check wether the order got filled
+// check wether the order got fully filled
 // if it is not: cancel & instantiate a new order
 Manager.prototype.checkOrder = function() {
   var finish = function(err, filled) {
     if(!filled) {
-      log.info(this.action, 'order was not filled, canceling and creating new order');
+      log.info(this.action, 'order was not (fully) filled, canceling and creating new order');
       this.exchange.cancelOrder(this.order);
       return this.trade(this.action);
     }
