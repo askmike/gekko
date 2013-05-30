@@ -52,6 +52,14 @@ To run the bot you just have to start Gekko:
 
     node gekko
 
+### Current bugs in dependencies
+
+There are currently two bugs ([one](https://github.com/ameen3/node-mtgox-apiv2/pull/14), [two](https://github.com/pskupinski/node-bitcoincharts/pull/1)) in dependencies of Gekko. We have to wait until the maintainers have time to patch the bugs, but in the meantime you have to hotfix them yourself if you want to use these features:
+
+* Mt. Gox watcher: If you want Gekko to watch Mt. Gox you have to fix the bug as described [here](https://github.com/askmike/node-mtgox-apiv2/commit/757490174b6d9e0eb9fc21d3c0f20770e6e8b584).
+* BTC-e watcher: If you want Gekko to watch BTC-e you are advised to fix the bug as described [here](https://github.com/askmike/node-bitcoincharts/commit/4326334ed2da8247bba90acfa0f5a05a55ef4914). If you don't do this Gekko can crash when bitcoincharts returns nothing.
+
+
 You can also run Gekko silently, for examples on how to do this check out the [running gekko headless](https://github.com/askmike/gekko/blob/master/docs/Running_gekko_headless.md) documentation.
 
 If you installed the bot via git you can easily fetch the latest updates by running:
