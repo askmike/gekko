@@ -15,7 +15,6 @@
   it's working.
 
 */
-var config = require('./config.js');
 
 // helpers
 var moment = require('moment');
@@ -23,6 +22,8 @@ var _ = require('underscore');
 var util = require('./util.js');
 var log = require('./log.js');
 var async = require('async');
+
+var config = util.getConfig();
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.');
@@ -66,7 +67,7 @@ var configureManagers = function(_next) {
 var configureMail = function(next) {
   if(config.mail.enabled && config.mail.email) {
     var mailer = require('./mailer');
-    mailer.init(config.mail, function() {
+    mailer.init(function() {
       consultant.on('advice', mailer.send);
       next();
     });

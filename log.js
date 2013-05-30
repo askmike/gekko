@@ -9,7 +9,8 @@
 var moment = require('moment');
 var fmt = require('util').format;
 var _ = require('underscore');
-var config = require('./config.js');
+var util = require('./util.js');
+var config = util.getConfig();
 
 var Log = function() {
   this._debug = config.debug;

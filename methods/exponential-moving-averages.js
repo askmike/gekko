@@ -20,17 +20,17 @@
 var EventEmitter = require('events').EventEmitter;
 module.exports = new EventEmitter();
 
-var config = require('../config.js');
-var EMAsettings = config.EMA;
-
 // helpers
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
 var log = require('../log.js');
 
+var config = util.getConfig();
+var EMAsettings = config.EMA;
+
 var watcher, currentTrend;
-// this array stores _all_ price data
+// this array stores _all_ ticks (with each a price, shortEMA, longEMA, diff) in chronological order
 var ticks = [];
 var amount;
 

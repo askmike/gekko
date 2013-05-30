@@ -60,7 +60,7 @@ There are currently two bugs ([one](https://github.com/ameen3/node-mtgox-apiv2/p
 * BTC-e watcher: If you want Gekko to watch BTC-e you are advised to fix the bug in file `node_modules/bitcoincharts/bitcoincharts.js` as described [here](https://github.com/askmike/node-bitcoincharts/commit/4326334ed2da8247bba90acfa0f5a05a55ef4914). If you don't do this Gekko can crash when bitcoincharts returns nothing.
 
 
-You can also run Gekko silently, for examples on how to do this check out the [running gekko headless](https://github.com/askmike/gekko/blob/master/docs/Running_gekko_headless.md) documentation.
+You can also run Gekko silently, for examples on how to do this check out the [advanced features](https://github.com/askmike/gekko/blob/master/docs/Advanced_features.md).
 
 If you installed the bot via git you can easily fetch the latest updates by running:
 
@@ -106,7 +106,6 @@ It will try to buy/sell 1000 BTC, Mt. Gox and BTC-e change this in to all the fu
 ## TODO
 
 * Create an easy way to backtest historical data and determine the effectiveness of different paramters.
-* Keep record of balance and check wether auto orders are going through on markets without MKT orders (BTC-e and Bitstamp).
 * Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx)).
 * Store trade history in levelDB.
 * Add money management (so that the bot will only spend a start amount of X and the profits on top of X).

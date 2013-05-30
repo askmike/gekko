@@ -1,9 +1,23 @@
 var moment = require('moment');
 var _ = require('underscore');
-var config = require('./config.js');
 
 // helper functions
 var util = {
+  getConfig: function() {
+    var path = require('path');
+    var configFile = path.resolve(util.getArgument('config') || 'config.js');
+    return require(configFile);
+  },
+  getArgument: function(argument) {
+    var ret;
+    _.each(process.argv, function(arg) {
+      var pos = arg.indexOf(argument + '=');
+      if(pos !== -1) {
+        ret = arg.substr(argument.length + 1);
+      }
+    });
+    return ret;
+  },
   minToMs: function(min) {
     return min * 60 * 1000;
   },
@@ -48,5 +62,7 @@ var util = {
     return util.average(sample);
   }
 }
+
+var config = util.getConfig();
 
 module.exports = util;

@@ -1,12 +1,11 @@
 var email = require("emailjs");
 var moment = require('moment');
-var util = require('./util.js');
 var log = require('./log.js');
-var server, config;
+var util = require('./util.js');
+var config = util.getConfig().mail;
+var server;
 
-module.exports.init = function(conf, callback) {
-  config = conf;
-
+module.exports.init = function(callback) {
   var setupMail = function(err, result) {
     if(result) {
       log.info('Got it.');
