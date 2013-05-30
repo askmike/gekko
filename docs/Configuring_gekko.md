@@ -1,6 +1,6 @@
 # Configuring Gekko
 
-This file will explain all different parameters you can set in the [config](https://github.com/askmike/gekko/blob/master/config.js). But for now everything except for real trading is explained in the [config](https://github.com/askmike/gekko/blob/master/config.js) itself.
+This file will explain all different parameters you can set in the [config](https://github.com/askmike/gekko/blob/master/config.js). But for now everything except for the watcher real trading is explained in the [config](https://github.com/askmike/gekko/blob/master/config.js) itself.
 
 ## Enabling real trading
 
@@ -51,3 +51,7 @@ Gekko won't do anything on the account except for: checking balance and creating
 ### Note for Mt. Gox users
 
 You can only trade the currency configured in the Mt. Gox dashboard.
+
+## Set the watcher
+
+The watcher is the exchange Gekko pulls trade data from to analyze and detect trend. It is advised to set this the same as the real trader you configured (if you have done so).

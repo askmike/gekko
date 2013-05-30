@@ -4,8 +4,10 @@ var config = {};
 config.tradingMethod =  'Exponential Moving Averages';
 
 // On trades at which exchange should Gekko base its analysis on?
+//
+// see: https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
 config.watch =  {
-  exchange: 'MtGox', // either 'BTCe', 'MtGox' or 'Bitstamp'
+  exchange: 'MtGox',
   currency: 'USD',
   asset: 'BTC'
 } 

@@ -48,6 +48,7 @@ var getTicks = function(callback) {
     var since = null;
   log.debug('fetching exchange...');
   watcher.getTrades(since, function(err, trades) {
+    console.log(err, trades);
     if (err)
       return serverError();
 

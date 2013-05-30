@@ -3,10 +3,12 @@ var util = require('../util.js');
 var moment = require('moment');
 var _ = require('underscore');
 
-var Watcher = function(market, currency, config) {
-  this.symbol = market + currency;
+var Watcher = function(config) {
+  if(_.isObject(config)) {
+    this.symbol = config.market + config.currency;
+  }
+
   this.name = 'bitcoincharts';
-  this.config = config;
 
   _.bindAll(this);
 

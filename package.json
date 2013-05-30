@@ -16,7 +16,8 @@
     "bitcoincharts": "0.0.x",
     "emailjs": "0.3.x",
     "prompt-lite": "0.1.x",
-    "bitstamp": "0.0.x"
+    "bitstamp": "0.0.x",
+    "async": "0.2.x"
   },
   "engines": { "node": "0.10.x" },
   "repository": {

@@ -1,3 +1,11 @@
+/*
+
+  Lightweight logger, print everything that is send to error, warn
+  and messages to stdout (the terminal). If config.debug is set in config
+  also print out everything send to debug.
+
+*/
+
 var moment = require('moment');
 var fmt = require('util').format;
 var _ = require('underscore');
@@ -12,7 +20,6 @@ Log.prototype = {
   _write: function(method, args, name) {
     if(!name)
       name = method.toUpperCase();
-    
 
     var message = moment().format('YYYY-MM-DD HH:mm:ss');
     message += ' (' + name + '):\t';

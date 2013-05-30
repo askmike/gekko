@@ -22,6 +22,7 @@ var moment = require('moment');
 var _ = require('underscore');
 var util = require('./util.js');
 var log = require('./log.js');
+var async = require('async');
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.');
@@ -29,60 +30,52 @@ log.info('Let me show you some ' + config.tradingMethod + '.');
 // create a public exchange object which can retrieve trade information
 var provider = config.watch.exchange.toLowerCase();
 if(provider === 'btce') {
-  if(!config.watch.currency)
-    throw 'need to set watcher currency';
   // we can't fetch historical data from btce directly so we use bitcoincharts
   // @link http://bitcoincharts.com/about/markets-api/
-  var market = provider;
+  config.watch.market = provider;
   provider = 'bitcoincharts';
 }
-var DataProvider = require('./exchanges/' + provider + '.js');
+var DataProvider = require('./exchanges/' + provider);
 var watcher = new DataProvider(config.watch);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
-var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-') + '.js');
+var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 consultant.emit('init', watcher, config.debug);
 
-// whenever the consultant advices to sell or buy we can act on the information
-
 // log advice
-var Logger = require('./logger.js');
+var Logger = require('./logger');
 var logger = new Logger(config.profitCalculator);
 consultant.on('advice', logger.inform);
 consultant.on('advice', logger.trackProfits);
 
 // automatically trade
-var exchanges = ['mtgox', 'btce', 'bitstamp'];
-_.each(config.traders, function(conf) {
-  if(!conf.enabled)
-    return;
+var configureManagers = function(_next) {
+  var Manager = require('./portfolioManager');
+  var managers = _.filter(config.traders, function(t) { return t.enabled });
+  var next = _.after(managers.length, _next);
+  _.each(managers, function(conf) {
+    conf.exchange = conf.exchange.toLowerCase();
 
-  conf.exchange = conf.exchange.toLowerCase()
-
-  if(_.indexOf(exchanges, conf.exchange) === -1)
-    throw 'unkown exchange';
-
-  if(conf.exchange === 'bitstamp') {
-    if(!conf.user || !conf.password)
-      throw 'missing user or password!';
-  } else {
-    if(!conf.key || !conf.secret)
-      throw 'missing key or secret!';
-  }
-
-  log.info('real trading at', conf.exchange, 'ACTIVE');
-  var Trader = require('./exchanges/' + conf.exchange.toLowerCase() + '.js');
-  var trader = new Trader(conf);
-  consultant.on('advice', trader.trade);
-});
-
-// mail advice
-if(config.mail.enabled && config.mail.email) {
-  var mailer = require('./mailer.js');
-  mailer.init(config.mail, function() {
-    consultant.emit('start');
-    consultant.on('advice', mailer.send);
+    var manager = new Manager(conf);
+    consultant.on('advice', manager.trade);
+    manager.on('ready', next);
   });
-} else 
+}
+
+var configureMail = function(next) {
+  if(config.mail.enabled && config.mail.email) {
+    var mailer = require('./mailer');
+    mailer.init(config.mail, function() {
+      consultant.on('advice', mailer.send);
+      next();
+    });
+  } else
+    next();
+}
+
+var start = function() {
   consultant.emit('start');
+}
+
+async.series([configureMail, configureManagers], start);
