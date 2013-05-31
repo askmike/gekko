@@ -63,7 +63,7 @@ The order will be something that the manager previously received via the `sell` 
 
     this.exchange.checkOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled. Currently only partially filled orders should be treated as not filled.
 
 ## Trading method's expectations
 
