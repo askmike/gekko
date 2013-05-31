@@ -23,6 +23,7 @@ var Manager = function(conf) {
   this.exchange = new Exchange(conf);
 
   //    state
+  this.conf = conf;
   this.portfolio = {};
   this.fee;
   this.order;
@@ -79,21 +80,24 @@ Manager.prototype.checkExchange = function() {
         'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY',
         'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
       ],
-      assets: ['BTC']
+      assets: ['BTC'],
+      requires: ['key', 'secret']
     },
     {
       name: 'btce',
       direct: false,
       infinityOrder: true,
       currencies: ['USD', 'RUR', 'EUR'],
-      assets: ['BTC']
+      assets: ['BTC'],
+      requires: ['key', 'secret']
     },
     {
       name: 'bitstamp',
       direct: false,
       infinityOrder: false,
       currencies: ['USD'],
-      assets: ['BTC']
+      assets: ['BTC'],
+      requires: ['user', 'password']
     }
   ];
   var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
@@ -107,6 +111,11 @@ Manager.prototype.checkExchange = function() {
 
   if(_.indexOf(exchange.assets, this.asset) === -1)
     throw 'Gekko does not support the asset ' + this.asset + ' at ' + this.exchange.name;
+
+  _.each(exchange.requires, function(req) {
+    if(!this.conf[req])
+      throw this.exchange.name + ' requires "' + req + '" to be set in the config';
+  }, this);
 }
 
 Manager.prototype.setPortfolio = function(callback) {
@@ -208,7 +217,7 @@ Manager.prototype.buy = function(amount, price) {
     this.exchange.buy(amount, price, this.noteOrder);
     this.action = 'BUY';
   } else
-    log.info('wanted to buy but insufficient', this.currency, 'at', this.exchange.name, amount, price);
+    log.info('wanted to buy but insufficient', this.currency, 'at');
 }
 
 // first do a quick check to see whether we can sell
@@ -221,7 +230,7 @@ Manager.prototype.sell = function(amount, price) {
     this.exchange.sell(amount, price, this.noteOrder);
     this.action = 'SELL';
   } else
-    log.info('wanted to sell but insufficient', this.asset, 'at', this.exchange.name, amount, price);
+    log.info('wanted to sell but insufficient', this.asset, 'at');
 }
 
 Manager.prototype.noteOrder = function(order) {
