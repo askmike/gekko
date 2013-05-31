@@ -57,13 +57,13 @@ This should create a buy / sell order at the exchange for [amount] of [asset] at
 
     this.exchange.checkOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not. Currently only partially filled orders should be treated as not filled.
 
 ### cancelOrder
 
-    this.exchange.checkOrder(order, callback);
+    this.exchange.cancelOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled. Currently only partially filled orders should be treated as not filled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled.
 
 ## Trading method's expectations
 
