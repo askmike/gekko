@@ -44,8 +44,7 @@ var Manager = function(conf) {
     log.info(this.exchange.name, 'trading fee will be:', this.fee * 100 + '%');
     log.info('current', this.exchange.name, 'portfolio:');
     _.each(this.portfolio, function(fund) {
-      if(fund.amount)
-        log.info('\t', fund.name + ':', fund.amount);
+      log.info('\t', fund.name + ':', fund.amount);
     });
     this.emit('ready');
   };
@@ -81,15 +80,17 @@ Manager.prototype.checkExchange = function() {
         'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
       ],
       assets: ['BTC'],
-      requires: ['key', 'secret']
+      requires: ['key', 'secret'],
+      minimalOrder: { amount: 0.01, unit: 'asset' }
     },
     {
       name: 'btce',
       direct: false,
-      infinityOrder: true,
+      infinityOrder: false,
       currencies: ['USD', 'RUR', 'EUR'],
       assets: ['BTC'],
-      requires: ['key', 'secret']
+      requires: ['key', 'secret'],
+      minimalOrder: { amount: 0.01, unit: 'asset' }
     },
     {
       name: 'bitstamp',
@@ -97,7 +98,8 @@ Manager.prototype.checkExchange = function() {
       infinityOrder: false,
       currencies: ['USD'],
       assets: ['BTC'],
-      requires: ['user', 'password']
+      requires: ['user', 'password'],
+      minimalOrder: { amount: 1, unit: 'currency' }
     }
   ];
   var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
@@ -116,6 +118,8 @@ Manager.prototype.checkExchange = function() {
     if(!this.conf[req])
       throw this.exchange.name + ' requires "' + req + '" to be set in the config';
   }, this);
+
+  this.minimalOrder = exchange.minimalOrder;
 }
 
 Manager.prototype.setPortfolio = function(callback) {
@@ -207,17 +211,25 @@ Manager.prototype.trade = function(what) {
 
 }
 
+Manager.prototype.getMinimum = function() {
+  if(this.minimalOrder.unit === 'currency')
+    return minimum = this.minimalOrder.amount / price;
+  else
+    return minimum = this.minimalOrder.amount;
+}
+
 // first do a quick check to see whether we can buy
 // the asset, if so BUY and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
   var currency = this.getFund(this.currency);
-  if(currency.amount) {
-    log.debug('attempting to BUY', this.asset, 'at', this.exchange.name);
+  var minimum = this.getMinimum();
+  if(amount > minimum) {
+    log.info('attempting to BUY', this.asset, 'at', this.exchange.name);
     this.exchange.buy(amount, price, this.noteOrder);
     this.action = 'BUY';
   } else
-    log.info('wanted to buy but insufficient', this.currency, 'at');
+    log.info('wanted to buy but insufficient', this.currency, '(' + amount * price + ') at', this.exchange.name);
 }
 
 // first do a quick check to see whether we can sell
@@ -225,12 +237,13 @@ Manager.prototype.buy = function(amount, price) {
 // (amount is in asset quantity)
 Manager.prototype.sell = function(amount, price) {
   var asset = this.getFund(this.asset);
-  if(asset.amount) {
-    log.debug('attempting to SELL', this.asset, 'at', this.exchange.name);
+  var minimum = this.getMinimum();
+  if(amount > minimum) {
+    log.info('attempting to SELL', this.asset, 'at', this.exchange.name);
     this.exchange.sell(amount, price, this.noteOrder);
     this.action = 'SELL';
   } else
-    log.info('wanted to sell but insufficient', this.asset, 'at');
+    log.info('wanted to sell but insufficient', this.asset, '(' + amount + ') at', this.exchange.name);
 }
 
 Manager.prototype.noteOrder = function(order) {

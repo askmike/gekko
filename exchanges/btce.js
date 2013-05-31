@@ -17,9 +17,15 @@ var Trader = function(config) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
+  // Prevent "You incorrectly entered one of fields."
+  // because of more than 8 decimals.
+  amount *= 100000000;
+  amount = Math.floor(amount);
+  amount /= 100000000;
+
   var set = function(err, data) {
     if(err)
-      log.error('unable to sell:', err, data);
+      log.error('unable to buy:', err);
 
     callback(data.order_id);
   };
@@ -31,6 +37,12 @@ Trader.prototype.buy = function(amount, price, callback) {
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+  // Prevent "You incorrectly entered one of fields."
+  // because of more than 8 decimals.
+  amount *= 100000000;
+  amount = Math.ceil(amount);
+  amount /= 100000000;
+
   var set = function(err, data) {
     if(err)
       log.error('unable to sell:', err);
