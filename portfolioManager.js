@@ -211,7 +211,7 @@ Manager.prototype.trade = function(what) {
 
 }
 
-Manager.prototype.getMinimum = function() {
+Manager.prototype.getMinimum = function(price) {
   if(this.minimalOrder.unit === 'currency')
     return minimum = this.minimalOrder.amount / price;
   else
@@ -223,7 +223,7 @@ Manager.prototype.getMinimum = function() {
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
   var currency = this.getFund(this.currency);
-  var minimum = this.getMinimum();
+  var minimum = this.getMinimum(price);
   if(amount > minimum) {
     log.info('attempting to BUY', this.asset, 'at', this.exchange.name);
     this.exchange.buy(amount, price, this.noteOrder);
@@ -237,7 +237,7 @@ Manager.prototype.buy = function(amount, price) {
 // (amount is in asset quantity)
 Manager.prototype.sell = function(amount, price) {
   var asset = this.getFund(this.asset);
-  var minimum = this.getMinimum();
+  var minimum = this.getMinimum(price);
   if(amount > minimum) {
     log.info('attempting to SELL', this.asset, 'at', this.exchange.name);
     this.exchange.sell(amount, price, this.noteOrder);
