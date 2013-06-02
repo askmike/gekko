@@ -70,14 +70,16 @@ config.traders = [
 // This is done via a simulation and has nothing to do with auto trading
 config.profitCalculator = {
   enabled: true,
-  // in what currency do you want Gekko to report?
-  // Either BTC or the currency the watcher is monitoring
-  reportInBTC: false,
+  // report the profit in the currency or the asset?
+  reportInCurrency: true,
   // start balance, on what the current balance is compared with
   simulationBalance: {
-    btc: 1,
-    foreign: 100, // foreign is the currency of the price reported by watcher
-  }
+    // these are in the unit types configured in the watcher.
+    asset: 1,
+    currency: 100,
+  },
+  // only want report after a sell? set to `false`.
+  verbose: true
 }
 
 // want Gekko to send a mail on buy or sell advice?

@@ -46,9 +46,10 @@ consultant.emit('init', watcher, config.debug);
 
 // log advice
 var Logger = require('./logger');
-var logger = new Logger(config.profitCalculator);
+var logger = new Logger(_.extend(config.profitCalculator, config.watch));
 consultant.on('advice', logger.inform);
-consultant.on('advice', logger.trackProfits);
+if(config.profitCalculator.enabled)
+  consultant.on('advice', logger.trackProfits);
 
 // automatically trade
 var configureManagers = function(_next) {
