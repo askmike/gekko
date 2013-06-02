@@ -67,8 +67,10 @@ If you started Gekko it will remain open in your terminal and log out new inform
     I'm gonna make you rich, Bud Fox.
     Let me show you some Exponential Moving Averages.
 
-    (ADVICE) 2013-05-19 23:18:14 HOLD @ 122.596 (-0.140)
-    (PROFIT REPORT) 2013-05-19 23:18:14 0.000 % profit (in 0 trades)
+    2013-06-02 18:21:15 (INFO): ADVICE is to HOLD @ 117.465 (0.132)
+    2013-06-02 18:21:15 (INFO): (PROFIT REPORT) original balance:    207.465 USD
+    2013-06-02 18:21:15 (INFO): (PROFIT REPORT) current balance:     217.465 USD
+    2013-06-02 18:21:15 (INFO): (PROFIT REPORT) profit:          10.000 USD (4.820%)
 
 After the first fetching, every new interval (in the [config](https://github.com/askmike/gekko/blob/master/config.js#L17)) Gekko will fetch new trade data, advice on what to do and give a profit report:
 
