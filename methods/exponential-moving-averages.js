@@ -200,7 +200,7 @@ var advice = function() {
 }
 
 var refresh = function() {
-  log.info('refreshing');
+  log.debug('refreshing');
 
   // remove the oldest tick
   ticks.splice(0, 1);

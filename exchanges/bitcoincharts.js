@@ -4,9 +4,8 @@ var moment = require('moment');
 var _ = require('underscore');
 
 var Watcher = function(config) {
-  if(_.isObject(config)) {
+  if(_.isObject(config))
     this.symbol = config.market + config.currency;
-  }
 
   this.name = 'bitcoincharts';
 
