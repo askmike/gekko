@@ -87,21 +87,21 @@ Logger.prototype.report = function() {
 
   log.info(
     '(PROFIT REPORT)',
-    'original balance:\t',
+    'original simulated balance:\t',
     round(this.start.balance),
     this.reportIn
   );
 
   log.info(
     '(PROFIT REPORT)',
-    'current balance:\t',
+    'current simulated balance:\t',
     round(this.current.balance),
     this.reportIn
   );
 
   log.info(
     '(PROFIT REPORT)',
-    'profit:\t\t\t',
+    'simulated profit:\t\t',
     round(this.profit),
     this.reportIn,
     '(' + round(this.relativeProfit) + '%)'
