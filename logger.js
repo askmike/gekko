@@ -26,7 +26,8 @@ var Logger = function(config) {
 
   _.bindAll(this);
 
-  log.info('Profit reporter active on simulated balance');
+  if(config.enabled)
+    log.info('Profit reporter active on simulated balance');
 
 }
 
