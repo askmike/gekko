@@ -111,7 +111,7 @@ It will try to buy/sell 1000 BTC, Mt. Gox and BTC-e change this in to all the fu
 
 ## Final
 
-If Gekko helped you in any way, you can always leave me a tip at (BTC) 1KyQdQ9ctjCrGjGRCWSBhPKcj5omy4gv5S
+If Gekko helped you in any way, you can always leave me a tip at (BTC) 16yRRwokeqgZ9WMgjhV77p8BR2xJbyMXmZ
 
 ## License
 
