@@ -41,8 +41,8 @@ var watcher = new DataProvider(config.watch);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
-var consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
-consultant.emit('init', watcher, config.debug);
+var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var consultant = new Consultant(watcher);
 
 // log advice
 var Logger = require('./logger');

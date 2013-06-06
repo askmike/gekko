@@ -16,83 +16,100 @@
 
  */
 
-// set up events so this method can talk with Gekko
 var EventEmitter = require('events').EventEmitter;
-module.exports = new EventEmitter();
 
 // helpers
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
+var Util = require('util');
 var log = require('../log.js');
 
 var config = util.getConfig();
 var EMAsettings = config.EMA;
 
-var watcher, currentTrend;
-// this array stores _all_ ticks (with each a price, shortEMA, longEMA, diff) in chronological order
-var ticks = [];
-var amount;
+var TradingMethod = function(watcher) {
+  this.watcher = watcher;
+  this.currentTrend;
+  this.amount = EMAsettings.ticks + 1;
+  // this array stores _all_ ticks (with each a price, shortEMA, longEMA, diff) in chronological order
+  this.ticks = [];
+
+  _.bindAll(this);
+
+  this.on('start', this.start);
+}
+
+Util.inherits(TradingMethod, EventEmitter);
+
+TradingMethod.prototype.start = function() {
+  log.info('Calculating EMA on historical data...')
+  this.getTicks(this.advice);
+  setInterval(this.refresh, util.minToMs( EMAsettings.interval) );
+}
 
 // fetch the price of all remaining ticks and calculate 
 // the short & long EMA and the difference for these ticks.
-var getTicks = function(callback) {
-  var current = amount - ticks.length;
+TradingMethod.prototype.getTicks = function() {
+  this.current = this.amount - this.ticks.length;
   // get the date of the tick we are fetching
-  var tickTime = util.intervalsAgo(current);
+  var tickTime = util.intervalsAgo(this.current);
 
-  if(current)
+  if(this.current)
     var since = tickTime;
   else
     // if this is the last tick just fetch the latest trades
     var since = null;
   log.debug('fetching exchange...');
-  watcher.getTrades(since, function(err, trades) {
-    if (err || !trades)
-      return serverError();
+  this.watcher.getTrades(since, this.processTrades);
+}
 
-    trades = trades.data;
-    if (trades.length === 0)
-      return serverError();
+TradingMethod.prototype.processTrades = function(err, trades) {
+  if (err || !trades)
+    return this.serverError();
 
-    log.debug('fetched exchange');
+  trades = trades.data;
+  if (trades.length === 0)
+    return this.serverError();
 
-    // if we are fetching the last tick we are interested 
-    // in the most recent prices of the batch instead of the
-    // most dated ones
-    var price = calculatePrice(trades, !current);
-    calculateTick(price);
-    
-    // check if the fetched trades can be used to 
-    // calculate remaining ticks
-    var outOfTrades = false, nextTreshold;
-    while(!outOfTrades && current > 1) {
-      nextTreshold = util.intervalsAgo(current - 1);
+  log.debug('fetched exchange');
 
-      outOfTrades = _.every(trades, function(trade, i) {
-        // if next treshold is in this batch
-        if(moment.unix(trade.date) > nextTreshold) {
-          trades.splice(0, i);
-          return false;
-        }
-        return true;
-      });
+  // if we are fetching the last tick we are interested
+  // in the most recent prices of the batch instead of the
+  // most dated ones
+  var price = this.calculatePrice(trades, !this.current);
+  this.calculateTick(price);
 
-      if(!outOfTrades) {
-        current -= 1;
-        price = calculatePrice(trades, !(current - 1));
-        calculateTick(price);
+  // check if the fetched trades can be used to
+  // calculate remaining ticks
+  var outOfTrades = false, nextTreshold;
+  while(!outOfTrades && this.current > 1) {
+    nextTreshold = util.intervalsAgo(this.current - 1);
+
+    outOfTrades = _.every(trades, function(trade, i) {
+      // if next treshold is in this batch
+      if(moment.unix(trade.date) > nextTreshold) {
+        trades.splice(0, i);
+        return false;
       }
-    }
+      return true;
+    });
 
-    // recurse if we don't have all ticks yet
-    if(current > 1)
-      return getTicks(callback);
-    
-    // we're done
-    module.exports.emit('monitoring');
-    if(callback) callback();
-  });
+    if(!outOfTrades) {
+      this.current -= 1;
+      price = this.calculatePrice(trades, !(this.current - 1));
+      this.calculateTick(price);
+    }
+  }
+
+  // recurse if we don't have all ticks yet
+  if(this.current > 1)
+    return this.getTicks();
+
+  // we're done
+  // module.exports.emit('monitoring');
+  if(this.callback) this.callback();
+  this.callback = false;
 }
 
 // calculate the average trade price out of a sample of trades.
@@ -101,7 +118,7 @@ var getTicks = function(callback) {
 // 
 // if newestFirst is true we are instead interested in the most 
 // recent trades up to (newest - sampleSize)
-var calculatePrice = function(trades, newestFirst) {
+TradingMethod.prototype.calculatePrice = function(trades, newestFirst) {
   if(newestFirst) {
     trades = trades.reverse();
     var treshold = moment.unix(_.first(trades).date).subtract('seconds', EMAsettings.sampleSize);
@@ -114,7 +131,7 @@ var calculatePrice = function(trades, newestFirst) {
 
 // add a price and calculate the EMAs and
 // the diff for that price
-var calculateTick = function(price) {
+TradingMethod.prototype.calculateTick = function(price) {
   var tick = {
     price: price,
     shortEMA: false,
@@ -122,52 +139,52 @@ var calculateTick = function(price) {
     diff: false
   };
 
-  ticks.push(tick);
+  this.ticks.push(tick);
 
-  calculateEMA('shortEMA');
-  calculateEMA('longEMA');
-  calculateEMAdiff();
+  this.calculateEMA('shortEMA');
+  this.calculateEMA('longEMA');
+  this.calculateEMAdiff();
   log.debug(
-    'calculated new tick: ' + 
-    (amount - ticks.length) + 
-    '\tprice: ' + 
-    _.last(ticks).price.toFixed(3) + 
+    'calculated new tick: ' +
+    (this.amount - this.ticks.length) +
+    '\tprice: ' +
+    _.last(this.ticks).price.toFixed(3) +
     '\tdiff: ' +
-    _.last(ticks).diff.toFixed(3)
+    _.last(this.ticks).diff.toFixed(3)
   );
 }
 
 //    calculation (based on tick/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
-var calculateEMA = function(type) {
+TradingMethod.prototype.calculateEMA = function(type) {
   var k = 2 / (EMAsettings[type] + 1);
   var ema, y;
 
-  var current = ticks.length;
+  var current = this.ticks.length;
 
   if(current === 1)
     // we don't have any 'yesterday'
-    y = _.first(ticks).price;
+    y = _.first(this.ticks).price;
   else
-    y = ticks[current - 2][type];
+    y = this.ticks[current - 2][type];
   
-  ema = _.last(ticks).price * k + y * (1 - k);
-  ticks[current - 1][type] = ema;
+  ema = _.last(this.ticks).price * k + y * (1 - k);
+  this.ticks[current - 1][type] = ema;
 }
 
 // @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
-var calculateEMAdiff = function() {
-  var tick = _.last(ticks);
+TradingMethod.prototype.calculateEMAdiff = function() {
+  var tick = _.last(this.ticks);
   var shortEMA = tick.shortEMA;
   var longEMA = tick.longEMA;
 
   var diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
-  ticks[ ticks.length - 1 ].diff = diff;
+  this.ticks[ this.ticks.length - 1 ].diff = diff;
 }
 
-var advice = function() {
-  var tick = _.last(ticks);
+TradingMethod.prototype.advice = function() {
+  var tick = _.last(this.ticks);
   var diff = tick.diff.toFixed(3);
   var price = tick.price.toFixed(3);
   var message = '@ ' + price + ' (' + diff + ')';
@@ -177,9 +194,9 @@ var advice = function() {
 
     if(currentTrend !== 'up') {
       currentTrend = 'up';
-      module.exports.emit('advice', 'BUY', price, message);
+      this.emit('advice', 'BUY', price, message);
     } else {
-      module.exports.emit('advice', 'HOLD', price, message);
+      this.emit('advice', 'HOLD', price, message);
     }
 
   } else if(tick.diff < EMAsettings.sellTreshold) {
@@ -187,42 +204,32 @@ var advice = function() {
 
     if(currentTrend !== 'down') {
       currentTrend = 'down';
-      module.exports.emit('advice', 'SELL', price, message);
+      this.emit('advice', 'SELL', price, message);
     } else {
-      module.exports.emit('advice', 'HOLD', price, message);
+      this.emit('advice', 'HOLD', price, message);
     }
 
   } else {
     log.debug('we are currently not in an up or down trend  (' + diff + ')');
-    module.exports.emit('advice', 'HOLD', price, message);
+    this.emit('advice', 'HOLD', price, message);
 
   }
 }
 
-var refresh = function() {
+TradingMethod.prototype.refresh = function() {
   log.debug('refreshing');
 
   // remove the oldest tick
-  ticks.splice(0, 1);
+  this.ticks.splice(0, 1);
 
   // get new tick
-  getTicks(advice);
+  this.callback = this.advice;
+  this.getTicks();
 }
 
-var init = function(w) {
-  watcher = w;
-  amount = EMAsettings.ticks + 1;
-
-  module.exports.on('start', function() {
-    log.info('Calculating EMA on historical data...')
-    getTicks(advice);
-    setInterval(refresh, util.minToMs( EMAsettings.interval) );
-  });
-}
-
-var serverError = function() {
+TradingMethod.prototype.serverError = function() {
   log.error('Server responded with an error or no data, sleeping.');
-  setTimeout(getTicks, util.minToMs(0.5), advice);
+  setTimeout(this.getTicks, util.minToMs(0.5), this.advice);
 };
 
-module.exports.on('init', init);
+module.exports = TradingMethod;
