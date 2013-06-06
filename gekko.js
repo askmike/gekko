@@ -22,11 +22,31 @@ var _ = require('underscore');
 var util = require('./util.js');
 var log = require('./log.js');
 var async = require('async');
+var Manager = require('./portfolioManager');
 
 var config = util.getConfig();
 
 log.info('I\'m gonna make you rich, Bud Fox.');
-log.info('Let me show you some ' + config.tradingMethod + '.');
+log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
+
+
+if(config.normal && config.normal.enabled) {
+  // if the normal settings are enabled we overwrite the
+  // watcher and traders set in the advanced zone
+  log.info('Using normal settings');
+  config.watch = config.normal;
+  config.traders = [];
+
+  var checker = new Manager(config.normal, true);
+  var valid = checker.validCredentials();
+  if(valid)
+    config.traders.push( config.normal );
+  else
+    log.info('NOT trading with real money');
+} else {
+  log.info('Using advances settings');
+}
+
 
 // create a public exchange object which can retrieve trade information
 var provider = config.watch.exchange.toLowerCase();
@@ -53,7 +73,6 @@ if(config.profitCalculator.enabled)
 
 // automatically trade
 var configureManagers = function(_next) {
-  var Manager = require('./portfolioManager');
   var managers = _.filter(config.traders, function(t) { return t.enabled });
   var next = _.after(managers.length, _next);
   _.each(managers, function(conf) {

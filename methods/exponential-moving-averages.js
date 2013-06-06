@@ -10,10 +10,6 @@
   This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo.
 
   @link https://bitcointalk.org/index.php?topic=60501.0
-
-
-      Method state: BETA
-
  */
 
 var EventEmitter = require('events').EventEmitter;
@@ -43,8 +39,9 @@ var TradingMethod = function(watcher) {
 Util.inherits(TradingMethod, EventEmitter);
 
 TradingMethod.prototype.start = function() {
-  log.info('Calculating EMA on historical data...')
-  this.getTicks(this.advice);
+  log.info('Calculating EMA on historical data...');
+  this.callback = this.advice;
+  this.getTicks();
   setInterval(this.refresh, util.minToMs( EMAsettings.interval) );
 }
 
@@ -192,8 +189,8 @@ TradingMethod.prototype.advice = function() {
   if(tick.diff > EMAsettings.buyTreshold) {
     log.debug('we are currently in uptrend (' + diff + ')');
 
-    if(currentTrend !== 'up') {
-      currentTrend = 'up';
+    if(this.currentTrend !== 'up') {
+      this.currentTrend = 'up';
       this.emit('advice', 'BUY', price, message);
     } else {
       this.emit('advice', 'HOLD', price, message);
@@ -202,8 +199,8 @@ TradingMethod.prototype.advice = function() {
   } else if(tick.diff < EMAsettings.sellTreshold) {
     log.debug('we are currently in a downtrend  (' + diff + ')');
 
-    if(currentTrend !== 'down') {
-      currentTrend = 'down';
+    if(this.currentTrend !== 'down') {
+      this.currentTrend = 'down';
       this.emit('advice', 'SELL', price, message);
     } else {
       this.emit('advice', 'HOLD', price, message);
@@ -229,7 +226,7 @@ TradingMethod.prototype.refresh = function() {
 
 TradingMethod.prototype.serverError = function() {
   log.error('Server responded with an error or no data, sleeping.');
-  setTimeout(this.getTicks, util.minToMs(0.5), this.advice);
+  setTimeout(this.getTicks, util.minToMs(0.5));
 };
 
 module.exports = TradingMethod;

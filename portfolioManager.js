@@ -15,7 +15,7 @@ var events = require("events");
 var log = require('./log');
 var async = require('async');
 
-var Manager = function(conf) {
+var Manager = function(conf, checker) {
   this.exchangeSlug = conf.exchange.toLowerCase();
 
   // create an exchange
@@ -32,9 +32,14 @@ var Manager = function(conf) {
   this.currency = conf.currency || 'USD';
   this.asset = conf.asset || 'BTC';
 
-  this.checkExchange();
+  var error = this.checkExchange();
+  if(error && !checker)
+    throw error;
 
   _.bindAll(this);
+
+  if(checker)
+    return;
 
   log.debug('getting balance & fee from', this.exchange.name);
   var prepare = function() {
@@ -57,6 +62,10 @@ var Manager = function(conf) {
 
 // teach our Manager events
 Util.inherits(Manager, events.EventEmitter);
+
+Manager.prototype.validCredentials = function() {
+  return !this.checkExchange();
+}
 
 Manager.prototype.checkExchange = function() {
   // what kind of exchange are we dealing with?
@@ -104,22 +113,26 @@ Manager.prototype.checkExchange = function() {
   ];
   var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
   if(!exchange)
-    throw 'Gekko does not support the exchange ' + this.exchangeSlug;
+    return 'Gekko does not support the exchange ' + this.exchangeSlug;
 
   this.directExchange = exchange.direct;
   this.infinityOrderExchange = exchange.infinityOrder;
   if(_.indexOf(exchange.currencies, this.currency) === -1)
-    throw 'Gekko does not support the currency ' + this.currency + ' at ' + this.exchange.name;
+    return 'Gekko does not support the currency ' + this.currency + ' at ' + this.exchange.name;
 
   if(_.indexOf(exchange.assets, this.asset) === -1)
-    throw 'Gekko does not support the asset ' + this.asset + ' at ' + this.exchange.name;
+    return 'Gekko does not support the asset ' + this.asset + ' at ' + this.exchange.name;
 
+  var ret;
   _.each(exchange.requires, function(req) {
     if(!this.conf[req])
-      throw this.exchange.name + ' requires "' + req + '" to be set in the config';
+      ret = this.exchange.name + ' requires "' + req + '" to be set in the config';
   }, this);
 
   this.minimalOrder = exchange.minimalOrder;
+
+  return ret;
+
 }
 
 Manager.prototype.setPortfolio = function(callback) {
