@@ -118,4 +118,10 @@ Trader.prototype.checkOrder = function(order, callback) {
   this.btce.orderList({}, _.bind(check, this));
 }
 
+Trader.prototype.cancelOrder = function(order) {
+  // TODO: properly test
+  var devNull = function() {}
+  this.btce.orderList(order, devNull);
+}
+
 module.exports = Trader;

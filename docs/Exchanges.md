@@ -61,9 +61,9 @@ The order will be something that the manager previously received via the `sell` 
 
 ### cancelOrder
 
-    this.exchange.cancelOrder(order, callback);
+    this.exchange.cancelOrder(order);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `succes`. Succes is a boolean that is reflects whether the order is succesfully canceled.
+The order will be something that the manager previously received via the `sell` or `buy` methods.
 
 ## Trading method's expectations
 
