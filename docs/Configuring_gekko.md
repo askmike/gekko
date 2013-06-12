@@ -9,6 +9,7 @@ The easiest way to configure Gekko is in the normal zone of the config:
       exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
       currency: 'USD',
       asset: 'BTC',
+      tradingEnabled: false,
       key: '',
       secret: '',
     }
@@ -47,7 +48,7 @@ If you choose to let Gekko trade on Bitstamp note that you first have to enable 
 
 ## Real trading
 
-If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (or `user` and `password` if you want to trade at Bitstamp*). You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
+If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (or `user` and `password` if you want to trade at Bitstamp*) and set `tradingEnabled` to true. You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
 
 ## EMA Settings
 

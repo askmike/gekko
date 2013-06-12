@@ -39,12 +39,12 @@ if(config.normal && config.normal.enabled) {
 
   var checker = new Manager(config.normal, true);
   var valid = checker.validCredentials();
-  if(valid)
+  if(config.normal.tradingEnabled && valid)
     config.traders.push( config.normal );
   else
     log.info('NOT trading with real money');
 } else {
-  log.info('Using advances settings');
+  log.info('Using advanced settings');
 }
 
 

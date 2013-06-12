@@ -32,6 +32,7 @@ config.normal = {
   exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
   currency: 'USD',
   asset: 'BTC',
+  tradingEnabled: false,
   key: '',
   secret: '',
 }
@@ -43,6 +44,7 @@ config.normal = {
 //   exchange: 'Bitstamp',
 //   currency: 'USD',
 //   asset: 'BTC',
+//   tradingEnabled: false,
 //   user: '',
 //   password: '',
 // }
