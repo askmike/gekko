@@ -48,8 +48,10 @@ TradingMethod.prototype.start = function() {
     diff: []
   };
 
+
   this.on('calculated candle', this.calculateEMAs);
   this.getHistoricalCandles();
+  setInterval(this.getNewCandle, util.minToMs( EMAsettings.interval) );
 }
 
 // add a price and calculate the EMAs and
