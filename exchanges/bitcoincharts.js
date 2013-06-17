@@ -14,16 +14,20 @@ var Watcher = function(config) {
   this.bitcoinCharts = new BitcoinCharts();
 }
 
-Watcher.prototype.getTrades = function(since, callback) {
+Watcher.prototype.getTrades = function(since, callback, descending) {
   var params = { symbol: this.symbol };
   if(since)
     // we don't want to hammer bitcoincharts,
     // this will fetch trades between start and now
     params.start = since.format('X');
-  
+
+  var args = _.toArray(arguments);
   this.bitcoinCharts.trades(params, function(err, data) {
-    if(err) return callback(err);
-    if(!data || !data.length) return callback(true);
+    if(err)
+      return this.retry(this.getTrades, args);
+
+    if(!data || !data.length)
+      return this.retry(this.getTrades, args);
 
     // normalize the data
     var trades = [];
@@ -35,8 +39,34 @@ Watcher.prototype.getTrades = function(since, callback) {
       });
     });
 
-    callback(false, { data: trades.reverse() });
+    if(descending)
+      callback(trades);
+    else
+      callback(trades.reverse());
   });
+}
+
+// if the exchange errors we try the same call again after
+// waiting 10 seconds
+Watcher.prototype.retry = function(method, args) {
+  var wait = +moment.duration(10, 'seconds');
+  log.debug(this.name, 'returned an error, retrying..');
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait
+  setTimeout(
+    function() { method.apply(self, args) },
+    wait
+  );
 }
 
 module.exports = Watcher;

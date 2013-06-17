@@ -16,12 +16,10 @@ config.EMA = {
   interval: 60, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
-  shortEMA: 10,
-  longEMA: 21,
-  // amount of samples to remember and base initial EMAs on
-  ticks: 100,
-  // max difference between first and last trade to base price calculation on
-  sampleSize: 10, // in seconds
+  short: 10,
+  long: 21,
+  // amount of candles to remember and base initial EMAs on
+  candles: 100,
   // the difference between the EMAs (to act as triggers)
   sellTreshold: -0.25,
   buyTreshold: 0.25

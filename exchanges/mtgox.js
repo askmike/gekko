@@ -39,22 +39,46 @@ Trader.prototype.sell = function(amount, price, callback) {
   });
 }
 
-Trader.prototype.getTrades = function(since, callback) {
-  if(since)
+Trader.prototype.getTrades = function(since, callback, descending) {
+  if(since && !_.isNumber(since))
     since = util.toMicro(since);
 
-  this.mtgox.fetchTrades(since, callback)
+  var args = _.toArray(arguments);
+  this.mtgox.fetchTrades(since, _.bind(function(err, trades) {
+    if (err || !trades)
+      return this.retry(this.getTrades, args);
+
+    trades = trades.data;
+    if (trades.length === 0)
+      return this.retry(this.getTrades, args);
+
+    if(descending)
+      callback(trades.reverse());
+    else
+      callback(trades);
+  }, this));
 }
 
-// if Mt. Gox errors we try the same call again after
-// 5 seconds or half a second if there is haste
-Trader.prototype.retry = function(method, callback, haste) {
-  var wait = +moment.duration(haste ? 0.5 : 5, 'seconds');
+// if the exchange errors we try the same call again after
+// waiting 10 seconds
+Trader.prototype.retry = function(method, args) {
+  var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait.
   setTimeout(
-    _.bind(method, this),
-    wait,
-    _.bind(callback, this)
+    function() { method.apply(self, args) },
+    wait
   );
 }
 
@@ -66,9 +90,10 @@ Trader.prototype.retry = function(method, callback, haste) {
 //  { name: 'EUR', amount: 0},
 // ]
 Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
   var calculate = function(err, result) {
     if(err)
-      return this.retry(this.mtgox.info, calculate);
+      return this.retry(this.getPortfolio, args);
 
     var assets = [];
     _.each(result.data.Wallets, function(wallet, name) {
@@ -82,9 +107,10 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getFee = function(callback) {
+  var args = _.toArray(arguments);
   var calculate = function(err, result) {
     if(err)
-      return this.retry(this.mtgox.info, calculate);
+      return this.retry(this.getFee, args);
 
     // convert the %
     var fee = result.data.Trade_Fee / 100;
@@ -95,11 +121,13 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
+  var args = _.toArray(arguments);
   // we can't just request the order id
   // @link https://bitbucket.org/nitrous/mtgox-api/#markdown-header-moneyorderresult
   var check = function(err, result) {
     if(err)
-      return this.retry(this.mtgox.orders, check);
+      return this.retry(this.checkOrder, args);
+
     var stillThere = _.find(result.data, function(o) { return o.oid === order });
     callback(null, !stillThere);
   };
@@ -117,9 +145,10 @@ Trader.prototype.cancelOrder = function(order) {
 }
 
 Trader.prototype.getTicker = function(callback) {
+  var args = _.toArray(arguments);
   var set = function(err, result) {
     if(err)
-      return this.retry(this.mtgox.ticker, set);
+      return this.retry(this.getTicker, args);
 
     var ticker = {
       bid: result.data.buy.value,

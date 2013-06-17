@@ -18,7 +18,7 @@ var Trader = function(config) {
   this.bitstamp = new Bitstamp(this.user, this.password);
 }
 
-Trader.prototype.getTrades = function(since, callback) {
+Trader.prototype.getTrades = function(since, callback, descending) {
   // bitstamp asks for a `deltatime`, this is the amount of seconds
   // ago from when to fetch trades
   if(since)
@@ -27,11 +27,47 @@ Trader.prototype.getTrades = function(since, callback) {
     deltatime = 600;
 
   deltatime = Math.round(deltatime);
-  setTimeout(_.bind(function(){
-    this.bitstamp.transactions(deltatime, function(err, trades) {
-      callback(err, {data: trades.reverse()});
+
+  var self = this;
+  var args = _.toArray(arguments);
+  setTimeout(function() {
+    self.bitstamp.transactions(deltatime, function(err, data) {
+      // console.log(err, data)
+      if(err)
+        return self.retry(self.getTrades, args);
+
+      if(!data || !data.length)
+        return self.retry(self.getTrades, args);
+
+      if(descending)
+        callback(data);
+      else
+        callback(data.reverse());
     });
-  }, this));
+  });
+}
+
+// if the exchange errors we try the same call again after
+// waiting 10 seconds
+Trader.prototype.retry = function(method, args) {
+  var wait = +moment.duration(10, 'seconds');
+  log.debug(this.name, 'returned an error, retrying..');
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait
+  setTimeout(
+    function() { method.apply(self, args) },
+    wait
+  );
 }
 
 Trader.prototype.getPortfolio = function(callback) {

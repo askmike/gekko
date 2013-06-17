@@ -71,6 +71,6 @@ The trading method analyzes exchange data to determine what to do. The trading m
 
 ### getTrades
 
-    this.watcher.getTrades(since, callback);
+    this.watcher.getTrades(since, callback, descending);
 
-The since parameter is a [moment](http://momentjs.com/), this is a wrapper around a Date object. This moment represents the point in time from when the trading method needs trade data. The callback expects `err` and `trades`. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have the `date` property (unix timestamp in either string or int) and a `price` property (float) which represents the price in [currency] per 1 [asset].
+The since parameter is a [moment](http://momentjs.com/), this is a wrapper around a Date object. This moment represents the point in time from when the trading method needs trade data. The callback expects a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have the `date` property (unix timestamp in either string or int) and a `price` property (float) which represents the price in [currency] per 1 [asset]. `descending` is a boolean describing if the trades need to be returned in chronological descending order (newest first).
