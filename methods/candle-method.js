@@ -135,6 +135,12 @@ CandleCalculator.prototype.fillNewBucket = function(trades) {
     return true;
   }, this);
 
+  if(!this.buckets[0].length) {
+    // none of the recieved trades were after the previous candle
+    log.debug('did not receive trades for most recent candle, retrying..');
+    return setTimeout(this.getNewCandle, +moment.duration(10, 'seconds'));
+  }
+
   this.calculateCandle();
 }
 

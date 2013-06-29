@@ -2,6 +2,7 @@ var BitcoinCharts = require('bitcoincharts');
 var util = require('../util.js');
 var moment = require('moment');
 var _ = require('underscore');
+var log = require('../log.js');
 
 var Watcher = function(config) {
   if(_.isObject(config))
@@ -22,7 +23,7 @@ Watcher.prototype.getTrades = function(since, callback, descending) {
     params.start = since.format('X');
 
   var args = _.toArray(arguments);
-  this.bitcoinCharts.trades(params, function(err, data) {
+  this.bitcoinCharts.trades(params, _.bind(function(err, data) {
     if(err)
       return this.retry(this.getTrades, args);
 
@@ -43,7 +44,7 @@ Watcher.prototype.getTrades = function(since, callback, descending) {
       callback(trades);
     else
       callback(trades.reverse());
-  });
+  }, this));
 }
 
 // if the exchange errors we try the same call again after
