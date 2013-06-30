@@ -96,7 +96,7 @@ config.profitCalculator = {
 //                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
 //                UNTIL THE CODE HAS BEEN PROVED SOLID.
 config.backtest = {
-  enabled: false,
+  enabled: true,
   candleFile: 'candles.csv',
   from: 0,
   to: 0

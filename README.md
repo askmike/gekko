@@ -6,7 +6,7 @@
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA).
+Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
 
 ## Main features
 
@@ -93,11 +93,14 @@ If you configured Gekko to automatically sell on this information it will also l
 * NOW going to BUY, when it is buying BTC.
 * NOW going to SELL, when it is selling BTC.
 
-It will try to buy/sell 1000 BTC, Mt. Gox and BTC-e change this in to all the funds on your account (unless you're pretty rich).
+## Backtesting
+
+Gekko also supports backtesing strategies. For information on how to set Gekko up plase refer to [the document on backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md).
+
+
 
 ## TODO
 
-* Create an easy way to backtest historical data and determine the effectiveness of different paramters.
 * Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx)).
 * Store trade history in levelDB.
 * Add money management (so that the bot will only spend a start amount of X and the profits on top of X).
