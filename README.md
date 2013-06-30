@@ -95,7 +95,21 @@ If you configured Gekko to automatically sell on this information it will also l
 
 ## Backtesting
 
-Gekko also supports backtesing strategies. For information on how to set Gekko up plase refer to [the document on backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md).
+Gekko also supports backtesing strategies. For information on how to set Gekko up plase refer to [the document on backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md). When you backtest strategies using Gekko, the output will look like this:
+
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) start time:          2013-04-24 07:00:00
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) end time:            2013-05-23 16:00:00
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) timespan:            29 days
+
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) start price:             121.6
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) end price:           125.44
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) Buy and Hold profit:         3.158%
+
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) amount of trades:        15
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) original simulated balance:  245.404 USD
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) current simulated balance:   281.819 USD
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) simulated profit:        36.415 USD (14.839%)
+    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) simulated yearly profit:     447.030 USD (182.161%)
 
 ## TODO
 
