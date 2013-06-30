@@ -56,7 +56,12 @@ CandleCalculator.prototype.getNewCandle = function() {
 
 CandleCalculator.prototype.finish = function() {
   this.endPrice = _.last(this.candles.close);
-  this.emit('finish', { start: this.startPrice, end: this.endPrice });
+  this.emit('finish', {
+    start: this.startPrice,
+    end: this.endPrice,
+    startTime: this.startTime,
+    endTime: this.currentTimestamp
+  });
 }
 
 CandleCalculator.prototype.getHistoricalCandles = function() {
@@ -87,6 +92,7 @@ CandleCalculator.prototype.addCandle = function(line) {
   } else {
     if(this.fetchingHistorical) {
       this.startPrice = _.first(this.candles.open);
+      this.startTime = this.currentTimestamp;
       this.fetchingHistorical = false;
       log.info('calculated initial EMA, simulating remaining candles')
     }

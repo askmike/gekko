@@ -1,6 +1,7 @@
 var util = require('./util.js');
 var _ = require('underscore');
 var log = require('./log.js');
+var moment = require('moment');
 
 var Logger = function(config) {
   this.config = util.getConfig();
@@ -97,13 +98,42 @@ Logger.prototype.trackProfits = function(what, price, meta) {
 }
 
 Logger.prototype.finish = function(data) {
+  var round = function(amount) {
+    return amount.toFixed(3);
+  }
+
   console.log();
   console.log();
   
-  log.info('\t\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING')
-  log.info('\t\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!')
+  log.info('\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING')
+  log.info('\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!')
 
   console.log();
+  console.log();
+
+  var start = moment.unix(data.startTime);
+  var end = moment.unix(data.endTime);
+  var timespan = end.diff(start, 'days');
+
+  log.info(
+    '(PROFIT REPORT)',
+    'start time:\t\t\t',
+    start.format('YYYY-MM-DD HH:mm:ss')
+  );
+
+  log.info(
+    '(PROFIT REPORT)',
+    'end time:\t\t\t',
+    end.format('YYYY-MM-DD HH:mm:ss')
+  );
+
+  log.info(
+    '(PROFIT REPORT)',
+    'timespan:\t\t\t',
+    timespan,
+    'days'
+  );
+
   console.log();
 
   log.info(
@@ -118,10 +148,24 @@ Logger.prototype.finish = function(data) {
     data.end
   );
 
-  this.report();
+  log.info(
+    '(PROFIT REPORT)',
+    'Buy and Hold profit:\t\t',
+    round((data.end - data.start) / data.start * 100) + '%'
+  );
+
+  console.log();
+
+  log.info(
+    '(PROFIT REPORT)',
+    'amount of trades:\t\t',
+    this.trades
+  );
+
+  this.report(timespan);
 }
 
-Logger.prototype.report = function() {
+Logger.prototype.report = function(timespan) {
   var round = function(amount) {
     return amount.toFixed(3);
   }
@@ -147,6 +191,18 @@ Logger.prototype.report = function() {
     this.reportIn,
     '(' + round(this.relativeProfit) + '%)'
   );
+
+  if(timespan) {
+    var timespanPerYear = 356 / timespan;
+
+    log.info(
+      '(PROFIT REPORT)',
+      'simulated yearly profit:\t',
+      round(this.profit * timespanPerYear),
+      this.reportIn,
+      '(' + round(this.relativeProfit * timespanPerYear) + '%)'
+    );
+  }
 }
 
 

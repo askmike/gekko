@@ -97,8 +97,6 @@ If you configured Gekko to automatically sell on this information it will also l
 
 Gekko also supports backtesing strategies. For information on how to set Gekko up plase refer to [the document on backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md).
 
-
-
 ## TODO
 
 * Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx)).
