@@ -3,7 +3,10 @@ var _ = require('underscore');
 var log = require('./log.js');
 
 var Logger = function(config) {
+  this.config = util.getConfig();
   this.verbose = config.verbose;
+  this.fee = 1 - config.fee / 100;
+
   this.reportInCurrency = config.reportInCurrency;
   if(this.reportInCurrency)
     this.reportIn = config.currency;
@@ -28,12 +31,25 @@ var Logger = function(config) {
 
   if(config.enabled)
     log.info('Profit reporter active on simulated balance');
-
 }
 
 // log advice
 Logger.prototype.inform = function(what, price, meta) {
+  if(!this.verbose && what !== 'SELL' && !this.config.backtest)
+    return;
+
+  if(!this.verbose && what === 'HOLD' && this.config.backtest)
+    return;
+
   log.info('ADVICE is to', what, meta);
+}
+
+Logger.prototype.extractFee = function(amount) {
+  amount *= 100000000;
+  amount *= this.fee;
+  amount = Math.floor(amount);
+  amount /= 100000000;
+  return amount;
 }
 
 // after every succesfull trend ride we end up with more BTC than we started with, 
@@ -51,14 +67,14 @@ Logger.prototype.trackProfits = function(what, price, meta) {
 
   // virtually trade all USD to BTC at the current MtGox price
   if(what === 'BUY') {
-    this.current.asset += this.current.currency / price;
+    this.current.asset += this.extractFee(this.current.currency / price);
     this.current.currency = 0;
     this.trades++;
   }
 
   // virtually trade all BTC to USD at the current MtGox price
   if(what === 'SELL') {
-    this.current.currency += this.current.asset * price;
+    this.current.currency += this.extractFee(this.current.asset * price);
     this.current.asset = 0;
     this.trades++;
   }
@@ -74,10 +90,35 @@ Logger.prototype.trackProfits = function(what, price, meta) {
   if(this.tracks === 1)
     return;
 
-  if(!this.verbose && what === 'SELL')
+  if(!this.verbose && what === 'SELL' && !this.config.backtest)
     this.report();
-  else if(this.verbose)
+  else if(this.verbose && !this.config.backtest)
     this.report();
+}
+
+Logger.prototype.finish = function(data) {
+  console.log();
+  console.log();
+  
+  log.info('\t\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING')
+  log.info('\t\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!')
+
+  console.log();
+  console.log();
+
+  log.info(
+    '(PROFIT REPORT)',
+    'start price:\t\t\t',
+    data.start
+  );
+
+  log.info(
+    '(PROFIT REPORT)',
+    'end price:\t\t\t',
+    data.end
+  );
+
+  this.report();
 }
 
 Logger.prototype.report = function() {

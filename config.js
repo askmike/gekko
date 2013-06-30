@@ -25,6 +25,7 @@ config.EMA = {
   buyTreshold: 0.25
 };
 
+// Monitor the live market
 config.normal = {
   enabled: true,
   exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
@@ -76,13 +77,31 @@ config.profitCalculator = {
     currency: 100,
   },
   // only want report after a sell? set to `false`.
-  verbose: true
+  verbose: false,
+  // how much fee in % does each trade cost?
+  fee: 0.6
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                           ADVANCED ZONE
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 
+// Backtesting strategies against historical data
 //
+// Test a strategy on historical data
+// 
+// Read here: https://github.com/askmike/gekko/blob/master/docs/Backtesting.md
+// 
+//          NOTE: THIS FEATURE HAS NOT BEEN PROPERELY TESTED YET, IT IS NOT 
+//                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
+//                UNTIL THE CODE HAS BEEN PROVED SOLID.
+config.backtest = {
+  enabled: false,
+  candleFile: 'candles.csv',
+  from: 0,
+  to: 0
+}
+
 // For when you want to monitor a market but want to act (trade) on a different one
 // (or different ones).
 //

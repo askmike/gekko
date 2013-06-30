@@ -1,3 +1,12 @@
+// 
+//  This is an abstract constructor function that has all methods needed to query
+//  raw trade information from exchanges (through objects described in `/exchanges`)
+//  and convert them into candles.
+// 
+//  Trade methods can extend this constructor to 
+// 
+
+
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
@@ -10,17 +19,16 @@ var CandleCalculator = function() {}
 
 Util.inherits(CandleCalculator, EventEmitter);
 
-// configure settings
-CandleCalculator.prototype.set = function(config, watcher) {
-  this.interval = config.interval;
-  this.candles = config.candles;
-  this.watcher = watcher;
-
-  this.currentBucket = config.candles - 2;
-  var list = _.range(config.candles - 1);
+// Prepares the candle fetcher and instantiates some objects
+// to keep track of what has been fetched.
+CandleCalculator.prototype.set = function() {
+  this.interval = this.settings.interval;
+  this.candles = this.settings.candles;
+  this.currentBucket = this.candles - 2;
+  var list = _.range(this.candles - 1);
   // buckets store all trades ordered per candle _chronologically reversed_ 
   this.buckets = _.map(list, function() { return [] });
-  // candles are stored _chronologically_ (first is new, last is old)
+  // candles are stored _chronologically_ (first is old, last is new)
   this.candles = {
     open: [],
     high: [],
@@ -28,7 +36,7 @@ CandleCalculator.prototype.set = function(config, watcher) {
     close: []
   }
 
-  _.bindAll(this);
+  this.emit('prepared');
 }
 
 // calculate [amount] of historical candles based on trades provided by the watcher
@@ -39,7 +47,6 @@ CandleCalculator.prototype.set = function(config, watcher) {
 CandleCalculator.prototype.getHistoricalCandles = function() {
   log.debug('fetching historical data at', this.watcher.name);
   this.fetchingHistorical = true;
-
   var candleStartTime = util.intervalsAgo(this.currentBucket + 2);
   this.watcher.getTrades(candleStartTime, this.fillBuckets);
 }
@@ -124,6 +131,8 @@ CandleCalculator.prototype.fillNewBucket = function(trades) {
 
   this.buckets.splice(0, 0, []);
 
+  // for as long as trades fit into the new bucket
+  // put them in.
   _.every(trades, function(trade) {
     var time = moment.unix(trade.date);
     if(time < candleStartTime)

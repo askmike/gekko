@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -17,7 +17,8 @@
     "emailjs": "0.3.x",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.x",
-    "async": "0.2.x"
+    "async": "0.2.x",
+    "line-reader": "0.2.x"
   },
   "engines": { "node": "0.10.x" },
   "repository": {

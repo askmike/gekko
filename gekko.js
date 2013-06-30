@@ -25,15 +25,41 @@ var async = require('async');
 var Manager = require('./portfolioManager');
 
 var config = util.getConfig();
+var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
 
+if(config.backtest.enabled) {
+  log.info('Preparing backtester to test strategy against historical data.');
 
+  // implement a trading method to create a consultant.
+  var consultant = new Consultant();
+
+  // overwrite the watcher in case of normal setup
+  if(config.normal.enabled)
+    config.watch = config.normal;
+
+  var Logger = require('./logger');
+  var logger = new Logger(_.extend(config.profitCalculator, config.watch));
+  consultant.on('advice', logger.inform);
+  if(config.profitCalculator.enabled)
+    consultant.on('advice', logger.trackProfits);
+
+  consultant.on('finish', logger.finish);
+
+  consultant.emit('prepare');
+  return;
+}
+
+
+//
+// Normalize the configuration between normal & advanced
+// 
 if(config.normal && config.normal.enabled) {
   // if the normal settings are enabled we overwrite the
   // watcher and traders set in the advanced zone
-  log.info('Using normal settings');
+  log.info('Using normal settings to monitor the live market');
   config.watch = config.normal;
   config.traders = [];
 
@@ -47,8 +73,9 @@ if(config.normal && config.normal.enabled) {
   log.info('Using advanced settings');
 }
 
-
-// create a public exchange object which can retrieve trade information
+//
+// create a public exchange object which can retrieve live trade information
+// 
 var provider = config.watch.exchange.toLowerCase();
 if(provider === 'btce') {
   // we can't fetch historical data from btce directly so we use bitcoincharts
@@ -61,7 +88,6 @@ var watcher = new DataProvider(config.watch);
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades
-var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 var consultant = new Consultant(watcher);
 
 // log advice
@@ -71,9 +97,11 @@ consultant.on('advice', logger.inform);
 if(config.profitCalculator.enabled)
   consultant.on('advice', logger.trackProfits);
 
-// automatically trade
+//
+// Configure automatic traders based on advice
+// 
+var managers = _.filter(config.traders, function(t) { return t.enabled });
 var configureManagers = function(_next) {
-  var managers = _.filter(config.traders, function(t) { return t.enabled });
   var next = _.after(managers.length, _next);
   _.each(managers, function(conf) {
     conf.exchange = conf.exchange.toLowerCase();
@@ -84,6 +112,10 @@ var configureManagers = function(_next) {
   });
 }
 
+
+//
+// Configure automatic email on advice
+//
 var configureMail = function(next) {
   if(config.mail.enabled && config.mail.email) {
     var mailer = require('./mailer');
@@ -96,7 +128,7 @@ var configureMail = function(next) {
 }
 
 var start = function() {
-  consultant.emit('start');
+  consultant.emit('prepare');
 }
 
 async.series([configureMail, configureManagers], start);

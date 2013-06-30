@@ -12,35 +12,44 @@
   @link https://bitcointalk.org/index.php?topic=60501.0
  */
 
-var CandleMethod = require('./candle-method.js');
-
 // helpers
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('../util.js');
 var Util = require('util');
 var log = require('../log.js');
-
 var config = util.getConfig();
-var EMAsettings = config.EMA;
+var settings = config.EMA;
+if(config.backtest.enabled)
+  settings = _.extend(settings, config.backtest);
 
 var TradingMethod = function(watcher) {
   this.watcher = watcher;
   this.currentTrend;
-  this.amount = EMAsettings.ticks + 1;
+  this.amount = settings.ticks + 1;
+  // store EMAsettings
+  this.settings = settings;
+  // store whole config
+  this.config = config;
 
   _.bindAll(this);
 
-  this.on('start', this.start);
+  this.on('prepare', this.prepare);
+  this.on('prepared', this.start);
+  this.on('calculated candle', this.calculateEMAs);
 }
 
+if(config.backtest.enabled)
+  var CandleMethod = require('./historical-candle-fetcher.js');
+else
+  var CandleMethod = require('./realtime-candle-fetcher.js');
 Util.inherits(TradingMethod, CandleMethod);
 
-TradingMethod.prototype.start = function() {
+// first prepare this trading method, then
+// prepare the candleMethod this trade method 
+// is extending.
+TradingMethod.prototype.prepare = function() {
   log.info('Calculating EMA on historical data...');
-
-  this.set(EMAsettings, this.watcher);
-
   // setup method specific parameters
   this.ema = {
     short: [],
@@ -48,10 +57,17 @@ TradingMethod.prototype.start = function() {
     diff: []
   };
 
+  this.set();
+}
 
-  this.on('calculated candle', this.calculateEMAs);
-  this.getHistoricalCandles();
-  setInterval(this.getNewCandle, util.minToMs( EMAsettings.interval) );
+TradingMethod.prototype.start = function() {
+  if(config.backtest.enabled) {
+    this.on('calculated new candle', this.getNewCandle);
+    this.getHistoricalCandles();
+  } else {
+    this.getHistoricalCandles();
+    setInterval(this.getNewCandle, util.minToMs( settings.interval ) );
+  }
 }
 
 // add a price and calculate the EMAs and
@@ -83,7 +99,7 @@ TradingMethod.prototype.calculateEMAs = function() {
 TradingMethod.prototype.calculateEMA = function(type) {
   var price = _.last(this.candles.close);
 
-  var k = 2 / (EMAsettings[type] + 1);
+  var k = 2 / (settings[type] + 1);
   var ema, y;
 
   var current = _.size(this.candles.close);
@@ -111,8 +127,10 @@ TradingMethod.prototype.advice = function() {
   var diff = _.last(this.ema.diff).toFixed(3);
   var price = _.last(this.candles.close).toFixed(3);
   var message = '@ ' + price + ' (' + diff + ')';
+  if(config.backtest.enabled)
+    message += '\tat \t' + moment.unix(this.currentTimestamp).format('YYYY-MM-DD HH:mm:ss');
 
-  if(diff > EMAsettings.buyTreshold) {
+  if(diff > settings.buyTreshold) {
     log.debug('we are currently in uptrend (' + diff + ')');
 
     if(this.currentTrend !== 'up') {
@@ -121,7 +139,7 @@ TradingMethod.prototype.advice = function() {
     } else
       this.emit('advice', 'HOLD', price, message);
 
-  } else if(diff < EMAsettings.sellTreshold) {
+  } else if(diff < settings.sellTreshold) {
     log.debug('we are currently in a downtrend', message);
 
     if(this.currentTrend !== 'down') {
