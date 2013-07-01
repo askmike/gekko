@@ -31,7 +31,7 @@ This means that `3486` is the PID of the command we just ran, and `13310` is the
 
 ### With [screen](http://www.gnu.org/software/screen/manual/screen.html)
 
-    screen -S gekko-seesion
+    screen -S gekko-session
     node gekko
 
 Then just detach your session with &lt;Ctrl&gt;+&lt;a&gt; followed by &lt;Ctrl&gt;+&lt;d&gt;.

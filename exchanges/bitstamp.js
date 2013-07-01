@@ -32,7 +32,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   setTimeout(function() {
     self.bitstamp.transactions(deltatime, function(err, data) {
-      // console.log(err, data)
       if(err)
         return self.retry(self.getTrades, args);
 
@@ -96,9 +95,7 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  console.log(amount, price);
   var set = function(err, result) {
-    console.log(err, result);
     if(err || result.error)
       return log.error('unable to buy:', err, result);
 
@@ -110,14 +107,11 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount *= 100000000;
   amount = Math.floor(amount);
   amount /= 100000000;
-  // return console.log(amount);
   this.bitstamp.buy(amount, price, _.bind(set, this));
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  console.log(amount, price);
   var set = function(err, result) {
-    console.log(err, result);
     if(err || result.error)
       return log.error('unable to sell:', err, result);
 

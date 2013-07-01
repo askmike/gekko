@@ -8,7 +8,7 @@
 
   USE AT YOUR OWN RISK!
 
-  The authors of this project is NOT responsible for any damage or loss caused 
+  The author of this project is NOT responsible for any damage or loss caused 
   by this software. There can be bugs and the bot may not perform as expected 
   or specified. Please consider testing it first without automatic buying / 
   selling in the provided advice. Also look at the code to see what how 
@@ -30,6 +30,9 @@ var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
 
+// if backtest is enabled do a minimal setup without
+// traders, emailer, and exchange manager. Run it and
+// quit.
 if(config.backtest.enabled) {
   log.info('Preparing backtester to test strategy against historical data.');
 
@@ -42,6 +45,7 @@ if(config.backtest.enabled) {
 
   var Logger = require('./logger');
   var logger = new Logger(_.extend(config.profitCalculator, config.watch));
+
   consultant.on('advice', logger.inform);
   if(config.profitCalculator.enabled)
     consultant.on('advice', logger.trackProfits);
@@ -52,9 +56,10 @@ if(config.backtest.enabled) {
   return;
 }
 
+// setting up Gekko for moniting the live market.
 
 //
-// Normalize the configuration between normal & advanced
+// Normalize the configuration between normal & advanced.
 // 
 if(config.normal && config.normal.enabled) {
   // if the normal settings are enabled we overwrite the
@@ -74,7 +79,8 @@ if(config.normal && config.normal.enabled) {
 }
 
 //
-// create a public exchange object which can retrieve live trade information
+// Create a public exchange object which can retrieve live 
+// trade information.
 // 
 var provider = config.watch.exchange.toLowerCase();
 if(provider === 'btce') {
@@ -98,7 +104,8 @@ if(config.profitCalculator.enabled)
   consultant.on('advice', logger.trackProfits);
 
 //
-// Configure automatic traders based on advice
+// Configure automatic traders based on advice,
+// after they are all prepared we continu.
 // 
 var managers = _.filter(config.traders, function(t) { return t.enabled });
 var configureManagers = function(_next) {
@@ -114,7 +121,7 @@ var configureManagers = function(_next) {
 
 
 //
-// Configure automatic email on advice
+// Configure automatic email on advice.
 //
 var configureMail = function(next) {
   if(config.mail.enabled && config.mail.email) {
