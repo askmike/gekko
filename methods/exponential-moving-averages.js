@@ -18,9 +18,11 @@ var _ = require('underscore');
 var util = require('../util.js');
 var Util = require('util');
 var log = require('../log.js');
+
 var config = util.getConfig();
 var settings = config.EMA;
-if(config.backtest.enabled)
+var backtesting = config.backtest.enabled;
+if(backtesting)
   settings = _.extend(settings, config.backtest);
 
 var TradingMethod = function(watcher) {
@@ -39,7 +41,7 @@ var TradingMethod = function(watcher) {
   this.on('calculated candle', this.calculateEMAs);
 }
 
-if(config.backtest.enabled)
+if(backtesting)
   var CandleMethod = require('./historical-candle-fetcher.js');
 else
   var CandleMethod = require('./realtime-candle-fetcher.js');
@@ -61,7 +63,7 @@ TradingMethod.prototype.prepare = function() {
 }
 
 TradingMethod.prototype.start = function() {
-  if(config.backtest.enabled) {
+  if(backtesting) {
     this.on('calculated new candle', this.getNewCandle);
     this.getHistoricalCandles();
   } else {

@@ -10,16 +10,9 @@ Gekko is a Bitcoin trading bot for popular exchanges written in javascript runni
 
 ## Main features
 
-Gekko uses technical analysis (only EMA at this moment) to determine when to enter or leave the market, at such a moment it can:
-
-* Advice on what you should do (for example per email).
-* Calculate the profits of all the advices so far.
-* Automatically trade.
-
-Gekko currently supports automatic trading at the following exchanges:
-* [Mt. Gox](https://mtgox.com/)
-* [BTC-e](https://btc-e.com/) (alpha stage)
-* [Bitstamp](https://bitstamp.net) (alpha stage)
+* Paper trading
+* Live trading (trade bot)
+* Backtesting
 
 ## What?
 
@@ -31,9 +24,29 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 *Use Gekko at you own risk.*
 
-## Install
+### Paper & live trading 
 
-Windows users? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running.
+Gekko uses Technical Analysis (only EMA at this moment) to determine when to enter or leave the live market, at such a moment it can:
+
+* Advice on what you should do (for example per email).
+* Calculate the profits of all the advices so far.
+* Automatically trade.
+
+Gekko currently supports paper & live trading at the following exchanges:
+
+* [Mt. Gox](https://mtgox.com/)
+* [BTC-e](https://btc-e.com/)
+* [Bitstamp](https://bitstamp.net)
+
+### Backtesting
+
+You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage. 
+
+You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.
+
+## Installing Gekko
+
+Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
 
 Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/master.zip) or clone the repository via git:
 
@@ -44,13 +57,19 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
+## Configuring Gekko
+
 To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters. Check out doc on [Configuring Gekko](https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md) where everything is explained in more detail.
+
+## Running Gekko
 
 To run the bot you just have to start Gekko:
 
     node gekko
 
 You can also run Gekko silently, for examples on how to do this check out the [advanced features](https://github.com/askmike/gekko/blob/master/docs/Advanced_features.md).
+
+## Updating Gekko
 
 If you installed the bot via git you can easily fetch the latest updates by running:
 
@@ -82,9 +101,9 @@ After every line of advice we can see the current price Gekko calculated and the
 
 ### Profit report
 
-The profit report will log out Gekko's profit since it started, this is done using a buy and sell simulations (regardless if you have automatic trading enabled or not). **The profit does not take fees into account.**
+The profit report will log out Gekko's profit since it started, this is done using a buy and sell simulations (regardless if you have automatic trading enabled or not). Gekko applies the configured trading fee on both simulated sells and buys.
 
-*If Gekko logs 20% that means that if you would have had automatic trading enabled on an exchange account with a balance of 1BTC, you would now have 1.2BTC (minus the exchange fees for the trades).*
+*If Gekko logs 20% that means that if you would have had automatic trading enabled on an exchange account with a balance of 1BTC, you would now have 1.2BTC.*
 
 ### Buying and selling
 
@@ -92,24 +111,6 @@ If you configured Gekko to automatically sell on this information it will also l
 
 * NOW going to BUY, when it is buying BTC.
 * NOW going to SELL, when it is selling BTC.
-
-## Backtesting
-
-Gekko also supports backtesing strategies. For information on how to set Gekko up plase refer to [the document on backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md). When you backtest strategies using Gekko, the output will look like this:
-
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) start time:                  2013-04-24 07:00:00
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) end time:                    2013-05-23 16:00:00
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) timespan:                    29 days
-
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) start price:                 121.6
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) end price:                   125.44
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) Buy and Hold profit:         3.158%
-
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) amount of trades:            15
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) original simulated balance:  245.404 USD
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) current simulated balance:   281.819 USD
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) simulated profit:            36.415 USD (14.839%)
-    2013-06-30 13:25:30 (INFO): (PROFIT REPORT) simulated yearly profit:     447.030 USD (182.161%)
 
 ## TODO
 

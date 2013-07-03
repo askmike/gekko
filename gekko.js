@@ -19,13 +19,16 @@
 // helpers
 var moment = require('moment');
 var _ = require('underscore');
-var util = require('./util.js');
-var log = require('./log.js');
+var util = require('./util');
+var log = require('./log');
 var async = require('async');
 var Manager = require('./portfolioManager');
 
 var config = util.getConfig();
-var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+if(config.talib)
+  var Consultant = require('./methods/talib');
+else
+  var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
