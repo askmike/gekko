@@ -56,11 +56,16 @@ CandleCalculator.prototype.fillBuckets = function(trades) {
   var latestTradeDate;
   var startBucket = this.currentBucket;
 
+  var emptyBucket = true;
   var nextBucketTime = util.intervalsAgo(this.currentBucket);
   _.every(trades, function(trade) {
     var time = moment.unix(trade.date);
-    // if this trade should go to the next bucket
-    if(time > nextBucketTime) {
+    // as long as this trade is to recent
+    // it should go to the next bucket
+    while(time > nextBucketTime) {
+      if(emptyBucket === true)
+        return false;
+
       // we can calculate the candle of the freshly filled bucket
       this.calculateCandle();
 
@@ -76,6 +81,7 @@ CandleCalculator.prototype.fillBuckets = function(trades) {
       nextBucketTime = util.intervalsAgo(this.currentBucket);
     }
 
+    emptyBucket = false;
     latestTradeDate = time;
     this.buckets[ this.currentBucket ].push(parseFloat(trade.price));
 
@@ -86,6 +92,10 @@ CandleCalculator.prototype.fillBuckets = function(trades) {
   // all buckets except for the most recent one
   if(this.currentBucket < 1)
     return;
+
+  // if we haven't got a single useful trade bail out
+  if(!latestTradeDate)
+    throw 'Failed to load historical trades from ' + this.watcher.name;
 
   log.debug('need new trades, refetching', this.watcher.name);
 
