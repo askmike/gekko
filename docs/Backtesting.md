@@ -27,7 +27,6 @@ You can configure Gekko to test the current EMA strategy on historical data. To 
 Once you have the csv file with candles you can configure Gekko for backtesting: in [config.js](https://github.com/askmike/gekko/blob/master/config.js) in the advanced zone you need to the backtesting part like so:
 
     config.backtest = {
-      enabled: true, // set to true to run backtests instead of live monitoring
       candleFile: 'candles.csv', // the candles file
       from: 0, // optional start timestamp 
       to: 0 // optional end timestamp
@@ -38,6 +37,12 @@ Once configured Gekko will run the backtest instead of watching the live market.
 * Everything under `backtest`.
 * Everything under `profitCalculator`.
 * Everything under `EMA` with the exception of interval, as this will be determined by the candles file.
+
+## Running the backtester
+
+Instead of running the paper / live trading Gekko using `node gekko`, you can start the backtester by running:
+
+    node gekko-backtest
 
 ## Notes
 

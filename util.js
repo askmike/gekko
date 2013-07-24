@@ -14,6 +14,16 @@ var util = {
     _config = require(configFile);
     return _config;
   },
+  // overwrite the whole config
+  setConfig: function(config) {
+    _config = config;
+  },
+  setConfigProperty: function(parent, key, value) {
+    if(parent)
+      _config[parent][key] = value;
+    else
+      _config[key] = value;
+  },
   getArgument: function(argument) {
     var ret;
     _.each(process.argv, function(arg) {

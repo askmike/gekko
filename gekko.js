@@ -10,8 +10,8 @@
 
   The author of this project is NOT responsible for any damage or loss caused 
   by this software. There can be bugs and the bot may not perform as expected 
-  or specified. Please consider testing it first without automatic buying / 
-  selling in the provided advice. Also look at the code to see what how 
+  or specified. Please consider testing it first with paper trading / 
+  backtesting on historical data. Also look at the code to see what how 
   it's working.
 
 */
@@ -32,34 +32,6 @@ else
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
-
-// if backtest is enabled do a minimal setup without
-// traders, emailer, and exchange manager. Run it and
-// quit.
-if(config.backtest.enabled) {
-  log.info('Preparing backtester to test strategy against historical data.');
-
-  // implement a trading method to create a consultant.
-  var consultant = new Consultant();
-
-  // overwrite the watcher in case of normal setup
-  if(config.normal.enabled)
-    config.watch = config.normal;
-
-  var Logger = require('./logger');
-  var logger = new Logger(_.extend(config.profitCalculator, config.watch));
-
-  consultant.on('advice', logger.inform);
-  if(config.profitCalculator.enabled)
-    consultant.on('advice', logger.trackProfits);
-
-  consultant.on('finish', logger.finish);
-
-  consultant.emit('prepare');
-  return;
-}
-
-// setting up Gekko for moniting the live market.
 
 //
 // Normalize the configuration between normal & advanced.
