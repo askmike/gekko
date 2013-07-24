@@ -1,12 +1,18 @@
 var moment = require('moment');
 var _ = require('underscore');
 
+var _config = false;
+
 // helper functions
 var util = {
   getConfig: function() {
+    if(_config)
+      return _config;
+
     var path = require('path');
     var configFile = path.resolve(util.getArgument('config') || 'config.js');
-    return require(configFile);
+    _config = require(configFile);
+    return _config;
   },
   getArgument: function(argument) {
     var ret;
