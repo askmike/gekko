@@ -19,6 +19,18 @@ module.exports.init = function(callback) {
       ssl: true
     });
 
+    if(config.sendMailOnStart) {
+      server.send({
+        from: "Gekko <" + config.email + ">",
+        to: "Bud Fox <" + config.email + ">",
+        subject: "Gekko has started",
+        text: [
+          "I've just started watching the markets, ",
+          "I'll let you know when I got some advice"
+        ].join('')
+      }, send);
+    }
+
     log.debug('Setup email adviser.');
     callback();
   }

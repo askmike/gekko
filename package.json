@@ -14,7 +14,7 @@
     "moment": "2.0.x",
     "btc-e": "0.0.x",
     "bitcoincharts": "0.0.x",
-    "emailjs": "0.3.x",
+    "emailjs": "https://github.com/titaniumlou/emailjs/tarball/patch-1",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
     "async": "0.2.x",

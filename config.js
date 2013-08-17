@@ -51,6 +51,7 @@ config.normal = {
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {
   enabled: false,
+  sendMailOnStart: true,
   email: '', // only works for Gmail or Google apps accounts at the moment
 
   // You don't have to set your password here, if you leave it blank we will ask it
