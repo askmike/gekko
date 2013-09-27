@@ -10,11 +10,11 @@
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
     "mtgox-apiv2": "1.0.x",
-    "underscore": "1.4.x",
+    "lodash": "2.x",
     "moment": "2.0.x",
     "btc-e": "0.0.x",
     "bitcoincharts": "0.0.x",
-    "emailjs": "https://github.com/titaniumlou/emailjs/tarball/patch-1",
+    "emailjs": "git://github.com/eleith/emailjs.git",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
     "async": "0.2.x",
