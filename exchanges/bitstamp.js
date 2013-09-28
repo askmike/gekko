@@ -1,6 +1,6 @@
 var Bitstamp = require("bitstamp");
 var util = require('../util.js');
-var _ = require('underscore');
+var _ = require('lodash');
 var moment = require('moment');
 var log = require('../log');
 

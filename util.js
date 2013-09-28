@@ -1,5 +1,5 @@
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var _config = false;
 

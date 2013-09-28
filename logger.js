@@ -1,5 +1,5 @@
 var util = require('./util.js');
-var _ = require('underscore');
+var _ = require('lodash');
 var log = require('./log.js');
 var moment = require('moment');
 

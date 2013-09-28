@@ -18,7 +18,7 @@
 
 // helpers
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('./util');
 var log = require('./log');
 var async = require('async');
@@ -84,7 +84,11 @@ if(config.profitCalculator.enabled)
 // 
 var managers = _.filter(config.traders, function(t) { return t.enabled });
 var configureManagers = function(_next) {
-  var next = _.after(managers.length, _next);
+  var amount = _.size(managers);
+  if(!amount)
+    return _next();
+
+  var next = _.after(amount, _next);
   _.each(managers, function(conf) {
     conf.exchange = conf.exchange.toLowerCase();
 

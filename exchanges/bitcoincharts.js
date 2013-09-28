@@ -1,7 +1,7 @@
 var BitcoinCharts = require('bitcoincharts');
 var util = require('../util.js');
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 var log = require('../log.js');
 
 var Watcher = function(config) {

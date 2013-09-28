@@ -8,7 +8,7 @@
 
 var moment = require('moment');
 var fmt = require('util').format;
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('./util.js');
 var config = util.getConfig();
 

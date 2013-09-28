@@ -18,7 +18,7 @@
 
 // helpers
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 var util = require('./util');
 var log = require('./log');
 var async = require('async');
