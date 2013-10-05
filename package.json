@@ -14,7 +14,7 @@
     "moment": "2.0.x",
     "btc-e": "0.0.x",
     "bitcoincharts": "0.0.x",
-    "emailjs": "git://github.com/eleith/emailjs.git",
+    "emailjs": "https://github.com/eleith/emailjs.git",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
     "async": "0.2.x",
