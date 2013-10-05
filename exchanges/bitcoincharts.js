@@ -46,7 +46,7 @@ Watcher.prototype.getTrades = function(since, callback, descending) {
     if(descending)
       callback(trades.reverse());
     else
-      callback(trades;
+      callback(trades);
   }, this));
 }
 
