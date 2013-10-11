@@ -13,7 +13,7 @@
     "lodash": "2.x",
     "moment": "2.0.x",
     "btc-e": "0.0.x",
-    "bitcoincharts": "git://github.com/milianx/node-bitcoincharts.git",
+    "bitcoincharts": "0.0.x",
     "emailjs": "git://github.com/eleith/emailjs.git",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
