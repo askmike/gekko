@@ -113,6 +113,11 @@ TradingMethod.prototype.calculateEMA = function(type) {
     y = this.ema[type][current - 2];
   
   ema = price * k + y * (1 - k);
+  
+  if(!ema)
+    //in case of empty ema value (e.g. bitcoincharts downtime) take the last ema value
+    ema = _.last(this.ema[type]);
+  
   this.ema[type].push(ema);
 }
 
