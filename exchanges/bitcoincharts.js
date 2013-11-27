@@ -21,6 +21,9 @@ Watcher.prototype.getTrades = function(since, callback, descending) {
     // we don't want to hammer bitcoincharts,
     // this will fetch trades between start and now
     params.start = since.format('X');
+  // otherwise fetch trades within the last interval
+  else 
+    params.start = util.intervalsAgo(1).format('X');
 
   var args = _.toArray(arguments);
   this.bitcoinCharts.trades(params, _.bind(function(err, data) {
@@ -41,9 +44,9 @@ Watcher.prototype.getTrades = function(since, callback, descending) {
     });
 
     if(descending)
-      callback(trades);
-    else
       callback(trades.reverse());
+    else
+      callback(trades);
   }, this));
 }
 
