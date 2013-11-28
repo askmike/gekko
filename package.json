@@ -14,10 +14,12 @@
     "moment": "2.0.x",
     "btc-e": "0.0.x",
     "bitcoincharts": "0.0.x",
+    "cexio": "0.0.1",
     "emailjs": "git://github.com/eleith/emailjs.git",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
     "async": "0.2.x",
+    "nedb": "*",
     "line-reader": "0.2.x"
   },
   "engines": { "node": "0.10.x" },

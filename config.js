@@ -48,6 +48,20 @@ config.normal = {
 //   password: '',
 // }
 
+// example cex.io config;
+
+//config.normal = {
+//  enabled: true,
+//  exchange: 'cexio',
+//  currency: 'BTC',   // @ cexio we pay BTC
+//  asset: 'GHS',      // @ cexio we buy GH/s
+//  tradingEnabled: false,
+//  username: '',      // this option MUST be set for cex.io
+//  key: '',
+//  secret: '',
+//}
+
+
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {
   enabled: false,
@@ -139,9 +153,18 @@ config.traders = [
     currency: 'USD',
     asset: 'BTC',
     enabled: false
+  },
+  {
+    exchange: 'cex.io',
+    key: '',
+    secret: '',
+    currency: 'BTC',
+    asset: 'GHS',
+    enabled: false
   }
 ];
 
 config.debug = false; // for additional logging / debugging
 
 module.exports = config;
+

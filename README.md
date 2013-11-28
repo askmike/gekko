@@ -37,6 +37,7 @@ Gekko currently supports paper & live trading at the following exchanges:
 * [Mt. Gox](https://mtgox.com/)
 * [BTC-e](https://btc-e.com/)
 * [Bitstamp](https://bitstamp.net)
+* [cex.io] (https://cex.io)
 
 ### Backtesting
 

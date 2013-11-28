@@ -161,3 +161,4 @@ Trader.prototype.getTicker = function(callback) {
 }
 
 module.exports = Trader;
+

@@ -99,7 +99,7 @@ Logger.prototype.trackProfits = function(what, price, meta) {
 
 Logger.prototype.finish = function(data) {
   var round = function(amount) {
-    return amount.toFixed(3);
+    return amount.toFixed(6);
   }
 
   console.log();
@@ -167,7 +167,7 @@ Logger.prototype.finish = function(data) {
 
 Logger.prototype.report = function(timespan) {
   var round = function(amount) {
-    return amount.toFixed(3);
+    return amount.toFixed(6);
   }
 
   log.info(
