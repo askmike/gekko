@@ -8,7 +8,7 @@ var config = {};
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Gekko currently only supports Exponential Moving Averages
-config.tradingMethod =  'Exponential Moving Averages';
+config.tradingMethod = 'Exponential Moving Averages';
 
 // Exponential Moving Averages settings:
 config.EMA = {
@@ -86,14 +86,14 @@ config.profitCalculator = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                           ADVANCED ZONE
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 
+//
 // Backtesting strategies against historical data
 //
 // Test a strategy on historical data
-// 
+//
 // Read here: https://github.com/askmike/gekko/blob/master/docs/Backtesting.md
-// 
-//          NOTE: THIS FEATURE HAS NOT BEEN PROPERELY TESTED YET, IT IS NOT 
+//
+//          NOTE: THIS FEATURE HAS NOT BEEN PROPERELY TESTED YET, IT IS NOT
 //                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
 //                UNTIL THE CODE HAS BEEN PROVED SOLID.
 config.backtest = {
