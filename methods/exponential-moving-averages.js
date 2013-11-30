@@ -88,7 +88,10 @@ TradingMethod.prototype.calculateEMAs = function() {
 
   log.debug('calced EMA properties for new candle:');
   _.each(['short', 'long', 'diff'], function(e) {
-    log.debug('\t', e, 'ema', _.last(this.ema[e]).toFixed(3));
+    if(config.normal.exchange === 'cexio')
+      log.debug('\t', e, 'ema', _.last(this.ema[e]).toFixed(8));
+    else
+      log.debug('\t', e, 'ema', _.last(this.ema[e]).toFixed(3));
   }, this);
 
   if(!this.fetchingHistorical)
@@ -133,9 +136,17 @@ TradingMethod.prototype.calculateEMAdiff = function() {
 }
 
 TradingMethod.prototype.advice = function() {
-  var diff = _.last(this.ema.diff).toFixed(3);
-  var price = _.last(this.candles.close).toFixed(3);
+  // @ cexio we need to be more precise due to low prices
+  // and low margins on trade.  All others use 3 digist.
+
+  var diff = _.last(this.ema.diff).toFixed(3),
+      price = _.last(this.candles.close).toFixed(8);
+
+  if(config.normal.exchange !== 'cexio')
+    price = price.toFixed(3);
+
   var message = '@ ' + price + ' (' + diff + ')';
+
   if(config.backtest.enabled)
     message += '\tat \t' + moment.unix(this.currentTimestamp).format('YYYY-MM-DD HH:mm:ss');
 

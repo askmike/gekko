@@ -28,13 +28,13 @@ config.EMA = {
 // Monitor the live market
 config.normal = {
   enabled: true,
-  exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
-  currency: 'USD',
-  asset: 'BTC',
+  exchange: 'cexio', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  currency: 'BTC',
+  asset: 'GHS',
   tradingEnabled: false,
   key: 'your-key',
   secret: 'your-secret',
-  clientID: 0, // your username, only fill in when using bitstamp
+  username: 0, // your username, only fill in when using bitstamp or cexio
 }
 
 // want Gekko to send a mail on buy or sell advice?
@@ -128,9 +128,18 @@ config.traders = [
     currency: 'USD',
     asset: 'BTC',
     enabled: false
+  },
+  {
+    exchange: 'cex.io',
+    key: '',
+    secret: '',
+    currency: 'BTC',
+    asset: 'GHS',
+    enabled: false
   }
 ];
 
-config.debug = false; // for additional logging / debugging
+config.debug = true; // for additional logging / debugging
 
 module.exports = config;
+

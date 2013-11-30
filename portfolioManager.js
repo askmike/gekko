@@ -107,8 +107,17 @@ Manager.prototype.checkExchange = function() {
       infinityOrder: false,
       currencies: ['USD'],
       assets: ['BTC'],
-      requires: ['key', 'secret', 'clientID'],
+      requires: ['key', 'secret', 'username'],
       minimalOrder: { amount: 1, unit: 'currency' }
+    },
+    {
+      name: 'cexio',
+      direct: false,
+      infinityOrder: false,
+      currencies: ['BTC'],
+      assets: ['GHS'],
+      requires: ['key', 'secret', 'username'],
+      minimalOrder: { amount: 0.000001, unit: 'currency' }
     }
   ];
   var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
@@ -235,28 +244,47 @@ Manager.prototype.getMinimum = function(price) {
 // the asset, if so BUY and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
+  // sometimes cex.io specifies a price w/ > 8 decimals
+  price *= 100000000;
+  price = Math.ceil(price);
+  price /= 100000000;
+
   var currency = this.getFund(this.currency);
   var minimum = this.getMinimum(price);
+
   if(amount > minimum) {
-    log.info('attempting to BUY', this.asset, 'at', this.exchange.name);
+    log.info('attempting to BUY',
+             amount, this.asset,
+             'at', this.exchange.name);
     this.exchange.buy(amount, price, this.noteOrder);
     this.action = 'BUY';
   } else
-    log.info('wanted to buy but insufficient', this.currency, '(' + amount * price + ') at', this.exchange.name);
+    log.info('wanted to buy but insufficient',
+             this.currency,
+             '(' + amount * price + ') at', this.exchange.name);
 }
 
 // first do a quick check to see whether we can sell
 // the asset, if so SELL and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.sell = function(amount, price) {
+  // sometimes cex.io specifies a price w/ > 8 decimals
+  price *= 100000000;
+  price = Math.ceil(price);
+  price /= 100000000;
+
   var asset = this.getFund(this.asset);
   var minimum = this.getMinimum(price);
   if(amount > minimum) {
-    log.info('attempting to SELL', this.asset, 'at', this.exchange.name);
+    log.info('attempting to SELL',
+             amount, this.asset,
+             'at', this.exchange.name);
     this.exchange.sell(amount, price, this.noteOrder);
     this.action = 'SELL';
   } else
-    log.info('wanted to sell but insufficient', this.asset, '(' + amount + ') at', this.exchange.name);
+    log.info('wanted to sell but insufficient',
+             this.asset,
+             '(' + amount + ') at', this.exchange.name);
 }
 
 Manager.prototype.noteOrder = function(order) {

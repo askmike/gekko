@@ -46,7 +46,7 @@ if(config.normal && config.normal.enabled) {
   var checker = new Manager(config.normal, true);
   var valid = checker.validCredentials();
 
-  if(!valid)
+  if(!valid && config.normal.tradingEnabled)
     throw 'Your exchange credentials don\'t look valid.';
 
   if(config.normal.tradingEnabled)

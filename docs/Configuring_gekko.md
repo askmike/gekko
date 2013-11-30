@@ -14,13 +14,16 @@ The easiest way to configure Gekko is in the normal zone of the config:
       secret: '',
     }
 
+When using with cex.io marketplace, you need to add option `username` set to the username you're registered with at cex.io.
+
 ## Exchanges
 
 Gekko currently supports these exchanges:
 
 * [Mt. Gox](https://mtgox.com) (MtGox)
-* [BTC-e](http://btc-e.com) (BTCe)
-* [Bitstamp](http://bitstamp.com) (Bitstamp)*
+* [BTC-e](https://btc-e.com) (BTCe)
+* [Bitstamp](https://bitstamp.com) (Bitstamp)*
+* [cex.io] (https://cex.io) (cexio)
 
 You have to tell Gekko what market to monitor on the selected exchange, A market is defined by a `currency` and an `asset`. here are all supported combinations per exchange:
 
@@ -32,9 +35,13 @@ You have to tell Gekko what market to monitor on the selected exchange, A market
   currencies: USD, EUR, RUR  
   assets: BTC
 
-* Bitstamp:
+* Bitstamp:  
   currencies: USD  
   assets: BTC
+  
+* cex.io:  
+  currencies: BTC, *NMC (not yet supported)*  
+  assets: GHS
 
 *Even though Bitcoin is a currency Gekko treats is like an asset when you are trading USD vs BTC.*
 
