@@ -6,15 +6,14 @@ The easiest way to configure Gekko is in the normal zone of the config:
 
     config.normal = {
       enabled: true,
-      exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
+      exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
       currency: 'USD',
       asset: 'BTC',
       tradingEnabled: false,
       key: '',
       secret: '',
+      username: 0 // only fill this is when using Bitstamp or cexio
     }
-
-When using with cex.io marketplace, you need to add option `username` set to the username you're registered with at cex.io.
 
 ## Exchanges
 
@@ -49,7 +48,7 @@ You have to tell Gekko what market to monitor on the selected exchange, A market
 
 ## Real trading
 
-If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (~~with a clientID - your username - if you want to trade at Bitstamp~~ - Real trading is not working on Bitstamp right now) and set `tradingEnabled` to true. You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
+If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (~~with a clientID - your username - if you want to trade at Bitstamp~~ or cexio - Real trading is not working on Bitstamp right now) and set `tradingEnabled` to true. You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
 
 ## EMA Settings
 
