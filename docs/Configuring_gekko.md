@@ -21,9 +21,11 @@ When using with cex.io marketplace, you need to add option `username` set to the
 Gekko currently supports these exchanges:
 
 * [Mt. Gox](https://mtgox.com) (MtGox)
-* [BTC-e](https://btc-e.com) (BTCe)
+* [BTC-e](https://btc-e.com) (BTCe)*
 * [Bitstamp](https://bitstamp.com) (Bitstamp)*
-* [cex.io] (https://cex.io) (cexio)
+* [cex.io](https://cex.io) (cexio)
+
+*Note that there currently is a DNS bug for the dataprovider of these exchanges. If you are unable to fetch data, please check [this issue](https://github.com/askmike/gekko/issues/51#issuecomment-29551099).
 
 You have to tell Gekko what market to monitor on the selected exchange, A market is defined by a `currency` and an `asset`. here are all supported combinations per exchange:
 
