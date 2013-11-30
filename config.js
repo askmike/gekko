@@ -28,9 +28,9 @@ config.EMA = {
 // Monitor the live market
 config.normal = {
   enabled: true,
-  exchange: 'cexio', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'BTC',
-  asset: 'GHS',
+  exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  currency: 'USD',
+  asset: 'BTC',
   tradingEnabled: false,
   key: 'your-key',
   secret: 'your-secret',
@@ -139,7 +139,7 @@ config.traders = [
   }
 ];
 
-config.debug = true; // for additional logging / debugging
+config.debug = false; // for additional logging / debugging
 
 module.exports = config;
 

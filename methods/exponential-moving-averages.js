@@ -142,6 +142,9 @@ TradingMethod.prototype.advice = function() {
   var diff = _.last(this.ema.diff).toFixed(3),
       price = _.last(this.candles.close).toFixed(8);
 
+  if(typeof price === 'string')
+    price = parseFloat(price);
+
   if(config.normal.exchange !== 'cexio')
     price = price.toFixed(3);
 
