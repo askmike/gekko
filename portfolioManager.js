@@ -107,7 +107,7 @@ Manager.prototype.checkExchange = function() {
       infinityOrder: false,
       currencies: ['USD'],
       assets: ['BTC'],
-      requires: ['user', 'password'],
+      requires: ['key', 'secret', 'clientID'],
       minimalOrder: { amount: 1, unit: 'currency' }
     }
   ];

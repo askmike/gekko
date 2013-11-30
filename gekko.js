@@ -4,7 +4,7 @@
   in node, it features multiple trading methods using 
   technical analysis.
 
-  Disclaimer: 
+  Disclaimer:
 
   USE AT YOUR OWN RISK!
 
@@ -45,7 +45,11 @@ if(config.normal && config.normal.enabled) {
 
   var checker = new Manager(config.normal, true);
   var valid = checker.validCredentials();
-  if(config.normal.tradingEnabled && valid)
+
+  if(!valid)
+    throw 'Your exchange credentials don\'t look valid.';
+
+  if(config.normal.tradingEnabled)
     config.traders.push( config.normal );
   else
     log.info('NOT trading with real money');
@@ -58,7 +62,7 @@ if(config.normal && config.normal.enabled) {
 // trade information.
 // 
 var provider = config.watch.exchange.toLowerCase();
-if(provider === 'btce') {
+if(provider === 'btce' || provider === 'bitstamp') {
   // we can't fetch historical data from btce directly so we use bitcoincharts
   // @link http://bitcoincharts.com/about/markets-api/
   config.watch.market = provider;
@@ -80,7 +84,7 @@ if(config.profitCalculator.enabled)
 
 //
 // Configure automatic traders based on advice,
-// after they are all prepared we continu.
+// after they are all prepared we continue.
 // 
 var managers = _.filter(config.traders, function(t) { return t.enabled });
 var configureManagers = function(_next) {
@@ -91,6 +95,9 @@ var configureManagers = function(_next) {
   var next = _.after(amount, _next);
   _.each(managers, function(conf) {
     conf.exchange = conf.exchange.toLowerCase();
+
+    if(conf.exchange === 'bitstamp')
+      throw 'Live trading currently broken at Bitstamp! :(';
 
     var manager = new Manager(conf);
     consultant.on('advice', manager.trade);

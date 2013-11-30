@@ -16,7 +16,7 @@
     "bitcoincharts": "0.0.x",
     "emailjs": "git://github.com/eleith/emailjs.git",
     "prompt-lite": "0.1.x",
-    "bitstamp": "0.0.4",
+    "bitstamp": "0.1.x",
     "async": "0.2.x",
     "line-reader": "0.2.x"
   },

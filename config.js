@@ -32,21 +32,10 @@ config.normal = {
   currency: 'USD',
   asset: 'BTC',
   tradingEnabled: false,
-  key: '',
-  secret: '',
+  key: 'your-key',
+  secret: 'your-secret',
+  clientID: 0, // your username, only fill in when using bitstamp
 }
-
-// example Bitstamp Config:
-
-// config.normal = {
-//   enabled: true,
-//   exchange: 'Bitstamp',
-//   currency: 'USD',
-//   asset: 'BTC',
-//   tradingEnabled: false,
-//   user: '',
-//   password: '',
-// }
 
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {

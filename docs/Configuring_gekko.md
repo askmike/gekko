@@ -38,17 +38,9 @@ You have to tell Gekko what market to monitor on the selected exchange, A market
 
 *Even though Bitcoin is a currency Gekko treats is like an asset when you are trading USD vs BTC.*
 
-### *Warning for Bitstamp users
-
-Bitstamp only offers login via username and password at their API, so if you want to use Bitstamp that is something you need to set instead of the API key and secret. This does imposes a big security risk:
-
-Gekko won't do anything on the account except for: checking balance and creating buy / sell orders (don't take my word: [check the code yourself](https://github.com/askmike/gekko)). **If you have not downloaded Gekko directly from this Github repo I CANNOT guarantee that malicious code has not been added that will withdraw all your funds.**
-
-If you choose to let Gekko trade on Bitstamp note that you first have to enable API access in your Bitstamp settings.
-
 ## Real trading
 
-If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (or `user` and `password` if you want to trade at Bitstamp*) and set `tradingEnabled` to true. You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
+If you want to let Gekko trade on your account you also need to fill in your `key` and `secret` (~~with a clientID - your username - if you want to trade at Bitstamp~~ - Real trading is not working on Bitstamp right now) and set `tradingEnabled` to true. You can get the key and secret on the websites of the exchanges. Gekko only needs trade rights to create the trade orders.
 
 ## EMA Settings
 
@@ -76,11 +68,6 @@ Gekko can calculate the profit of its advice by using a trade simulation.
     }
 
 The calculator listens to Gekko's advice and on a sell it will swap all (simulated) currency into (simulated) assets at the current price. On a buy it will be the other way around. If you set `reportInCurrency` to false the profit will be calculated in `asset` instead of `currency` (the ones you set in the normal zone). When you set `verbose` to false Gekko will only report the profit after a sell instead of after every interval.
-
-
-## Enabling real trading
-
-To enable real trading at a supported exchange you need to enable a trader in the advances zone of the config. The currently supported exchanges are:
 
 ## The advanced zone
 

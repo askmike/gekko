@@ -6,8 +6,9 @@ var log = require('../log');
 
 var Trader = function(config) {
   if(_.isObject(config)) {
-    this.user = config.user;
-    this.password = config.password;
+    this.key = config.key;
+    this.secret = config.secret;
+    this.clientID = config.clientID;
   }
   this.name = 'Bitstamp';
   this.balance;
@@ -15,35 +16,7 @@ var Trader = function(config) {
 
   _.bindAll(this);
 
-  this.bitstamp = new Bitstamp(this.user, this.password);
-}
-
-Trader.prototype.getTrades = function(since, callback, descending) {
-  // bitstamp asks for a `deltatime`, this is the amount of seconds
-  // ago from when to fetch trades
-  if(since)
-    var deltatime = moment.duration(moment() - since).asSeconds();
-  else
-    deltatime = 600;
-
-  deltatime = Math.round(deltatime);
-
-  var self = this;
-  var args = _.toArray(arguments);
-  setTimeout(function() {
-    self.bitstamp.transactions(deltatime, function(err, data) {
-      if(err)
-        return self.retry(self.getTrades, args);
-
-      if(!data || !data.length)
-        return self.retry(self.getTrades, args);
-
-      if(descending)
-        callback(data);
-      else
-        callback(data.reverse());
-    });
-  });
+  this.bitstamp = new Bitstamp(this.key, this.secret, this.clientID);
 }
 
 // if the exchange errors we try the same call again after
