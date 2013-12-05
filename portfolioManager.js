@@ -54,6 +54,17 @@ var Manager = function(conf, checker) {
     this.emit('ready');
   };
 
+  // callback function to refresh portfolio stats
+  var refreshPortfolio = function() {
+    log.info('refreshed', this.exchange.name, 'portfolio:');
+    _.each(this.portfolio, function(fund) {
+      log.info('\t', fund.name + ':', fund.amount);
+    });
+  };
+
+  // refresh portfolio stats every 11 minutes
+  setInterval(_.bind(refreshPortfolio, this), util.minToMs( 11 ));
+
   async.series([
     this.setPortfolio,
     this.setFee
