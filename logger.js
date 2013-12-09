@@ -91,9 +91,9 @@ Logger.prototype.trackProfits = function(what, price, meta) {
   if(this.tracks === 1)
     return;
 
-  if(!this.verbose && what === 'SELL' && !this.config.backtest)
+  if(!this.verbose && what === 'SELL' && !this.config.backtest.enabled)
     this.report();
-  else if(this.verbose && !this.config.backtest)
+  else if(this.verbose && !this.config.backtest.enabled)
     this.report();
 }
 
