@@ -44,10 +44,10 @@ if(config.normal && config.normal.enabled) {
   config.traders = [];
 
   var checker = new Manager(config.normal, true);
-  var valid = checker.validCredentials();
 
-  if(!valid && config.normal.tradingEnabled)
-    throw 'Your exchange credentials don\'t look valid.';
+  var invalid = checker.notValidCredentials();
+  if(invalid)
+    throw invalid;
 
   if(config.normal.tradingEnabled)
     config.traders.push( config.normal );
@@ -100,6 +100,10 @@ var configureManagers = function(_next) {
       throw 'Live trading currently broken at Bitstamp! :(';
 
     var manager = new Manager(conf);
+    var invalid = manager.notValidCredentials();
+    if(invalid)
+      throw invalid;
+
     consultant.on('advice', manager.trade);
     manager.on('ready', next);
   });
