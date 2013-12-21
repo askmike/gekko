@@ -46,6 +46,8 @@ In order to list your active screen sessions just hit
 To re-attach this session use the following command
 
     screen -dr 57359
+
+
   
 ## Run Gekko using nodejs tools
 
@@ -55,11 +57,13 @@ You can also use nodejs tools to keep Gekko running, this should work cross plat
 
 You can tell Gekko what config file to use to make it easier to run Gekko more times on different exchanges, while watching each exchange. (If you configure Gekko to trade on all exchanges while only watching Mt. Gox in one single config file, Gekko will base all buy/sell actions on all exchanges based on the trends at Mt. Gox).
 
+The repo has some example config files in config/examples.  When you check the repository, there will also be a folder called /config/user, which is setup to ignore all files in the directory using .gitignore.  It is recommended to place your config files here to avoid issues when pulling in the latest updates.
+
 You can also use this feature to do a realtime study on what different EMA settings would generate the most profit.
 
 To specify a different config file, you can use the following command line argument:
 
-    node gekko config=alternative-config
+    node gekko config=config/user/alternative-config
 
 or a relative path:
 
@@ -67,4 +71,16 @@ or a relative path:
 
 or a static path:
 
-    node gekko config=home/gekko/alternative-config
+    node gekko config=home/gekko/config/user/alternative-config
+
+# Helper files
+
+In the bin folder, you will find various helper methods.
+
+Use `gekko_launch.sh` to launch a gekko instance using a provided config file param from the config/user folder.  The syntax for this is simply `bin/gekko_launch.sh alternative-config`
+
+Use `gekko_launch_screen.sh` to launch a headless instance of gekko using the outlined methods from above.    The syntax is `bin/gekko_launch_screen.sh alternative-config`
+
+Use `gekko_screen_grab.sh` to grab the screen for the config.  The syntax is `bin/gekko_screen_grab.sh alternative-config`
+
+Use `gekko_log_grab.sh` to start tailing the log instead of via screen.  The syntax is `bin/gekko_log_grab.sh alternative-config`
