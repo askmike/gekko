@@ -103,6 +103,9 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.getPortfolio, args);
 
+    if(!('Wallets' in result.data))
+      log.error('unable to get portfolio, do I have get_info rights?');
+
     var assets = [];
     _.each(result.data.Wallets, function(wallet, name) {
       var amount = parseFloat(wallet.Balance.value);
