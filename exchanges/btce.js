@@ -27,7 +27,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     if(err)
       log.error('unable to buy:', err);
 
-    callback(data.order_id);
+    callback(err, data.order_id);
   };
 
   // workaround for nonce error

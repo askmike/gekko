@@ -21,6 +21,7 @@ var Trader = function(config) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   this.mtgox.add('bid', amount, price, function(err, result) {
+    this.checkUnauthorized(err);
     // if Mt. Gox is down or lagging
     if(err || result.result === 'error')
       log.error('unable to buy (', err, result, ')');
@@ -31,6 +32,7 @@ Trader.prototype.buy = function(amount, price, callback) {
 
 Trader.prototype.sell = function(amount, price, callback) {
   this.mtgox.add('ask', amount, price, function(err, result) {
+    this.checkUnauthorized(err);
     // if Mt. Gox is down or lagging
     if(err || result.result === 'error')
       log.error('unable to sell (', err, result, ')');
@@ -82,6 +84,11 @@ Trader.prototype.retry = function(method, args) {
   );
 }
 
+Trader.prototype.checkUnauthorized = function(err) {
+  if(err = '[Error: Request failed with 403]')
+    throw 'It appears your ' + this.name + ' API key and secret are incorrect';
+}
+
 // calls callback with the following data structure:
 //
 // [
@@ -92,6 +99,7 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var calculate = function(err, result) {
+    this.checkUnauthorized(err);
     if(err)
       return this.retry(this.getPortfolio, args);
 
@@ -109,6 +117,7 @@ Trader.prototype.getPortfolio = function(callback) {
 Trader.prototype.getFee = function(callback) {
   var args = _.toArray(arguments);
   var calculate = function(err, result) {
+    this.checkUnauthorized(err);
     if(err)
       return this.retry(this.getFee, args);
 

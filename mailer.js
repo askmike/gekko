@@ -62,7 +62,7 @@ var send = function(err) {
 }
 
 module.exports.send = function(what, price, meta) {
-  if(what !== 'BUY' && what !== 'SELL')
+  if (!config.mail.what || -1 == config.mail.what.indexOf(what))
     return;
 
   var text = [
