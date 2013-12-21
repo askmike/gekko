@@ -8,14 +8,15 @@
 */
 
 var _ = require('lodash');
-// var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events').EventEmitter;
 var Util = require("util");
 var util = require('./util')
 var events = require("events");
 var log = require('./log');
 var async = require('async');
+var exchangeChecker = require('./exchangeChecker.js');
 
-var Manager = function(conf, checker) {
+var Manager = function(conf) {
   this.exchangeSlug = conf.exchange.toLowerCase();
 
   // create an exchange
@@ -29,17 +30,13 @@ var Manager = function(conf, checker) {
   this.order;
   this.action;
 
+  this.directExchange = conf.direct;
+  this.infinityOrderExchange = conf.infinityOrder;
+
   this.currency = conf.currency || 'USD';
   this.asset = conf.asset || 'BTC';
 
-  var error = this.checkExchange();
-  if(error && !checker)
-    throw error;
-
   _.bindAll(this);
-
-  if(checker)
-    return this.checker = true;
 
   log.debug('getting balance & fee from', this.exchange.name);
   var prepare = function() {
@@ -62,92 +59,6 @@ var Manager = function(conf, checker) {
 
 // teach our Manager events
 Util.inherits(Manager, events.EventEmitter);
-
-Manager.prototype.notValidCredentials = function() {
-  return this.checkExchange();
-}
-
-Manager.prototype.checkExchange = function() {
-  // what kind of exchange are we dealing with?
-  // 
-  // name: slug of exchange
-  // direct: does this exchange support MKT orders?
-  // infinityOrder: is this an exchange that supports infinity 
-  //    orders? (which means that it will accept orders bigger then
-  //    the current balance and order at the full balance instead)
-  // currencies: all the currencies supported by the exchange
-  //    implementation in gekko.
-  // assets: all the assets supported by the exchange implementation
-  //    in gekko.
-  var exchanges = [
-    {
-      name: 'mtgox',
-      direct: true,
-      infinityOrder: true,
-      currencies: [
-        'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY',
-        'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
-      ],
-      assets: ['BTC'],
-      requires: ['key', 'secret'],
-      minimalOrder: { amount: 0.01, unit: 'asset' }
-    },
-    {
-      name: 'btce',
-      direct: false,
-      infinityOrder: false,
-      currencies: ['USD', 'RUR', 'EUR'],
-      assets: ['BTC'],
-      requires: ['key', 'secret'],
-      minimalOrder: { amount: 0.01, unit: 'asset' }
-    },
-    {
-      name: 'bitstamp',
-      direct: false,
-      infinityOrder: false,
-      currencies: ['USD'],
-      assets: ['BTC'],
-      requires: ['key', 'secret', 'username'],
-      minimalOrder: { amount: 1, unit: 'currency' }
-    },
-    {
-      name: 'cexio',
-      direct: false,
-      infinityOrder: false,
-      currencies: ['BTC'],
-      assets: ['GHS'],
-      requires: ['key', 'secret', 'username'],
-      minimalOrder: { amount: 0.000001, unit: 'currency' }
-    }
-  ];
-
-  var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
-  if(!exchange)
-    return 'Gekko does not support the exchange ' + this.exchangeSlug;
-
-  this.directExchange = exchange.direct;
-  this.infinityOrderExchange = exchange.infinityOrder;
-
-  if(_.indexOf(exchange.currencies, this.currency) === -1)
-    return 'Gekko only supports the currencies [ ' + exchange.currencies.join(', ') + ' ] at ' + this.exchange.name;
-
-  if(_.indexOf(exchange.assets, this.asset) === -1)
-    return 'Gekko only supports the assets [ ' + exchange.assets.join(', ') + ' ]  at ' + this.exchange.name;
-
-  // only verify credentials on real trading
-  if(!this.checker) {
-    var ret;
-    _.each(exchange.requires, function(req) {
-      if(!this.conf[req])
-        ret = this.exchange.name + ' requires "' + req + '" to be set in the config';
-    }, this);  
-  }
-  
-
-  this.minimalOrder = exchange.minimalOrder;
-  return ret;
-
-}
 
 Manager.prototype.setPortfolio = function(callback) {
   var set = function(err, portfolio) {

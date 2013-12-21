@@ -23,6 +23,7 @@ var util = require('./util');
 var log = require('./log');
 var async = require('async');
 var Manager = require('./portfolioManager');
+var exchangeChecker = require('./exchangeChecker');
 
 var config = util.getConfig();
 if(config.talib)
@@ -43,12 +44,6 @@ if(config.normal && config.normal.enabled) {
   config.watch = config.normal;
   config.traders = [];
 
-  var checker = new Manager(config.normal, true);
-
-  var invalid = checker.notValidCredentials();
-  if(invalid)
-    throw invalid;
-
   if(config.normal.tradingEnabled)
     config.traders.push( config.normal );
   else
@@ -61,6 +56,12 @@ if(config.normal && config.normal.enabled) {
 // Create a public exchange object which can retrieve live 
 // trade information.
 // 
+
+// make sure the monitoring exchange is configured correctly for monitoring
+var invalid = exchangeChecker.cantMonitor(config.watch);
+if(invalid)
+  throw invalid;
+
 var provider = config.watch.exchange.toLowerCase();
 if(provider === 'btce' || provider === 'bitstamp') {
   // we can't fetch historical data from btce directly so we use bitcoincharts
@@ -96,13 +97,16 @@ var configureManagers = function(_next) {
   _.each(managers, function(conf) {
     conf.exchange = conf.exchange.toLowerCase();
 
+    // make sure we the exchange is configured correctly
+    // for trading.
+    var invalid = exchangeChecker.cantTrade(conf);
+    if(invalid)
+      throw invalid;
+
     if(conf.exchange === 'bitstamp')
       throw 'Live trading currently broken at Bitstamp! :(';
 
     var manager = new Manager(conf);
-    var invalid = manager.notValidCredentials();
-    if(invalid)
-      throw invalid;
 
     consultant.on('advice', manager.trade);
     manager.on('ready', next);

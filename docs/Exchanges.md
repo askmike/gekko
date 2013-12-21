@@ -12,7 +12,7 @@ It is advised to use a npm module to query an exchange. This will seperate the a
 
 Besides this javascript file a new object needs to be added to `gekko/config.js` in the `config.traders` array. Here you can set the default currency and asset that will be available through the exchange. Keep enabled at false, this is up to the end user.
 
-Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in the `checkExchange` method in `gekko/portfolioManager.js`. As described in the comments.
+Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in `gekko/exchanges.js`. The parameters are described in that document.
 
 ## Portfolio manager's expectations
 
