@@ -44,10 +44,7 @@ var Manager = function(conf) {
 
     log.info('trading at', this.exchange.name, 'ACTIVE');
     log.info(this.exchange.name, 'trading fee will be:', this.fee * 100 + '%');
-    log.info('current', this.exchange.name, 'portfolio:');
-    _.each(this.portfolio, function(fund) {
-      log.info('\t', fund.name + ':', fund.amount);
-    });
+    this.logPortfolio();
     this.emit('ready');
   };
 
