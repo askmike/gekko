@@ -2,7 +2,8 @@
 // 
 // Required parameters per exchange.
 // 
-// name: slug of exchange (needs to match filename in `gekko/exchanges/`)
+// name: Proper name of the exchange
+// slug: slug name of the exchange (needs to match filename in `gekko/exchanges/`)
 // direct: does this exchange support MKT orders?
 // infinityOrder: is this an exchange that supports infinity 
 //    orders? (which means that it will accept orders bigger then
