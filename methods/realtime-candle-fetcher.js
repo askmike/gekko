@@ -64,7 +64,7 @@ CandleCalculator.prototype.fillBuckets = function(trades) {
     // it should go to the next bucket
     while(time > nextBucketTime) {
       if(emptyBucket === true)
-        break;
+        return false;
 
       // we can calculate the candle of the freshly filled bucket
       this.calculateCandle();
