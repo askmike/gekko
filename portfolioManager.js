@@ -51,6 +51,25 @@ var Manager = function(conf) {
     this.emit('ready');
   };
 
+  // callback function to DISPLAY portfolio stats
+  var refreshPortfolioBeforeYouCanDisplay = function() {
+    log.info('refreshed', this.exchange.name, 'portfolio:');
+    _.each(this.portfolio, function(fund) {
+      log.info('\t', fund.name + ':', fund.amount);
+    });
+  };
+
+  // callback function to REFRESH portfolio stats
+  var displayPortfolio = function() {
+	  // lazy way to do it without a major rewrite
+	  async.series([
+	                this.setPortfolio
+	                ], _.bind(refreshPortfolioBeforeYouCanDisplay, this));
+  };
+
+  // refresh and display portfolio stats every 11 minutes
+  setInterval(_.bind(displayPortfolio, this), util.minToMs( 11 ));
+
   async.series([
     this.setPortfolio,
     this.setFee
