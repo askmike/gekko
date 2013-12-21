@@ -22,6 +22,11 @@ Checker.prototype.cantMonitor = function(conf) {
 
   var name = exchange.name;
 
+  if('monitorError' in exchange)
+    return 'At this moment Gekko can\'t monitor ' + name +  ', find out more info here:\n\n' + exchange.monitorError;
+
+  var name = exchange.name;
+
   if(!_.contains(exchange.currencies, conf.currency))
     return 'Gekko only supports the currencies [ ' + exchange.currencies.join(', ') + ' ] at ' + name;
 
@@ -41,6 +46,9 @@ Checker.prototype.cantTrade = function(conf) {
   var slug = conf.exchange.toLowerCase();
   var exchange = _.find(exchanges, function(e) { return e.slug === slug });
   var name = exchange.name;
+
+  if('tradeError' in exchange)
+    return 'At this moment Gekko can\'t trade at ' + name + ', find out more info here:\n\n' + exchange.tradeError;
 
   if(conf.key === 'your-key')
     throw '"your-key" is not a valid API key';

@@ -12,6 +12,11 @@
 //    implementation in gekko.
 // assets: all the assets supported by the exchange implementation
 //    in gekko.
+//    
+// monitorError: if Gekko is currently not able to monitor this exchange, please set it
+//    to an URL explaining the problem.
+// tradeError: If gekko is currently not able to trade at this exchange, please set it
+//    to an URL explaining the problem.
 var exchanges = [
   {
     name: 'MtGox',
@@ -44,7 +49,8 @@ var exchanges = [
     currencies: ['USD'],
     assets: ['BTC'],
     requires: ['key', 'secret', 'username'],
-    minimalOrder: { amount: 1, unit: 'currency' }
+    minimalOrder: { amount: 1, unit: 'currency' },
+    tradeError: 'https://github.com/askmike/gekko/issues/38#issuecomment-29552100'
   },
   {
     name: 'CEX.io',
@@ -54,7 +60,8 @@ var exchanges = [
     currencies: ['BTC'],
     assets: ['GHS'],
     requires: ['key', 'secret', 'username'],
-    minimalOrder: { amount: 0.000001, unit: 'currency' }
+    minimalOrder: { amount: 0.000001, unit: 'currency' },
+    monitorError: 'https://github.com/askmike/gekko/issues/90'
   }
 ];
 

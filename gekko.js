@@ -103,9 +103,6 @@ var configureManagers = function(_next) {
     if(invalid)
       throw invalid;
 
-    if(conf.exchange === 'bitstamp')
-      throw 'Live trading currently broken at Bitstamp! :(';
-
     var manager = new Manager(conf);
 
     consultant.on('advice', manager.trade);
