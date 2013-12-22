@@ -20,25 +20,27 @@ var Trader = function(config) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  this.mtgox.add('bid', amount, price, function(err, result) {
+  var process = function(err, result) {
     this.checkUnauthorized(err);
     // if Mt. Gox is down or lagging
     if(err || result.result === 'error')
       log.error('unable to buy (', err, result, ')');
 
     callback(err, result.data);
-  });
+  };
+  this.mtgox.add('bid', amount, price, _.bind(process, this));
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  this.mtgox.add('ask', amount, price, function(err, result) {
+  var process = function(err, result) {
     this.checkUnauthorized(err);
     // if Mt. Gox is down or lagging
     if(err || result.result === 'error')
       log.error('unable to sell (', err, result, ')');
 
     callback(err, result.data);
-  });
+  };
+  this.mtgox.add('ask', amount, price, _.bind(process, this));
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
