@@ -15,9 +15,11 @@ var events = require("events");
 var log = require('./log');
 var async = require('async');
 var exchangeChecker = require('./exchangeChecker.js');
+var exchanges = require('./exchanges.js');
 
 var Manager = function(conf) {
   this.exchangeSlug = conf.exchange.toLowerCase();
+  var exchange = _.find(exchanges, function(e) { return e.slug === this.exchangeSlug }, this);
 
   // create an exchange
   var Exchange = require('./exchanges/' + this.exchangeSlug);
@@ -30,8 +32,9 @@ var Manager = function(conf) {
   this.order;
   this.action;
 
-  this.directExchange = conf.direct;
-  this.infinityOrderExchange = conf.infinityOrder;
+  this.directExchange = exchange.direct;
+  this.infinityOrderExchange = exchange.infinityOrder;
+  this.minimalOrder = exchange.minimalOrder;
 
   this.currency = conf.currency || 'USD';
   this.asset = conf.asset || 'BTC';

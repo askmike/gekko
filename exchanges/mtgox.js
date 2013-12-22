@@ -85,7 +85,7 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.checkUnauthorized = function(err) {
-  if(err === '[Error: Request failed with 403]')
+  if(err.message === 'Request failed with 403')
     throw 'It appears your ' + this.name + ' API key and secret are incorrect';
 }
 
