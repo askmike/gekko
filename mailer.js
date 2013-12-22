@@ -2,6 +2,7 @@ var email = require("emailjs");
 var moment = require('moment');
 var log = require('./log.js');
 var util = require('./util.js');
+var _ = require('lodash');
 var config = util.getConfig().mail;
 var server;
 
