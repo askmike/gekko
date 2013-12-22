@@ -3,7 +3,7 @@ var lineReader = require('line-reader');
 var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('lodash');
-var log = require('../log');
+var log = require('./log');
 
 // `abstract` constructor
 var CandleCalculator = function() {};

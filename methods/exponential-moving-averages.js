@@ -42,9 +42,9 @@ var TradingMethod = function(watcher) {
 }
 
 if(backtesting)
-  var CandleMethod = require('./historical-candle-fetcher.js');
+  var CandleMethod = require('../historicalCandleFetcher.js');
 else
-  var CandleMethod = require('./realtime-candle-fetcher.js');
+  var CandleMethod = require('../realtimeCandleFetcher.js');
 Util.inherits(TradingMethod, CandleMethod);
 
 // first prepare this trading method, then

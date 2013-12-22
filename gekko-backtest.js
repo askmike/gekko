@@ -35,10 +35,7 @@ config.backtest.enabled = true;
 // set updated config
 util.setConfig(config);
 
-if(config.talib)
-  var Consultant = require('./methods/talib');
-else
-  var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');

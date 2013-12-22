@@ -9,9 +9,9 @@
 
 var moment = require('moment');
 var _ = require('lodash');
-var util = require('../util.js');
+var util = require('./util.js');
 var Util = require('util');
-var log = require('../log.js');
+var log = require('./log.js');
 var EventEmitter = require('events').EventEmitter;
 
 // `abstract` constructor

@@ -26,10 +26,7 @@ var Manager = require('./portfolioManager');
 var exchangeChecker = require('./exchangeChecker');
 
 var config = util.getConfig();
-if(config.talib)
-  var Consultant = require('./methods/talib');
-else
-  var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
