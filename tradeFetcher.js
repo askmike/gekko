@@ -9,9 +9,6 @@
 //  historical data).
 //  - The amount of data we get per fetch.
 //  - The interval at which we need new data.
-// 
-// 
-// 
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -75,7 +72,7 @@ Fetcher.prototype.start = function() {
     console.log(
       'either start looping right away (`since`)',
       'or first determine starting point dynamically'
-      );
+    );
 }
 
 // Set the first & last trade date and set the
@@ -125,11 +122,11 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     var fetchAfter = this.fetchTimespan / safeTreshold;
 
   log.debug('Scheduling next fetch: in', util.msToMin(fetchAfter), 'minutes');
-  return fetchAfter;
+  this.fetchAfter = fetchAfter;
 }
 
-Fetcher.prototype.scheduleNextFetch = function(at) {
-  setTimeout(this.fetch, at);
+Fetcher.prototype.scheduleNextFetch = function() {
+  setTimeout(this.fetch, this.fetchAfter);
 }
 
 Fetcher.prototype.fetch = function(since) {
@@ -141,19 +138,20 @@ Fetcher.prototype.processTrades = function(err, trades) {
     throw err;
 
   this.setFetchMeta(trades);
-  
+
+  this.calculateNextFetch();
+  // schedule next fetch
+  if(!this.exchange.providesHistory)
+    this.scheduleNextFetch();
+  else
+    console.log('wup wup refetching NOW because this exchange supports it');
+
   this.emit('new trades', {
     start: this.first,
     end: this.last,
-    all: trades
+    all: trades,
+    nextIn: this.fetchAfter
   });
-
-  // schedule next fetch
-  if(!this.exchange.providesHistory) {
-    var at = this.calculateNextFetch(trades);
-    this.scheduleNextFetch(at);
-  } else
-    console.log('wup wup refetching because this exchange supports it');
 }
 
 

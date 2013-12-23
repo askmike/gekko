@@ -15,9 +15,12 @@ var utc = moment.utc;
 var log = require('./log.js');
 var fs = require('fs');
 var nedb = require('nedb');
+var async = require('async');
 
 var util = require('./util');
 var config = util.getConfig();
+
+var equals = util.equals;
 
 // even though we have leap seconds
 // (https://en.wikipedia.org/wiki/Leap_second)
@@ -32,7 +35,6 @@ var Manager = function() {
   this.today;
   this.startDay;
 
-  this.init();
   this.on('empty history', function() {
     console.log('empty history');
   });
@@ -43,31 +45,26 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(Manager, EventEmitter);
 
 // load all databases we need
-Manager.prototype.init = function() {
+Manager.prototype.init = function(data) {
+
+  this.createDays();
+
+  this.nextFetchAt = utc().subtract('ms', data.nextIn);
 
   this.start = util.intervalsAgo(config.EMA.candles);
   this.startMinute = this.momentToMinute(this.start);
   this.startDay = this.start.clone().startOf('day');
+  this.today = utc().startOf('day');
 
   // make sure the historical folder exists
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
   
-  var day = this.startDay.clone();
-  this.today = utc().startOf('day');
-  var neededDays = [];
+  this.loadDays();
+}
 
-  while(day <= this.today) {
-    neededDays.push(day.clone());
-    day.add('d', 1);
-  };
+Manager.prototype.processTrades = function(trades) {
 
-  // load those days
-  _.each(neededDays, function(day) {
-    var success = this.loadDay(day);
-  }, this);
-
-  this.verifyDays(neededDays);
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
@@ -83,13 +80,55 @@ Manager.prototype.deleteDay = function(day, safe) {
     );
   else
     fs.unlinkSync(day.filename);
-
-  delete this.days[day.string];
 }
 
 
-// refactor to:
-// 
+// calculate from which days databases we need data
+Manager.prototype.loadDays = function() {
+  var day = this.startDay.clone();
+
+  this.oldestDay = false;
+  this.newestDay = false;
+
+  var days = [];
+  while(day <= this.today) {
+    days.push(day.clone());
+    day.add('d', 1);
+  };
+
+  // load & verify each day
+  var iterator = function(day, next) {
+    this.loadDay(day, _.bind(function(day) {
+      this.verifyDay(day, next);
+    }, this));
+  }
+
+  // we're done, interpetet results
+  var checked = function() {
+    if(!this.oldestDay)
+      this.emit('history', false);
+    else {
+      // we have *ungapped* historical data
+      var start = this
+        .minuteToMoment(this.oldestMinute, this.oldestDay);
+
+      var end = this
+        .minuteToMoment(this.newestMinute, this.newestDay);
+
+      this.emit('history', {
+        start: start,
+        end: end
+      });
+    }
+  }
+
+  async.some(
+    days.reverse(),
+    _.bind(iterator, this), 
+    _.bind(checked, this)
+  );
+}
+
 // for each day (from now to past)
 //  - load it
 //  - if today: 
@@ -101,56 +140,128 @@ Manager.prototype.deleteDay = function(day, safe) {
 //      check if full
 // as soon as the first one errors
 // we now the history we have
-Manager.prototype.verifyDays = function(neededDays) {
-  if(_.size(this.days) !== _.size(neededDays))
-    return console.log('~~~~, we couldnt load all days we needed');
+Manager.prototype.verifyDay = function(day, next) {
+  if(!day)
+    return next(false);
 
-  // check if we have all data we need per day
-  var verifyEachDay = _.after(_.size(this.days), _.bind(function() {
+  if(day.empty) {
+    this.deleteDay(db);
+    return next(false);
+  }
 
-    // remove all empty days
-    _.each(this.days, function(day) {
-      if(day.empty)
-        this.deleteDay(day, false);
-    }, this);
+  // store a global reference
+  this.days[day.string] = day;
 
-    // check for gaps
-    _.each(_.clone(this.days), function(day, i) {
-      
-      var isToday = util.equals(this.today, day.time);
-      var isStartDay = util.equals(this.startDay, day.time);
+  // if we don't already have the newest
+  // day this is the most recent day so 
+  // this holds the newest data
+  if(!this.newestDay) {
 
-      if(isToday) {
-        if(day.minutes !== day.end)
-          // we have a gap in today
-          throw 'gap in today';
-      } else if(isStartDay) {
+    // verify that it's recent enough,
+    // else we can drop everything because
+    // the whole history is too old
+    var age = this.minuteToMoment(day.end, day.time);
+    if(age > this.nextFetchAt) {
 
-        // if the end day didn't finish
-        // we have a gap in startDay
-        if(day.end !== MINUTES_IN_DAY)
-          throw 'end day didn\t finish';
+      // hacky way to propogate error
+      // to the candlemanager
+      this.emit('historical data outdated')
+      return next(false);
+    }
 
-        if(day.start > this.startMinute)
-          throw 'we don\'t have enough of startDay';
+    this.newestDay = day.time;
+    this.newestMinute = day.end;
+  }
 
-      } else {
-        // if the day is not the start day
-        // and not today and it is incomplete
-        // we have a gap in our data.
-        if(day.minutes !== MINUTES_IN_DAY)
-          this.deleteDay(day, false);
-        else
-          log.debug('Got full history for', day.string);
-      }
-        
+  // if this day doesn't end at midnight
+  // we can't use any data it has
+  // 
+  // except when it's about today
+  if(
+    day.end !== MINUTES_IN_DAY &&
+    !equals(this.today, day.time)
+  )
+    return next(false);
 
-    }, this);
+  // we can use atleast some of it's data
+  this.oldestDay = day.time;
+  this.oldestMinute = day.start;
+
+  // but we can't use anything else
+  // since it doesn't go back to midnight
+  if(db.start !== 0)
+    return next(false);
+
+  next(true);
+}
+
+// setup an interval to create new daily files 
+// every day at 11PM.
+Manager.prototype.createDays = function() {
+  var midnight = utc()
+    .endOf('day')
+    .subtract('h', 1)
+    .diff();
+
+  var untilMidnight = utc().diff(midnight);
+
+  setTimeout(_.bind(function() {
+    this.createDay();
+    setInterval(this.createDay, +moment.duration(1, 'days'));
   }, this));
+  
+}
 
-  // grab everything out of each DB
-  _.each(this.days, function(day) {
-    // console.log(day);
+// create a new daily database
+Manager.prototype.createDay = function() {
+  var day = utc()
+    .startOf('day')
+    .add('d', 1);
+
+  var string = day.format('YYYY-MM-DD');
+
+  log.debug('Creating a new daily database for day', string);
+
+  var file = this.historyPath + [
+    config.watch.exchange,
+    config.watch.currency,
+    config.watch.asset,
+    string
+  ].join('-');
+
+  var db = new nedb({filename: file, autoload: true});
+  db.ensureIndex({fieldName: 's', unique: true});
+
+  this.days[string] = {
+    string: string,
+    handle: db
+  };
+}
+
+// load a daily database
+// 
+// returns the name if succeeded
+// returns false otherwise
+Manager.prototype.loadDay = function(day, next) {
+  var string = day.format('YYYY-MM-DD');
+  var file = this.historyPath + [
+    config.watch.exchange,
+    config.watch.currency,
+    config.watch.asset,
+    string
+  ].join('-');
+
+  if(fs.exists(file)) {
+    // load it and set meta
+    var db = new nedb({filename: file, autoload: true});
+    db.ensureIndex({fieldName: 's', unique: true});
+    var day = {
+      handle: db,
+      time: day,
+      filename: file,
+      string: string
+    };
+
     day.handle.find({}, function(err, minutes) {
       if(err)
         throw err;
@@ -163,15 +274,10 @@ Manager.prototype.verifyDays = function(neededDays) {
         day.start = _.min(minutes, function(m) { return m.s; } );
         day.end = _.max(minutes, function(m) { return m.s; } );
       }
-      verifyEachDay();
+      next(day);
     });
-  });
-
-  // if after deleting corrupted stuff we don't
-  // have anything left anymore, upstream that info
-  // console.log(this);
-  if(!_.size(this.days))
-    return this.emit('empty history');
+  } else
+    next(false);
 }
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
@@ -183,30 +289,5 @@ Manager.prototype.momentToMinute = function(moment) {
   var start = moment.clone().startOf('day');
   return Math.floor(moment.diff(start) / 1000 / 60);
 };
-
-Manager.prototype.loadDay = function(day) {
-  var string = day.format('YYYY-MM-DD');
-  var file = this.historyPath + [
-    config.watch.exchange,
-    config.watch.currency,
-    config.watch.asset,
-    string
-  ].join('-');
-
-  // if(fs.exists(file)) {
-    var db = new nedb({filename: file, autoload: true});
-    db.ensureIndex({fieldName: 's', unique: true});
-    this.days[string] = {
-      handle: db,
-      time: day,
-      filename: file,
-      string: string
-    };
-  // } else {
-    // this.days.push({time: day});
-    // console.log('failed to load', file);
-  // }
-    // return false;
-}
 
 module.exports = new Manager;
