@@ -8,7 +8,7 @@ var log = require('../log')
 var Trader = function(config) {
   this.key = config.key;
   this.secret = config.secret;
-  this.pair = 'btc_' + config.currency.toLowerCase();
+  this.pair = [config.asset, config.currency].join('_').toLowerCase();
   this.name = 'BTC-E';
 
   _.bindAll(this);
@@ -125,15 +125,16 @@ Trader.prototype.cancelOrder = function(order) {
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
-  this.btce.trades('btc_usd', function(err, trades) {
+  var process = function(err, trades) {
     if(err)
-      return callback(err);
+      return this.retry(this.btce.getTrades, process);
 
     if(descending)
       callback(false, trades);
     else
       callback(false, trades.reverse());
-  });
+  }
+  this.btce.trades(this.pair, _.bind(process, this));
 }
 
 module.exports = Trader;

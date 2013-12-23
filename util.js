@@ -34,6 +34,9 @@ var util = {
     });
     return ret;
   },
+  msToMin: function(ms) {
+    return Math.round(ms / 60 / 1000);
+  },
   minToMs: function(min) {
     return min * 60 * 1000;
   },
