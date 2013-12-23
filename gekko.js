@@ -26,7 +26,8 @@ var Manager = require('./portfolioManager');
 var exchangeChecker = require('./exchangeChecker');
 
 var config = util.getConfig();
-var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+
+// var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
@@ -49,25 +50,17 @@ if(config.normal && config.normal.enabled) {
   log.info('Using advanced settings');
 }
 
-//
-// Create a public exchange object which can retrieve live 
-// trade information.
-// 
-
 // make sure the monitoring exchange is configured correctly for monitoring
 var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
   throw invalid;
 
-var provider = config.watch.exchange.toLowerCase();
-if(provider === 'btce' || provider === 'bitstamp') {
-  // we can't fetch historical data from btce directly so we use bitcoincharts
-  // @link http://bitcoincharts.com/about/markets-api/
-  config.watch.market = provider;
-  provider = 'bitcoincharts';
-}
-var DataProvider = require('./exchanges/' + provider);
-var watcher = new DataProvider(config.watch);
+// write config
+util.setConfig(config);
+
+var TradeFetcher = require('./tradeFetcher.js');
+var tradeFetcher = new TradeFetcher();
+return;
 
 // implement a trading method to create a consultant, we pass it a config and a 
 // public mtgox object which the method can use to get data on past trades

@@ -124,4 +124,16 @@ Trader.prototype.cancelOrder = function(order) {
   this.btce.orderList(order, devNull);
 }
 
+Trader.prototype.getTrades = function(since, callback, descending) {
+  this.btce.trades('btc_usd', function(err, trades) {
+    if(err)
+      return callback(err);
+
+    if(descending)
+      callback(false, trades);
+    else
+      callback(false, trades.reverse());
+  });
+}
+
 module.exports = Trader;

@@ -12,6 +12,15 @@
 //    implementation in gekko.
 // assets: all the assets supported by the exchange implementation
 //    in gekko.
+// providesHistory: If the getTrades can be fed a since parameter
+//    that Gekko can use to get historical data, set this to:
+//    
+//    - 'date' // When Gekko can pass in a starting point in time
+//             // to start returning data from.
+//    - 'tid'  // When Gekko needs to pass in a trade id to act as
+//             // a starting point in time.
+//    - false  // When the exchange does not support to give back
+//             // historical data at all.
 //    
 // monitorError: if Gekko is currently not able to monitor this exchange, please set it
 //    to an URL explaining the problem.
@@ -29,7 +38,8 @@ var exchanges = [
     ],
     assets: ['BTC'],
     requires: ['key', 'secret'],
-    minimalOrder: { amount: 0.01, unit: 'asset' }
+    minimalOrder: { amount: 0.01, unit: 'asset' },
+    providesHistory: 'date'
   },
   {
     name: 'BTC-e',
@@ -39,7 +49,8 @@ var exchanges = [
     currencies: ['USD', 'RUR', 'EUR'],
     assets: ['BTC'],
     requires: ['key', 'secret'],
-    minimalOrder: { amount: 0.01, unit: 'asset' }
+    minimalOrder: { amount: 0.01, unit: 'asset' },
+    providesHistory: false
   },
   {
     name: 'Bitstamp',
@@ -50,6 +61,7 @@ var exchanges = [
     assets: ['BTC'],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 1, unit: 'currency' },
+    providesHistory: false,
     tradeError: 'https://github.com/askmike/gekko/issues/38#issuecomment-29552100'
   },
   {
@@ -61,6 +73,7 @@ var exchanges = [
     assets: ['GHS'],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 0.000001, unit: 'currency' },
+    providesHistory: false,
     monitorError: 'https://github.com/askmike/gekko/issues/90'
   }
 ];

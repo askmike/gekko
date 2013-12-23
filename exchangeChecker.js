@@ -65,4 +65,9 @@ Checker.prototype.cantTrade = function(conf) {
   return error;
 }
 
+Checker.prototype.settings = function(conf) {
+  var slug = conf.exchange.toLowerCase();
+  return exchange = _.find(exchanges, function(e) { return e.slug === slug });
+}
+
 module.exports = new Checker();

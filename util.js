@@ -76,6 +76,12 @@ var util = {
     });
 
     return util.average(sample);
+  },
+  calculateTimespan: function(a, b) {
+    if(a < b)
+      return b.diff(a);
+    else
+      return a.diff(b);
   }
 }
 
