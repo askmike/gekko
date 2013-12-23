@@ -87,6 +87,20 @@ Manager.prototype.deleteDay = function(day, safe) {
   delete this.days[day.string];
 }
 
+
+// refactor to:
+// 
+// for each day (from now to past)
+//  - load it
+//  - if today: 
+//      check if since midnight
+//      check if up to now - 10 min (or smth)
+//    else if last:
+//      check if first < startMinute
+//    else
+//      check if full
+// as soon as the first one errors
+// we now the history we have
 Manager.prototype.verifyDays = function(neededDays) {
   if(_.size(this.days) !== _.size(neededDays))
     return console.log('~~~~, we couldnt load all days we needed');
