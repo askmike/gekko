@@ -13,7 +13,6 @@
 // 
 // 
 
-var cexio = require('cexio');
 var _ = require('lodash');
 var moment = require('moment');
 var utc = moment.utc;
@@ -38,40 +37,94 @@ var Fetcher = function() {
 
   this.exchange = exchangeChecker.settings(config.watch);
 
-  this.fetch();
+  // console.log(config);
+  log.info('Starting to watch the market:',
+    this.exchange.name,
+    [
+      config.watch.currency,
+      config.watch.asset
+    ].join('/')
+  );
+
+  this.start();
+
+  if(!this.exchange.providesHistory) {
+    this.on('new trades', function(a) {
+      log.debug(
+        'Fetched',
+        _.size(a.all),
+        'new trades, from',
+        a.start.format('HH:mm:ss (UTC)'),
+        'to',
+        a.end.format('HH:mm:ss (UTC)')
+      );
+    });  
+  }
 }
 
-// we need to keep polling exchange because we cannot
-// access older data. We need to calculate how often we
-// we should poll.
-// 
-// *This method is only used if this exchange does not support
-// historica data*
-Fetcher.prototype.calculateNextFetch = function(trades) {
+var Util = require('util');
+var EventEmitter = require('events').EventEmitter;
+Util.inherits(Fetcher, EventEmitter);
+
+Fetcher.prototype.start = function() {
+  // if this exchange does not support historical trades
+  // start fetching.
+  if(!this.exchange.providesHistory)
+    this.fetch(false);
+  else
+    console.log(
+      'either start looping right away (`since`)',
+      'or first determine starting point dynamically'
+      );
+}
+
+// Set the first & last trade date and set the
+// timespan between them.
+Fetcher.prototype.setFetchMeta = function(trades) {
   var first = _.first(trades); 
   this.first = moment.unix(first.date).utc();
   var last = _.last(trades);
   this.last = moment.unix(last.date).utc();
 
-  var fetchTimespan = util.calculateTimespan(this.first, this.last);
+  this.fetchTimespan = util.calculateTimespan(this.first, this.last);
+}
+
+// *This method is only used if this exchange does not support
+// historical data.*
+// 
+// we need to keep polling exchange because we cannot
+// access older data. We need to calculate how often we
+// we should poll.
+// 
+// Returns amount of ms to wait for until next fetch.
+Fetcher.prototype.calculateNextFetch = function(trades) {
+  // if the timespan per fetch is fixed at this exchange,
+  // just return that number.
+  if(this.exchange.fetchTimespan)
+    return util.msToMin(this.exchange.fetchTimespan);
+
   var minimalInterval = util.minToMs(config.EMA.interval);
-  
+
   // if we got the last 150 seconds of trades last
   // time make sure we fetch at least in 100 seconds
   // again.
   var safeTreshold = 1.5;
+  var defaultFetchTime = util.minToMs(1);
 
-  if(fetchTimespan / safeTreshold > minimalInterval)
+  if(this.fetchTimespan / safeTreshold > minimalInterval)
     // If the oldest trade in a fetch call > ema.interval
     // we can just use ema.interval.
     var fetchAfter = minimalInterval;
+  else if(this.fetchTimespan / safeTreshold > defaultFetchTime)
+    // If the oldest trade in a fetch call > default time
+    // we fetch at default time.
+    var fetchAfter = defaultFetchTime;
   else
-    // If the oldest trade in a fetch call < ema.interval
-    // we fetch once every minute until we can determine a
-    // better interval based on history.
-    var fetchAfter = util.minToMs(1);
+    // if we didn't even get enough trades for 1 minute
+    // fetch aggresively.
+    var fetchAfter = this.fetchTimespan / safeTreshold;
 
-  log.debug('Scheduling next fetch in', util.msToMin(fetchAfter), 'minute');
+  log.debug('Scheduling next fetch: in', util.msToMin(fetchAfter), 'minutes');
   return fetchAfter;
 }
 
@@ -79,29 +132,28 @@ Fetcher.prototype.scheduleNextFetch = function(at) {
   setTimeout(this.fetch, at);
 }
 
-Fetcher.prototype.fetch = function() {
-  this.watcher.getTrades(null, this.processTrades, false);
+Fetcher.prototype.fetch = function(since) {
+  this.watcher.getTrades(since, this.processTrades, false);
 }
 
 Fetcher.prototype.processTrades = function(err, trades) {
   if(err)
     throw err;
 
-  // schedule next fetch
-  if(!this.exchange.providesHistory) {
-    var at = this.calculateNextFetch(trades);
-    this.scheduleNextFetch(at);
-  }
-    
-  else
-    console.log('wup wup refetching because this exchange supports it');
-
+  this.setFetchMeta(trades);
   
   this.emit('new trades', {
     start: this.first,
     end: this.last,
     all: trades
   });
+
+  // schedule next fetch
+  if(!this.exchange.providesHistory) {
+    var at = this.calculateNextFetch(trades);
+    this.scheduleNextFetch(at);
+  } else
+    console.log('wup wup refetching because this exchange supports it');
 }
 
 

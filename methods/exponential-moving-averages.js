@@ -41,7 +41,7 @@ var TradingMethod = function(watcher) {
   this.on('calculated candle', this.calculateEMAs);
 }
 
-
+throw 'fix this ffs';
 Util.inherits(TradingMethod, CandleMethod);
 
 // first prepare this trading method, then

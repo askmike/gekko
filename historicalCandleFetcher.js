@@ -1,13 +1,14 @@
 // var csv = require('csv');
 var lineReader = require('line-reader');
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
+
 var _ = require('lodash');
 var log = require('./log');
 
 // `abstract` constructor
 var CandleCalculator = function() {};
 
+var Util = require('util');
+var EventEmitter = require('events').EventEmitter;
 Util.inherits(CandleCalculator, EventEmitter);
 
 CandleCalculator.prototype.set = function() {

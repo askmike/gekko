@@ -58,8 +58,10 @@ if(invalid)
 // write config
 util.setConfig(config);
 
-var TradeFetcher = require('./tradeFetcher.js');
-var tradeFetcher = new TradeFetcher();
+// var TradeFetcher = require('./tradeFetcher.js');
+// var tradeFetcher = new TradeFetcher();
+var CM = require('./candleManager');
+var a = new CM;
 return;
 
 // implement a trading method to create a consultant, we pass it a config and a 
@@ -92,6 +94,11 @@ var configureManagers = function(_next) {
     var invalid = exchangeChecker.cantTrade(conf);
     if(invalid)
       throw invalid;
+
+    log.info(
+      'Trading for real money based on market advice at',
+      conf.exchange
+    );
 
     var manager = new Manager(conf);
 
