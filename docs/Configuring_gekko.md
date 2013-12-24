@@ -30,22 +30,22 @@ You have to tell Gekko what market to monitor on the selected exchange, A market
 
 * Mt. Gox:  
   currencies: USD, EUR, GBP, AUD, CAD, CHF, CNY, DKK, HKD, PLN, RUB, SGD, THB  
-  assets: BTC
+  assets: BTC  
   markets: USD/BTC, EUR/BTC, GBP/BTC, AUD/BTC, CAD/BTC, CHF/BTC, CNY/BTC, DKK/BTC, HKD/BTC, PLN/BTC, RUB/BTC, SGD/BTC, THB/BTC.
 
 * BTC-e:  
   currencies: USD, EUR, RUR, BTC  
-  assets: BTC, LTC, NMC, NVC, USD, EUR, TRC, PPC, FTC, XPM
+  assets: BTC, LTC, NMC, NVC, USD, EUR, TRC, PPC, FTC, XPM  
   markets: USD/BTC, RUR/BTC, EUR/BTC, BTC/LTC, USD/LTC, RUR/LTC, EUR/LTC, BTC/NMC, USD/NMC, BTC/NVC, USD/NVC, RUR/USD, USD/EUR, BTC/TRC, BTC/PPC, USD/PPC, BTC/FTC, BTC/XPM.
 
 * Bitstamp:  
   currencies: USD  
-  assets: BTC
+  assets: BTC  
   markets: USD/BTC
   
 * cex.io:  
   currencies: BTC, *NMC (not yet supported)*  
-  assets: GHS
+  assets: GHS  
   markets: BTC/GHS
 
 *Even though Bitcoin is a currency Gekko treats is like an asset when you are trading USD vs BTC.*
