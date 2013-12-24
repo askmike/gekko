@@ -46,15 +46,18 @@ Util.inherits(Manager, EventEmitter);
 
 // load all databases we need
 Manager.prototype.init = function(data) {
-
   this.createDays();
 
-  this.nextFetchAt = utc().subtract('ms', data.nextIn);
+  // we need this information to know how recent
+  // the history needs to be
+  this.nextFetchAt = utc().add('ms', data.nextIn);
 
   this.start = util.intervalsAgo(config.EMA.candles);
   this.startMinute = this.momentToMinute(this.start);
   this.startDay = this.start.clone().startOf('day');
+  
   this.today = utc().startOf('day');
+  this.todayString = this.today.format('YYYY-MM-DD');
 
   // make sure the historical folder exists
   if(!fs.existsSync(this.historyPath))
@@ -63,8 +66,116 @@ Manager.prototype.init = function(data) {
   this.loadDays();
 }
 
-Manager.prototype.processTrades = function(trades) {
+// grab a batch of trades and for each full minute
+// create a new candle
+Manager.prototype.processTrades = function(data) {
 
+  // TODO:
+  // we can only do this once we know
+  // how what our history looks like
+  // 
+  // chicken & egg problem, need better
+  // solution
+  if(!this.historySet) {
+    log.debug('halting processTrades');
+    return this.onHistorySet = function() {
+      this.processTrades(data)
+    };
+  }
+
+  // console.log('NEWEST:', this.newest.format('YYYY-MM-DD HH:mm:ss'));
+  // console.log('NEWEST:', this.momentToMinute(this.newest));
+  
+  // filter out all trades that are do not belong to the last candle
+  var trades = _.filter(data.all, function(trade) {
+    return this.minumum < moment.unix(trade.date).utc();
+  }, this);
+
+  var candles = [];
+  var minutes = [];
+
+  // if we have remaining trades from last fetch
+  // let's include them to this round
+  if(this.leftOvers) {
+    var m = this.leftOver
+    candles.push(m);
+    minutes.push(m.s);
+  }
+
+  // bucket all trades into minutes
+  _.each(trades, function(trade) {
+    var mom = moment.unix(trade.date).utc();
+    var min = this.momentToMinute(mom);
+    if(!_.contains(minutes, min)) {
+      // create a new candle
+      // for this minute
+      candles.push({
+        s: min,
+        o: trade.price,
+        h: trade.price,
+        l: trade.price,
+        c: trade.price,
+        v: trade.amount
+      });
+      minutes.push(min);
+    } else {
+      // update h, l, c, v
+      var m = _.last(candles);
+      m.h = _.max([m.h, trade.price]);
+      m.l = _.min([m.l, trade.price]);
+      m.c = trade.price;
+      m.v += trade.amount;
+    }
+  }, this);
+
+  // console.log(candles);
+
+  // TODO: think about best solution:
+  // the more info we drop here the bigger
+  // the drop, but we need a way to note
+  // that these candles are not 100% full
+  // 
+  // if(!this.leftOver) {
+  //   // this is the first time, since we don't
+  //   // know if we got the full minute drop it.
+  //   candles.shift();
+  // }
+
+  // since we don't know if we have the full minute
+  // for the last one, pop it under leftovers
+  this.leftovers = candles.pop();
+
+  if(_.size(candles))
+    this.storeCandles(candles);
+  else
+    log.debug('Not enough data for new candle, maybe next round')
+
+  if(this.leftovers)
+    log.debug('Leftovers:', this.leftovers.s);
+
+
+  var last = _.last(trades);
+  if(last)
+    this.minumum = moment.unix(last.date).utc();
+  else
+    console.log('why is this called without trades?')
+}
+
+// TODO: make sure this.today gets updates
+// ALSO catch some candles being in day A and
+// a couple being in day B
+Manager.prototype.storeCandles = function(candles) {
+  _.each(candles, function(c) {
+    log.debug(
+      'inserting candle',
+      c.s,
+      '(' + this.minuteToMoment(c.s).format('HH:mm:ss') + ')'
+    );
+  }, this);
+  this.days[this.todayString].handle.insert(candles, function(err) {
+    if(err)
+      log.warn('DOUBLE UNIQUE INSERT')
+  });
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
@@ -105,9 +216,12 @@ Manager.prototype.loadDays = function() {
 
   // we're done, interpetet results
   var checked = function() {
-    if(!this.oldestDay)
+    this.createDay(true);
+
+    if(!this.oldestDay) {
       this.emit('history', false);
-    else {
+      this.setHistoryAge();
+    } else {
       // we have *ungapped* historical data
       var start = this
         .minuteToMoment(this.oldestMinute, this.oldestDay);
@@ -133,7 +247,7 @@ Manager.prototype.loadDays = function() {
 //  - load it
 //  - if today: 
 //      check if since midnight
-//      check if up to now - 10 min (or smth)
+//      check if up to now - fetchInterval
 //    else if last:
 //      check if first < startMinute
 //    else
@@ -145,33 +259,16 @@ Manager.prototype.verifyDay = function(day, next) {
     return next(false);
 
   if(day.empty) {
-    this.deleteDay(db);
+    this.deleteDay(day);
     return next(false);
   }
 
   // store a global reference
   this.days[day.string] = day;
 
-  // if we don't already have the newest
-  // day this is the most recent day so 
-  // this holds the newest data
-  if(!this.newestDay) {
-
-    // verify that it's recent enough,
-    // else we can drop everything because
-    // the whole history is too old
-    var age = this.minuteToMoment(day.end, day.time);
-    if(age > this.nextFetchAt) {
-
-      // hacky way to propogate error
-      // to the candlemanager
-      this.emit('historical data outdated')
-      return next(false);
-    }
-
-    this.newestDay = day.time;
-    this.newestMinute = day.end;
-  }
+  this.newestDay = day.time;
+  this.newestMinute = day.end.s;
+  this.setHistoryAge();
 
   // if this day doesn't end at midnight
   // we can't use any data it has
@@ -189,44 +286,63 @@ Manager.prototype.verifyDay = function(day, next) {
 
   // but we can't use anything else
   // since it doesn't go back to midnight
-  if(db.start !== 0)
+  if(day.start !== 0)
     return next(false);
 
   next(true);
 }
 
-// setup an interval to create new daily files 
-// every day at 11PM.
+Manager.prototype.setHistoryAge = function() {
+  if(this.newestMinute)
+    this.newest = this.minuteToMoment(this.newestMinute, this.newestDay);
+  else
+    this.newest = utc().subtract(1, 'years');
+  this.minumum = this.newest.clone().endOf('minute');
+
+  // we can only do certain things once this is
+  // set, if we have something waiting do it now
+  if(this.onHistorySet) {
+    this.historySet = true;
+    this.onHistorySet();
+    this.onHistorySet = false;
+  }
+}
+
+// setup an interval to create new daily db 
+// files every day at 11PM UTC.
 Manager.prototype.createDays = function() {
   var midnight = utc()
     .endOf('day')
-    .subtract('h', 1)
-    .diff();
+    .subtract('h', 1);
 
-  var untilMidnight = utc().diff(midnight);
+  var untilMidnight = midnight.diff(utc());
 
   setTimeout(_.bind(function() {
-    this.createDay();
     setInterval(this.createDay, +moment.duration(1, 'days'));
-  }, this));
+  }, this), untilMidnight);
   
 }
 
 // create a new daily database
-Manager.prototype.createDay = function() {
+Manager.prototype.createDay = function(today) {
   var day = utc()
-    .startOf('day')
-    .add('d', 1);
+    .startOf('day');
+
+  if(!today)
+    day.add('d', 1);
 
   var string = day.format('YYYY-MM-DD');
 
-  log.debug('Creating a new daily database for day', string);
+  if(today && string in this.days)
+    return log.debug('Daily database already exists, skipping create');
+  else
+    log.debug('Creating a new daily database for day', string);
 
   var file = this.historyPath + [
     config.watch.exchange,
     config.watch.currency,
     config.watch.asset,
-    string
+    string + '.db'
   ].join('-');
 
   var db = new nedb({filename: file, autoload: true});
@@ -248,10 +364,10 @@ Manager.prototype.loadDay = function(day, next) {
     config.watch.exchange,
     config.watch.currency,
     config.watch.asset,
-    string
+    string + '.db'
   ].join('-');
 
-  if(fs.exists(file)) {
+  if(fs.existsSync(file)) {
     // load it and set meta
     var db = new nedb({filename: file, autoload: true});
     db.ensureIndex({fieldName: 's', unique: true});
@@ -281,6 +397,8 @@ Manager.prototype.loadDay = function(day, next) {
 }
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
+  if(!day)
+    day = this.today;
   day = day.clone().startOf('day');
   return day.clone().add('minutes', minutes);
 };

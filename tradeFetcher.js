@@ -98,7 +98,7 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
   // if the timespan per fetch is fixed at this exchange,
   // just return that number.
   if(this.exchange.fetchTimespan)
-    return util.msToMin(this.exchange.fetchTimespan);
+    return this.fetchAfter = util.minToMs(this.exchange.fetchTimespan);
 
   var minimalInterval = util.minToMs(config.EMA.interval);
 
@@ -121,11 +121,11 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     // fetch aggresively.
     var fetchAfter = this.fetchTimespan / safeTreshold;
 
-  log.debug('Scheduling next fetch: in', util.msToMin(fetchAfter), 'minutes');
   this.fetchAfter = fetchAfter;
 }
 
 Fetcher.prototype.scheduleNextFetch = function() {
+  log.debug('Scheduling next fetch: in', util.msToMin(this.fetchAfter), 'minutes');
   setTimeout(this.fetch, this.fetchAfter);
 }
 

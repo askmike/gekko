@@ -77,8 +77,8 @@ var exchanges = [
     assets: ['GHS'],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 0.000001, unit: 'currency' },
-    providesHistory: false,
-    monitorError: 'https://github.com/askmike/gekko/issues/90'
+    providesHistory: false//,
+    // monitorError: 'https://github.com/askmike/gekko/issues/90'
   }
 ];
 
