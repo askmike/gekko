@@ -97,8 +97,22 @@ Fetcher.prototype.setFetchMeta = function(trades) {
 Fetcher.prototype.calculateNextFetch = function(trades) {
   // if the timespan per fetch is fixed at this exchange,
   // just return that number.
-  if(this.exchange.fetchTimespan)
-    return this.fetchAfter = util.minToMs(this.exchange.fetchTimespan);
+  if(this.exchange.fetchTimespan) {
+    // todo: if the interval doesn't go in
+    // sync with exchange fetchTimes we
+    // need to calculate overlapping times.
+    // 
+    // eg: if we can fetch every 60 min but user
+    // interval is at 80, we would also need to
+    // fetch again at 80 min.
+    var min = _.min([
+      this.exchange.fetchTimespan,
+      config.EMA.interval
+    ]);
+    this.fetchAfter = util.minToMs(min);
+    return;  
+  }
+    
 
   var minimalInterval = util.minToMs(config.EMA.interval);
 

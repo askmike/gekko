@@ -77,11 +77,13 @@ Manager.prototype.processTrades = function(data) {
   // chicken & egg problem, need better
   // solution
   if(!this.historySet) {
-    log.debug('halting processTrades');
+    log.debug('delaying processTrades');
     return this.onHistorySet = function() {
       this.processTrades(data)
     };
-  }
+    // race condition fix
+  } else if(!this.leftovers)
+    this.createDay(true);
 
   // console.log('NEWEST:', this.newest.format('YYYY-MM-DD HH:mm:ss'));
   // console.log('NEWEST:', this.momentToMinute(this.newest));
@@ -102,6 +104,8 @@ Manager.prototype.processTrades = function(data) {
     minutes.push(m.s);
   }
 
+  var f = parseFloat;
+
   // bucket all trades into minutes
   _.each(trades, function(trade) {
     var mom = moment.unix(trade.date).utc();
@@ -111,20 +115,20 @@ Manager.prototype.processTrades = function(data) {
       // for this minute
       candles.push({
         s: min,
-        o: trade.price,
-        h: trade.price,
-        l: trade.price,
-        c: trade.price,
-        v: trade.amount
+        o: f(trade.price),
+        h: f(trade.price),
+        l: f(trade.price),
+        c: f(trade.price),
+        v: f(trade.amount)
       });
       minutes.push(min);
     } else {
       // update h, l, c, v
       var m = _.last(candles);
-      m.h = _.max([m.h, trade.price]);
-      m.l = _.min([m.l, trade.price]);
-      m.c = trade.price;
-      m.v += trade.amount;
+      m.h = _.max([m.h, f(trade.price)]);
+      m.l = _.min([m.l, f(trade.price)]);
+      m.c = f(trade.price);
+      m.v += f(trade.amount);
     }
   }, this);
 
@@ -152,7 +156,6 @@ Manager.prototype.processTrades = function(data) {
 
   if(this.leftovers)
     log.debug('Leftovers:', this.leftovers.s);
-
 
   var last = _.last(trades);
   if(last)
@@ -216,11 +219,9 @@ Manager.prototype.loadDays = function() {
 
   // we're done, interpetet results
   var checked = function() {
-    this.createDay(true);
-
+    this.setHistoryAge();
     if(!this.oldestDay) {
       this.emit('history', false);
-      this.setHistoryAge();
     } else {
       // we have *ungapped* historical data
       var start = this
@@ -268,7 +269,6 @@ Manager.prototype.verifyDay = function(day, next) {
 
   this.newestDay = day.time;
   this.newestMinute = day.end.s;
-  this.setHistoryAge();
 
   // if this day doesn't end at midnight
   // we can't use any data it has
@@ -301,8 +301,8 @@ Manager.prototype.setHistoryAge = function() {
 
   // we can only do certain things once this is
   // set, if we have something waiting do it now
+  this.historySet = true;
   if(this.onHistorySet) {
-    this.historySet = true;
     this.onHistorySet();
     this.onHistorySet = false;
   }
@@ -318,6 +318,7 @@ Manager.prototype.createDays = function() {
   var untilMidnight = midnight.diff(utc());
 
   setTimeout(_.bind(function() {
+    this.createDay();
     setInterval(this.createDay, +moment.duration(1, 'days'));
   }, this), untilMidnight);
   
