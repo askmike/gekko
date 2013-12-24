@@ -87,7 +87,8 @@ Manager.prototype.init = function(data) {
 }
 
 // fires everytime we have a new 1m candle
-// and aggregates them 
+// and aggregates them into the candles
+// of the required size
 Manager.prototype.watchRealCandles = function() {
   if(_.size(this.realCandleContents) !== this.realCandleSize)
     return;
@@ -105,7 +106,7 @@ Manager.prototype.watchRealCandles = function() {
       candle.h = _.max([candle.h, m.h]);
       candle.l = _.min([candle.l, m.l]);
       candle.c = m.c;
-      candle.v =+ m.v
+      candle.v += m.v
       return candle;
     },
     first.candle
