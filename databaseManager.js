@@ -26,9 +26,20 @@ var equals = util.equals;
 // (https://en.wikipedia.org/wiki/Leap_second)
 // every day has the same amount of minutes
 var MINUTES_IN_DAY = 1439;
+// TODO: This breaks if we have a minute without
+// trades ~~.
 
 var Manager = function() {
   _.bindAll(this);
+
+  // internally every candle is 1m
+  // but when someone requests a candle
+  // we need to give back a bigger one
+  this.realCandleSize = config.EMA.interval;
+  // all minutes we fetched that are part
+  // of the real candle
+  this.realCandleContents = [];
+
 
   this.historyPath = './history/';
   this.days = {};
@@ -38,6 +49,15 @@ var Manager = function() {
   this.on('empty history', function() {
     console.log('empty history');
   });
+
+  this.on('candle', this.watchRealCandles);
+  this.on('real candle', function(candle) {
+    console.log(
+      'NEW REAL CANDLE:',
+      candle.s.format('YYYY-MM-DD HH:mm:ss'),
+      ['O:', candle.o, ', H:', candle.h, ', L:', candle.l, ', C:', candle.c].join('')
+    );
+  })
 }
 
 var Util = require('util');
@@ -65,6 +85,70 @@ Manager.prototype.init = function(data) {
   this.setToday();
   this.loadDays();
 }
+
+// fires everytime we have a new 1m candle
+// and aggregates them 
+Manager.prototype.watchRealCandles = function() {
+  if(_.size(this.realCandleContents) !== this.realCandleSize)
+    return;
+
+  var first = this.realCandleContents.shift();
+
+  delete first.candle._id;
+  first.candle.s = this.minuteToMoment(first.candle.s, first.day);
+
+  // create a fake candle based on all real candles
+  var candle = _.reduce(
+    this.realCandleContents,
+    function(candle, m) {
+      m = m.candle;
+      candle.h = _.max([candle.h, m.h]);
+      candle.l = _.min([candle.l, m.l]);
+      candle.c = m.c;
+      candle.v =+ m.v
+      return candle;
+    },
+    first.candle
+  );
+
+  this.emit('real candle', candle);
+
+  this.realCandleContents = [];
+}
+
+
+
+// We keep in memory for now
+// 
+// 
+// Manager.prototype.emitCandle = function() {
+//   var iterator = function(time, next) {
+//     this.getCandle(time.minute, time.day, next)
+//   }
+
+//   var done = function(err, results) {
+//     if(err)
+//       throw err;
+
+//     console.log(results);
+//     this.realCandleContents = [];
+//   }
+
+//   async.each(
+//     this.realCandleContents,
+//     _.bind(iterator, this),
+//     _.bind(done, this)
+//   );
+// }
+
+// retrieve an 1m candle out of the DB
+Manager.prototype.getCandle = function(minute, day, callback) {
+  if(!day)
+    day = this.todayString;
+
+  this.days[day].handle.find({s: minute}, callback);
+}
+
 Manager.prototype.setToday = function() {
   this.today = utc().startOf('day');
   this.todayString = this.today.format('YYYY-MM-DD');
@@ -78,8 +162,8 @@ Manager.prototype.processTrades = function(data) {
   // we can only do this once we know
   // how what our history looks like
   // 
-  // hotfix race condition, need better
-  // solution
+  // hotfix for race condition, need 
+  // better solution
   if(!this.historySet) {
     return this.onHistorySet = function() {
       this.processTrades(data)
@@ -148,7 +232,7 @@ Manager.prototype.processTrades = function(data) {
   last = moment.unix(last).utc();
 
   // TODO: test at midnight
-  if(!util.equals(last.startOf('day'), this.today)) {
+  if(!equals(last.startOf('day'), this.today)) {
     log.debug('UNTESTED CODE, should insert candles from today and from tomorrow');
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
@@ -162,7 +246,7 @@ Manager.prototype.processTrades = function(data) {
 
       // add all the candles belonging
       // to trades to the right batch
-      if(util.equals(day, this.today))
+      if(equals(day, this.today))
         var batch = firstBatch;
       else
         var batch = secondBatch;
@@ -206,6 +290,15 @@ Manager.prototype.storeCandles = function(candles) {
       c.s,
       '(' + this.minuteToMoment(c.s).format('HH:mm:ss') + ' UTC)'
     );
+
+    // local reference
+    this.realCandleContents.push({
+      candle: c,
+      day: this.today
+    });
+
+    this.emit('candle');
+
   }, this);
 
   this.days[this.todayString].handle.insert(candles, function(err) {
@@ -368,7 +461,7 @@ Manager.prototype.createDay = function(today) {
   var string = day.format('YYYY-MM-DD');
 
   if(today && string in this.days)
-    return log.debug('Daily database already exists, skipping create');
+    return;
   else
     log.debug('Creating a new daily database for day', string);
 
