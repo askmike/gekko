@@ -12,6 +12,7 @@
 //    implementation in gekko.
 // assets: all the assets supported by the exchange implementation
 //    in gekko.
+// pairs: all allowed currency / asset combinatinos that form a market
 // providesHistory: If the getTrades can be fed a since parameter
 //    that Gekko can use to get historical data, set this to:
 //    
@@ -21,9 +22,8 @@
 //             // a starting point in time.
 //    - false  // When the exchange does not support to give back
 //             // historical data at all.
-// fetchTimespan: if providesHistory is either 'tid' or false and
-//    the timespan between first and last trade is fixed, set it
-//    here in minutes.
+// fetchTimespan: if the timespan between first and last trade per 
+//    fetch is fixed, set it here in minutes.
 //    
 // monitorError: if Gekko is currently not able to monitor this exchange, please set it
 //    to an URL explaining the problem.
@@ -40,6 +40,13 @@ var exchanges = [
       'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
     ],
     assets: ['BTC'],
+    pairs: [
+      ['USD', 'BTC'], ['EUR', 'BTC'], ['GBP', 'BTC'],
+      ['AUD', 'BTC'], ['CAD', 'BTC'], ['CHF', 'BTC'],
+      ['CNY', 'BTC'], ['DKK', 'BTC'], ['HKD', 'BTC'],
+      ['PLN', 'BTC'], ['RUB', 'BTC'], ['SGD', 'BTC'],
+      ['THB', 'BTC']
+    ],
     requires: ['key', 'secret'],
     minimalOrder: { amount: 0.01, unit: 'asset' },
     providesHistory: 'date'
@@ -49,8 +56,19 @@ var exchanges = [
     slug: 'btce',
     direct: false,
     infinityOrder: false,
-    currencies: ['USD', 'RUR', 'EUR'],
-    assets: ['BTC'],
+    currencies: ['USD', 'RUR', 'EUR', 'BTC'],
+    assets: [
+      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR',
+      'TRC', 'PPC', 'FTC', 'XPM'
+    ],
+    pairs: [
+      ['USD', 'BTC'], ['RUR', 'BTC'], ['EUR', 'BTC'],
+      ['BTC', 'LTC'], ['USD', 'LTC'], ['RUR', 'LTC'],
+      ['EUR', 'LTC'], ['BTC', 'NMC'], ['USD', 'NMC'],
+      ['BTC', 'NVC'], ['USD', 'NVC'], ['RUR', 'USD'],
+      ['USD', 'EUR'], ['BTC', 'TRC'], ['BTC', 'PPC'],
+      ['USD', 'PPC'], ['BTC', 'FTC'], ['BTC', 'XPM'],
+    ],
     requires: ['key', 'secret'],
     minimalOrder: { amount: 0.01, unit: 'asset' },
     providesHistory: false
@@ -62,6 +80,7 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['USD'],
     assets: ['BTC'],
+    paris: [['USD', 'BTC']],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 1, unit: 'currency' },
     providesHistory: false,
@@ -75,6 +94,7 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['BTC'],
     assets: ['GHS'],
+    pairs: [['BTC', 'GHS']],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 0.000001, unit: 'currency' },
     providesHistory: false
