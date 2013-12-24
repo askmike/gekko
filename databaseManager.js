@@ -74,7 +74,7 @@ Manager.prototype.processTrades = function(data) {
   // we can only do this once we know
   // how what our history looks like
   // 
-  // chicken & egg problem, need better
+  // hotfix race condition, need better
   // solution
   if(!this.historySet) {
     log.debug('delaying processTrades');
@@ -172,7 +172,7 @@ Manager.prototype.storeCandles = function(candles) {
     log.debug(
       'inserting candle',
       c.s,
-      '(' + this.minuteToMoment(c.s).format('HH:mm:ss') + ')'
+      '(' + this.minuteToMoment(c.s).format('HH:mm:ss') + ' UTC)'
     );
   }, this);
   this.days[this.todayString].handle.insert(candles, function(err) {

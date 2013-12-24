@@ -126,13 +126,12 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     // If the oldest trade in a fetch call > ema.interval
     // we can just use ema.interval.
     var fetchAfter = minimalInterval;
-  else if(this.fetchTimespan / safeTreshold > defaultFetchTime)
-    // If the oldest trade in a fetch call > default time
+  else if(this.fetchTimespan / safeTreshold < defaultFetchTime)
+    // If the oldest trade in a fetch call < default time
     // we fetch at default time.
     var fetchAfter = defaultFetchTime;
   else
-    // if we didn't even get enough trades for 1 minute
-    // fetch aggresively.
+    // use a safe fetch time to determine
     var fetchAfter = this.fetchTimespan / safeTreshold;
 
   this.fetchAfter = fetchAfter;

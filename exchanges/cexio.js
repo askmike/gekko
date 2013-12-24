@@ -1,8 +1,6 @@
-var cexio = require('cexio'),
+var CEXio = require('cexio'),
    moment = require('moment'),
-     nedb = require('nedb'),
     async = require('async'),
-       db = new nedb({filename: 'cexio.db', autoload: true}),
         _ = require('lodash'),
      util = require('../util'),
       log = require('../log');
@@ -13,79 +11,32 @@ var Trader = function(config) {
   this.secret = config.secret;
   this.pair = 'ghs_' + config.currency.toLowerCase();
   this.name = 'cex.io';
-  this.next_tid = 0;
+
+  this.cexio = new CEXio(
+    this.pair,
+    this.user,
+    this.key,
+    this.secret
+  );
 
   _.bindAll(this);
-
-  this.cexio = new cexio(this.pair, this.user,
-                        this.key, this.secret);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
-  var self = this;
-  var last_tid = next_tid = 0;
-
-  if(since && !_.isNumber(since))
-    since = util.toMicro(since);
-
   var args = _.toArray(arguments);
+  var process = function(err, trades) {
+    if(err || !trades || trades.length === 0)
+      return this.retry(self.getTrades, args);
 
-  // FIXME:  fetching and updating our db shall be done in an seperate
-  // thread (timeout-callback) rather than here.  This method shall
-  // only fetch and return from local db.
+    var f = parseFloat;
 
-  async.waterfall([
-    function(callback) {
-      db.find({}, function(err, docs) {
-        if(!docs || docs.length === 0)
-          tid = 263000;
-        else
-          tid = 1 + _.max(docs, 'tid').tid;
+    if(descending)
+      callback(null, trades);
+    else
+      callback(null, trades.reverse());
+  }
 
-        //log.info(self.name, 'Updating cex.io historical data store');
-        log.debug(self.name, 'fetching from tid ' + tid);
-
-        self.cexio.trades({since: tid},
-          function(err, trades) {
-            if(err || !trades || trades.length === 0)
-              return self.retry(self.getTrades, args);
-            else if('error' in trades)
-              throw 'Error from cexio: ' + trades.error
-            else {
-              trades = trades.reverse();
-              _.forEach(trades, function(trade) {
-                // convert to int
-                trade.amount = Number(trade.amount);
-                trade.price = Number(trade.price);
-                trade.tid = Number(trade.tid);
-                trade.date = Number(trade.date);
-                db.insert(trade);
-              });
-            }
-            callback();
-        });
-      });
-    },
-    function(callback) {
-      if(!since) {
-        since = new Date().getTime() * 1000;
-        since -= (10 * 1000 * 1000);
-      }
-      since = Math.floor(since / 1000 / 1000);
-      log.debug('fetching since ' + since);
-
-      db.find({'date': {$gte: since}}, function(err, docs) {
-        docs = _.sortBy(docs, 'tid');
-        // log.debug(self.name, docs);
-        if(!docs || docs.length === 0)
-          return self.retry(self.getTrades, args);
-        callback(null, docs);
-      });
-    }
-  ], function(err, result) {
-    if(err) return log.error(self.name, 'error: ' + err);
-    callback(result);
-  });
+  this.cexio.trades({}, _.bind(process, this));
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
