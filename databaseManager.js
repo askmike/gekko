@@ -52,18 +52,22 @@ Manager.prototype.init = function(data) {
   // the history needs to be
   this.nextFetchAt = utc().add('ms', data.nextIn);
 
+  // the history data we need according to the EMA
+  // configuration
   this.start = util.intervalsAgo(config.EMA.candles);
   this.startMinute = this.momentToMinute(this.start);
   this.startDay = this.start.clone().startOf('day');
-  
-  this.today = utc().startOf('day');
-  this.todayString = this.today.format('YYYY-MM-DD');
 
   // make sure the historical folder exists
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
-  
+
+  this.setToday();
   this.loadDays();
+}
+Manager.prototype.setToday = function() {
+  this.today = utc().startOf('day');
+  this.todayString = this.today.format('YYYY-MM-DD');
 }
 
 // grab a batch of trades and for each full minute
@@ -77,16 +81,12 @@ Manager.prototype.processTrades = function(data) {
   // hotfix race condition, need better
   // solution
   if(!this.historySet) {
-    log.debug('delaying processTrades');
     return this.onHistorySet = function() {
       this.processTrades(data)
     };
     // race condition fix
   } else if(!this.leftovers)
     this.createDay(true);
-
-  // console.log('NEWEST:', this.newest.format('YYYY-MM-DD HH:mm:ss'));
-  // console.log('NEWEST:', this.momentToMinute(this.newest));
   
   // filter out all trades that are do not belong to the last candle
   var trades = _.filter(data.all, function(trade) {
@@ -132,27 +132,59 @@ Manager.prototype.processTrades = function(data) {
     }
   }, this);
 
-  // console.log(candles);
-
-  // TODO: think about best solution:
-  // the more info we drop here the bigger
-  // the drop, but we need a way to note
-  // that these candles are not 100% full
-  // 
-  // if(!this.leftOver) {
-  //   // this is the first time, since we don't
-  //   // know if we got the full minute drop it.
-  //   candles.shift();
-  // }
-
   // since we don't know if we have the full minute
   // for the last one, pop it under leftovers
   this.leftovers = candles.pop();
 
-  if(_.size(candles))
+  if(!_.size(candles))
+    return log.debug('done with this batch');
+
+  // we need to verify that all candles belong to today
+  // else:
+  // - first insert the candles from today
+  // - shift to new day
+  // - insert remaining candles
+  var last = _.last(trades).date;
+  last = moment.unix(last).utc();
+
+  // TODO: test at midnight
+  if(!util.equals(last.startOf('day'), this.today)) {
+    log.debug('UNTESTED CODE, should insert candles from today and from tomorrow');
+    // some trades are after midnight, create
+    // a batch for today and for tomorrow,
+    // insert today, shift a day, insert tomorrow
+    var firstBatch, secondBatch;
+
+    _.each(trades, function(t) {
+      var date = moment.unix(t.date).utc();
+      var day = date.clone().startOf('day');
+      var minute = this.momentToMinute(date);
+
+      // add all the candles belonging
+      // to trades to the right batch
+      if(util.equals(day, this.today))
+        var batch = firstBatch;
+      else
+        var batch = secondBatch;
+
+      batch.push(_.find(candles, function(c) {
+        return c.s === minute;
+      }));
+    }, this);
+
+    // for every trade in a candle we've
+    // added the candle, strip out all
+    // candles except one candle per
+    // minute
+    firstBatch = _.uniq(firstBatch);
+    secondBatch = _.uniq(secondBatch);
+
+    this.storeCandles(firstBatch);
+    this.setToday();
+    this.storeCandles(secondBatch);
+
+  } else
     this.storeCandles(candles);
-  else
-    log.debug('Not enough data for new candle, maybe next round')
 
   if(this.leftovers)
     log.debug('Leftovers:', this.leftovers.s);
@@ -161,7 +193,7 @@ Manager.prototype.processTrades = function(data) {
   if(last)
     this.minumum = moment.unix(last.date).utc();
   else
-    console.log('why is this called without trades?')
+    console.log('why is this called without trades?');
 }
 
 // TODO: make sure this.today gets updates
@@ -175,6 +207,7 @@ Manager.prototype.storeCandles = function(candles) {
       '(' + this.minuteToMoment(c.s).format('HH:mm:ss') + ' UTC)'
     );
   }, this);
+
   this.days[this.todayString].handle.insert(candles, function(err) {
     if(err)
       log.warn('DOUBLE UNIQUE INSERT')

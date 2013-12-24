@@ -113,26 +113,25 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     return;  
   }
     
-
   var minimalInterval = util.minToMs(config.EMA.interval);
 
-  // if we got the last 150 seconds of trades last
-  // time make sure we fetch at least in 100 seconds
+  // if we got the last 100 seconds of trades last
+  // time make sure we fetch at least in 55 seconds
   // again.
-  var safeTreshold = 1.5;
+  var safeTreshold = 0.55;
   var defaultFetchTime = util.minToMs(1);
 
-  if(this.fetchTimespan / safeTreshold > minimalInterval)
+  if(this.fetchTimespan * safeTreshold > minimalInterval)
     // If the oldest trade in a fetch call > ema.interval
     // we can just use ema.interval.
     var fetchAfter = minimalInterval;
-  else if(this.fetchTimespan / safeTreshold < defaultFetchTime)
+  else if(this.fetchTimespan * safeTreshold < defaultFetchTime)
     // If the oldest trade in a fetch call < default time
     // we fetch at default time.
     var fetchAfter = defaultFetchTime;
   else
     // use a safe fetch time to determine
-    var fetchAfter = this.fetchTimespan / safeTreshold;
+    var fetchAfter = this.fetchTimespan * safeTreshold;
 
   this.fetchAfter = fetchAfter;
 }
