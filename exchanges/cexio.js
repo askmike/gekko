@@ -26,7 +26,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
     if(err || !trades || trades.length === 0)
-      return this.retry(self.getTrades, args);
+      return this.retry(this.getTrades, args);
 
     var f = parseFloat;
 
