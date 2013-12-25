@@ -29,8 +29,8 @@ config.EMA = {
 config.normal = {
   enabled: true,
   exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'BTC',
-  asset: 'LTC',
+  currency: 'USD',
+  asset: 'PPC',
   tradingEnabled: false,
   key: 'your-key',
   secret: 'your-secret',

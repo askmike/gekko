@@ -52,7 +52,7 @@ var Manager = function() {
 
   this.on('candle', this.watchRealCandles);
   this.on('real candle', function(candle) {
-    console.log(
+    log.debug(
       'NEW REAL CANDLE:',
       candle.s.format('YYYY-MM-DD HH:mm:ss'),
       ['O:', candle.o, ', H:', candle.h, ', L:', candle.l, ', C:', candle.c].join('')
@@ -82,6 +82,7 @@ Manager.prototype.init = function(data) {
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
 
+  this.firstFetch = data.start;
   this.setToday();
   this.loadDays();
 }
@@ -150,8 +151,10 @@ Manager.prototype.getCandle = function(minute, day, callback) {
   this.days[day].handle.find({s: minute}, callback);
 }
 
-Manager.prototype.setToday = function() {
-  this.today = utc().startOf('day');
+Manager.prototype.setToday = function(mom) {
+  if(!mom)
+    mom = utc();
+  this.today = mom.startOf('day');
   this.todayString = this.today.format('YYYY-MM-DD');
 }
 
@@ -232,13 +235,20 @@ Manager.prototype.processTrades = function(data) {
   var last = _.last(trades).date;
   last = moment.unix(last).utc();
 
+  // if we start just after midnight we need
+  // to make sure we have candle of yesterday
+  var fetchStartDay = this.firstFetch.clone().startOf('day');
+  if(!equals(this.today, this.firstFetch))
+    this.createDay(true, fetchStartDay);
+
   // TODO: test at midnight
   if(!equals(last.startOf('day'), this.today)) {
+
     log.debug('UNTESTED CODE, should insert candles from today and from tomorrow');
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
     // insert today, shift a day, insert tomorrow
-    var firstBatch, secondBatch;
+    var firstBatch = [], secondBatch = [];
 
     _.each(trades, function(t) {
       var date = moment.unix(t.date).utc();
@@ -264,6 +274,8 @@ Manager.prototype.processTrades = function(data) {
     firstBatch = _.uniq(firstBatch);
     secondBatch = _.uniq(secondBatch);
 
+    // return console.log(this.days);
+
     this.storeCandles(firstBatch);
     this.setToday();
     this.storeCandles(secondBatch);
@@ -284,7 +296,10 @@ Manager.prototype.processTrades = function(data) {
 // TODO: make sure this.today gets updates
 // ALSO catch some candles being in day A and
 // a couple being in day B
-Manager.prototype.storeCandles = function(candles) {
+Manager.prototype.storeCandles = function(candles, day) {
+  if(!day)
+    day = this.todayString;
+
   _.each(candles, function(c) {
     log.debug(
       'inserting candle',
@@ -302,7 +317,7 @@ Manager.prototype.storeCandles = function(candles) {
 
   }, this);
 
-  this.days[this.todayString].handle.insert(candles, function(err) {
+  this.days[day].handle.insert(candles, function(err) {
     if(err)
       log.warn('DOUBLE UNIQUE INSERT')
   });
@@ -452,9 +467,13 @@ Manager.prototype.createDays = function() {
 }
 
 // create a new daily database
-Manager.prototype.createDay = function(today) {
-  var day = utc()
-    .startOf('day');
+Manager.prototype.createDay = function(today, mom) {
+  if(!mom)
+    var day = utc();
+  else
+    var day = mom;
+
+  day = day.startOf('day');
 
   if(!today)
     day.add('d', 1);
