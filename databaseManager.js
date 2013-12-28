@@ -185,7 +185,7 @@ Manager.prototype.processTrades = function(data) {
   // this.mostRecentCandle = {s: this.momentToMinute(utc().subtract('h', 3))};
 
   console.log('MINIMUM:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
-  console.log('MOST RECENT:', this.mostRecentCandle);
+  // console.log('MOST RECENT:', this.mostRecentCandle);
   // throw 'a';
 
   // filter out all trades that are do not belong to the last candle
@@ -212,11 +212,14 @@ Manager.prototype.processTrades = function(data) {
 
   // if we have remaining trades from last fetch
   // let's include them to this round
-  if(this.leftOvers) {
-    var m = this.leftOver
+  if(this.leftovers) {
+    var m = this.leftovers;
     candles.push(m);
     minutes.push(m.s);
   }
+
+  console.log('starting process with these leftovers:');
+  console.log(candles);
 
   var f = parseFloat;
 
@@ -258,8 +261,19 @@ Manager.prototype.processTrades = function(data) {
     return c;
   });
 
-  if(_.size(candles) < 1)
-    return log.debug('done with this batch');
+  var amount = _.size(candles);
+  if(amount === 0)
+    return log.debug('done with this batch (1)');
+  else if(amount === 1) {
+    if(_.size(trades)) {
+      // update leftovers with new trades
+      this.leftovers = _.first(candles);
+      this.minumum = moment.unix(_.last(trades).date).utc();
+    }
+
+    return log.debug('done with this batch (2)');
+  }
+
 
   // we need to verify that all candles belong to today
   // else:
@@ -326,7 +340,6 @@ Manager.prototype.processTrades = function(data) {
     // add candles:
     //       [gap between this batch & last inserted candle][batch]
     candles = this.addEmtpyCandles(candles, startFrom);
-
     this.leftovers = candles.pop();
     this.storeCandles(candles);
   }
@@ -342,6 +355,9 @@ Manager.prototype.processTrades = function(data) {
 }
 
 Manager.prototype.storeCandles = function(candles) {
+  if(!_.size(candles))
+    return;
+
   _.each(candles, function(c) {
     log.debug(
       'inserting candle',
@@ -361,6 +377,7 @@ Manager.prototype.storeCandles = function(candles) {
 
   }, this);
 
+  // console.log('SETTING mostRecentCandle', _.last(candles));
   this.mostRecentCandle = _.last(candles);
 
   this.days[this.current.dayString].handle.insert(candles, function(err) {

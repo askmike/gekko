@@ -110,6 +110,8 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
       config.EMA.interval
     ]);
     this.fetchAfter = util.minToMs(min);
+    // debugging bitstamp
+    this.fetchAfter = util.minToMs(1);
     return;  
   }
     
