@@ -25,17 +25,9 @@ var Manager = function() {
     // we pass a fetch to the model right away
     // so it knows how new the history needs to be
     this.fetcher.once('new trades', this.model.init);
-    this.fetcher.on('new trades', this.model.processTrades);
+    // this.fetcher.on('new trades', this.model.processTrades);
 
-    // this.model.on('history', this.processHistory);
-
-  this.model.on('historical data outdated', function() {
-    log.warning(
-      'Gekko found a dataset, but it\'s outdated',
-      'this causes a gap in the data and means we need',
-      'to build up a new history'
-    );
-  });
+    this.model.on('history', this.processHistory);
 
   } else
     console.log('WUP WUP this.backtest();');
@@ -51,18 +43,16 @@ Manager.prototype.processHistory = function(history) {
   var minimum = util.intervalsAgo(config.EMA.candles);
 
   if(!this.exchange.providesHistory) {
-    // If we don't have nor are able to
-    // fetch historical data wait until 
-    // we do.
-    if(!history) {
-      log.info('Gekko could not find any historical data');
-      this.sleep(utc().diff(minimum));
-    } else if(minimum > history.start) {
-      log.info('Gekko could find partial history, but not enough to start');
-      this.sleep(history.start.diff(minimum));
+
+    if(history.empty) {
+      // we are just going to fetch because we don't have
+      // any history yet.
+      log.info('No history found, starting to build one now');
+    } else if(!history.complete) {
+      log.info('History found, but not enough to start giving advice');
     } else {
-      // history is ok
-      this.setupAdvice();
+      log.info('Full history available');
+      console.log('GOT FULL HISTORY, SIZE:', history.candles.length);
     }
   }
 

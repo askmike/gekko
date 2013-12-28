@@ -114,6 +114,7 @@ Manager.prototype.init = function(data) {
   // what do we need if we want
   // to start right away?
   this.required = {
+    to: this.mom(utc().subtract('ms', data.timespan)),
 
     // todo: abstract EMA stuff out of this
     from: this.mom(util.intervalsAgo(config.EMA.candles).utc())
@@ -137,45 +138,14 @@ Manager.prototype.watchRealCandles = function() {
   if(_.size(this.realCandleContents) < this.realCandleSize)
     return;
 
-  var first = this.realCandleContents.shift();
-
-  var firstCandle = _.clone(first.candle);
-  delete firstCandle._id;
-  firstCandle.p = firstCandle.p * firstCandle.v;
-
-  firstCandle.start = this.minuteToMoment(firstCandle.s, first.day);
-
-  // create a fake candle based on all real candles
-  var candle = _.reduce(
-    this.realCandleContents,
-    function(candle, m) {
-      m = m.candle;
-      candle.h = _.max([candle.h, m.h]);
-      candle.l = _.min([candle.l, m.l]);
-      candle.c = m.c;
-      candle.v += m.v;
-      candle.p += m.p * m.v;
-      return candle;
-    },
-    firstCandle
-  );
-
-  if(candle.v)
-    // we have added up all prices (relative to volume)
-    // now divide by volume to get the Volume Weighted Price
-    candle.p /= candle.v;
-  else
-    // empty candle
-    candle.p = candle.o;
-
-
+  var candle = calculateRealCandle(this.realCandleContents);
   this.emit('real candle', candle);
 
   this.realCandleContents = [];
 }
 
 // retrieve an 1m candle out of the DB
-Manager.prototype.getCandle = function(minute, dayString, callback) {
+Manager.prototype.getCandle = function(mom, callback) {
   this.days[mom.dayString].handle.findOne({s: mom.minute}, callback);
 }
 
@@ -190,6 +160,7 @@ Manager.prototype.today = function() {
 // grab a batch of trades and for each full minute
 // create a new candle
 Manager.prototype.processTrades = function(data) {
+  console.log('`');
   // TODO:
   // we can only do this once we know
   // how what our history looks like
@@ -300,7 +271,6 @@ Manager.prototype.processTrades = function(data) {
     return log.debug('done with this batch (2)');
   }
 
-
   // we need to verify that all candles belong to today
   // else:
   // - first insert the candles from today
@@ -381,6 +351,7 @@ Manager.prototype.processTrades = function(data) {
 }
 
 Manager.prototype.storeCandles = function(candles) {
+  console.log('`');
   if(!_.size(candles))
     return;
 
@@ -394,23 +365,41 @@ Manager.prototype.storeCandles = function(candles) {
     );
 
     // local reference
-    var fakeCandle = {
-      candle: c,
-      day: this.current.day
-    }
+    throw 'a';
+    var fakeCandle = this.transportCandle(c, this.current.day);
     this.realCandleContents.push(fakeCandle);
+
+    throw fakeCandle;
 
     this.emit('fake candle', fakeCandle);
 
   }, this);
 
-  // console.log('SETTING mostRecentCandle', _.last(candles));
   this.mostRecentCandle = _.last(candles);
 
   this.days[this.current.dayString].handle.insert(candles, function(err) {
-    if(err)
+    if(err) {
       log.warn('DOUBLE UNIQUE INSERT, this should never happen. Please post details here: https://github.com/askmike/gekko/issues');
+      throw err;
+    }
   });
+}
+
+// small wrapper around a fake candle 
+// to make it easier to throw them around
+Manager.prototype.transportCandle = function(c, day) {
+  if(!day.m)
+    day = this.mom(day.clone());
+
+  return {
+    candle: c,
+    day: day
+  }
+}
+Manager.prototype.transportCandles = function(candles, day) {
+  return _.map(candles, function(c) {
+    return this.transportCandle(c, day);
+  }, this);
 }
 
 // We store each minute, even minutes that didn't contain
@@ -485,9 +474,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
 
 
   var all = candles.concat(emptyCandles);
-  all = all.sort(function(a, b) {
-    return a.s - b.s;
-  });
+  all = this.sortCandles(all);
 
   return all;
 }
@@ -501,14 +488,32 @@ Manager.prototype.deleteDay = function(day, safe) {
   if(safe)
     fs.renameSync(
       day.filename,
-      day.filename + ' [incomplete ~ ' + (+moment()) + ']'
+      day.filename.replace('.db', '') + ' [incomplete ~ ' + (+moment()) + '].db'
     );
   else
     fs.unlinkSync(day.filename);
+
+  if(day.string in this.days)
+    delete this.days[day.string];
+}
+
+Manager.prototype.requiredDays = function() {
+  var day = this.today();
+
+  // create an array of days which we should
+  // check to see if we have them
+  var days = [];
+  while(day >= this.required.from.day) {
+    days.push(this.mom(day.clone()));
+    day.subtract('d', 1);
+  };
+
+  return days;
 }
 
 
 // calculate from which days databases we need data
+// load & verify that data, and emit the status
 Manager.prototype.loadDays = function() {
   // the history we have available
   this.history = {
@@ -516,26 +521,17 @@ Manager.prototype.loadDays = function() {
     oldest: false
   };
 
-  var day = this.today();
-
-  // create an array of days which we should
-  // check to see if we have them
-  var days = [];
-  while(day >= this.required.from.day) {
-    days.push(day.clone());
-    day.subtract('d', 1);
-  };
+  var days = _.pluck(this.requiredDays(), 'm');
 
   // load & verify each day
   var iterator = function(day) {
-
     // we validate from now till past,
     // bail out as soon as we've hit
     // the fist gap
     return function(next) {
       this.loadDay(day, true, _.bind(function(err, day) {
         if(err)
-          return next(true);
+          return next(err);
 
         this.verifyDay(day, next);
       }, this));
@@ -545,18 +541,46 @@ Manager.prototype.loadDays = function() {
   // we're done, interpetet results
   var checked = function(err) {
     this.setHistoryAge();
-    if(!this.oldestDay) {
-      this.emit('history', false); 
-    } else {
-      var h = this.history;
 
-      // TODO: fix verifyDay
-      // we have *ungapped* historical data
-      this.emit('history', {
+    if(err === 'history to old') {
+      log.warn([
+        'History is to old, if we would just start',
+        'appending new data we would have a gap between',
+        'the fresh data and the old data.'
+      ]).join(' ');
+      return this.emit('history', {complete: false, empty: true});
+    };
+
+    var h = this.history;
+
+    if(err === 'file not found') {
+      if(!h.oldest)
+        // we don't have any history
+        return this.emit('history', {complete: false, empty: true});
+      else
+        return this.emit('history', {
+          start: h.oldest.m.clone(),
+          end: h.newest.m.clone(),
+          complete: false
+        });
+    }
+
+    if(err === 'history imcomplete') {
+      return this.emit('history', {
         start: h.oldest.m.clone(),
-        end: h.newest.m.clone()
+        end: h.newest.m.clone(),
+        complete: false
       });
     }
+
+    // we have *ungapped* historical data
+    // get it all and broadcast it
+    
+    this.broadcastHistory({
+      start: h.oldest.m.clone(),
+      end: h.newest.m.clone(),
+      complete: true
+    });
   }
 
   var checkers = _.map(days, function(day) {
@@ -569,6 +593,112 @@ Manager.prototype.loadDays = function() {
   );
 }
 
+// At this point we have full history,
+// fetch everything and broadcast it
+Manager.prototype.broadcastHistory = function(meta) {
+  var days = this.requiredDays()
+  var done = function(err, result) {
+    // concat all days together
+    result = _.flatten(result);
+
+    // broadcast all the candles
+    this.emit('history', _.extend(meta, {
+      candles: result
+    }));
+  }
+
+  var iterator = function(day, next) {
+    this.getDayHistory(day, false, next);
+  }
+
+  async.map(
+    days,
+    _.bind(iterator, this),
+    _.bind(done, this)
+  )
+}
+
+Manager.prototype.sortCandles = function(candles) {
+  return candles.sort(function(a, b) {
+    return a.s - b.s;
+  });
+}
+
+Manager.prototype.calculateRealCandle = function(fakeCandles) {
+  var first = fakeCandles.shift();
+  var firstCandle = _.clone(first.candle);
+
+  delete firstCandle._id;
+  firstCandle.p = firstCandle.p * firstCandle.v;
+  firstCandle.start = this.minuteToMoment(firstCandle.s, first.day.m);
+
+  // create a fake candle based on all real candles
+  var candle = _.reduce(
+    this.realCandleContents,
+    function(candle, m) {
+      m = m.candle;
+      candle.h = _.max([candle.h, m.h]);
+      candle.l = _.min([candle.l, m.l]);
+      candle.c = m.c;
+      candle.v += m.v;
+      candle.p += m.p * m.v;
+      return candle;
+    },
+    firstCandle
+  );
+
+  if(candle.v)
+    // we have added up all prices (relative to volume)
+    // now divide by volume to get the Volume Weighted Price
+    candle.p /= candle.v;
+  else
+    // empty candle
+    candle.p = candle.o;
+
+  return candle;
+}
+
+// transform all candles from fake to real
+Manager.prototype.calculateRealCandles = function(fakeCandles) {
+  var realCandles = [];
+  var bucket = [];
+  _.each(fakeCandles, function(c, i) {
+    bucket.push(c);
+    if(i !== 0 && i % this.realCandleSize === 0) {
+      realCandles.push(this.calculateRealCandle(bucket));
+      bucket = [];
+    }
+  }, this);
+
+  return realCandles;
+}
+
+Manager.prototype.getRealCandles = function(candles, day) {
+  candles = this.sortCandles(candles);
+  candles = this.transportCandles(candles, day);
+  candles = this.calculateRealCandles(candles);
+  return candles;
+}
+
+// get all the real candles of a day, full day
+// if limit is false else:
+// 
+// if limit is an object the  
+Manager.prototype.getDayHistory = function(day, limit, cb) {
+  var dayString = day.dayString;
+
+  if(!(dayString in this.days))
+    throw dayString + ' should have been loaded but isn\'t';
+
+  var next = function(err, candles) {
+    if(err)
+      return cb(err);
+
+    cb(false, this.getRealCandles(candles, day));
+  }
+
+  this.days[dayString].handle.find({}, _.bind(next, this));
+}
 
 // for each day (from now to past)
 //  - load it
@@ -583,14 +713,14 @@ Manager.prototype.loadDays = function() {
 // we now the history we have
 Manager.prototype.verifyDay = function(day, next) {
   if(!day)
-    return next(false);
+    return next(true);
 
   day = this.days[day];
 
   if(day.empty) {
     this.deleteDay(day);
     delete this.days[day];
-    return next(false);
+    return next(true);
   }
 
   // resest this every iteration up
@@ -604,23 +734,33 @@ Manager.prototype.verifyDay = function(day, next) {
     this.setDay(day.end);
   }
 
-  // if this day doesn't end at midnight
-  // we can't use any data it has
-  // 
-  // except when it's about the day we
-  // have fetchdata from
-  if(
-    day.end !== MINUTES_IN_DAY &&
-    !equals(this.fetch.start.day, day.time)
-  )
+  // if this day is full, we're done
+  // straight away
+  if(day.full)
     return next(false);
 
-  // if it doesn't go back to midnight
-  // but we can't use anything else
-  if(day.start !== 0)
-    return next(false);
+  // is this the first day we need data from?
+  var startDay = equals(this.required.from.day, day.time);
+  // is this the last day we need data from?
+  var endDay = equals(this.fetch.end.day, day.time);
 
-  next(true);
+  // if this is a day in the middle and
+  // it's not full we don't have complete
+  // history
+  if(!startDay && !endDay) {
+    this.deleteDay(day.string, true);
+    return next('history incomplete');
+  }
+
+  if(startDay && day.start > this.required.from.m)
+    return next('history incomplete');
+
+  if(endDay && day.end > this.required.to.m) {
+    this.deleteDay(day, true);
+    return next('history to old');
+  }
+
+  next(false);
 }
 
 Manager.prototype.setHistoryAge = function() {
@@ -674,7 +814,7 @@ Manager.prototype.loadDay = function(mom, check, next) {
   if(!fs.existsSync(file)) {
     // if we should not create it, bail out
     if(check)
-      return cb(true);
+      return cb('file not found');
 
     log.debug('Creating a new daily database for day', string);
 
@@ -686,6 +826,7 @@ Manager.prototype.loadDay = function(mom, check, next) {
     return cb(null, day.string);
   }
 
+  // it exists already
   day.handle = new nedb({filename: file, autoload: true});
   day.handle.ensureIndex({fieldName: 's', unique: true});
 
