@@ -3,7 +3,7 @@
 // we store all candles as 1m candles in a 
 // database per day. Using this method you can
 // 
-// - Storing new candles in a database
+// - Store new candles in a database
 // - Getting candles out of a database
 // 
 // This manager will convert candles on the
@@ -22,12 +22,9 @@ var config = util.getConfig();
 
 var equals = util.equals;
 
-// even though we have leap seconds
-// (https://en.wikipedia.org/wiki/Leap_second)
-// every day has the same amount of minutes
+// even though we have leap seconds, every
+// day has the same amount of minutes
 var MINUTES_IN_DAY = 1439;
-// TODO: This breaks if we have a minute without
-// trades ~~.
 
 var Manager = function() {
   _.bindAll(this);
@@ -167,18 +164,28 @@ Manager.prototype.processTrades = function(data) {
   console.log('TRADES', moment.unix(_.first(data.all).date).utc().format('HH:mm:ss'));
   console.log('TRADES', moment.unix(_.last(data.all).date).utc().format('HH:mm:ss'));
 
+  // if first time
   if(!this.minumum) {
-    // first time
-    if(this.history.newest)
+    // if we have history
+    if(this.history.newest) {
       // start at beginning of next candle
       this.minumum = this.history.newest.m.clone().add('m', 1);
-    else
-      // store everything
-      this.minumum = this.current.day.clone().subtract('y', 10);
+      // the previous candle
+      var day = this.days[this.current.dayString];
+      this.mostRecentCandle = day.endCandle;
+    } else {
+      // store everything we might need
+      this.minumum = this.required.from.day.clone();
+      // we don't have any candle yet
+      this.mostRecentCandle = false;
+    }
   }
     
+  this.minumum = utc().subtract('h', 2);
+  this.mostRecentCandle = {s: this.momentToMinute(utc().subtract('h', 3))};
 
   console.log('MINIMUM:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
+  console.log('MOST RECENT:', this.mostRecentCandle);
   // throw 'a';
 
   // filter out all trades that are do not belong to the last candle
@@ -192,7 +199,12 @@ Manager.prototype.processTrades = function(data) {
 
   console.log('FILTERED TRADES', trades.length);
   _.each(trades, function(t) {
-    console.log('FILTERED TRADES', moment.unix(t.date).utc().format('YYYY-MM-DD HH:mm:ss'));
+    console.log(
+      'FILTERED TRADES',
+      moment.unix(t.date).utc().format('YYYY-MM-DD HH:mm:ss'),
+      'price:',
+      t.price
+    );
   });
 
   var candles = [];
@@ -212,27 +224,39 @@ Manager.prototype.processTrades = function(data) {
   _.each(trades, function(trade) {
     var mom = moment.unix(trade.date).utc();
     var min = this.momentToMinute(mom);
+
+    var price = f(trade.price);
+    var amount = f(trade.amount);
     if(!_.contains(minutes, min)) {
       // create a new candle
       // for this minute
       candles.push({
-        s: min,
-        o: f(trade.price),
-        h: f(trade.price),
-        l: f(trade.price),
-        c: f(trade.price),
-        v: f(trade.amount)
+        s: min,           // # minutes since midnight UTC
+        o: price,         // open price
+        h: price,         // high price
+        l: price,         // low price
+        c: price,         // close price
+        v: amount,        // volume in asset
+        p: price * amount // volume weighted price
       });
       minutes.push(min);
     } else {
-      // update h, l, c, v
+      // update h, l, c, v, p
       var m = _.last(candles);
-      m.h = _.max([m.h, f(trade.price)]);
-      m.l = _.min([m.l, f(trade.price)]);
-      m.c = f(trade.price);
-      m.v += f(trade.amount);
+      m.h = _.max([m.h, price]);
+      m.l = _.min([m.l, price]);
+      m.c = price;
+      m.v += amount;
+      m.p += price * amount;
     }
   }, this);
+
+  // we have added up all prices (relative to volume)
+  // now divide by volume to get the Volume Weighted Price
+  candles = _.map(candles, function(c) {
+    c.p /= c.v;
+    return c;
+  });
 
   if(_.size(candles) < 1)
     return log.debug('done with this batch');
@@ -247,6 +271,7 @@ Manager.prototype.processTrades = function(data) {
 
   // TODO: test at midnight
   if(!equals(last.startOf('day'), this.current.day)) {
+    log.debug('This batch includes trades for a new day.');
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
     // insert today, shift a day, insert tomorrow
@@ -279,19 +304,29 @@ Manager.prototype.processTrades = function(data) {
     firstBatch = _.compact(_.uniq(firstBatch));
     secondBatch = _.compact(_.uniq(secondBatch));
 
-    firstBatch = this.addEmtpyCandles(firstBatch, 'end');
+    var startFrom = this.mostRecentCandle;
+
+    // add candles:
+    //       [gap between this batch & last inserted candle][batch][midnight]
+    firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
     this.storeCandles(firstBatch);
 
     this.setDay(moment.unix(last).utc());
     this.loadDay(this.current.day);
 
-    secondBatch = this.addEmtpyCandles(secondBatch, 'start');
+    // add candles:
+    //       [midnight][batch]
+    secondBatch = this.addEmtpyCandles(secondBatch, -1);
     this.leftovers = secondBatch.pop();
 
     this.storeCandles(secondBatch);
 
   } else {
-    candles = this.addEmtpyCandles(candles);
+    var startFrom = this.mostRecentCandle;
+    // add candles:
+    //       [gap between this batch & last inserted candle][batch]
+    candles = this.addEmtpyCandles(candles, startFrom);
+
     this.leftovers = candles.pop();
     this.storeCandles(candles);
   }
@@ -306,10 +341,7 @@ Manager.prototype.processTrades = function(data) {
     console.log('why is this called without trades?');
 }
 
-// TODO: make sure this.currentDay gets updates
-// ALSO catch some candles being in day A and
-// a couple being in day B
-Manager.prototype.storeCandles = function(candles, endOfDay) {
+Manager.prototype.storeCandles = function(candles) {
   _.each(candles, function(c) {
     log.debug(
       'inserting candle',
@@ -329,11 +361,7 @@ Manager.prototype.storeCandles = function(candles, endOfDay) {
 
   }, this);
 
-  // console.log(0, this.current.dayString)
-  // console.log(1, this.days);
-  // console.log(2, this.days[this.current.dayString])
-  // throw 'b';
-  // 
+  this.mostRecentCandle = _.last(candles);
 
   this.days[this.current.dayString].handle.insert(candles, function(err) {
     if(err)
@@ -344,59 +372,79 @@ Manager.prototype.storeCandles = function(candles, endOfDay) {
 // We store each minute, even minutes that didn't contain
 // any trades.
 // 
-// Set dayBorder to `start` when empty candles should be filled
-// from the first minute
+// `candles` is an array with candles that did contain trades
 // 
-// Set dayBorder to `end` when empty candles should be filled up
-// to the last minute
-Manager.prototype.addEmtpyCandles = function(candles, dayBorder) {
-  if(dayBorder) {
-    if(dayBorder === 'start')
-      var startOfDay = true;
-    else if(dayBorder === 'end')
-      var endOfDay = true;
-  }
-
+// `start` indicates from where up to the first candle we should
+// add empty candles. Start is a candle
+// 
+// `end` indicates from the last candle up to where we should
+// add empty candles. End is a minute # since midnight.
+// 
+// for example:
+//    addEmtpyCandles(candles, 0, MINUTES_IN_DAY)
+// would return an array of candles from:
+//     [midnight up to][batch without gaps][up to next midnight - 1]
+Manager.prototype.addEmtpyCandles = function(candles, start, end) {
   var length = _.size(candles);
-  if(length < 2 || length === 1 && dayBorder)
+  if(!length)
     return candles;
+
+  if(start) {
+    // put the start candle in front
+    candles.splice(0, 0, start);
+    length = _.size(candles);
+  }
 
   var last = length - 1;
   var emptyCandles = [];
+
   // for each candle iterate and if the next one does
   // not exist, create it
   _.each(candles, function(c, i) {
-    if(i === last && !endOfDay)
+    // if this was last and we don't
+    // have to fill a gap after this batch
+    // we're done
+    if(i === last && !end)
       return;
 
-    if(startOfDay && i === 0)
-      var min = 0;
-    else
-      var min = c.s + 1;
+    var min = c.s + 1;
 
-    if(endOfDay && i === last)
-      var max = MINUTES_IN_DAY + 1;
+    if(i === last && end)
+      var max = mom.minutes + 1;
     else
       var max = candles[i + 1].s;
-      
-    var empty;
+
+    var empty, prevClose;
+
+    // console.log(min, max);
+
+    // var a = 0;
 
     while(min !== max) {
+      // a++;
       empty = _.clone(c);
       empty.s = min;
       empty.v = 0;
+
+      var prevClose = empty.c;
+      // set o, h, l, p to previous
+      // close price
+      empty.o = prevClose;
+      empty.h = prevClose;
+      empty.l = prevClose;
+      empty.p = prevClose;
+
       emptyCandles.push(empty);
       min++;
     }
 
-    // we just inserted the first candle
-    // as an empty one, remove it
-    if(startOfDay && i === 0) {
-      emptyCandles = _.filter(emptyCandles, function(e) {
-        return e.s !== c.s;
-      });
-    }
+    // console.log('res', min, a);
   });
+
+  // we added start to fill the gap from before
+  // previous candles to this batch
+  if(start)
+    candles.shift();
 
   // console.log('EXISTING CANDLES:', _.map(candles, function(c) { return c.s }));
   // console.log('ADDED EMPTY CANDLES:', _.map(emptyCandles, function(c) { return c.s }));
@@ -404,8 +452,18 @@ Manager.prototype.addEmtpyCandles = function(candles, dayBorder) {
 
   var all = candles.concat(emptyCandles);
   all = all.sort(function(a, b) {
-    return a.s > b.s;
-  })
+    return a.s - b.s;
+  });
+
+  // console.log(_.map(all, function(c) {return c.s}));
+  // console.log(_.pluck(all, 's'));
+  // throw 'a';
+  // console.log('candles', candles.length);
+  // console.log('emptyCandles', emptyCandles.length);
+  // console.log('all', all.length);
+  // console.log('from', _.first(all).s);
+  // console.log('from', _.last(all).s);
+  // throw 'a';
 
   return all;
 }
@@ -521,7 +579,8 @@ Manager.prototype.verifyDay = function(day, next) {
     return next(false);
   }
 
-  // resest this every iteration
+  // resest this every iteration up
+  // to the oldest accepted day
   this.history.oldest = this.mom(day.start);
 
   // the first iteration we're at
@@ -535,6 +594,8 @@ Manager.prototype.verifyDay = function(day, next) {
   // we can't use any data it has
   // 
   // except when it's about today
+  // TODO: *except when it's about the first day
+  // we need data from
   if(
     day.end !== MINUTES_IN_DAY &&
     !equals(this.current.day, day.time)
@@ -610,7 +671,9 @@ Manager.prototype.loadDay = function(mom, check, next) {
     // meta
     full: false,
     start: false,
+    startCandle: false,
     end: false,
+    endCandle: false,
     empty: true
   };
 
@@ -648,10 +711,10 @@ Manager.prototype.loadDay = function(mom, check, next) {
     } else {
       day.empty = false;
       day.full = day.minutes === MINUTES_IN_DAY;
-      var first = _.min(minutes, function(m) { return m.s; } );
-      day.start = this.minuteToMoment(first.s, day.time);
-      var last = _.max(minutes, function(m) { return m.s; } );
-      day.end = this.minuteToMoment(last.s, day.time);
+      day.startCandle = _.min(minutes, function(m) { return m.s; } );
+      day.start = this.minuteToMoment(day.startCandle.s, day.time);
+      day.endCandle = _.max(minutes, function(m) { return m.s; } );
+      day.end = this.minuteToMoment(day.endCandle.s, day.time);
     }
 
     // store a global reference
