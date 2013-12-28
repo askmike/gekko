@@ -70,13 +70,14 @@ var Manager = function() {
       'NEW REAL CANDLE:',
       candle.start.format('YYYY-MM-DD HH:mm:ss'),
       [
+        '',
         'O:' + candle.o,
-        ', H:' + candle.h,
-        ', L:' + candle.l,
-        ', C:' + candle.c,
-        ', V:' + candle.v,
-        ' VWP: ' + candle.p
-      ].join('\n')
+        'H:' + candle.h,
+        'L:' + candle.l,
+        'C:' + candle.c,
+        'V:' + candle.v,
+        'VWP: ' + candle.p
+      ].join('\n\t')
     );
   });
 }
