@@ -8,6 +8,23 @@
 // 
 // This manager will convert candles on the
 // fly from 1m to whatever is needed
+// 
+// Notes:
+// 
+//  - All candles are stored in daily format
+//    per exchange per market per day (in UTC).
+//  - it adds empty candles to fill gaps, it
+//    does this to differentiate between times
+//    with no volume and missing data.
+//  - because of this it expects empty candles
+//    in the files, else it assumes there is
+//    missing data (and the db is most likely
+//    discarded as corrupt).
+//  - It trusts the trade data provider to send
+//    enough data: if the tradeFetcher doesn't
+//    keep up with the trades coming in, this
+//    manager doesn't know that the data is 
+//    corrupted.
 
 var _ = require('lodash');
 var moment = require('moment');

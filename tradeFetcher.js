@@ -120,7 +120,7 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
   // if we got the last 100 seconds of trades last
   // time make sure we fetch at least in 55 seconds
   // again.
-  var safeTreshold = 0.55;
+  var safeTreshold = 0.2;
   var defaultFetchTime = util.minToMs(1);
 
   if(this.fetchTimespan * safeTreshold > minimalInterval)
