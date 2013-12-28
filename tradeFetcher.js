@@ -51,9 +51,9 @@ var Fetcher = function() {
         'Fetched',
         _.size(a.all),
         'new trades, from',
-        a.start.format('HH:mm:ss (UTC)'),
+        a.start.format('YYYY-MM-DD HH:mm:ss (UTC)'),
         'to',
-        a.end.format('HH:mm:ss (UTC)')
+        a.end.format('YYYY-MM-DD HH:mm:ss (UTC)')
       );
     });  
   }

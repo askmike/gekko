@@ -46,9 +46,6 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount = Math.floor(amount);
   amount /= 100000000;
 
-  // test placing orders which will not be filled
-  //price /=10; price = price.toFixed(8);
-
   log.debug('BUY', amount, 'GHS @', price, 'BTC');
 
   var set = function(err, data) {
