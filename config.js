@@ -7,6 +7,13 @@ var config = {};
 //                           NORMAL ZONE
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// Gekko stores historical history
+config.history = {
+  // in what directory should Gekko store
+  // and load historical data from?
+  directory: './history/'
+}
+
 // Gekko currently only supports Exponential Moving Averages
 config.tradingMethod = 'Exponential Moving Averages';
 

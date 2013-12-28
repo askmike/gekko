@@ -53,7 +53,7 @@ var Manager = function() {
   // of the real candle
   this.realCandleContents = [];
 
-  this.historyPath = './history/';
+  this.historyPath = config.history.directory || './history/';
   this.days = {};
   this.realCandleSize = false;
 
