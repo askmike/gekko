@@ -16,6 +16,7 @@ var Manager = function() {
 
   this.exchange = exchangeChecker.settings(config.watch);
   this.model = require('./databaseManager');
+  this.model.setRealCandleSize(config.EMA.interval);
 
   if(!config.backtest.enabled) {
     // watch the market

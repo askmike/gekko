@@ -46,16 +46,13 @@ var MINUTES_IN_DAY = 1439;
 var Manager = function() {
   _.bindAll(this);
 
-  // internally every candle is 1m
-  // but when someone requests a candle
-  // we need to give back a bigger one
-  this.realCandleSize = config.EMA.interval;
   // all minutes we fetched that are part
   // of the real candle
   this.realCandleContents = [];
 
   this.historyPath = './history/';
   this.days = {};
+  this.realCandleSize = false;
 
   this.currentDay;
 
@@ -67,7 +64,7 @@ var Manager = function() {
     console.log('empty history');
   });
 
-  // this.on('candle', this.watchRealCandles);
+  this.on('candle', this.watchRealCandles);
   // this.on('real candle', function(candle) {
   //   log.debug(
   //     'NEW REAL CANDLE:',
@@ -106,11 +103,20 @@ Manager.prototype.init = function(data) {
   // what do we need if we want
   // to start right away?
   this.required = {
+
+    // todo: abstract EMA stuff out of this
     from: this.mom(util.intervalsAgo(config.EMA.candles).utc())
   }
 
   this.setDay(this.fetch.start.m);
   this.loadDays();
+}
+
+// internally every candle is 1m
+// but when someone requests a candle
+// we need to give back a bigger one
+Manager.prototype.setRealCandleSize = function(interval) {
+  this.realCandleSize = interval;
 }
 
 // fires everytime we have a new 1m candle
@@ -197,13 +203,8 @@ Manager.prototype.processTrades = function(data) {
       this.mostRecentCandle = false;
     }
   }
-    
-  // this.minumum = utc().subtract('h', 2);
-  // this.mostRecentCandle = {s: this.momentToMinute(utc().subtract('h', 3))};
 
   console.log('MINIMUM:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
-  // console.log('MOST RECENT:', this.mostRecentCandle);
-  // throw 'a';
 
   // filter out all trades that are do not belong to the last candle
   var trades = _.filter(data.all, function(trade) {
@@ -234,9 +235,6 @@ Manager.prototype.processTrades = function(data) {
     candles.push(m);
     minutes.push(m.s);
   }
-
-  console.log('starting process with these leftovers:');
-  console.log(candles);
 
   var f = parseFloat;
 
@@ -450,12 +448,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
 
     var empty, prevClose;
 
-    // console.log(min, max);
-
-    // var a = 0;
-
     while(min !== max) {
-      // a++;
       empty = _.clone(c);
       empty.s = min;
       empty.v = 0;
@@ -471,8 +464,6 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
       emptyCandles.push(empty);
       min++;
     }
-
-    // console.log('res', min, a);
   });
 
   // we added start to fill the gap from before
@@ -480,24 +471,11 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
   if(start)
     candles.shift();
 
-  // console.log('EXISTING CANDLES:', _.map(candles, function(c) { return c.s }));
-  // console.log('ADDED EMPTY CANDLES:', _.map(emptyCandles, function(c) { return c.s }));
-  // console.log('ADDED EMPTY', emptyCandles);
 
   var all = candles.concat(emptyCandles);
   all = all.sort(function(a, b) {
     return a.s - b.s;
   });
-
-  // console.log(_.map(all, function(c) {return c.s}));
-  // console.log(_.pluck(all, 's'));
-  // throw 'a';
-  // console.log('candles', candles.length);
-  // console.log('emptyCandles', emptyCandles.length);
-  // console.log('all', all.length);
-  // console.log('from', _.first(all).s);
-  // console.log('from', _.last(all).s);
-  // throw 'a';
 
   return all;
 }
@@ -536,8 +514,6 @@ Manager.prototype.loadDays = function() {
     day.subtract('d', 1);
   };
 
-  // var foundGap = false;
-
   // load & verify each day
   var iterator = function(day) {
 
@@ -561,6 +537,8 @@ Manager.prototype.loadDays = function() {
       this.emit('history', false); 
     } else {
       var h = this.history;
+
+      // TODO: fix verifyDay
       // we have *ungapped* historical data
       this.emit('history', {
         start: h.oldest.m.clone(),
@@ -573,20 +551,10 @@ Manager.prototype.loadDays = function() {
     return _.bind(iterator(day), this);
   }, this);
 
-  // console.log(checkers)
-
-  // console.log(days);
-  // throw 'a';
   async.series(
     checkers,
     _.bind(checked, this)
   );
-
-  // async.some(
-  //   days,
-  //   _.bind(iterator, this), 
-  //   _.bind(checked, this)
-  // );
 }
 
 
@@ -657,21 +625,6 @@ Manager.prototype.setHistoryAge = function() {
     this.onHistorySet = false;
   }
 }
-
-// setup an interval to create new daily db 
-// files every day at 11PM UTC.
-// Manager.prototype.createDays = function() {
-//   var midnight = utc()
-//     .endOf('day')
-//     .subtract('h', 1);
-
-//   var untilMidnight = midnight.diff(utc());
-
-//   setTimeout(_.bind(function() {
-//     this.createDay();
-//     setInterval(this.createDay, +moment.duration(1, 'days'));
-//   }, this), untilMidnight);
-// }
 
 // load a daily database
 // 
@@ -757,35 +710,6 @@ Manager.prototype.loadDay = function(mom, check, next) {
     cb(false, day.string);
   }, this));
 }
-
-// create a new daily database
-// Manager.prototype.createDay = function(mom) {
-//   if(!mom)
-//     mom = this.currentDay;
-
-//   var day = mom.clone().startOf('day');
-//   var string = day.format('YYYY-MM-DD');
-
-//   if(string in this.days)
-//     return;
-  
-//   log.debug('Creating a new daily database for day', string);
-
-//   var file = this.historyPath + [
-//     config.watch.exchange,
-//     config.watch.currency,
-//     config.watch.asset,
-//     string + '.db'
-//   ].join('-');
-
-//   var db = new nedb({filename: file, autoload: true});
-//   db.ensureIndex({fieldName: 's', unique: true});
-
-//   this.days[string] = {
-//     string: string,
-//     handle: db
-//   };
-// }
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
