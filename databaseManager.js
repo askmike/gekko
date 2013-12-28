@@ -21,8 +21,8 @@
 //  - It trusts the trade data provider to send
 //    enough data: if the tradeFetcher doesn't
 //    keep up with the trades coming in, this
-//    manager doesn't know that the data is 
-//    corrupted.
+//    manager cannot tell that the data is 
+//    corrupted. And thus assumes it is not.
 //  - The 1m candles are an internal datastructure
 //    (referred to as fake candles), when clients
 //    request candle data we convert the 1m
