@@ -225,26 +225,12 @@ Manager.prototype.processTrades = function(data) {
     }
   }
 
-  console.log('MINIMUM:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
+  log.debug('MINIMUM TRADE TRESHOLD:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
 
   // filter out all trades that are do not belong to the last candle
   var trades = _.filter(data.all, function(trade) {
     return this.minumum < moment.unix(trade.date).utc();
   }, this);
-
-  
-  // console.log(trades);
-  
-
-  console.log('FILTERED TRADES', trades.length);
-  _.each(trades, function(t) {
-    console.log(
-      'FILTERED TRADES',
-      moment.unix(t.date).utc().format('YYYY-MM-DD HH:mm:ss'),
-      'price:',
-      t.price
-    );
-  });
 
   var candles = [];
   var minutes = [];
@@ -422,7 +408,7 @@ Manager.prototype.storeCandles = function(candles) {
 
   this.days[this.current.dayString].handle.insert(candles, function(err) {
     if(err)
-      log.warn('DOUBLE UNIQUE INSERT')
+      log.warn('DOUBLE UNIQUE INSERT');
   });
 }
 
@@ -620,21 +606,16 @@ Manager.prototype.verifyDay = function(day, next) {
   // if this day doesn't end at midnight
   // we can't use any data it has
   // 
-  // except when it's about today
-  // TODO: *except when it's about the first day
-  // we need data from
+  // except when it's about the day we
+  // have fetchdata from
   if(
     day.end !== MINUTES_IN_DAY &&
-    !equals(this.current.day, day.time)
+    !equals(this.fetch.start.day, day.time)
   )
     return next(false);
 
-  // we can use atleast some of it's data
-  this.oldestDay = day.time;
-  this.oldestMinute = day.start;
-
+  // if it doesn't go back to midnight
   // but we can't use anything else
-  // since it doesn't go back to midnight
   if(day.start !== 0)
     return next(false);
 
