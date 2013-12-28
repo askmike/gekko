@@ -65,13 +65,20 @@ var Manager = function() {
   });
 
   this.on('candle', this.watchRealCandles);
-  // this.on('real candle', function(candle) {
-  //   log.debug(
-  //     'NEW REAL CANDLE:',
-  //     candle.s.format('YYYY-MM-DD HH:mm:ss'),
-  //     ['O:', candle.o, ', H:', candle.h, ', L:', candle.l, ', C:', candle.c].join('')
-  //   );
-  // });
+  this.on('real candle', function(candle) {
+    log.debug(
+      'NEW REAL CANDLE:',
+      candle.start.format('YYYY-MM-DD HH:mm:ss'),
+      [
+        'O:' + candle.o,
+        ', H:' + candle.h,
+        ', L:' + candle.l,
+        ', C:' + candle.c,
+        ', V:' + candle.v,
+        ' VWP: ' + candle.p
+      ].join('\n')
+    );
+  });
 }
 
 var Util = require('util');
@@ -123,13 +130,16 @@ Manager.prototype.setRealCandleSize = function(interval) {
 // and aggregates them into the candles
 // of the required size
 Manager.prototype.watchRealCandles = function() {
-  if(_.size(this.realCandleContents) !== this.realCandleSize)
+  if(_.size(this.realCandleContents) < this.realCandleSize)
     return;
 
   var first = this.realCandleContents.shift();
 
-  delete first.candle._id;
-  first.candle.s = this.minuteToMoment(first.candle.s, first.day);
+  var firstCandle = first.candle;
+  delete firstCandle._id;
+  firstCandle.p = firstCandle.p * firstCandle.v;
+
+  firstCandle.start = this.minuteToMoment(firstCandle.s, first.day);
 
   // create a fake candle based on all real candles
   var candle = _.reduce(
@@ -139,11 +149,21 @@ Manager.prototype.watchRealCandles = function() {
       candle.h = _.max([candle.h, m.h]);
       candle.l = _.min([candle.l, m.l]);
       candle.c = m.c;
-      candle.v += m.v
+      candle.v += m.v;
+      candle.p += m.p * m.v;
       return candle;
     },
-    first.candle
+    firstCandle
   );
+
+  if(candle.v)
+    // we have added up all prices (relative to volume)
+    // now divide by volume to get the Volume Weighted Price
+    candle.p /= candle.v;
+  else
+    // empty candle
+    candle.p = candle.o;
+
 
   this.emit('real candle', candle);
 
@@ -233,6 +253,10 @@ Manager.prototype.processTrades = function(data) {
   if(this.leftovers) {
     var m = this.leftovers;
     candles.push(m);
+
+    // fix vwp pre state after
+    // finalizing it to early
+    m.p *= m.v;
     minutes.push(m.s);
   }
 
