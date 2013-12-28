@@ -3,11 +3,9 @@
 // we store all candles as 1m candles in a 
 // database per day. Using this method you can
 // 
-// - Store new candles in a database
-// - Getting candles out of a database
-// 
-// This manager will convert candles on the
-// fly from 1m to whatever is needed
+// - Store new candles in the database based 
+//   on fetched trade data.
+// - Getting candles out of a database.
 // 
 // Notes:
 // 
@@ -25,6 +23,11 @@
 //    keep up with the trades coming in, this
 //    manager doesn't know that the data is 
 //    corrupted.
+//  - The 1m candles are an internal datastructure
+//    (referred to as fake candles), when clients
+//    request candle data we convert the 1m
+//    candles on the fly to the desired X minute
+//    based candles (referred to as real candles).
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -64,7 +67,7 @@ var Manager = function() {
     console.log('empty history');
   });
 
-  this.on('candle', this.watchRealCandles);
+  this.on('fake candle', this.watchRealCandles);
   this.on('real candle', function(candle) {
     log.debug(
       'NEW REAL CANDLE:',
@@ -136,7 +139,7 @@ Manager.prototype.watchRealCandles = function() {
 
   var first = this.realCandleContents.shift();
 
-  var firstCandle = first.candle;
+  var firstCandle = _.clone(first.candle);
   delete firstCandle._id;
   firstCandle.p = firstCandle.p * firstCandle.v;
 
@@ -172,11 +175,8 @@ Manager.prototype.watchRealCandles = function() {
 }
 
 // retrieve an 1m candle out of the DB
-Manager.prototype.getCandle = function(minute, day, callback) {
-  if(!day)
-    day = this.currentDayString;
-
-  this.days[day].handle.find({s: minute}, callback);
+Manager.prototype.getCandle = function(minute, dayString, callback) {
+  this.days[mom.dayString].handle.findOne({s: mom.minute}, callback);
 }
 
 Manager.prototype.setDay = function(m) {
@@ -394,12 +394,13 @@ Manager.prototype.storeCandles = function(candles) {
     );
 
     // local reference
-    this.realCandleContents.push({
+    var fakeCandle = {
       candle: c,
       day: this.current.day
-    });
+    }
+    this.realCandleContents.push(fakeCandle);
 
-    this.emit('candle');
+    this.emit('fake candle', fakeCandle);
 
   }, this);
 
@@ -408,7 +409,7 @@ Manager.prototype.storeCandles = function(candles) {
 
   this.days[this.current.dayString].handle.insert(candles, function(err) {
     if(err)
-      log.warn('DOUBLE UNIQUE INSERT');
+      log.warn('DOUBLE UNIQUE INSERT, this should never happen. Please post details here: https://github.com/askmike/gekko/issues');
   });
 }
 
