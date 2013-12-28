@@ -181,8 +181,8 @@ Manager.prototype.processTrades = function(data) {
     }
   }
     
-  this.minumum = utc().subtract('h', 2);
-  this.mostRecentCandle = {s: this.momentToMinute(utc().subtract('h', 3))};
+  // this.minumum = utc().subtract('h', 2);
+  // this.mostRecentCandle = {s: this.momentToMinute(utc().subtract('h', 3))};
 
   console.log('MINIMUM:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
   console.log('MOST RECENT:', this.mostRecentCandle);

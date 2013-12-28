@@ -80,7 +80,7 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['USD'],
     assets: ['BTC'],
-    paris: [['USD', 'BTC']],
+    pairs: [['USD', 'BTC']],
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 1, unit: 'currency' },
     providesHistory: false,
