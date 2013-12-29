@@ -464,11 +464,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
   if(start)
     candles.shift();
 
-
-  var all = candles.concat(emptyCandles);
-  all = this.sortCandles(all);
-
-  return all;
+  return candles.concat(emptyCandles);
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
@@ -665,7 +661,6 @@ Manager.prototype.calculateRealCandles = function(fakeCandles) {
 }
 
 Manager.prototype.getRealCandles = function(candles, day) {
-  candles = this.sortCandles(candles);
   candles = this.transportCandles(candles, day);
   candles = this.calculateRealCandles(candles);
   return candles;
@@ -688,7 +683,7 @@ Manager.prototype.getDayHistory = function(day, limit, cb) {
     cb(false, this.getRealCandles(candles, day));
   }
 
-  this.days[dayString].handle.find({}, _.bind(next, this));
+  this.days[dayString].handle.find({s: {$gt: -1}}, _.bind(next, this));
 }
 
 // for each day (from now to past)
@@ -817,7 +812,7 @@ Manager.prototype.loadDay = function(mom, check, next) {
   if(!check)
     return cb(null, day.string);
 
-  day.handle.find({}, _.bind(function(err, minutes) {
+  day.handle.find({s: {$gt: -1}}, _.bind(function(err, minutes) {
     if(err)
       throw err;
 
@@ -827,9 +822,9 @@ Manager.prototype.loadDay = function(mom, check, next) {
     } else {
       day.empty = false;
       day.full = day.minutes === MINUTES_IN_DAY;
-      day.startCandle = _.min(minutes, function(m) { return m.s; } );
+      day.startCandle = minutes[0];
       day.start = this.minuteToMoment(day.startCandle.s, day.time);
-      day.endCandle = _.max(minutes, function(m) { return m.s; } );
+      day.endCandle = minutes[day.minutes - 1];
       day.end = this.minuteToMoment(day.endCandle.s, day.time);
     }
 
@@ -841,12 +836,6 @@ Manager.prototype.loadDay = function(mom, check, next) {
 }
 
 // HELPERS
-
-Manager.prototype.sortCandles = function(candles) {
-  return candles.sort(function(a, b) {
-    return a.s - b.s;
-  });
-}
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
