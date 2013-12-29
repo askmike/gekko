@@ -63,23 +63,30 @@ var Manager = function() {
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
 
-
-  this.on('fake candle', this.watchRealCandles);
-  this.on('real candle', function(candle) {
-    log.debug(
-      'NEW REAL CANDLE:',
-      candle.start.format('YYYY-MM-DD HH:mm:ss'),
-      [
-        '',
-        'O:' + candle.o,
-        'H:' + candle.h,
-        'L:' + candle.l,
-        'C:' + candle.c,
-        'V:' + candle.v,
-        'VWP: ' + candle.p
-      ].join('\n\t')
-    );
-  });
+  this
+    .on('processed', function() {
+      log.info(
+        'Processed some trades, sleeping for',
+        this.fetch.next.m.fromNow(true),
+        '...'
+      );
+    })
+    .on('fake candle', this.watchRealCandles)
+    .on('real candle', function(candle) {
+      log.debug(
+        'NEW REAL CANDLE:',
+        candle.start.format('YYYY-MM-DD HH:mm:ss'),
+        [
+          '',
+          'O:\t' + candle.o,
+          'H:\t' + candle.h,
+          'L:\t' + candle.l,
+          'C:\t' + candle.c,
+          'V:\t' + candle.v,
+          'VWP: ' + candle.p
+        ].join('\n\t')
+      );
+    });
 };
 
 var Util = require('util');
@@ -243,8 +250,8 @@ Manager.prototype.processTrades = function(data) {
 
   var amount = _.size(candles);
   if(amount === 0) {
-    return log.debug('done with this batch (1)');
     this.emit('processed');
+    return log.debug('done with this batch (1)');
   } else if(amount === 1) {
     if(_.size(trades)) {
       // update leftovers with new trades

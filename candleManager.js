@@ -43,6 +43,7 @@ Manager.prototype.setupAdvice = function() {
 Manager.prototype.processHistory = function(history) {
   // if history is not in this region we should discard
   var minimum = util.intervalsAgo(config.EMA.candles);
+  var requiredHistory = config.EMA.candles * config.EMA.interval;
 
   if(!this.exchange.providesHistory) {
 
@@ -50,12 +51,26 @@ Manager.prototype.processHistory = function(history) {
       // we are just going to fetch because we don't have
       // any history yet.
       log.info('No history found, starting to build one now');
+      var startAt = utc().add('ms', requiredHistory);
+      var startIn = utc().from(startAt);
+      log.info(
+        'Expected to start giving advice in',
+        startIn,
+        '(' + startAt.format('YYYY-MM-DD HH:mm:ss') + ' UTC)'
+      );
     } else if(!history.complete) {
-      log.info('History found, but not enough to start giving advice');
+      log.debug('History found, but not enough to start giving advice');
       log.info(
         'I have history since',
-        history.start.format('YYYY-MM-DD HH:mm:ss'),
-        '(' + history.start.fromNow() + ' UTC)'
+        history.start.fromNow(),
+        '(' + history.start.format('YYYY-MM-DD HH:mm:ss') + ' UTC)'
+      );
+      var startAt = history.start.clone().add('ms', requiredHistory);
+      var startIn = utc().from(startAt);
+      log.info(
+        'Expected to start giving advice in', 
+        startIn,
+        '(' + startAt.format('YYYY-MM-DD HH:mm:ss') + ' UTC)'
       );
     } else {
       log.info('Full history available');
