@@ -225,7 +225,7 @@ Manager.prototype.processTrades = function(data) {
     return log.debug('done with this batch (1)');
   }
 
-  log.debug('processing', _.size(trades), 'trades');
+  log.debug('processing', _.size(trades), 'trade(s)');
 
   var candles = [];
   var minutes = [];
@@ -294,7 +294,6 @@ Manager.prototype.processTrades = function(data) {
     // update leftovers with new trades
     this.leftovers = _.first(candles);
     this.minumum = moment.unix(_.last(trades).date).utc();
-
     this.emit('processed');
     return log.debug('done with this batch (3)');
   }
@@ -389,7 +388,7 @@ Manager.prototype.processTrades = function(data) {
     log.debug('Leftovers:', this.leftovers.s);
 
   if(lastTrade)
-    this.minumum = moment.unix(last.date).utc();
+    this.minumum = last;
   else
     console.log('why is this called without trades?');
 }
