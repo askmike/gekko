@@ -63,9 +63,6 @@ var Manager = function() {
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
 
-  this.on('empty history', function() {
-    console.log('empty history');
-  });
 
   this.on('fake candle', this.watchRealCandles);
   this.on('real candle', function(candle) {
@@ -89,17 +86,6 @@ var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(Manager, EventEmitter);
 
-// Internal data structure for easy dealing
-// with dates.
-Manager.prototype.mom = function(m) {
-  return {
-    m: m,
-    minute: this.momentToMinute(m),
-    day: m.clone().startOf('day'),
-    dayString: m.format('YYYY-MM-DD')
-  }
-}
-
 // load all databases we need based on fetch
 // data (which tells us how for we can currently
 // fetch back and thus what our limits are)
@@ -119,7 +105,6 @@ Manager.prototype.init = function(data) {
     // todo: abstract EMA stuff out of this
     from: this.mom(util.intervalsAgo(config.EMA.candles).utc())
   }
-
 
   // the order in which we do things:
   // - (receive first batch)
@@ -142,7 +127,6 @@ Manager.prototype.setRealCandleSize = function(interval) {
 // and aggregates them into the candles
 // of the required size
 Manager.prototype.watchRealCandles = function() {
-  console.log('a', _.size(this.realCandleContents));
   if(_.size(this.realCandleContents) < this.realCandleSize)
     return;
 
@@ -385,23 +369,6 @@ Manager.prototype.storeCandles = function(candles) {
   });
 }
 
-// small wrapper around a fake candle 
-// to make it easier to throw them around
-Manager.prototype.transportCandle = function(c, day) {
-  if(!day.m)
-    day = this.mom(day.clone());
-
-  return {
-    candle: c,
-    day: day
-  }
-}
-Manager.prototype.transportCandles = function(candles, day) {
-  return _.map(candles, function(c) {
-    return this.transportCandle(c, day);
-  }, this);
-}
-
 // We store each minute, even minutes that didn't contain
 // any trades.
 // 
@@ -619,12 +586,6 @@ Manager.prototype.broadcastFullHistory = function(meta) {
     _.bind(iterator, this),
     _.bind(done, this)
   )
-}
-
-Manager.prototype.sortCandles = function(candles) {
-  return candles.sort(function(a, b) {
-    return a.s - b.s;
-  });
 }
 
 Manager.prototype.calculateRealCandle = function(fakeCandles) {
@@ -854,6 +815,14 @@ Manager.prototype.loadDay = function(mom, check, next) {
   }, this));
 }
 
+// HELPERS
+
+Manager.prototype.sortCandles = function(candles) {
+  return candles.sort(function(a, b) {
+    return a.s - b.s;
+  });
+}
+
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
     day = this.currentDay;
@@ -865,5 +834,34 @@ Manager.prototype.momentToMinute = function(moment) {
   var start = moment.clone().startOf('day');
   return Math.floor(moment.diff(start) / 1000 / 60);
 };
+
+// Internal data structure for easy dealing
+// with dates.
+Manager.prototype.mom = function(m) {
+  return {
+    m: m,
+    minute: this.momentToMinute(m),
+    day: m.clone().startOf('day'),
+    dayString: m.format('YYYY-MM-DD')
+  }
+}
+
+// small wrapper around a fake candle 
+// to make it easier to throw them around
+Manager.prototype.transportCandle = function(c, day) {
+  // check whether we got a mom or a moment
+  if(!day.m)
+    day = this.mom(day.clone());
+
+  return {
+    candle: c,
+    day: day
+  }
+}
+Manager.prototype.transportCandles = function(candles, day) {
+  return _.map(candles, function(c) {
+    return this.transportCandle(c, day);
+  }, this);
+}
 
 module.exports = new Manager;
