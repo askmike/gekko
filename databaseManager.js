@@ -28,6 +28,22 @@
 //    request candle data we convert the 1m
 //    candles on the fly to the desired X minute
 //    based candles (referred to as real candles).
+//    
+// Known issues:
+//  - The manager is unable to correctly process
+//    trade fetches that span over more than 2 days
+//    (after filtering out all the trade data already
+//    stored on disk).
+//  - The leftovers are not persisted to disk: Gekko
+//    uses leftovers to keep track of trades that
+//    did not span a full minute in a certain fetch.
+//    This makes sure we also store fully aggregated
+//    minutes between two fetches. However this state
+//    is stored in memory and is lost on restart. This
+//    also means that we potentially lose accuracy in
+//    the rare case that *on restart* the first fetches
+//    are since the next-to-be-stored-candle but maybe
+//    not since its start.
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -77,15 +93,15 @@ var Manager = function() {
     .on('real candle', function(candle) {
       log.debug(
         'NEW REAL CANDLE:',
-        candle.start.format('YYYY-MM-DD HH:mm:ss'),
         [
           '',
+          'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
           'O:\t' + candle.o,
           'H:\t' + candle.h,
           'L:\t' + candle.l,
           'C:\t' + candle.c,
           'V:\t' + candle.v,
-          'VWP: ' + candle.p
+          'VWP:\t' + candle.p
         ].join('\n\t')
       );
     });
