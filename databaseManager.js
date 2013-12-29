@@ -91,19 +91,19 @@ var Manager = function() {
     })
     .on('fake candle', this.watchRealCandles)
     .on('real candle', function(candle) {
-      // log.debug(
-      //   'NEW REAL CANDLE:',
-      //   [
-      //     '',
-      //     'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
-      //     'O:\t' + candle.o,
-      //     'H:\t' + candle.h,
-      //     'L:\t' + candle.l,
-      //     'C:\t' + candle.c,
-      //     'V:\t' + candle.v,
-      //     'VWP:\t' + candle.p
-      //   ].join('\n\t')
-      // );
+      log.debug(
+        'NEW REAL CANDLE:',
+        [
+          '',
+          'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
+          'O:\t' + candle.o,
+          'H:\t' + candle.h,
+          'L:\t' + candle.l,
+          'C:\t' + candle.c,
+          'V:\t' + candle.v,
+          'VWP:\t' + candle.p
+        ].join('\n\t')
+      );
     });
 };
 
@@ -115,12 +115,7 @@ Util.inherits(Manager, EventEmitter);
 // data (which tells us how for we can currently
 // fetch back and thus what our limits are)
 Manager.prototype.init = function(data) {
-  // meta state on fetch data
-  this.fetch = {
-    start: this.mom(data.start),
-    end: this.mom(data.end),
-    next: this.mom(utc().add('ms', data.nextIn))
-  };
+  this.setFetchMeta(data);
 
   // what do we need if we want to start right 
   // away?
@@ -142,6 +137,14 @@ Manager.prototype.init = function(data) {
 
   this.setDay(this.fetch.start.m);
   this.loadDays();
+}
+
+Manager.prototype.setFetchMeta = function(data) {
+  this.fetch = {
+    start: this.mom(data.start),
+    end: this.mom(data.end),
+    next: this.mom(utc().add('ms', data.nextIn))
+  };
 }
 
 Manager.prototype.setRealCandleSize = function(interval) {
@@ -178,6 +181,7 @@ Manager.prototype.today = function() {
 // grab a batch of trades and for each full minute
 // create a new candle
 Manager.prototype.processTrades = function(data) {
+  this.setFetchMeta(data);
   // first time make sure we have
   // loaded this day.
   if(!this.leftovers)
