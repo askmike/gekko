@@ -66,7 +66,7 @@ var Manager = function() {
   this
     .on('processed', function() {
       log.info(
-        'Processed some trades, sleeping for',
+        'Processed trades, sleeping for',
         this.fetch.next.m.fromNow(true),
         '...'
       );
@@ -353,7 +353,7 @@ Manager.prototype.storeCandles = function(candles) {
       'inserting candle',
       c.s,
       '(' + this.minuteToMoment(c.s, this.current.day).format('HH:mm:ss') + ' UTC)',
-      'vol:',
+      'volume:',
       c.v,
       this.current.dayString
     );

@@ -54,7 +54,7 @@ Manager.prototype.processHistory = function(history) {
       var startAt = utc().add('ms', requiredHistory);
       var startIn = utc().from(startAt);
       log.info(
-        'Expected to start giving advice in',
+        'Expected to start giving advice',
         startIn,
         '(' + startAt.format('YYYY-MM-DD HH:mm:ss') + ' UTC)'
       );
@@ -68,7 +68,7 @@ Manager.prototype.processHistory = function(history) {
       var startAt = history.start.clone().add('ms', requiredHistory);
       var startIn = utc().from(startAt);
       log.info(
-        'Expected to start giving advice in', 
+        'Expected to start giving advice', 
         startIn,
         '(' + startAt.format('YYYY-MM-DD HH:mm:ss') + ' UTC)'
       );
