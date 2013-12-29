@@ -1,14 +1,14 @@
 
 // This serves as an abstraction layer for Gekko:
-// we store all candles as 1m candles in a 
+// we store all candles as 1m candles in a
 // database per day. Using this method you can
-// 
-// - Store new candles in the database based 
+//
+// - Store new candles in the database based
 //   on fetched trade data.
 // - Getting candles out of a database.
-// 
+//
 // Notes:
-// 
+//
 //  - All candles are stored in daily format
 //    per exchange per market per day (in UTC).
 //  - it adds empty candles to fill gaps, it
@@ -21,14 +21,14 @@
 //  - It trusts the trade data provider to send
 //    enough data: if the tradeFetcher doesn't
 //    keep up with the trades coming in, this
-//    manager cannot tell that the data is 
+//    manager cannot tell that the data is
 //    corrupted. And thus assumes it is not.
 //  - The 1m candles are an internal datastructure
 //    (referred to as fake candles), when clients
 //    request candle data we convert the 1m
 //    candles on the fly to the desired X minute
 //    based candles (referred to as real candles).
-//    
+//
 // Known issues:
 //  - The manager is unable to correctly process
 //    trade fetches that span over more than 2 days
@@ -445,15 +445,15 @@ Manager.prototype.storeCandles = function(candles) {
 
 // We store each minute, even minutes that didn't contain
 // any trades.
-// 
+//
 // `candles` is an array with candles that did contain trades
-// 
+//
 // `start` indicates from where up to the first candle we should
 // add empty candles. Start is a candle
-// 
+//
 // `end` indicates from the last candle up to where we should
 // add empty candles. End is a minute # since midnight.
-// 
+//
 // for example:
 //    addEmtpyCandles(candles, 0, MINUTES_IN_DAY)
 // would return an array of candles from:
@@ -514,11 +514,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
   if(start)
     candles.shift();
 
-
-  var all = candles.concat(emptyCandles);
-  all = this.sortCandles(all);
-
-  return all;
+  return candles.concat(emptyCandles);
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
@@ -723,7 +719,6 @@ Manager.prototype.calculateRealCandles = function(fakeCandles) {
 }
 
 Manager.prototype.getRealCandles = function(candles, day) {
-  candles = this.sortCandles(candles);
   candles = this.transportCandles(candles, day);
   candles = this.calculateRealCandles(candles);
   return candles;
@@ -731,8 +726,8 @@ Manager.prototype.getRealCandles = function(candles, day) {
 
 // get all the real candles of a day, full day
 // if limit is false else:
-// 
-// if limit is an object the  
+//
+// if limit is an object the
 Manager.prototype.getDayHistory = function(day, limit, cb) {
   var dayString = day.dayString;
 
@@ -746,12 +741,12 @@ Manager.prototype.getDayHistory = function(day, limit, cb) {
     cb(false, this.getRealCandles(candles, day));
   }
 
-  this.days[dayString].handle.find({}, _.bind(next, this));
+  this.days[dayString].handle.find({s: {$gt: -1}}, _.bind(next, this));
 }
 
 // for each day (from now to past)
 //  - load it
-//  - if today: 
+//  - if today:
 //      check if since midnight
 //      check if up to now - fetchInterval
 //    else if last:
@@ -819,7 +814,7 @@ Manager.prototype.verifyDay = function(day, next) {
 }
 
 // load a daily database
-// 
+//
 // note this function returns via callback
 // if check is true it returns the string if
 // the db existed, false otherwise
@@ -880,7 +875,7 @@ Manager.prototype.loadDay = function(mom, check, next) {
   if(!check)
     return cb(null, day.string);
 
-  day.handle.find({}, _.bind(function(err, minutes) {
+  day.handle.find({s: {$gt: -1}}, _.bind(function(err, minutes) {
     if(err)
       throw err;
 
@@ -890,9 +885,9 @@ Manager.prototype.loadDay = function(mom, check, next) {
     } else {
       day.empty = false;
       day.full = day.minutes === MINUTES_IN_DAY;
-      day.startCandle = _.min(minutes, function(m) { return m.s; } );
+      day.startCandle = minutes[0];
       day.start = this.minuteToMoment(day.startCandle.s, day.time);
-      day.endCandle = _.max(minutes, function(m) { return m.s; } );
+      day.endCandle = minutes[day.minutes - 1];
       day.end = this.minuteToMoment(day.endCandle.s, day.time);
     }
 
@@ -904,12 +899,6 @@ Manager.prototype.loadDay = function(mom, check, next) {
 }
 
 // HELPERS
-
-Manager.prototype.sortCandles = function(candles) {
-  return candles.sort(function(a, b) {
-    return a.s - b.s;
-  });
-}
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
@@ -934,7 +923,7 @@ Manager.prototype.mom = function(m) {
   }
 }
 
-// small wrapper around a fake candle 
+// small wrapper around a fake candle
 // to make it easier to throw them around
 Manager.prototype.transportCandle = function(c, day) {
   // check whether we got a mom or a moment
