@@ -83,7 +83,7 @@ var Manager = function() {
       ].join('\n\t')
     );
   });
-}
+};
 
 var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -120,13 +120,20 @@ Manager.prototype.init = function(data) {
     from: this.mom(util.intervalsAgo(config.EMA.candles).utc())
   }
 
+
+  // the order in which we do things:
+  // - (receive first batch)
+  // - check historical db
+  // - process new trades
+
+  this.once('history', function() {
+    this.processTrades(data);
+  });
+
   this.setDay(this.fetch.start.m);
   this.loadDays();
 }
 
-// internally every candle is 1m
-// but when someone requests a candle
-// we need to give back a bigger one
 Manager.prototype.setRealCandleSize = function(interval) {
   this.realCandleSize = interval;
 }
@@ -138,8 +145,11 @@ Manager.prototype.watchRealCandles = function() {
   if(_.size(this.realCandleContents) < this.realCandleSize)
     return;
 
-  var candle = calculateRealCandle(this.realCandleContents);
-  this.emit('real candle', candle);
+  var candle = this.calculateRealCandle(this.realCandleContents);
+
+  process.nextTick(_.bind(function() {
+    this.emit('real candle', candle);
+  }, this));
 
   this.realCandleContents = [];
 }
@@ -160,24 +170,10 @@ Manager.prototype.today = function() {
 // grab a batch of trades and for each full minute
 // create a new candle
 Manager.prototype.processTrades = function(data) {
-  console.log('`');
-  // TODO:
-  // we can only do this once we know
-  // how what our history looks like
-  // 
-  // hotfix for race condition, need 
-  // better solution
-  if(!this.historySet) {
-    return this.onHistorySet = function() {
-      this.processTrades(data)
-    };
-    // race condition fix
-  } else if(!this.leftovers)
+  // first time make sure we have
+  // loaded this day.
+  if(!this.leftovers)
     this.loadDay(this.current.day);
-
-  console.log('TRADES', data.all.length);
-  console.log('TRADES', moment.unix(_.first(data.all).date).utc().format('HH:mm:ss'));
-  console.log('TRADES', moment.unix(_.last(data.all).date).utc().format('HH:mm:ss'));
 
   // if first time
   if(!this.minumum) {
@@ -196,12 +192,14 @@ Manager.prototype.processTrades = function(data) {
     }
   }
 
-  log.debug('MINIMUM TRADE TRESHOLD:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
+  log.debug('minimum trade treshold:', this.minumum.utc().format('YYYY-MM-DD HH:mm:ss'));
 
   // filter out all trades that are do not belong to the last candle
   var trades = _.filter(data.all, function(trade) {
     return this.minumum < moment.unix(trade.date).utc();
   }, this);
+
+  log.debug('processing', _.size(trades), 'trades');
 
   var candles = [];
   var minutes = [];
@@ -259,15 +257,17 @@ Manager.prototype.processTrades = function(data) {
   });
 
   var amount = _.size(candles);
-  if(amount === 0)
+  if(amount === 0) {
     return log.debug('done with this batch (1)');
-  else if(amount === 1) {
+    this.emit('processed');
+  } else if(amount === 1) {
     if(_.size(trades)) {
       // update leftovers with new trades
       this.leftovers = _.first(candles);
       this.minumum = moment.unix(_.last(trades).date).utc();
     }
 
+    this.emit('processed');
     return log.debug('done with this batch (2)');
   }
 
@@ -321,6 +321,8 @@ Manager.prototype.processTrades = function(data) {
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
     this.storeCandles(firstBatch);
 
+    // return;
+
     this.setDay(moment.unix(last).utc());
     this.loadDay(this.current.day);
 
@@ -348,10 +350,11 @@ Manager.prototype.processTrades = function(data) {
     this.minumum = moment.unix(last.date).utc();
   else
     console.log('why is this called without trades?');
+
+  this.emit('processed');
 }
 
 Manager.prototype.storeCandles = function(candles) {
-  console.log('`');
   if(!_.size(candles))
     return;
 
@@ -361,25 +364,30 @@ Manager.prototype.storeCandles = function(candles) {
       c.s,
       '(' + this.minuteToMoment(c.s, this.current.day).format('HH:mm:ss') + ' UTC)',
       'vol:',
-      c.v
+      c.v,
+      this.current.dayString
     );
 
-    // local reference
-    throw 'a';
-    var fakeCandle = this.transportCandle(c, this.current.day);
-    this.realCandleContents.push(fakeCandle);
+    // var fakeCandle = this.transportCandle(c, this.current.day);
+    // this.realCandleContents.push(fakeCandle);
 
-    throw fakeCandle;
-
-    this.emit('fake candle', fakeCandle);
-
+    // process.nextTick(_.bind(function() {
+      // this.emit('fake candle', fakeCandle);
+    // }, this))
   }, this);
 
   this.mostRecentCandle = _.last(candles);
+  // console.log(this.days[this.current.dayString].handle.insert);
+  // throw 'a';
 
+  // console.log(candles);
+  // throw 'a';
   this.days[this.current.dayString].handle.insert(candles, function(err) {
     if(err) {
-      log.warn('DOUBLE UNIQUE INSERT, this should never happen. Please post details here: https://github.com/askmike/gekko/issues');
+      log.warn(
+        'DOUBLE UNIQUE INSERT, this should never happen. Please post details ',
+        'here: https://github.com/askmike/gekko/issues'
+      );
       throw err;
     }
   });
@@ -443,7 +451,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     var min = c.s + 1;
 
     if(i === last && end)
-      var max = mom.minutes + 1;
+      var max = end + 1;
     else
       var max = candles[i + 1].s;
 
@@ -538,64 +546,65 @@ Manager.prototype.loadDays = function() {
     }
   }
 
-  // we're done, interpetet results
-  var checked = function(err) {
-    this.setHistoryAge();
-
-    if(err === 'history to old') {
-      log.warn([
-        'History is to old, if we would just start',
-        'appending new data we would have a gap between',
-        'the fresh data and the old data.'
-      ]).join(' ');
-      return this.emit('history', {complete: false, empty: true});
-    };
-
-    var h = this.history;
-
-    if(err === 'file not found') {
-      if(!h.oldest)
-        // we don't have any history
-        return this.emit('history', {complete: false, empty: true});
-      else
-        return this.emit('history', {
-          start: h.oldest.m.clone(),
-          end: h.newest.m.clone(),
-          complete: false
-        });
-    }
-
-    if(err === 'history imcomplete') {
-      return this.emit('history', {
-        start: h.oldest.m.clone(),
-        end: h.newest.m.clone(),
-        complete: false
-      });
-    }
-
-    // we have *ungapped* historical data
-    // get it all and broadcast it
-    
-    this.broadcastHistory({
-      start: h.oldest.m.clone(),
-      end: h.newest.m.clone(),
-      complete: true
-    });
-  }
-
   var checkers = _.map(days, function(day) {
     return _.bind(iterator(day), this);
   }, this);
 
   async.series(
     checkers,
-    _.bind(checked, this)
+    this.broadcastHistory
   );
+};
+
+Manager.prototype.broadcastHistory = function(err) {
+  if(err === 'history to old') {
+    log.warn([
+      'History is to old, if we would just start',
+      'appending new data we would have a gap between',
+      'the fresh data and the old data.'
+    ].join(' '));
+    return this.emit('history', {complete: false, empty: true});
+  };
+
+  var h = this.history;
+
+  if(err === 'file not found') {
+    if(!h.oldest)
+      // we don't have any history
+      return this.emit('history', {complete: false, empty: true});
+    else
+      return this.emit('history', {
+        start: h.oldest.m.clone(),
+        end: h.newest.m.clone(),
+        complete: false
+      });
+  }
+
+  if(err === 'history incomplete') {
+    return this.emit('history', {
+      start: h.oldest.m.clone(),
+      end: h.newest.m.clone(),
+      complete: false
+    });
+  }
+
+  // we have *ungapped* historical data
+  // get it all and broadcast it
+  console.log(err);
+  console.log(h);
+  throw 'a';
+  process.nextTick(function() {
+    this.broadcastFullHistory({
+      start: h.oldest.m.clone(),
+      end: h.newest.m.clone(),
+      complete: true
+    });
+  });
 }
 
 // At this point we have full history,
 // fetch everything and broadcast it
-Manager.prototype.broadcastHistory = function(meta) {
+Manager.prototype.broadcastFullHistory = function(meta) {
   var days = this.requiredDays()
   var done = function(err, result) {
     // concat all days together
@@ -667,7 +676,15 @@ Manager.prototype.calculateRealCandles = function(fakeCandles) {
     if(i !== 0 && i % this.realCandleSize === 0) {
       realCandles.push(this.calculateRealCandle(bucket));
       bucket = [];
-    }
+    };
+
+    // TODO: global order:
+    // - fetch trades
+    // - verify dats
+    // - calc history & emit
+    // - process new trades
+
+    // TODO; push remainings under realCandleContents
   }, this);
 
   return realCandles;
@@ -761,16 +778,6 @@ Manager.prototype.verifyDay = function(day, next) {
   }
 
   next(false);
-}
-
-Manager.prototype.setHistoryAge = function() {
-  // we can only do certain things once this is
-  // set, if we have something waiting do it now
-  this.historySet = true;
-  if(this.onHistorySet) {
-    this.onHistorySet();
-    this.onHistorySet = false;
-  }
 }
 
 // load a daily database

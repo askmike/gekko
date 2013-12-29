@@ -25,9 +25,11 @@ var Manager = function() {
     // we pass a fetch to the model right away
     // so it knows how new the history needs to be
     this.fetcher.once('new trades', this.model.init);
-    // this.fetcher.on('new trades', this.model.processTrades);
 
-    this.model.on('history', this.processHistory);
+    this.model.once('history', _.bind(function(history) {
+      this.processHistory(history);
+      this.fetcher.on('new trades', this.model.processTrades);
+    }, this));
 
   } else
     console.log('WUP WUP this.backtest();');
@@ -50,6 +52,11 @@ Manager.prototype.processHistory = function(history) {
       log.info('No history found, starting to build one now');
     } else if(!history.complete) {
       log.info('History found, but not enough to start giving advice');
+      log.info(
+        'I have history since',
+        history.start.format('YYYY-MM-DD HH:mm:ss'),
+        '(' + history.start.fromNow() + ')'
+      );
     } else {
       log.info('Full history available');
       console.log('GOT FULL HISTORY, SIZE:', history.candles.length);
