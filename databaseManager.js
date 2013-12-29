@@ -178,8 +178,6 @@ Manager.prototype.today = function() {
 // grab a batch of trades and for each full minute
 // create a new candle
 Manager.prototype.processTrades = function(data) {
-  // throw a;
-  // console.log(0, this.current.day);
   // first time make sure we have
   // loaded this day.
   if(!this.leftovers)
@@ -217,12 +215,6 @@ Manager.prototype.processTrades = function(data) {
   var trades = _.filter(data.all, function(trade) {
     return this.minumum < moment.unix(trade.date).utc();
   }, this);
-
-  // console.log(this.minumum);
-  // console.log(trades.length);
-  // console.log(moment.unix(_.first(trades).date).utc().format('YYYY-MM-DD HH:mm:ss'));
-  // console.log(moment.unix(_.last(trades).date).utc().format('YYYY-MM-DD HH:mm:ss'));
-  // throw 'a';
 
   if(!_.size(trades)) {
     this.emit('processed');
@@ -316,7 +308,6 @@ Manager.prototype.processTrades = function(data) {
   if(!equals(last.startOf('day'), this.current.day)) {
     log.debug('This batch includes trades for a new day.');
     log.debug('TODO: test if this is working correctly..');
-    console.log(1);
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
     // insert today, shift a day, insert tomorrow
@@ -339,9 +330,6 @@ Manager.prototype.processTrades = function(data) {
       }));
     }, this);
 
-    // console.log(firstBatch);
-    // console.log('s:', secondBatch.length);
-
     // for every trade in a candle we've
     // added the candle, strip out all
     // candles except one candle per
@@ -354,10 +342,7 @@ Manager.prototype.processTrades = function(data) {
     // add candles:
     //       [gap between this batch & last inserted candle][batch][midnight]
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
-    // console.log(firstBatch);
     this.storeCandles(firstBatch);
-
-    return console.log('~~~');
 
     this.setDay(last);
     this.loadDay(this.current.day);
@@ -377,13 +362,13 @@ Manager.prototype.processTrades = function(data) {
     // from midnight to batch. To do this we need the price of
     // yesterday's last candle.
     if(this.insertSinceMidnight) {
+      this.insertSinceMidnight = false;
       // add candles:
       //       [midnight][gap between this batch & last inserted candle][batch]
       var yesterday = this.mom(this.current.m.clone().subtract('d', 1));
       var ghostCandle = _.clone(this.days[yesterday.dayString].endCandle);
       ghostCandle.s = 0;
       candles = this.addEmtpyCandles(candles, ghostCandle);
-      this.insertSinceMidnight = false;
     } else {
 
       var startFrom = this.mostRecentCandle;
@@ -503,7 +488,6 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     var empty, prevClose;
 
     while(min !== max) {
-      // console.log('i:', min);
       empty = _.clone(c);
       empty.s = min;
       empty.v = 0;
@@ -534,7 +518,6 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
-  throw a;
   log.warn(
     'Found a corrupted database (',
     day.string,
@@ -555,9 +538,6 @@ Manager.prototype.deleteDay = function(day, safe) {
 Manager.prototype.requiredDays = function() {
   var day = this.fetch.start.m.clone().startOf('day');
   var start = this.required.from.day.clone();
-
-  // console.log(this.required)
-  // throw 'a';
 
   // if we get more trades back than we need
   // only use the minimal history we need
@@ -822,10 +802,6 @@ Manager.prototype.verifyDay = function(day, next) {
   // don't have enough.
   if(startDay && day.start > this.required.from.m)
     return next('history incomplete');
-
-  // console.log(this.required.from.m);
-  // console.log(this.required.to.m);
-  // console.log('~~', day.end)
 
   // if this is the last (= most recent) day we
   // need to have data from after the required
