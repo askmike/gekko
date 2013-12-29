@@ -577,7 +577,7 @@ Manager.prototype.broadcastHistory = function(err) {
     });
   }
 
-  if(err !! !h.oldest) {
+  if(err || !h.oldest) {
     log.debug('This should not happen, please post details here: https://github.com/askmike/gekko/issues/90')
     return this.emit('history', {complete: false, empty: true});
   }
