@@ -142,6 +142,7 @@ Manager.prototype.setRealCandleSize = function(interval) {
 // and aggregates them into the candles
 // of the required size
 Manager.prototype.watchRealCandles = function() {
+  console.log('a', _.size(this.realCandleContents));
   if(_.size(this.realCandleContents) < this.realCandleSize)
     return;
 
@@ -279,9 +280,9 @@ Manager.prototype.processTrades = function(data) {
   var last = _.last(trades).date;
   last = moment.unix(last).utc();
 
-  // TODO: test at midnight
   if(!equals(last.startOf('day'), this.current.day)) {
     log.debug('This batch includes trades for a new day.');
+    log.debug('TODO: test if this is working correctly..');
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
     // insert today, shift a day, insert tomorrow
@@ -320,8 +321,6 @@ Manager.prototype.processTrades = function(data) {
     //       [gap between this batch & last inserted candle][batch][midnight]
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
     this.storeCandles(firstBatch);
-
-    // return;
 
     this.setDay(moment.unix(last).utc());
     this.loadDay(this.current.day);
@@ -367,6 +366,10 @@ Manager.prototype.storeCandles = function(candles) {
       c.v,
       this.current.dayString
     );
+
+    var fakeCandle = this.transportCandle(c, this.current);
+    this.realCandleContents.push(fakeCandle);
+    this.emit('fake candle', fakeCandle);
   }, this);
 
   this.mostRecentCandle = _.last(candles);
@@ -669,12 +672,6 @@ Manager.prototype.calculateRealCandles = function(fakeCandles) {
       bucket = [];
     };
 
-    // TODO: global order:
-    // - fetch trades
-    // - verify dats
-    // - calc history & emit
-    // - process new trades
-
     // TODO; push remainings under realCandleContents
   }, this);
 
@@ -718,7 +715,7 @@ Manager.prototype.getDayHistory = function(day, limit, cb) {
 //    else
 //      check if full
 // as soon as the first one errors
-// we now the history we have
+// we know the history we have
 Manager.prototype.verifyDay = function(day, next) {
   if(!day)
     return next(true);
