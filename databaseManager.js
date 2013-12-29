@@ -65,11 +65,13 @@ var Manager = function() {
 
   this
     .on('processed', function() {
-      log.info(
-        'Processed trades, sleeping for',
-        this.fetch.next.m.fromNow(true),
-        '...'
-      );
+      this.defer(function() {
+        log.info(
+          'Processed trades, sleeping for',
+          this.fetch.next.m.fromNow(true),
+          '...'
+        );
+      });
     })
     .on('fake candle', this.watchRealCandles)
     .on('real candle', function(candle) {
@@ -139,9 +141,9 @@ Manager.prototype.watchRealCandles = function() {
 
   var candle = this.calculateRealCandle(this.realCandleContents);
 
-  process.nextTick(_.bind(function() {
+  this.defer(function() {
     this.emit('real candle', candle);
-  }, this));
+  });
 
   this.realCandleContents = [];
 }
@@ -561,7 +563,7 @@ Manager.prototype.broadcastHistory = function(err) {
 
   // we have *ungapped* historical data
   // get it all and broadcast it
-  process.nextTick(function() {
+  this.defer(function() {
     this.broadcastFullHistory({
       start: h.oldest.m.clone(),
       end: h.newest.m.clone(),
@@ -869,6 +871,12 @@ Manager.prototype.transportCandles = function(candles, day) {
   return _.map(candles, function(c) {
     return this.transportCandle(c, day);
   }, this);
+}
+
+// executes cb on next tick while
+// maintaining context (to `Manager`).
+Manager.prototype.defer = function(cb) {
+  return _.defer(_.bind(cb, this));
 }
 
 module.exports = new Manager;

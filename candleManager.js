@@ -18,6 +18,10 @@ var Manager = function() {
   this.model = require('./databaseManager');
   this.model.setRealCandleSize(config.EMA.interval);
 
+  this.state = 'calculating';
+  // calculating - 
+
+
   if(config.backtest.enabled) {
     console.log('WUP WUP this.backtest();');
   } else {
@@ -44,8 +48,6 @@ Manager.prototype.setupAdvice = function() {
 }
 
 Manager.prototype.processHistory = function(history) {
-  // if history is not in this region we should discard
-  var minimum = util.intervalsAgo(config.EMA.candles);
   var requiredHistory = util.minToMs(config.EMA.candles * config.EMA.interval);
 
   if(!this.exchange.providesHistory) {
