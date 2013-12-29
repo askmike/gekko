@@ -365,6 +365,7 @@ Manager.prototype.processTrades = function(data) {
     // from midnight to batch. To do this we need the price of
     // yesterday's last candle.
     if(this.insertSinceMidnight) {
+      console.log('insertSinceMidnight');
       this.insertSinceMidnight = false;
       // add candles:
       //       [midnight][gap between this batch & last inserted candle][batch]
@@ -387,9 +388,6 @@ Manager.prototype.processTrades = function(data) {
     this.leftovers = candles.pop();
     this.storeCandles(candles);
   }
-
-  if(this.leftovers)
-    log.debug('Leftovers:', this.leftovers.s);
 
   if(lastTrade)
     this.minumum = last;
@@ -424,6 +422,8 @@ Manager.prototype.storeCandles = function(candles) {
     });
   }
   var done = function() {
+    if(this.leftovers)
+      log.debug('Leftovers:', this.leftovers.s);
     this.emit('processed');
   }
 
@@ -519,7 +519,9 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
   if(start)
     candles.shift();
 
-  return candles.concat(emptyCandles);
+  var all = candles.concat(emptyCandles);
+  
+  return this.sortCandles(all);
 }
 
 Manager.prototype.deleteDay = function(day, safe) {
@@ -904,6 +906,13 @@ Manager.prototype.loadDay = function(mom, check, next) {
 }
 
 // HELPERS
+
+
+Manager.prototype.sortCandles = function(candles) {
+ return candles.sort(function(a, b) {
+   return a.s - b.s;
+  });
+}
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
