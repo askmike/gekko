@@ -92,17 +92,17 @@ var Manager = function() {
     .on('fake candle', this.watchRealCandles)
     .on('real candle', function(candle) {
       log.debug(
-        'NEW REAL CANDLE:',
-        [
-          '',
-          'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
-          'O:\t' + candle.o,
-          'H:\t' + candle.h,
-          'L:\t' + candle.l,
-          'C:\t' + candle.c,
-          'V:\t' + candle.v,
-          'VWP:\t' + candle.p
-        ].join('\n\t')
+        'NEW REAL CANDLE'//,
+        // [
+        //   '',
+        //   'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
+        //   'O:\t' + candle.o,
+        //   'H:\t' + candle.h,
+        //   'L:\t' + candle.l,
+        //   'C:\t' + candle.c,
+        //   'V:\t' + candle.v,
+        //   'VWP:\t' + candle.p
+        // ].join('\n\t')
       );
     });
 };
@@ -298,17 +298,17 @@ Manager.prototype.processTrades = function(data) {
     return log.debug('done with this batch (3)');
   }
 
-  // we need to verify that all candles belong to today
-  // else:
-  // - first insert the candles from today and fill upto midnight
-  // - shift to new day
-  // - insert remaining candles with filling from last midnight
   var lastTrade = _.last(trades);
   var last = moment.unix(lastTrade.date).utc();
   var firstTrade = _.first(trades);
   var first = moment.unix(firstTrade.date).utc();
 
-  if(!equals(last.startOf('day'), this.current.day)) {
+  // we need to verify that all candles belong to today
+  // else:
+  // - first insert the candles from today and fill upto midnight
+  // - shift to new day
+  // - insert remaining candles with filling from last midnight
+  if(!equals(last.clone().startOf('day'), this.current.day)) {
     log.debug('This batch includes trades for a new day.');
     log.debug('TODO: test if this is working correctly..');
     // some trades are after midnight, create
@@ -347,7 +347,7 @@ Manager.prototype.processTrades = function(data) {
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
     this.storeCandles(firstBatch);
 
-    this.setDay(last);
+    this.setDay(last.clone());
     this.loadDay(this.current.day);
 
     // add candles:
@@ -375,11 +375,15 @@ Manager.prototype.processTrades = function(data) {
     } else {
 
       var startFrom = this.mostRecentCandle;
+      if(startFrom.s > _.first(candles).s) {
+        console.log(candles, startFrom);
+        throw 'b';
+      }
+
       // add candles:
       //       [gap between this batch & last inserted candle][batch]
       candles = this.addEmtpyCandles(candles, startFrom);
     }
-
     this.leftovers = candles.pop();
     this.storeCandles(candles);
   }
@@ -480,7 +484,6 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     if(i === last && !end)
       return;
 
-
     var min = c.s + 1;
 
     if(i === last && end)
@@ -489,6 +492,9 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
       var max = candles[i + 1].s;
 
     var empty, prevClose;
+
+    if(min > max)
+      throw 'a';
 
     while(min !== max) {
       empty = _.clone(c);
