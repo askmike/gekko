@@ -80,14 +80,6 @@ Manager.prototype.processHistory = function(history) {
       console.log('GOT FULL HISTORY, SIZE:', history.candles.length);
     }
   }
-
-}
-
-// we don't got any history and we can't get it
-// from the exchange, watch until we fetched for
-// interval * candles
-Manager.prototype.sleep = function(ms) {
-  console.log('we are going to wait a loooong time :(', ms);
 }
 
 Manager.prototype.fetchHistory = function(since) {
