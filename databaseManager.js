@@ -709,6 +709,8 @@ Manager.prototype.calculateRealCandle = function(fakeCandles) {
 }
 
 // transform all candles from fake to real
+// all the leftovers are prepared for the new 
+// real candle calculation
 Manager.prototype.calculateRealCandles = function(fakeCandles) {
   var realCandles = [];
   var bucket = [];
@@ -718,10 +720,12 @@ Manager.prototype.calculateRealCandles = function(fakeCandles) {
       realCandles.push(this.calculateRealCandle(bucket));
       bucket = [];
     };
-
-    // TODO; push remainings under realCandleContents
   }, this);
 
+  // set the remaining fake candles as
+  // leftovers for the new real candle
+  // calculation
+  this.realCandleContents = bucket;
   return realCandles;
 }
 

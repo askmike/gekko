@@ -139,11 +139,11 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
 }
 
 Fetcher.prototype.scheduleNextFetch = function() {
-  log.debug('Scheduling next fetch: in', util.msToMin(this.fetchAfter), 'minutes');
   setTimeout(this.fetch, this.fetchAfter);
 }
 
 Fetcher.prototype.fetch = function(since) {
+  log.debug('Requested trade data from', this.exchange.name, '...')
   this.watcher.getTrades(since, this.processTrades, false);
 }
 
