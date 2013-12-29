@@ -55,7 +55,7 @@ Manager.prototype.processHistory = function(history) {
       log.info(
         'I have history since',
         history.start.format('YYYY-MM-DD HH:mm:ss'),
-        '(' + history.start.fromNow() + ')'
+        '(' + history.start.fromNow() + ' UTC)'
       );
     } else {
       log.info('Full history available');

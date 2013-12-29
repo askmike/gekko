@@ -367,26 +367,15 @@ Manager.prototype.storeCandles = function(candles) {
       c.v,
       this.current.dayString
     );
-
-    // var fakeCandle = this.transportCandle(c, this.current.day);
-    // this.realCandleContents.push(fakeCandle);
-
-    // process.nextTick(_.bind(function() {
-      // this.emit('fake candle', fakeCandle);
-    // }, this))
   }, this);
 
   this.mostRecentCandle = _.last(candles);
-  // console.log(this.days[this.current.dayString].handle.insert);
-  // throw 'a';
 
-  // console.log(candles);
-  // throw 'a';
   this.days[this.current.dayString].handle.insert(candles, function(err) {
     if(err) {
       log.warn(
         'DOUBLE UNIQUE INSERT, this should never happen. Please post details ',
-        'here: https://github.com/askmike/gekko/issues'
+        'here: https://github.com/askmike/gekko/issues/90'
       );
       throw err;
     }
@@ -588,11 +577,13 @@ Manager.prototype.broadcastHistory = function(err) {
     });
   }
 
+  if(err !! !h.oldest) {
+    log.debug('This should not happen, please post details here: https://github.com/askmike/gekko/issues/90')
+    return this.emit('history', {complete: false, empty: true});
+  }
+
   // we have *ungapped* historical data
   // get it all and broadcast it
-  console.log(err);
-  console.log(h);
-  throw 'a';
   process.nextTick(function() {
     this.broadcastFullHistory({
       start: h.oldest.m.clone(),
