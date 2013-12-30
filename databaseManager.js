@@ -146,7 +146,7 @@ Manager.prototype.emitRealtime = function() {
         //   'L:\t' + candle.l,
         //   'C:\t' + candle.c,
         //   'V:\t' + candle.v,
-        //   'VWP:\t' + candle.p
+        //   'VWAP:\t' + candle.p
         // ].join('\n\t')
       );
     });
@@ -439,16 +439,27 @@ Manager.prototype.storeCandles = function(candles) {
     });
   }
   var done = function() {
-    // this was not the only
-    // batch for this trade
-    // batch, another one
-    // coming up
+    // this was not the only batch for this trade
+    // batch, another one coming up
     if(this.firstBatch)
       return;
 
     if(this.leftovers)
       log.debug('Leftovers:', this.leftovers.s);
+
     this.emit('processed');
+
+    // if we were waiting for full history,
+    // check whether we got it
+    if(this.state === 'building history') {
+      var last = this.minuteToMoment(
+        this.mostRecentCandle.s,
+        this.current.day
+      );
+
+      if(this.required.to.m < last)
+        this.recheckHistory();
+    }
   }
 
   async.eachSeries(
@@ -459,6 +470,8 @@ Manager.prototype.storeCandles = function(candles) {
 
   this.mostRecentCandle = _.last(candles);
 
+  // we insert right away and emit on next ticks, so that if shit
+  // hits the fan we atleast still have the data stored safely.
   this.days[day.dayString].handle.insert(candles, function(err) {
     if(err) {
       log.warn(
@@ -468,6 +481,34 @@ Manager.prototype.storeCandles = function(candles) {
       throw err;
     }
   });
+}
+
+// recheck if history is complete enough
+Manager.prototype.recheckHistory = function() {
+  var days = this.requiredDays();
+
+  days = _.map(days, function(d) {
+    return this.days[d.dayString];
+  }, this);
+
+  var iterator = function(day, next) {
+    this.setDayMeta(day, _.bind(function(err) {
+      this.verifyDay(day.string, next);
+    }, this))
+  }
+
+  var done = function(err) {
+    if(err)
+      throw 'Gekko expected the history to be complete, however it was not :(';
+
+    this.broadcastHistory(err);
+  }
+
+  async.eachSeries(
+    days,
+    _.bind(iterator, this),
+    _.bind(done, this)
+  );
 }
 
 // We store each minute, even minutes that didn't contain
@@ -626,30 +667,56 @@ Manager.prototype.loadDays = function() {
 };
 
 Manager.prototype.broadcastHistory = function(err) {
+  var h = this.history;
+
+  // run this when we don't have full history yet. 
+  // This will make sure that once we do, we will 
+  // broadcast it.
+  var self = this;
+  var bail = _.bind(function() {
+    console.log('BAIL');
+    // in the future we will have the complete history
+    // let's update the expectations
+    var requiredHistory = util.minToMs(config.EMA.candles * config.EMA.interval);
+    if(h.oldest)
+      var from = h.oldest.m.clone();
+    else
+      var from = this.fetch.start.m.clone();
+    var to = from.clone().add('ms', requiredHistory);
+
+    this.required = {
+      from: this.mom(from),
+      to: this.mom(to)
+    };
+  }, this);
+
   if(err === 'history to old') {
     log.warn([
       'History is to old, if we would just start',
       'appending new data we would have a gap between',
       'the fresh data and the old data.'
     ].join(' '));
+    bail();
     return this.emit('history', {complete: false, empty: true});
   };
 
-  var h = this.history;
-
   if(err === 'file not found') {
-    if(!h.oldest)
+    if(!h.oldest) {
       // we don't have any history
+      bail();
       return this.emit('history', {complete: false, empty: true});
-    else
+    } else {
+      bail();
       return this.emit('history', {
         start: h.oldest.m.clone(),
         end: h.newest.m.clone(),
         complete: false
       });
+    }
   }
 
   if(err === 'history incomplete') {
+    bail();
     return this.emit('history', {
       start: h.oldest.m.clone(),
       end: h.newest.m.clone(),
@@ -659,6 +726,7 @@ Manager.prototype.broadcastHistory = function(err) {
 
   if(err || !h.oldest) {
     log.debug('This should not happen, please post details here: https://github.com/askmike/gekko/issues/90')
+    bail();
     return this.emit('history', {complete: false, empty: true});
   }
 
