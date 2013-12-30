@@ -323,7 +323,6 @@ Manager.prototype.processTrades = function(data) {
   // - insert remaining candles with filling from last midnight
   if(!equals(last.clone().startOf('day'), this.current.day)) {
     log.debug('This batch includes trades for a new day.');
-    log.debug('TODO: test if this is working correctly..');
     // some trades are after midnight, create
     // a batch for today and for tomorrow,
     // insert today, shift a day, insert tomorrow
@@ -346,6 +345,8 @@ Manager.prototype.processTrades = function(data) {
       }));
     }, this);
 
+    this.firstBatch = true;
+
     // for every trade in a candle we've
     // added the candle, strip out all
     // candles except one candle per
@@ -360,13 +361,15 @@ Manager.prototype.processTrades = function(data) {
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
     this.storeCandles(firstBatch);
 
+    this.firstBatch = false;
+
     this.setDay(last.clone());
     this.loadDay(this.current.day);
 
     // add candles:
     //       [midnight][batch]
     var ghostCandle = _.clone(_.last(firstBatch));
-    ghostCandle.s = 0;
+    ghostCandle.s = -1;
     secondBatch = this.addEmtpyCandles(secondBatch, ghostCandle);
     this.leftovers = secondBatch.pop();
 
@@ -378,20 +381,18 @@ Manager.prototype.processTrades = function(data) {
     // from midnight to batch. To do this we need the price of
     // yesterday's last candle.
     if(this.insertSinceMidnight) {
-      console.log('insertSinceMidnight');
       this.insertSinceMidnight = false;
       // add candles:
       //       [midnight][gap between this batch & last inserted candle][batch]
       var yesterday = this.mom(this.current.m.clone().subtract('d', 1));
       var ghostCandle = _.clone(this.days[yesterday.dayString].endCandle);
-      ghostCandle.s = 0;
+      ghostCandle.s = -1;
       candles = this.addEmtpyCandles(candles, ghostCandle);
     } else {
 
       var startFrom = this.mostRecentCandle;
       if(startFrom.s > _.first(candles).s) {
-        console.log(candles, startFrom);
-        throw 'b';
+        throw 'Weird error';
       }
 
       // add candles:
@@ -412,6 +413,9 @@ Manager.prototype.storeCandles = function(candles) {
   if(!_.size(candles))
     return;
 
+  // because this function is async make
+  // sure we are using the right day.
+  var day = _.clone(this.current);
 
   // broadcast each fake candle one per tick
   // they need to be dealt with during this tick
@@ -421,13 +425,13 @@ Manager.prototype.storeCandles = function(candles) {
       log.debug(
         'inserting candle',
         c.s,
-        '(' + this.current.dayString,
-        this.minuteToMoment(c.s, this.current.day).format('HH:mm:ss') + ' UTC)',
+        '(' + day.dayString,
+        this.minuteToMoment(c.s, day.day).format('HH:mm:ss') + ' UTC)',
         'volume:',
         c.v
       );
 
-      var fakeCandle = this.transportCandle(c, this.current);
+      var fakeCandle = this.transportCandle(c, day);
       this.realCandleContents.push(fakeCandle);
       this.emit('fake candle', fakeCandle);
 
@@ -435,6 +439,13 @@ Manager.prototype.storeCandles = function(candles) {
     });
   }
   var done = function() {
+    // this was not the only
+    // batch for this trade
+    // batch, another one
+    // coming up
+    if(this.firstBatch)
+      return;
+
     if(this.leftovers)
       log.debug('Leftovers:', this.leftovers.s);
     this.emit('processed');
@@ -448,7 +459,7 @@ Manager.prototype.storeCandles = function(candles) {
 
   this.mostRecentCandle = _.last(candles);
 
-  this.days[this.current.dayString].handle.insert(candles, function(err) {
+  this.days[day.dayString].handle.insert(candles, function(err) {
     if(err) {
       log.warn(
         'DOUBLE UNIQUE INSERT, this should never happen. Please post details ',
@@ -507,7 +518,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     var empty, prevClose;
 
     if(min > max)
-      throw 'a';
+      throw 'Weird error...';
 
     while(min !== max) {
       empty = _.clone(c);
