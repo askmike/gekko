@@ -5,7 +5,7 @@
 //
 // - Store new candles in the database based
 //   on fetched trade data.
-// - Getting candles out of a database.
+// - Get candles out of a database.
 //
 // Notes:
 //
@@ -75,9 +75,15 @@ var Manager = function() {
 
   this.currentDay;
 
+  this.state = 'building history';
+  // 'realtime updating'
+
   // make sure the historical folder exists
   if(!fs.existsSync(this.historyPath))
     fs.mkdirSync(this.historyPath);
+
+  if(!fs.existsSync(this.historyPath))
+    throw 'Gekko is unable to save historical data, do I have sufficient rights?';
 
   this
     .on('processed', function() {
@@ -89,22 +95,7 @@ var Manager = function() {
         );
       });
     })
-    .on('fake candle', this.watchRealCandles)
-    .on('real candle', function(candle) {
-      log.debug(
-        'NEW REAL CANDLE'//,
-        // [
-        //   '',
-        //   'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
-        //   'O:\t' + candle.o,
-        //   'H:\t' + candle.h,
-        //   'L:\t' + candle.l,
-        //   'C:\t' + candle.c,
-        //   'V:\t' + candle.v,
-        //   'VWP:\t' + candle.p
-        // ].join('\n\t')
-      );
-    });
+    .on('full history build', this.emitRealtime)
 };
 
 var Util = require('util');
@@ -118,7 +109,7 @@ Manager.prototype.init = function(data) {
   this.setFetchMeta(data);
 
   // what do we need if we want to start right 
-  // away?
+  // away? 
   this.required = {
     to: this.mom(utc().subtract('ms', data.timespan)),
 
@@ -137,6 +128,28 @@ Manager.prototype.init = function(data) {
 
   this.setDay(this.fetch.start.m);
   this.loadDays();
+}
+
+// emit all events required for realtime
+// candle propogation
+Manager.prototype.emitRealtime = function() {
+  this
+    .on('fake candle', this.watchRealCandles)
+    .on('real candle', function(candle) {
+      log.debug(
+        'NEW REAL CANDLE'//,
+        // [
+        //   '',
+        //   'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
+        //   'O:\t' + candle.o,
+        //   'H:\t' + candle.h,
+        //   'L:\t' + candle.l,
+        //   'C:\t' + candle.c,
+        //   'V:\t' + candle.v,
+        //   'VWP:\t' + candle.p
+        // ].join('\n\t')
+      );
+    });
 }
 
 Manager.prototype.setFetchMeta = function(data) {
@@ -661,6 +674,10 @@ Manager.prototype.broadcastFullHistory = function(meta) {
     this.emit('history', _.extend(meta, {
       candles: result
     }));
+
+    log.debug('Setting state to', 'realtime updating');
+    this.state = 'realtime updating';
+    this.emit('full history build');
   }
 
   var iterator = function(day, next) {
@@ -886,6 +903,11 @@ Manager.prototype.loadDay = function(mom, check, next) {
   if(!check)
     return cb(null, day.string);
 
+  this.setDayMeta(day, cb);
+}
+
+// set the meta information of daily database.
+Manager.prototype.setDayMeta = function(day, cb) {
   day.handle.find({s: {$gt: -1}}, _.bind(function(err, minutes) {
     if(err)
       throw err;
@@ -893,16 +915,21 @@ Manager.prototype.loadDay = function(mom, check, next) {
     day.minutes = _.size(minutes);
     if(day.minutes === 0) {
       day.empty = true;
+      day.full = false;
+      day.startCandle = false;
+      day.start = false;
+      day.endCandle = false;
+      day.end = false;
     } else {
       day.empty = false;
       day.full = day.minutes === MINUTES_IN_DAY;
-      day.startCandle = minutes[0];
+      day.startCandle = _.first(minutes);
       day.start = this.minuteToMoment(day.startCandle.s, day.time);
-      day.endCandle = minutes[day.minutes - 1];
+      day.endCandle = _.last(minutes);
       day.end = this.minuteToMoment(day.endCandle.s, day.time);
     }
 
-    // store a global reference
+    // store / overwrite a global reference
     this.days[day.string] = day;
 
     cb(false, day.string);
