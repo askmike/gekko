@@ -40,6 +40,7 @@ var TradingMethod = function() {
   };
 }
 
+// teach our trading method events
 var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
@@ -58,7 +59,6 @@ TradingMethod.prototype.update = function(candle) {
   this.log();
   this.calculateAdvice();
 }
-
 
 // add a price and calculate the EMAs and
 // the diff for that price
@@ -136,6 +136,7 @@ TradingMethod.prototype.advice = function(newPosition) {
   if(!newPosition)
     return this.emit('soft advice');
 
+  log.info('New trade recommandation:', newPosition);
   this.emit('advice', {
     recommandation: newPosition,
     portfolio: 1

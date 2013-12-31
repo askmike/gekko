@@ -28,7 +28,7 @@ var CandleManager = require('./core/candleManager');
 
 var config = util.getConfig();
 
-var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var TradeAdvisor = require('./actors/price/tradeAdvisor');
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
@@ -39,7 +39,6 @@ log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
 if(config.normal && config.normal.enabled) {
   // if the normal settings are enabled we overwrite the
   // watcher and traders set in the advanced zone
-  log.info('Using normal settings to monitor the live market');
   config.watch = config.normal;
   config.traders = [];
 
@@ -59,19 +58,39 @@ if(invalid)
 // write config
 util.setConfig(config);
 
+var tradeAvisor = new TradeAdvisor;
 var candleManager = new CandleManager;
-var consultant = new Consultant;
 
-candleManager.on('prepared', function(history) {
-  // the CM has enough history available for a trader
-  process.nextTick(function() {
-    consultant.init(history);
-  });
+log.info('Setup a new price actor:');
+log.info('\t', tradeAvisor.name);
+log.info('\t', tradeAvisor.description);
+
+var priceActors = [
+  tradeAvisor
+  // todo: add more price actors, like:
+  //  - price monitoring tool
+  //  - price charting module
+];
+
+_.each(priceActors, function(actor) {
+  // when we have enough history available for a price actor
+  candleManager.on('prepared', actor.init);
+
+  // relay new candles to every price actor
+  candleManager.on('candle', actor.update);
 });
 
-candleManager.on('candle', consultant.update);
-consultant.on('advice', console.log);
+var adviceActors = [
+  // todo: add actors like
+  //  - mailer
+  //  - trader
+  //  - profit simulator
+];
 
+_.each(adviceActors, function(actor) {
+  // relay all new advice to everyone interested
+  consultant.on('advice', actor.update);
+});
 
 // END OF THE ROAD
 return;
