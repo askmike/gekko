@@ -497,6 +497,9 @@ Manager.prototype.recheckHistory = function() {
 
   var iterator = function(day, next) {
     this.setDayMeta(day, _.bind(function(err) {
+      if(err)
+        return next(err);
+
       this.verifyDay(day.string, next);
     }, this))
   }
@@ -664,7 +667,7 @@ Manager.prototype.loadDays = function() {
     // the fist gap
     return function(next) {
       this.loadDay(day, true, _.bind(function(err, day) {
-        if(err)
+        if(err || !day)
           return next(err);
 
         this.verifyDay(day, next);
