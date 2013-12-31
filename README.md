@@ -11,8 +11,8 @@ Gekko is a Bitcoin trading bot for popular exchanges written in javascript runni
 ## Main features
 
 * Paper trading
-* Live trading (trade bot)
-* Backtesting
+* ~~Live trading (trade bot)~~
+* ~~Backtesting~~
 
 ## What?
 
@@ -32,21 +32,18 @@ Gekko uses Technical Analysis (only EMA at this moment) to determine when to ent
 * Calculate the profits of all the advices so far.
 * Automatically trade.
 
-Gekko currently supports paper & live trading at the following exchanges:
+Gekko currently supports paper ~~& live trading~~ at the following exchanges:
 
-* [Mt. Gox](https://mtgox.com/)
+* ~~[Mt. Gox](https://mtgox.com/)~~
 * [BTC-e](https://btc-e.com/)
+* [Bitstamp](https://bitstamp.net/)
 * [cex.io](https://cex.io) (commodity exchange for mining power)
 
-Gekko supports paper trading at the following exchanges:
+### ~~Backtesting~~
 
-* [Bitstamp](https://bitstamp.net) (Live trading broken at the moment)
+~~You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage. 
 
-### Backtesting
-
-You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage. 
-
-You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.
+You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.~~
 
 ## Installing Gekko
 
@@ -98,8 +95,8 @@ After the first fetching, every new interval (in the [config](https://github.com
 ### Advice
 
 * HOLD means don't do anything, we are either not in a trend or the trend has not changed since last check.
-* BUY means the trend has changed to an uptrend, advice is to buy now so we can sell at the end of the trend.
-* SELL means the trend has chacnged to a downtrend, advice is to sell now so we can buy back at the end of the trend.
+* LONG means the trend has changed to an uptrend, advice is to buy now so we can sell at the end of the trend.
+* SHORT means the trend has chacnged to a downtrend, advice is to sell now so we can buy back at the end of the trend.
 
 After every line of advice we can see the current price Gekko calculated and the difference in EMAs, this makes it easier to understand the advice.
 
@@ -109,18 +106,18 @@ The profit report will log out Gekko's profit since it started, this is done usi
 
 *If Gekko logs 20% that means that if you would have had automatic trading enabled on an exchange account with a balance of 1BTC, you would now have 1.2BTC.*
 
-### Buying and selling
+### ~~Buying and selling~~
 
-If you configured Gekko to automatically sell on this information it will also log:
+~~If you configured Gekko to automatically sell on this information it will also log:
 
 * NOW going to BUY, when it is buying BTC.
-* NOW going to SELL, when it is selling BTC.
+* NOW going to SELL, when it is selling BTC.~~
 
 ## TODO
 
-* Add more exchanges (such as [bitfloor](https://npmjs.org/package/bitfloor), [campBX](https://npmjs.org/package/campbx)).
-* Store trade history in levelDB.
-* Add money management (so that the bot will only spend a start amount of X and the profits on top of X).
+* More exchanges (cryptsy, bitfinex, kraken, btcchina)
+* More trading methods
+* Webbased interface
 
 ## Credits
 
