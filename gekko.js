@@ -66,7 +66,8 @@ var cm = new CM;
 cm.on('prepared', function(history) {
   // the CM has enough history available for a trader
   process.nextTick(function() {
-    var consultant = new Consultant(history);
+    var consultant = new Consultant;
+    consultant.init(history);
     cm.on('candle', consultant.update)
   });
 });
