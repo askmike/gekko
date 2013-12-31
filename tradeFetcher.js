@@ -143,7 +143,7 @@ Fetcher.prototype.scheduleNextFetch = function() {
 }
 
 Fetcher.prototype.fetch = function(since) {
-  log.debug('Requested trade data from', this.exchange.name, '...')
+  log.debug('Requested trade data from', this.exchange.name, '...');
   this.watcher.getTrades(since, this.processTrades, false);
 }
 

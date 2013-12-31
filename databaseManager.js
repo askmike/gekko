@@ -194,6 +194,7 @@ Manager.prototype.today = function() {
 // grab a batch of trades and for each full minute
 // create a new candle
 Manager.prototype.processTrades = function(data) {
+
   this.setFetchMeta(data);
   // first time make sure we have
   // loaded this day.
@@ -476,7 +477,10 @@ Manager.prototype.storeCandles = function(candles) {
     if(err) {
       log.warn(
         'DOUBLE UNIQUE INSERT, this should never happen. Please post details ',
-        'here: https://github.com/askmike/gekko/issues/90'
+        'here: https://github.com/askmike/gekko/issues/90',
+        day.dayString,
+        err.key,
+        err
       );
       throw err;
     }
@@ -607,23 +611,35 @@ Manager.prototype.deleteDay = function(day, safe) {
     delete this.days[day.string];
 }
 
+// calculate all days which we need data from
+// based on:
+// 
+// - what are the fetch results?
+// - what data do we need?
+// 
+// (it will calculate the widest range between
+// those and return array with all those days
+// chronologically reversed.)
 Manager.prototype.requiredDays = function() {
-  var day = this.fetch.start.m.clone().startOf('day');
-  var start = this.required.from.day.clone();
+  var start = _.min(
+    [
+      this.required.from.m,
+      this.fetch.start.m
+    ]
+  ).clone().startOf('day');
 
-  // if we get more trades back than we need
-  // only use the minimal history we need
-  if(day < start) {
-    this.setDay(start);
-    return [ this.mom(start) ];
-  }
+  var end = _.max(
+    [
+      this.required.to.m,
+      this.fetch.end.m
+    ]
+  ).clone().startOf('day');
 
-  // create an array of days which we should
-  // check to see if we have them
   var days = [];
-  while(day >= start) {
-    days.push(this.mom(day.clone()));
-    day.subtract('d', 1);
+
+  while(end >= start) {
+    days.push(this.mom(end.clone()));
+    end.subtract('d', 1);
   };
 
   return days;
@@ -672,9 +688,7 @@ Manager.prototype.broadcastHistory = function(err) {
   // run this when we don't have full history yet. 
   // This will make sure that once we do, we will 
   // broadcast it.
-  var self = this;
   var bail = _.bind(function() {
-    console.log('BAIL');
     // in the future we will have the complete history
     // let's update the expectations
     var requiredHistory = util.minToMs(config.EMA.candles * config.EMA.interval);
@@ -890,6 +904,7 @@ Manager.prototype.verifyDay = function(day, next) {
   if(day.full)
     return next(false);
 
+
   // is this the first day we need data from?
   var startDay = equals(this.required.from.day, day.time);
   // is this the last day we need data from?
@@ -927,7 +942,7 @@ Manager.prototype.verifyDay = function(day, next) {
 // the db existed, false otherwise
 Manager.prototype.loadDay = function(mom, check, next) {
   var cb = next || function() {};
-  var day = mom.clone();
+  var day = mom.clone().startOf('day');
   var string = day.format('YYYY-MM-DD');
   var file = this.historyPath + [
     config.watch.exchange,
