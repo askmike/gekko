@@ -70,6 +70,8 @@ candleManager.on('prepared', function(history) {
 });
 
 candleManager.on('candle', consultant.update);
+consultant.on('advice', console.log);
+
 
 // END OF THE ROAD
 return;

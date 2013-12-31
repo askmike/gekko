@@ -49,14 +49,14 @@ TradingMethod.prototype.init = function(history) {
     this.calculateEMAs(candle);
   }, this);
   this.lastCandle = _.last(history.candles);
-  this.advice();
+  this.calculateAdvice();
 }
 
 TradingMethod.prototype.update = function(candle) {
   this.lastCandle = candle;
   this.calculateEMAs(candle);
   this.log();
-  this.advice();
+  this.calculateAdvice();
 }
 
 
@@ -90,7 +90,7 @@ TradingMethod.prototype.calculateEMAdiff = function() {
   this.diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
 }
 
-TradingMethod.prototype.advice = function() {
+TradingMethod.prototype.calculateAdvice = function() {
   // @ cexio we need to be more precise due to low prices
   // and low margins on trade.  All others use 3 digist.
 
@@ -113,23 +113,33 @@ TradingMethod.prototype.advice = function() {
 
     if(this.currentTrend !== 'up') {
       this.currentTrend = 'up';
-      this.emit('advice', 'BUY', price, message);
+      this.advice('long');
     } else
-      this.emit('advice', 'HOLD', price, message);
+      this.advice();
 
   } else if(diff < settings.sellTreshold) {
     log.debug('we are currently in a downtrend', message);
 
     if(this.currentTrend !== 'down') {
       this.currentTrend = 'down';
-      this.emit('advice', 'SELL', price, message);
+      this.advice('short');
     } else
-      this.emit('advice', 'HOLD', price, message);
+      this.advice();
 
   } else {
     log.debug('we are currently not in an up or down trend', message);
-    this.emit('advice', 'HOLD', price, message);
+    this.advice();
   }
+}
+
+TradingMethod.prototype.advice = function(newPosition) {
+  if(!newPosition)
+    return this.emit('soft advice');
+
+  this.emit('advice', {
+    recommandation: newPosition,
+    portfolio: 1
+  });
 }
 
 module.exports = TradingMethod;
