@@ -136,7 +136,6 @@ TradingMethod.prototype.advice = function(newPosition) {
   if(!newPosition)
     return this.emit('soft advice');
 
-  log.info('New trade recommandation:', newPosition);
   this.emit('advice', {
     recommandation: newPosition,
     portfolio: 1

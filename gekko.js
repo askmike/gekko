@@ -29,9 +29,9 @@ var CandleManager = require('./core/candleManager');
 var config = util.getConfig();
 
 var TradeAdvisor = require('./actors/price/tradeAdvisor');
+var AdviceLogger = require('./actors/advice/logger');
 
-log.info('I\'m gonna make you rich, Bud Fox.');
-log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
+log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 //
 // Normalize the configuration between normal & advanced.
@@ -58,103 +58,45 @@ if(invalid)
 // write config
 util.setConfig(config);
 
+var adviceLogger = new AdviceLogger;
 var tradeAvisor = new TradeAdvisor;
 var candleManager = new CandleManager;
 
-log.info('Setup a new price actor:');
+console.log();
+log.info('Seting up a new price actor:');
 log.info('\t', tradeAvisor.name);
 log.info('\t', tradeAvisor.description);
+console.log();
 
-var priceActors = [
+var marketActors = [
+  adviceLogger,
   tradeAvisor
-  // todo: add more price actors, like:
+  // todo: add more market actors, like:
   //  - price monitoring tool
   //  - price charting module
+  //  - volume monitoring module
 ];
 
-_.each(priceActors, function(actor) {
-  // when we have enough history available for a price actor
-  candleManager.on('prepared', actor.init);
+_.each(marketActors, function(actor) {
+  if(actor.init)
+    // when we have enough history available for a market actor
+    candleManager.on('prepared', actor.init);
 
-  // relay new candles to every price actor
-  candleManager.on('candle', actor.update);
+  if(actor.processCandle)
+    // relay new candles to every market actor
+    candleManager.on('candle', actor.processCandle);
 });
 
 var adviceActors = [
-  // todo: add actors like
+  adviceLogger
+  // todo: add advice actors like
   //  - mailer
-  //  - trader
+  //  - auto trader
   //  - profit simulator
 ];
 
 _.each(adviceActors, function(actor) {
   // relay all new advice to everyone interested
-  consultant.on('advice', actor.update);
+  tradeAvisor.method.on('advice', util.defer(actor.processAdvice));
 });
 
-// END OF THE ROAD
-return;
-
-// implement a trading method to create a consultant, we pass it a config and a 
-// public mtgox object which the method can use to get data on past trades
-var consultant = new Consultant(watcher);
-
-// log advice
-var Logger = require('./logger');
-var logger = new Logger(_.extend(config.profitCalculator, config.watch));
-consultant.on('advice', logger.inform);
-if(config.profitCalculator.enabled)
-  consultant.on('advice', logger.trackProfits);
-
-//
-// Configure automatic traders based on advice,
-// after they are all prepared we continue.
-// 
-var managers = _.filter(config.traders, function(t) { return t.enabled });
-var configureManagers = function(_next) {
-  var amount = _.size(managers);
-  if(!amount)
-    return _next();
-
-  var next = _.after(amount, _next);
-  _.each(managers, function(conf) {
-    conf.exchange = conf.exchange.toLowerCase();
-
-    // make sure we the exchange is configured correctly
-    // for trading.
-    var invalid = exchangeChecker.cantTrade(conf);
-    if(invalid)
-      throw invalid;
-
-    log.info(
-      'Trading for real money based on market advice at',
-      conf.exchange
-    );
-
-    var manager = new Manager(conf);
-
-    consultant.on('advice', manager.trade);
-    manager.on('ready', next);
-  });
-}
-
-
-//
-// Configure automatic email on advice.
-//
-var configureMail = function(next) {
-  if(config.mail.enabled && config.mail.email) {
-    var mailer = require('./mailer');
-    mailer.init(function() {
-      consultant.on('advice', mailer.send);
-      next();
-    });
-  } else
-    next();
-}
-
-var start = function() {
-  consultant.emit('prepare');
-}
-
-async.series([configureMail, configureManagers], start);

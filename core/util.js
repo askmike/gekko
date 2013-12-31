@@ -93,6 +93,12 @@ var util = {
       return b.diff(a);
     else
       return a.diff(b);
+  },
+  defer: function(fn) {
+    return function(args) {
+      var args = _.toArray(arguments);
+      return _.defer(function() { fn.apply(this, args) });
+    }
   }
 }
 
