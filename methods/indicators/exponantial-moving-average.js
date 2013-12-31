@@ -34,7 +34,4 @@ Indicator.prototype.calculate = function() {
   this.result = price * k + y * (1 - k);
 }
 
-// console.log(Indicator.prototype)
-
-// throw 'a';
 module.exports = Indicator;
