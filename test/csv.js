@@ -6,8 +6,10 @@ var CSVStore = require('../csv-interface.js');
 var TMPDIR = "./tmp/";
 var CSVNAME = "test.csv";
 var CSVFILE = TMPDIR + CSVNAME;
-var VALUES = [[1,2,3,4,5], [10,20,30,40,50]];
-var DATA = "1,2,3,4,5\n10,20,30,40,50";
+var CANDLES = [{s:1 ,o:2 ,h:3 ,l:4 ,c:5 ,p:6},
+	       {s:10,o:20,h:30,l:40,c:50,p:60}];
+var DATA = "1,2,3,4,5,6\n"
+           + "10,20,30,40,50,60";
 
 function deflate(file, data, next) {
     zlib.deflate(data, function(err, buffer) { next(err, file, buffer) });
@@ -47,7 +49,7 @@ module.exports = {
     test_loadFile: function(test) {
         var csv = new CSVStore({history: {directory: TMPDIR}});
         csv.read(CSVNAME, function(candles) {
-            test.ok(candles);
+            test.deepEqual(candles, CANDLES, "Loaded candles seem corrupt");
             test.done();
         });
     }
