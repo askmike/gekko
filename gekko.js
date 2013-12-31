@@ -27,7 +27,7 @@ var exchangeChecker = require('./exchangeChecker');
 
 var config = util.getConfig();
 
-// var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 log.info('I\'m gonna make you rich, Bud Fox.');
 log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
@@ -61,7 +61,17 @@ util.setConfig(config);
 // var TradeFetcher = require('./tradeFetcher.js');
 // var tradeFetcher = new TradeFetcher();
 var CM = require('./candleManager');
-var a = new CM;
+var cm = new CM;
+
+cm.on('prepared', function(history) {
+  // the CM has enough history available for a trader
+  process.nextTick(function() {
+    var consultant = new Consultant(history);
+    cm.on('candle', consultant.update)
+  });
+});
+
+// END OF THE ROAD
 return;
 
 // implement a trading method to create a consultant, we pass it a config and a 

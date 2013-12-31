@@ -134,22 +134,22 @@ Manager.prototype.init = function(data) {
 // candle propogation
 Manager.prototype.emitRealtime = function() {
   this
-    .on('fake candle', this.watchRealCandles)
-    .on('real candle', function(candle) {
-      log.debug(
-        'NEW REAL CANDLE'//,
-        // [
-        //   '',
-        //   'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
-        //   'O:\t' + candle.o,
-        //   'H:\t' + candle.h,
-        //   'L:\t' + candle.l,
-        //   'C:\t' + candle.c,
-        //   'V:\t' + candle.v,
-        //   'VWAP:\t' + candle.p
-        // ].join('\n\t')
-      );
-    });
+    .on('fake candle', this.watchRealCandles);
+    // .on('real candle', function(candle) {
+    //   log.debug(
+    //     'NEW REAL CANDLE'//,
+    //     // [
+    //     //   '',
+    //     //   'TIME:\t' + candle.start.format('YYYY-MM-DD HH:mm:ss'),
+    //     //   'O:\t' + candle.o,
+    //     //   'H:\t' + candle.h,
+    //     //   'L:\t' + candle.l,
+    //     //   'C:\t' + candle.c,
+    //     //   'V:\t' + candle.v,
+    //     //   'VWAP:\t' + candle.p
+    //     // ].join('\n\t')
+    //   );
+    // });
 }
 
 Manager.prototype.setFetchMeta = function(data) {

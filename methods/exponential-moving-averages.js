@@ -21,103 +21,90 @@ var log = require('../log.js');
 
 var config = util.getConfig();
 var settings = config.EMA;
+
+
 var backtesting = config.backtest.enabled;
 if(backtesting)
-  settings = _.extend(settings, config.backtest);
+  throw ':(';
+  // settings = _.extend(settings, config.backtest);
 
-var TradingMethod = function(watcher) {
-  this.watcher = watcher;
-  this.currentTrend;
-  this.amount = settings.ticks + 1;
-  // store EMAsettings
-  this.settings = settings;
-  // store whole config
-  this.config = config;
-
+var TradingMethod = function(history) {
   _.bindAll(this);
 
-  this.on('prepare', this.prepare);
-  this.on('prepared', this.start);
-  this.on('calculated candle', this.calculateEMAs);
-}
+  this.currentTrend;  
 
-throw 'fix this ffs';
-Util.inherits(TradingMethod, CandleMethod);
-
-// first prepare this trading method, then
-// prepare the candleMethod this trade method 
-// is extending.
-TradingMethod.prototype.prepare = function() {
-  log.info('Calculating EMA on historical data...');
-  // setup method specific parameters
   this.ema = {
     short: [],
     long: [],
     diff: []
   };
 
-  this.set();
+  _.each(history.candles, function(candle) {
+    this.calculateEMAs(candle);
+  }, this);
+
+  this.lastCandle = _.last(history.candles);
+
+  this.advice();
 }
 
-TradingMethod.prototype.start = function() {
-  if(backtesting) {
-    this.on('calculated new candle', this.getNewCandle);
-    this.getHistoricalCandles();
-  } else {
-    this.getHistoricalCandles();
-    setInterval(this.getNewCandle, util.minToMs( settings.interval ) );
-  }
+var Util = require('util');
+var EventEmitter = require('events').EventEmitter;
+Util.inherits(TradingMethod, EventEmitter);
+
+// on every new candle let's clean up old data
+TradingMethod.prototype.cleanUp = function() {
+  this.ema.short.shift();
+  this.ema.long.shift();
+  this.ema.diff.shift();
 }
+
+TradingMethod.prototype.update = function(candle) {
+  this.lastCandle = candle;
+  this.cleanUp();
+  this.calculateEMAs(candle);
+  this.advice();
+}
+
 
 // add a price and calculate the EMAs and
 // the diff for that price
-TradingMethod.prototype.calculateEMAs = function() {
-  if(!this.fetchingHistorical) {
-    // we need to remove the oldest EMAs
-    this.ema.short.shift();
-    this.ema.long.shift();
-    this.ema.diff.shift();
-  }
-
-  this.calculateEMA('short');
-  this.calculateEMA('long');
+TradingMethod.prototype.calculateEMAs = function(candle) {
+  this.calculateEMA('short', candle);
+  this.calculateEMA('long', candle);
   this.calculateEMAdiff();
 
   log.debug('calced EMA properties for new candle:');
   _.each(['short', 'long', 'diff'], function(e) {
-    if(config.normal.exchange === 'cexio')
+    if(config.watch.exchange === 'cexio')
       log.debug('\t', e, 'ema', _.last(this.ema[e]).toFixed(8));
     else
       log.debug('\t', e, 'ema', _.last(this.ema[e]).toFixed(3));
   }, this);
-
-  if(!this.fetchingHistorical)
-    this.advice();
 }
 
 //    calculation (based on tick/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
-TradingMethod.prototype.calculateEMA = function(type) {
-  var price = _.last(this.candles.close);
-
+TradingMethod.prototype.calculateEMA = function(type, candle) {
+  var price = candle.c;
   var k = 2 / (settings[type] + 1);
   var ema, y;
 
-  var current = _.size(this.candles.close);
+  var current = _.size(this.ema[type]);
 
-  if(current === 1)
+  if(!current)
     // we don't have any 'yesterday'
     y = price;
   else
-    y = this.ema[type][current - 2];
+    y = this.ema[type][current - 1];
   
   ema = price * k + y * (1 - k);
   
   if(!ema){
     //in case of empty ema value (e.g. bitcoincharts downtime) take the last ema value
     ema = _.last(this.ema[type]);
-    log.debug('WARNING: Unable to calculate EMA on current candle. Using last defined value.');
+    // log.debug('WARNING: Unable to calculate EMA on current candle. Using last defined value.');
   }
   
   this.ema[type].push(ema);
@@ -137,7 +124,7 @@ TradingMethod.prototype.advice = function() {
   // and low margins on trade.  All others use 3 digist.
 
   var diff = _.last(this.ema.diff).toFixed(3),
-      price = _.last(this.candles.close).toFixed(8);
+      price = this.lastCandle.c.toFixed(8);
 
   if(typeof price === 'string')
     price = parseFloat(price);
@@ -172,17 +159,6 @@ TradingMethod.prototype.advice = function() {
     log.debug('we are currently not in an up or down trend', message);
     this.emit('advice', 'HOLD', price, message);
   }
-}
-
-TradingMethod.prototype.refresh = function() {
-  log.debug('refreshing');
-
-  // remove the oldest tick
-  this.ticks.splice(0, 1);
-
-  // get new tick
-  this.callback = this.advice;
-  this.getTicks();
 }
 
 module.exports = TradingMethod;

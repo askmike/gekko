@@ -18,10 +18,6 @@ var Manager = function() {
   this.model = require('./databaseManager');
   this.model.setRealCandleSize(config.EMA.interval);
 
-  this.state = 'calculating';
-  // calculating - 
-
-
   if(config.backtest.enabled) {
     console.log('WUP WUP this.backtest();');
   } else {
@@ -33,6 +29,7 @@ var Manager = function() {
     // so it knows how new the history needs to be
     this.fetcher.once('new trades', this.model.init);
     this.model.on('history', this.processHistory);
+    this.model.on('real candle', this.relayCandle);
 
     this.model.once('history', _.bind(function(history) {
       // the first time the model first needs to calculate
@@ -43,8 +40,12 @@ var Manager = function() {
   }
 }
 
-Manager.prototype.setupAdvice = function() {
-  console.log('we got all history we need, lets rock');
+var Util = require('util');
+var EventEmitter = require('events').EventEmitter;
+Util.inherits(Manager, EventEmitter);
+
+Manager.prototype.relayCandle = function(candle) {
+  this.emit('candle', candle);
 }
 
 Manager.prototype.processHistory = function(history) {
@@ -77,7 +78,7 @@ Manager.prototype.processHistory = function(history) {
     } else {
       // we have complete history
       log.info('Full history available');
-      console.log('GOT FULL HISTORY, SIZE:', history.candles.length);
+      this.emit('prepared', history);
     }
   }
 }
