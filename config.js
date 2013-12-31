@@ -14,8 +14,8 @@ config.history = {
   directory: './history/'
 }
 
-// Gekko currently only supports Exponential Moving Averages
-config.tradingMethod = 'Exponential Moving Averages';
+// Gekko currently only supports Exponential Moving Average Crossovers
+config.tradingMethod = 'Exponential Moving Average Crossovers';
 
 // Exponential Moving Averages settings:
 config.EMA = {
