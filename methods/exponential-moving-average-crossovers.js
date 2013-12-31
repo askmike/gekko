@@ -55,6 +55,7 @@ TradingMethod.prototype.init = function(history) {
 TradingMethod.prototype.update = function(candle) {
   this.lastCandle = candle;
   this.calculateEMAs(candle);
+  this.log();
   this.advice();
 }
 
@@ -66,7 +67,11 @@ TradingMethod.prototype.calculateEMAs = function(candle) {
     this.ema[type].update(candle);
   }, this);
   this.calculateEMAdiff();
+}
 
+// for debugging purposes: log the last calculated
+// EMAs and diff.
+TradingMethod.prototype.log = function() {
   log.debug('calced EMA properties for candle:');
   _.each(['short', 'long'], function(e) {
     if(config.watch.exchange === 'cexio')

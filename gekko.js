@@ -24,6 +24,7 @@ var log = require('./core/log');
 var async = require('async');
 var Manager = require('./core/portfolioManager');
 var exchangeChecker = require('./core/exchangeChecker');
+var CandleManager = require('./core/candleManager');
 
 var config = util.getConfig();
 
@@ -58,19 +59,17 @@ if(invalid)
 // write config
 util.setConfig(config);
 
-// var TradeFetcher = require('./tradeFetcher.js');
-// var tradeFetcher = new TradeFetcher();
-var CM = require('./core/candleManager');
-var cm = new CM;
+var candleManager = new CandleManager;
+var consultant = new Consultant;
 
-cm.on('prepared', function(history) {
+candleManager.on('prepared', function(history) {
   // the CM has enough history available for a trader
   process.nextTick(function() {
-    var consultant = new Consultant;
     consultant.init(history);
-    cm.on('candle', consultant.update)
   });
 });
+
+candleManager.on('candle', consultant.update);
 
 // END OF THE ROAD
 return;
