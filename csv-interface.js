@@ -13,6 +13,7 @@ var Store = function(config) {
   config = config || require('./util').util.getConfig();
   this.directory = config.history.directory;
  
+  //TODO(yin): Make this mockable, or mock the fs in tests.
   // write a daily database
   this.write = async.compose(
     this.writeFile,
