@@ -2,8 +2,8 @@ var CEXio = require('cexio'),
    moment = require('moment'),
     async = require('async'),
         _ = require('lodash'),
-     util = require('../util'),
-      log = require('../log');
+     util = require('../core/util'),
+      log = require('../core/log');
 
 var Trader = function(config) {
   this.user = config.username;

@@ -1,4 +1,4 @@
-var exchanges = require('./exchanges.js');
+var exchanges = require('../exchanges.js');
 var _ = require('lodash');
 
 var Checker = function() {

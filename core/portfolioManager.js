@@ -15,7 +15,7 @@ var events = require("events");
 var log = require('./log');
 var async = require('async');
 var exchangeChecker = require('./exchangeChecker.js');
-var exchanges = require('./exchanges.js');
+var exchanges = require('../exchanges.js');
 
 var Manager = function(conf) {
   this.exchangeSlug = conf.exchange.toLowerCase();

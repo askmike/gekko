@@ -1,9 +1,9 @@
 var BTCE = require('btc-e');
 
 var moment = require('moment');
-var util = require('../util');
+var util = require('../core/util');
 var _ = require('lodash');
-var log = require('../log')
+var log = require('../core/log')
 
 var Trader = function(config) {
   this.key = config.key;

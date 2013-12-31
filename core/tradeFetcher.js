@@ -21,7 +21,7 @@ var config = util.getConfig();
 var exchangeChecker = require('./exchangeChecker');
 
 var provider = config.watch.exchange.toLowerCase();
-var DataProvider = require('./exchanges/' + provider);
+var DataProvider = require('../exchanges/' + provider);
 
 var Fetcher = function() {
   _.bindAll(this);

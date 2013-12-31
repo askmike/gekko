@@ -19,11 +19,11 @@
 // helpers
 var moment = require('moment');
 var _ = require('lodash');
-var util = require('./util');
-var log = require('./log');
+var util = require('./core/util');
+var log = require('./core/log');
 var async = require('async');
-var Manager = require('./portfolioManager');
-var exchangeChecker = require('./exchangeChecker');
+var Manager = require('./core/portfolioManager');
+var exchangeChecker = require('./core/exchangeChecker');
 
 var config = util.getConfig();
 
@@ -60,7 +60,7 @@ util.setConfig(config);
 
 // var TradeFetcher = require('./tradeFetcher.js');
 // var tradeFetcher = new TradeFetcher();
-var CM = require('./candleManager');
+var CM = require('./core/candleManager');
 var cm = new CM;
 
 cm.on('prepared', function(history) {
