@@ -41,9 +41,9 @@ Gekko currently supports paper ~~& live trading~~ at the following exchanges:
 
 ### ~~Backtesting~~
 
-~~You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage. 
+~~You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage.~~
 
-You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.~~
+~~You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.~~
 
 ## Installing Gekko
 
@@ -108,10 +108,10 @@ The profit report will log out Gekko's profit since it started, this is done usi
 
 ### ~~Buying and selling~~
 
-~~If you configured Gekko to automatically sell on this information it will also log:
+~~If you configured Gekko to automatically sell on this information it will also log:~~
 
-* NOW going to BUY, when it is buying BTC.
-* NOW going to SELL, when it is selling BTC.~~
+* ~~NOW going to BUY, when it is buying BTC.~~
+* ~~NOW going to SELL, when it is selling BTC.~~
 
 ## TODO
 
