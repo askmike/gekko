@@ -9,10 +9,8 @@ var lodash = require('lodash');
 var async = require('async');
 var _ = require('lodash');
  
-var util = require('./util');
-var config = util.getConfig();
- 
-var Store = function() {
+var Store = function(config) {
+  config = config || require('./util').util.getConfig();
   this.directory = config.history.directory;
  
   // write a daily database
@@ -92,9 +90,5 @@ Store.prototype.toArray = function(csv, next) {
  
   next(obj);
 }
- 
-var a = new Store;
- 
-a.read('csv-zlib2', function(candles) {
-  a.write('csv-zlib3', candles, console.log);
-});
+
+module.exports = Store;
