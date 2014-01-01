@@ -1,19 +1,17 @@
-// @link http://en.wikipedia.org/wiki/Exponential_moving_average#Exponential_moving_average
+﻿// @link http://en.wikipedia.org/wiki/Exponential_moving_average#Exponential_moving_average
 
 var Indicator = function(weight) {
   this.weight = weight;
   this.result = false;
 }
 
-Indicator.prototype.update = function(candle) {
+Indicator.prototype.update = function(price) {
   // The first time we can't calculate based on previous
   // ema, because we haven't calculated any yet.
   if(!this.result)
-    this.result = candle.c;
+    this.result = price;
 
-  this.candle = candle;
-
-  this.calculate();
+  this.calculate(price);
 
   return this.result;
 }
@@ -21,8 +19,7 @@ Indicator.prototype.update = function(candle) {
 //    calculation (based on tick/day):
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
-Indicator.prototype.calculate = function() {
-  var price = this.candle.c;
+Indicator.prototype.calculate = function(price) {
 
   // weight factor
   var k = 2 / (this.weight + 1);
