@@ -1,6 +1,6 @@
 /*
 
-  Gekko is a Bitcoin trading bot for Mt. Gox written 
+  Gekko is a Bitcoin trading bot for popular Bitcoin exchanges written 
   in node, it features multiple trading methods using 
   technical analysis.
 
