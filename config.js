@@ -80,6 +80,13 @@ config.profitCalculator = {
   fee: 0.6
 }
 
+config.irc = {
+  enabled: false,
+  channels: ['#gekkobot'],
+  server: 'irc.freenode.net',
+  botName: 'gekkobot'
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                           ADVANCED ZONE
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

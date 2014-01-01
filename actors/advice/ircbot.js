@@ -6,18 +6,12 @@ var utc = moment.utc;
 
 var irc = require("irc");
 
-var ircConfig = {
-  channels: ['#gekkobot'],
-  server: 'irc.freenode.net',
-  botName: 'gekkobot'
-};
-
 var Actor = function(next) {
   _.bindAll(this);
 
   console.log('setting up irc client');
-  this.bot = new irc.Client(ircConfig.server, ircConfig.botName, {
-    channels: ircConfig.channels
+  this.bot = new irc.Client(config.irc.server, config.irc.botName, {
+    channels: config.irc.channels
   });
 
   this.bot.addListener("message", this.verifyQuestion);
@@ -67,7 +61,7 @@ Actor.prototype.emitAdvice = function() {
     ')'
   ].join('');
 
-  this.bot.say(ircConfig.channels[0], message);
+  this.bot.say(config.irc.channels[0], message);
 };
 
 
