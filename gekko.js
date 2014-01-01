@@ -167,7 +167,7 @@ async.series(
   ],
   function() {
 
-    console.log('DONE');
+    // done!
 
   }
 );

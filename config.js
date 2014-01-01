@@ -81,7 +81,7 @@ config.profitCalculator = {
 }
 
 config.irc = {
-  enabled: false,
+  enabled: true,
   channels: ['#gekkobot'],
   server: 'irc.freenode.net',
   botName: 'gekkobot'

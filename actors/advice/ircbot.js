@@ -9,7 +9,6 @@ var irc = require("irc");
 var Actor = function(next) {
   _.bindAll(this);
 
-  console.log('setting up irc client');
   this.bot = new irc.Client(config.irc.server, config.irc.botName, {
     channels: config.irc.channels
   });
