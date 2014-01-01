@@ -153,6 +153,7 @@ var setupMarketActors = function(next) {
 
 var setupAdviceActors = function(next) {
   var done = function() {
+
     _.each(adviceActors, function(actor) {
       // relay all new advice to everyone interested
       advisor.method.on('advice', util.defer(actor.processAdvice));
@@ -163,7 +164,7 @@ var setupAdviceActors = function(next) {
 
   var ready = [];
   _.each(doubleActors, function(name) {
-    ready = _.find(marketActors, function(actor) {
+    ready = _.filter(marketActors, function(actor) {
       return actor.name && actor.name === name;
     });
   });
