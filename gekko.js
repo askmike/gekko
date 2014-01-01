@@ -142,7 +142,7 @@ var watchFeeds = function(next) {
       if(actor.processTrade)
         market.on('trade', actor.processTrade);
       if(actor.init)
-        advisor.on('history', actor.init);
+        market.on('history', actor.init);
     }
 
     if(_.contains(subscriptions, 'advice feed')) {

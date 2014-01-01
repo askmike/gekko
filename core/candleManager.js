@@ -92,7 +92,7 @@ Manager.prototype.processHistory = function(history) {
     } else {
       // we have complete history
       log.info('Full history available');
-      this.emit('prepared', history);
+      this.emit('history', history);
     }
   }
 }

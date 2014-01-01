@@ -41,13 +41,13 @@ var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
 
-TradingMethod.prototype.init = function (history) {
+TradingMethod.prototype.init = function(history) {
   _.each(history.candles, function (candle) {
     this.calculateEMAs(candle);
   }, this);
 
   this.lastCandle = _.last(history.candles);
-
+  this.log();
   this.calculateAdvice();
 }
 
@@ -62,7 +62,6 @@ TradingMethod.prototype.update = function (candle) {
 // add a price and calculate the EMAs and
 // the diff for that price
 TradingMethod.prototype.calculateEMAs = function (candle) {
-
   _.each(['short', 'long'], function (type) {
     this.ema[type].update(candle.p);
   }, this);
@@ -74,19 +73,11 @@ TradingMethod.prototype.calculateEMAs = function (candle) {
 // for debugging purposes: log the last calculated
 // EMAs and diff.
 TradingMethod.prototype.log = function () {
-
-  // Use local MACD debug flag rather than global.
-
-  if(settings.debug) {
-    log.info('calced EMA properties for candle:');
-    _.each(['short', 'long', 'signal'], function (e) {
-      if(config.watch.exchange === 'cexio')
-        log.info('\t', e, 'ema', this.ema[e].result.toFixed(8));
-      else
-        log.info('\t', e, 'ema', this.ema[e].result.toFixed(3));
-    }, this);
-    log.info('\t diff', this.diff.toFixed(4));
-  }
+  log.debug('calced EMA properties for candle:');
+  _.each(['short', 'long', 'signal'], function (e) {
+    log.debug('\t', e, 'ema', this.ema[e].result.toFixed(8));
+  }, this);
+  log.debug('\t macd', this.diff.toFixed(4));
 }
 
 
@@ -101,8 +92,9 @@ TradingMethod.prototype.calculateAdvice = function () {
   // @ cexio we need to be more precise due to low prices
   // and low margins on trade.  All others use 3 digits.
 
+
   var digits = 3;
-  if(config.watch.exchange === 'cexio')
+  if(config.normal.exchange === 'cexio')
     digits = 8;
 
   var macd = this.diff.toFixed(3),
@@ -119,7 +111,7 @@ TradingMethod.prototype.calculateAdvice = function () {
   if(typeof price === 'string')
     price = parseFloat(price);
 
-  if(config.watch.exchange !== 'cexio')
+  if(config.normal.exchange !== 'cexio')
     price = price.toFixed(3);
 
   var message = '@ P:' + price + ' (L:' + long + ', S:' + short + ', M:' + macd + ', s:' + signal + ', D:' + macddiff + ')';
@@ -152,20 +144,19 @@ TradingMethod.prototype.calculateAdvice = function () {
       else {
         this.currentTrend = 'down';
         this.advice('short');
-        if(settings.verbose) log.info('advice - SELL' + message);
+        // if(settings.verbose) log.info('advice - SELL' + message);
         this.trendDuration = 1;
       }
     } else
       this.advice();
     message = message + ', DT: ' + this.trendDuration;
   } else {
-    if(settings.debug) log.info('we are currently not in an up or down trend', message);
+    // if(settings.debug) log.info('we are currently not in an up or down trend', message);
     this.advice();
     // Trend has ended so reset counter
     this.trendDuration = 1;
     message = message + ', NT: ' + this.trendDuration;
   }
-  if(settings.verbose) log.info('MACD ' + message);
 
 }
 
