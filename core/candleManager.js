@@ -16,8 +16,14 @@ var Manager = function() {
 
   this.exchange = exchangeChecker.settings(config.watch);
   this.model = require('./databaseManager');
-  this.model.setRealCandleSize(config.EMA.interval);
+  this.model.setRealCandleSize(config.tradingAdvisor.candleSize);
+}
 
+var Util = require('util');
+var EventEmitter = require('events').EventEmitter;
+Util.inherits(Manager, EventEmitter);
+
+Manager.prototype.start = function() {
   if(config.backtest.enabled) {
     console.log('WUP WUP this.backtest();');
   } else {
@@ -28,6 +34,8 @@ var Manager = function() {
     // we pass a fetch to the model right away
     // so it knows how new the history needs to be
     this.fetcher.once('new trades', this.model.init);
+
+    this.fetcher.on('new trades', this.relayTrade);
     this.model.on('history', this.processHistory);
     this.model.on('real candle', this.relayCandle);
 
@@ -40,12 +48,18 @@ var Manager = function() {
   }
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(Manager, EventEmitter);
-
 Manager.prototype.relayCandle = function(candle) {
   this.emit('candle', candle);
+}
+
+// only relay if this has not been relied before.
+Manager.prototype.relayTrade = function(data) {
+  var trade = data.last;
+  if(_.isEqual(trade, this.lastTrade))
+    return;
+  
+  this.emit('trade', trade);
+  this.lastTrade = trade;
 }
 
 Manager.prototype.processHistory = function(history) {

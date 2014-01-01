@@ -78,10 +78,10 @@ Fetcher.prototype.start = function() {
 // Set the first & last trade date and set the
 // timespan between them.
 Fetcher.prototype.setFetchMeta = function(trades) {
-  var first = _.first(trades); 
-  this.first = moment.unix(first.date).utc();
-  var last = _.last(trades);
-  this.last = moment.unix(last.date).utc();
+  this.firstTrade = _.first(trades); 
+  this.first = moment.unix(this.firstTrade.date).utc();
+  this.lastTrade = _.last(trades);
+  this.last = moment.unix(this.lastTrade.date).utc();
 
   this.fetchTimespan = util.calculateTimespan(this.first, this.last);
 }
@@ -160,10 +160,14 @@ Fetcher.prototype.processTrades = function(err, trades) {
   else
     console.log('wup wup refetching NOW because this exchange supports it');
 
+  console.log('fetcher sending new trades');
+
   this.emit('new trades', {
     timespan: this.fetchTimespan,
     start: this.first,
+    first: this.firstTrade,
     end: this.last,
+    last: this.lastTrade,
     all: trades,
     nextIn: this.fetchAfter
   });

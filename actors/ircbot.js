@@ -2,17 +2,16 @@ var log = require('../core/log');
 var moment = require('moment');
 var _ = require('lodash');
 var config = require('../core/util').getConfig();
+var ircbot = config.ircbot;
 var utc = moment.utc;
 
 var irc = require("irc");
 
-var Actor = function(next) {
+var Actor = function() {
   _.bindAll(this);
 
-  this.name = 'IRC bot';
-
-  this.bot = new irc.Client(config.irc.server, config.irc.botName, {
-    channels: config.irc.channels
+  this.bot = new irc.Client(ircbot.server, ircbot.botName, {
+    channels: [ ircbot.channel ] 
   });
 
   this.bot.addListener("message", this.verifyQuestion);
@@ -22,8 +21,6 @@ var Actor = function(next) {
 
   this.price = 'Dont know yet :(';
   this.priceTime = utc();
-
-  next();
 }
 
 Actor.prototype.init = function(history) {
@@ -31,11 +28,9 @@ Actor.prototype.init = function(history) {
   this.processCandle(_.last(history.candles));
 };
 
-Actor.prototype.processCandle = function(candle) {
-  this.price = candle.c;
-
-  // we got a 1m candle, last time is 60 seconds after it.
-  this.priceTime = candle.start.clone().local().add('m', 1);
+Actor.prototype.processTrade = function(trade) {
+  this.price = trade.price;
+  this.priceTime = moment.unix(trade.date);
 };
 
 Actor.prototype.processAdvice = function(advice) {
@@ -55,7 +50,7 @@ Actor.prototype.verifyQuestion = function(from, to, text, message) {
 }
 
 Actor.prototype.newAdvice = function() {
-  this.bot.say(ircConfig.channels[0], 'Guys! Important news!');
+  this.bot.say(ircbot.channel, 'Guys! Important news!');
   this.emitAdvice();
 }
 
@@ -83,7 +78,7 @@ Actor.prototype.emitAdvice = function() {
     ')'
   ].join('');
 
-  this.bot.say(config.irc.channels[0], message);
+  this.bot.say(ircbot.channel, message);
 };
 
 // sent price over to the IRC channel
@@ -105,16 +100,16 @@ Actor.prototype.emitPrice = function() {
     ')'
   ].join('');
 
-  this.bot.say(config.irc.channels[0], message);
+  this.bot.say(ircbot.channel, message);
 };
 
-// sent advice over to the IRC channel
+// sent donation info over to the IRC channel
 Actor.prototype.emitDonation = function() {
   var message = 'You want to donate? How nice of you! You can send your coins here:';
   message += '\nBTC:\t13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW';
   message += '\nDOGE:\tDH3n9PCmi5k2Mqs3LhDAmy4ySQ1N1xUg43';
 
-  this.bot.say(config.irc.channels[0], message);
+  this.bot.say(ircbot.channel, message);
 };
 
 

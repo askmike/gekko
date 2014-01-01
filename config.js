@@ -14,13 +14,15 @@ config.history = {
   directory: './history/'
 }
 
-// Gekko currently only supports Exponential Moving Average Crossovers
-config.tradingMethod = 'Exponential Moving Average Crossovers';
+config.tradingAdvisor = {
+  enabled: true,
+  method: 'Exponential Moving Average Crossovers',
+  methodSlug: 'EMA',
+  candleSize: 2
+}
 
 // Exponential Moving Averages settings:
 config.EMA = {
-  // timeframe per candle
-  interval: 2, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
@@ -80,9 +82,13 @@ config.profitCalculator = {
   fee: 0.6
 }
 
-config.irc = {
+config.adviceLogger = {
+  enabled: true
+}
+
+config.ircbot = {
   enabled: false,
-  channels: ['#gekkobot'],
+  channel: '#gekkobot',
   server: 'irc.freenode.net',
   botName: 'gekkobot'
 }
