@@ -120,7 +120,7 @@ Trader.prototype.checkOrder = function(order, callback) {
     // right now we assume on every error that the order
     // was filled.
     //
-    // TODO: check whether the error stats that there are no
+    // TODO: check whether the error states that there are no
     // open trades or that there is something else.
     if(err)
       callback(false, true);

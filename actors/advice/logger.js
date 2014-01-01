@@ -4,6 +4,9 @@ var _ = require('lodash');
 
 var Actor = function(done) {
   _.bindAll(this);
+
+  this.name = 'Advice logger';
+
   done();
 }
 

@@ -63,6 +63,7 @@ var AdviceLogger = require('./actors/advice/logger');
 var market;
 var advisor;
 
+// instances will be spawned inside.
 var marketActors = [];
 var adviceActors = [];
 
@@ -72,8 +73,13 @@ var MarketActors = [
   TradeAdvisor
 ];
 
-// adviceLogger gets added below
 var AdviceActors = [];
+
+// the names of actors who are both
+// market Actors and adviceActors
+var doubleActors = [
+  'Advice logger'
+];
 // END TODO
 
 if(config.irc.enabled)
@@ -97,7 +103,7 @@ var setupActors = function(type, classes, instances, readyInstances, done) {
     function iterator(Actor, next) {
       var actor = new Actor(util.defer(next));
 
-      if(actor.name) {
+      if(actor.name && actor.description) {
         console.log();
         log.info('Seting up a new', type ,'actor:');
         log.info('\t', actor.name);
@@ -155,8 +161,14 @@ var setupAdviceActors = function(next) {
     next();
   }
 
-  var adviceLogger = _.first(marketActors);
-  setupActors('advice', AdviceActors, adviceActors, [adviceLogger], done);
+  var ready = [];
+  _.each(doubleActors, function(name) {
+    ready = _.find(marketActors, function(actor) {
+      return actor.name && actor.name === name;
+    });
+  });
+
+  setupActors('advice', AdviceActors, adviceActors, ready, done);
 }
 
 async.series(
