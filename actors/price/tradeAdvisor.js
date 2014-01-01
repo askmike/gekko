@@ -5,12 +5,13 @@ var _ = require('lodash');
 var config = util.getConfig();
 var Consultant = require('../../methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
-var Actor = function() {
+var Actor = function(done) {
   _.bindAll(this);
   this.name = 'Trade advisor';
   this.description = 'Calculate trading advice based on the ' + config.tradingMethod;
 
   this.method = new Consultant;
+  done();
 }
 
 Actor.prototype.init = function(data) {

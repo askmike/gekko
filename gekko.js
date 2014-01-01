@@ -28,9 +28,6 @@ var CandleManager = require('./core/candleManager');
 
 var config = util.getConfig();
 
-var TradeAdvisor = require('./actors/price/tradeAdvisor');
-var AdviceLogger = require('./actors/advice/logger');
-
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 //
@@ -58,45 +55,119 @@ if(invalid)
 // write config
 util.setConfig(config);
 
-var adviceLogger = new AdviceLogger;
-var tradeAvisor = new TradeAdvisor;
-var candleManager = new CandleManager;
+var TradeAdvisor = require('./actors/price/tradeAdvisor');
+var AdviceLogger = require('./actors/advice/logger');
+var IRCbot = require('./actors/advice/ircbot');
 
-console.log();
-log.info('Seting up a new price actor:');
-log.info('\t', tradeAvisor.name);
-log.info('\t', tradeAvisor.description);
-console.log();
+// currently we only support a single 
+// market and a single advisor.
+var market;
+var advisor;
 
-var marketActors = [
-  adviceLogger,
-  tradeAvisor
-  // todo: add more market actors, like:
-  //  - price monitoring tool
-  //  - price charting module
-  //  - volume monitoring module
+var marketActors = [];
+var adviceActors = [];
+
+// TODO: move this configurables into config somehow
+var MarketActors = [
+  AdviceLogger,
+  TradeAdvisor
 ];
-
-_.each(marketActors, function(actor) {
-  if(actor.init)
-    // when we have enough history available for a market actor
-    candleManager.on('prepared', actor.init);
-
-  if(actor.processCandle)
-    // relay new candles to every market actor
-    candleManager.on('candle', actor.processCandle);
-});
-
-var adviceActors = [
-  adviceLogger
-  // todo: add advice actors like
-  //  - mailer
-  //  - auto trader
-  //  - profit simulator
+var AdviceActors = [
+  IRCbot
+  // adviceLogger gets added below
+  // TODO: make configurable
 ];
+// END TODO
 
-_.each(adviceActors, function(actor) {
-  // relay all new advice to everyone interested
-  tradeAvisor.method.on('advice', util.defer(actor.processAdvice));
-});
+var setupMarket = function(next) {
+  market = new CandleManager;
+  next();
+}
 
+// async helper to spawn a bunch of either market or advice actors.
+// 
+// type: string name of type.
+// classes: an array of constructor functions from which to spawn advisors
+// instances: array to fill with instances of those constructors.
+// readyInstances: array with ready instances to append to the instances
+// done: callback
+var setupActors = function(type, classes, instances, readyInstances, done) {
+  async.each(
+    classes,
+    function iterator(Actor, next) {
+      var actor = new Actor(util.defer(next));
+
+      if(actor.name) {
+        console.log();
+        log.info('Seting up a new', type ,'actor:');
+        log.info('\t', actor.name);
+        log.info('\t', actor.description);
+        console.log();
+      }
+
+      instances.push(actor);
+    },
+    function() {
+      _.each(readyInstances, function(instance) {
+        instances.push(instance);
+      });
+
+      // set global reference to the advisor
+      var _advisor = _.find(instances, function(instance) {
+        return instance.name && instance.name === 'Trade advisor';
+      });
+
+      if(_advisor)
+        advisor = _advisor;
+
+      done();
+    }
+  );
+};
+
+
+var setupMarketActors = function(next) {
+
+  var done = function() {
+    _.each(marketActors, function(actor) {
+      if(actor.init)
+        // when we have enough history available for a market actor
+        market.on('prepared', actor.init);
+
+      if(actor.processCandle)
+        // relay new candles to every market actor
+        market.on('candle', actor.processCandle);
+    });
+
+    next();
+  }
+
+  setupActors('market', MarketActors, marketActors, [], done);
+}
+
+var setupAdviceActors = function(next) {
+  var done = function() {
+    _.each(adviceActors, function(actor) {
+      // relay all new advice to everyone interested
+      advisor.method.on('advice', util.defer(actor.processAdvice));
+    });
+    
+    next();
+  }
+
+  var adviceLogger = _.first(marketActors);
+  setupActors('advice', AdviceActors, adviceActors, [adviceLogger], done);
+}
+
+async.series(
+  [
+    setupMarket,
+    setupMarketActors,
+    setupAdviceActors
+  ],
+  function() {
+
+    console.log('DONE');
+
+  }
+);

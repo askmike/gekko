@@ -2,8 +2,9 @@ var log = require('../../core/log');
 var moment = require('moment');
 var _ = require('lodash');
 
-var Actor = function() {
+var Actor = function(done) {
   _.bindAll(this);
+  done();
 }
 
 Actor.prototype.init = function(history) {
