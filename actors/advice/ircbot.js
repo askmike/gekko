@@ -9,6 +9,8 @@ var irc = require("irc");
 var Actor = function(next) {
   _.bindAll(this);
 
+  this.name = 'IRC bot';
+
   this.bot = new irc.Client(config.irc.server, config.irc.botName, {
     channels: config.irc.channels
   });
@@ -18,8 +20,23 @@ var Actor = function(next) {
   this.advice = 'Dont got one yet :(';
   this.adviceTime = utc();
 
+  this.price = 'Dont know yet :(';
+  this.priceTime = utc();
+
   next();
 }
+
+Actor.prototype.init = function(history) {
+  // process last candle as now
+  this.processCandle(_.last(history.candles));
+};
+
+Actor.prototype.processCandle = function(candle) {
+  this.price = candle.c;
+
+  // we got a 1m candle, last time is 60 seconds after it.
+  this.priceTime = candle.start.clone().local().add('m', 1);
+};
 
 Actor.prototype.processAdvice = function(advice) {
   this.advice = advice.recommandation;
@@ -29,6 +46,9 @@ Actor.prototype.processAdvice = function(advice) {
 Actor.prototype.verifyQuestion = function(from, to, text, message) {
   if(text === ';;advice')
     this.emitAdvice();
+
+  if(text === ';;price')
+    this.emitPrice();
 }
 
 Actor.prototype.newAdvice = function() {
@@ -36,7 +56,7 @@ Actor.prototype.newAdvice = function() {
   this.emitAdvice();
 }
 
-// sent it over on the IRC channel
+// sent advice over to the IRC channel
 Actor.prototype.emitAdvice = function() {
   var message = [
     'Advice for market ',
@@ -57,6 +77,28 @@ Actor.prototype.emitAdvice = function() {
     config.watch.asset,
     ' (from ',
       this.adviceTime.fromNow(),
+    ')'
+  ].join('');
+
+  this.bot.say(config.irc.channels[0], message);
+};
+
+// sent price over to the IRC channel
+Actor.prototype.emitPrice = function() {
+
+  var message = [
+    'Current price at market ',
+    config.watch.exchange,
+    ' ',
+    config.watch.currency,
+    '/',
+    config.watch.asset,
+    ' is:\n',
+    this.price,
+    ' ',
+    config.watch.currency,
+    ' (from ',
+      this.priceTime.fromNow(),
     ')'
   ].join('');
 

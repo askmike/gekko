@@ -73,17 +73,20 @@ var MarketActors = [
   TradeAdvisor
 ];
 
+if(config.irc.enabled)
+  MarketActors.push(require('./actors/advice/ircbot'));
+
 var AdviceActors = [];
 
 // the names of actors who are both
 // market Actors and adviceActors
 var doubleActors = [
-  'Advice logger'
+  'Advice logger',
+  'IRC bot'
 ];
 // END TODO
 
-if(config.irc.enabled)
-  AdviceActors.push(require('./actors/advice/ircbot'));
+
 
 var setupMarket = function(next) {
   market = new CandleManager;
