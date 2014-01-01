@@ -47,10 +47,9 @@ config.normal = {
 }
 
 // want Gekko to send a mail on buy or sell advice?
-config.mail = {
+config.mailer = {
   enabled: false,
   sendMailOnStart: true,
-  what: ['BUY', 'SELL'], // send email by type of advice: any combination of 'BUY', 'SELL', 'HOLD'
   email: '', // only works for Gmail or Google apps accounts at the moment
 
   // You don't have to set your password here, if you leave it blank we will ask it

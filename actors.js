@@ -46,6 +46,14 @@ var actors = [
     silent: false
   },
   {
+    name: 'Mailer',
+    description: 'Mail module lets sends you mail yourself everytime Gekko has new advice',
+    slug: 'mailer',
+    subscriptions: ['advice feed'],
+    async: true,
+    silent: false
+  },
+  {
     name: 'Advice logger',
     description: '',
     slug: 'adviceLogger',

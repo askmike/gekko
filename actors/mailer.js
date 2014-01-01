@@ -1,38 +1,55 @@
 var email = require("emailjs");
-var moment = require('moment');
-var log = require('./log.js');
-var util = require('./util.js');
-var config = util.getConfig().mail;
-var server;
+var _ = require('lodash');
+var log = require('../core/log.js');
+var util = require('../core/util.js');
+var config = util.getConfig();
+var mailConfig = config.mailer;
 
-module.exports.init = function(callback) {
+var Mailer = function(done) {
+  _.bindAll(this);
+
+  this.server;
+  this.price = 'N/A';
+
+  this.done = done;
+  this.setup();
+}
+
+Mailer.prototype.setup = function(done) {
   var setupMail = function(err, result) {
     if(result) {
       log.info('Got it.');
-      config.password = result.password;
+      mailConfig.password = result.password;
     }
 
-    server = email.server.connect({
-      user: config.email,
-      password: config.password,
+    this.server = email.server.connect({
+      user: mailConfig.email,
+      password: mailConfig.password,
       host: "smtp.gmail.com",
       ssl: true
     });
 
-    if(config.sendMailOnStart) {
-      server.send({
-        from: "Gekko <" + config.email + ">",
-        to: "Bud Fox <" + config.email + ">",
-        subject: "Gekko has started",
-        text: [
-          "I've just started watching the markets, ",
-          "I'll let you know when I got some advice"
-        ].join('')
-      }, send);
-    }
+    if(mailConfig.sendMailOnStart) {
+      this.mail(
+        "Gekko has started",
+        [
+          "I've just started watching",
+          config.watch.exchange,
+          ' ',
+          config.watch.currency,
+          '/',
+          config.watch.asset,
+          ". I'll let you know when I got some advice"
+        ].join(''),
+        _.bind(function(err) {
+          this.checkResults(err);
+          this.done();
+        }, this)
+      );
+    } else 
+      this.done();
 
     log.debug('Setup email adviser.');
-    callback();
   }
 
   if(!config.password) {
@@ -48,35 +65,47 @@ module.exports.init = function(callback) {
       'CANNOT garantuee that your email address & password are safe!\n'
     ].join('\n\t');
     log.warn(warning);
-    prompt.get({name: 'password', hidden: true}, setupMail);
+    prompt.get({name: 'password', hidden: true}, _.bind(setupMail, this));
   } else {
     setupMail(false, false);
   }
 }
 
-var send = function(err) {
+Mailer.prototype.mail = function(subject, content, done) {
+  this.server.send({
+    text: content,
+    from: "Gekko <" + mailConfig.email + ">",
+    to: "Bud Fox <" + mailConfig.email + ">",
+    subject: subject
+  }, done || this.checkResults);
+}
+
+Mailer.prototype.processTrade = function(trade) {
+  this.price = trade.price;
+}
+
+Mailer.prototype.processAdvice = function(advice) {
+  var text = [
+    'Gekko is watching',
+    config.watch.exchange,
+    'and has detected a new trend, advice is to go',
+    advice.recommandation,
+    '.\n\nThe current ',
+    config.watch.asset,
+    ' price is ',
+    this.price
+  ].join('');
+
+  var subject = 'Gekko has new advice: go ' + advice.recommandation;
+
+  this.mail(subject, text);
+}
+
+Mailer.prototype.checkResults = function(err) {
   if(err)
-    log.warn('ERROR SENDING MAIL', err);
+    log.warn('error sending email', err);
   else
     log.info('Send advice via email.');
 }
 
-module.exports.send = function(what, price, meta) {
-  if (!_.contains(config.what, what))
-    return;
-
-  var text = [
-    'Gekko is watching the bitcoin market and has detected a new trend, advice is to ' + what,
-    'The current BTC price is ' + price,
-    '',
-    'Additional information:\n',
-    meta
-  ].join('\n');
-
-  server.send({
-    text: text,
-    from: "Gekko <" + config.email + ">",
-    to: "Bud Fox <" + config.email + ">",
-    subject: "New Gekko advice: " + what
-  }, send);
-}
+module.exports = Mailer;
