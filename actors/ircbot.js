@@ -10,6 +10,8 @@ var irc = require("irc");
 var Actor = function() {
   _.bindAll(this);
 
+  // console.log([ ircbot.channel ]);
+
   this.bot = new irc.Client(ircbot.server, ircbot.botName, {
     channels: [ ircbot.channel ] 
   });
@@ -57,7 +59,7 @@ Actor.prototype.newAdvice = function() {
 // sent advice over to the IRC channel
 Actor.prototype.emitAdvice = function() {
   var message = [
-    'Advice for market ',
+    'Advice for ',
     config.watch.exchange,
     ' ',
     config.watch.currency,
@@ -85,7 +87,7 @@ Actor.prototype.emitAdvice = function() {
 Actor.prototype.emitPrice = function() {
 
   var message = [
-    'Current price at market ',
+    'Current price at ',
     config.watch.exchange,
     ' ',
     config.watch.currency,

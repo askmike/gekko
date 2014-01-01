@@ -160,8 +160,6 @@ Fetcher.prototype.processTrades = function(err, trades) {
   else
     console.log('wup wup refetching NOW because this exchange supports it');
 
-  console.log('fetcher sending new trades');
-
   this.emit('new trades', {
     timespan: this.fetchTimespan,
     start: this.first,
