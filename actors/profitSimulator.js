@@ -1,48 +1,42 @@
-var util = require('./util.js');
+var util = require('../core/util.js');
 var _ = require('lodash');
-var log = require('./log.js');
+var log = require('../core/log.js');
 var moment = require('moment');
 
-var Logger = function(config) {
-  this.config = util.getConfig();
-  this.verbose = config.verbose;
-  this.fee = 1 - config.fee / 100;
+var config = util.getConfig();
+var calcConfig = config.profitSimulator;
+var watchConfig = config.watch;
 
-  this.reportInCurrency = config.reportInCurrency;
-  if(this.reportInCurrency)
-    this.reportIn = config.currency;
-  else
-    this.reportIn = config.asset;
-
-  // virtual balance
-  this.start = {
-    asset: config.simulationBalance.asset,
-    currency: config.simulationBalance.currency,
-    balance: false
-  }
-  this.current = {
-    asset: this.start.asset,
-    currency: this.start.currency,
-    balance: false
-  }
-  this.trades = 0;
-  this.tracks = 0;
+var Logger = function() {
 
   _.bindAll(this);
 
+  this.verbose = calcConfig.verbose;
+  this.fee = 1 - calcConfig.fee / 100;
+
+  this.currency = watchConfig.currency;
+  this.asset = watchConfig.asset;
+
+  this.reportInCurrency = calcConfig.reportInCurrency;
+
+  if(this.reportInCurrency)
+    this.reportIn = this.currency;
+  else
+    this.reportIn = this.asset;
+
+  // virtual balance
+  this.start = {
+    asset: calcConfig.simulationBalance.asset,
+    currency: calcConfig.simulationBalance.currency,
+    balance: false
+  }
+  this.current = _.clone(this.start);
+  this.trades = 0;
+  this.tracks = 0;
+
   if(config.enabled)
     log.info('Profit reporter active on simulated balance');
-}
 
-// log advice
-Logger.prototype.inform = function(what, price, meta) {
-  if(!this.verbose && what !== 'SELL' && !this.config.backtest)
-    return;
-
-  if(!this.verbose && what === 'HOLD' && this.config.backtest)
-    return;
-
-  log.info('ADVICE is to', what, meta);
 }
 
 Logger.prototype.extractFee = function(amount) {
@@ -53,10 +47,18 @@ Logger.prototype.extractFee = function(amount) {
   return amount;
 }
 
-// after every succesfull trend ride we end up with more BTC than we started with, 
-// this function calculates Gekko's profit in %.
-Logger.prototype.trackProfits = function(what, price, meta) {
+Logger.prototype.processTrade = function(trade) {
+  this.price = trade.price;
+}
+
+// after every succesfull trend ride we hopefully end up 
+// with more BTC than we started with, this function 
+// calculates Gekko's profit in %.
+Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
+
+  var price = this.price;
+  var what = advice.recommandation;
 
   // first time calculate the virtual account balance
   if(!this.start.balance) {
@@ -66,15 +68,15 @@ Logger.prototype.trackProfits = function(what, price, meta) {
       this.start.balance = this.start.asset + this.start.currency / price;
   }
 
-  // virtually trade all USD to BTC at the current MtGox price
-  if(what === 'BUY') {
+  // virtually trade all USD to BTC at the current price
+  if(what === 'long') {
     this.current.asset += this.extractFee(this.current.currency / price);
     this.current.currency = 0;
     this.trades++;
   }
 
-  // virtually trade all BTC to USD at the current MtGox price
-  if(what === 'SELL') {
+  // virtually trade all BTC to USD at the current price
+  if(what === 'short') {
     this.current.currency += this.extractFee(this.current.asset * price);
     this.current.asset = 0;
     this.trades++;
@@ -91,12 +93,13 @@ Logger.prototype.trackProfits = function(what, price, meta) {
   if(this.tracks === 1)
     return;
 
-  if(!this.verbose && what === 'SELL' && !this.config.backtest.enabled)
+  if(!this.verbose && what === 'short' && !config.backtest.enabled)
     this.report();
-  else if(this.verbose && !this.config.backtest.enabled)
+  else if(this.verbose && !config.backtest.enabled)
     this.report();
 }
 
+// finish up stats for backtesting
 Logger.prototype.finish = function(data) {
   var round = function(amount) {
     return amount.toFixed(6);

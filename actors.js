@@ -27,7 +27,7 @@ var config = require('./core/util').getConfig();
 var actors = [
   {
     name: 'Trading Advisor',
-    description: 'Calculate trading advice based on the ' + config.tradingMethod,
+    description: 'Calculate trading advice based on the ' + config.tradingAdvisor.method,
     slug: 'tradingAdvisor',
     subscriptions: ['market feed'],
     async: false,
@@ -51,6 +51,14 @@ var actors = [
     slug: 'mailer',
     subscriptions: ['advice feed'],
     async: true,
+    silent: false
+  },
+  {
+    name: 'Profit Simulator',
+    description: 'Setup paper trading and log fake profits.',
+    slug: 'profitSimulator',
+    subscriptions: ['market feed', 'advice feed'],
+    async: false,
     silent: false
   },
   {

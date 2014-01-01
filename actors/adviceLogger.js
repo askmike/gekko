@@ -6,17 +6,9 @@ var Actor = function() {
   _.bindAll(this);
 }
 
-Actor.prototype.init = function(history) {
-  // process last candle as now
-  this.processCandle(_.last(history.candles));
-};
-
-Actor.prototype.processCandle = function(candle) {
-  this.price = candle.c;
-
-  // we got a 1m candle, last time is 60 seconds after it.
-  // note that time is in UTC, we need to convert to local
-  this.marketTime = candle.start.clone().local().add('m', 1);
+Actor.prototype.processTrade = function(trade) {
+  this.price = trade.price;
+  this.marketTime = moment.unix(trade.date);
 };
 
 Actor.prototype.processAdvice = function(advice) {

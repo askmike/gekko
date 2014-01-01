@@ -65,7 +65,7 @@ config.mailer = {
 }
 
 // do you want Gekko to calculate the profit of its own advice?
-config.profitCalculator = {
+config.profitSimulator = {
   enabled: true,
   // report the profit in the currency or the asset?
   reportInCurrency: true,

@@ -25,11 +25,6 @@ var Actor = function() {
   this.priceTime = utc();
 }
 
-Actor.prototype.init = function(history) {
-  // process last candle as now
-  this.processCandle(_.last(history.candles));
-};
-
 Actor.prototype.processTrade = function(trade) {
   this.price = trade.price;
   this.priceTime = moment.unix(trade.date);
