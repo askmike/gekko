@@ -2,7 +2,7 @@ var fs = require('fs');
 var zlib = require('zlib');
 var async = require('async');
 var _ = require('lodash');
-var CSVStore = require('../csv-interface.js');
+var CSVStore = require('../core/candleStore.js');
 
 var TMPDIR = "./tmp/";
 var CSVNAME = "test.csv";
