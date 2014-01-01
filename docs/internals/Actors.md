@@ -69,7 +69,15 @@ to listen to:
       }
 
 You also need to add an entry for your actor inside `actors.js` which explains to Gekko
-to what feed it wants to listen and some meta information.
+to what feed it wants to listen and some meta information. Finally you need to add a close
+to `config.js` with atleast:
+
+    config.[slug name of actor] = {
+      enabled: true
+    }
+
+Besides enabled you can also add other configurables here which users can set themselves. 
 
 
+That's it, don't forget to create a pull request of the awesome actor you've just created!
 
