@@ -77,15 +77,17 @@ Store.prototype.unzip = function(buffer, next) {
 }
  
 Store.prototype.toArray = function(csv, next) {
+  var f = parseFloat;
+  var i = parseInt;
   var obj = _.map(csv.toString().split('\n'), function(l) {
     l = l.split(',');
     return {
-      s: l[0],
-      o: l[1],
-      h: l[2],
-      l: l[3],
-      c: l[4],
-      p: l[5]
+      s: i(l[0]),
+      o: f(l[1]),
+      h: f(l[2]),
+      l: f(l[3]),
+      c: f(l[4]),
+      p: f(l[5])
     }
   });
  
