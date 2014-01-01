@@ -110,11 +110,8 @@ module.exports = {
     fs.existsSync(TMPDIR) || fs.mkdirSync(TMPDIR);
     async.compose(save, deflate)(CSVFILE, DATA, done);
     timer = new Timer();
-    csv = new CSVStore({
-      history: {
-        directory: TMPDIR
-      }
-    });
+    csv = new CSVStore();
+    csv.directory = TMPDIR;
   },
   // runs after each test method invocation
   tearDown: function (done) {

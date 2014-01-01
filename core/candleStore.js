@@ -8,9 +8,10 @@ var fs = require('fs');
 var lodash = require('lodash');
 var async = require('async');
 var _ = require('lodash');
- 
-var Store = function(config) {
-  config = config || require('./util').util.getConfig();
+
+var config = require('./util').getConfig();
+
+var Store = function() {
   this.directory = config.history.directory;
  
   //TODO(yin): Make this mockable, or mock the fs in tests.
