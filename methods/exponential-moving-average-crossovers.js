@@ -64,7 +64,7 @@ TradingMethod.prototype.update = function(candle) {
 // the diff for that price
 TradingMethod.prototype.calculateEMAs = function(candle) {
   _.each(['short', 'long'], function(type) {
-    this.ema[type].update(candle);
+    this.ema[type].update(candle.c);
   }, this);
   this.calculateEMAdiff();
 }

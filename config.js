@@ -1,4 +1,4 @@
-// Everything is explained here:
+﻿// Everything is explained here:
 // https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
 
 var config = {};
@@ -32,6 +32,27 @@ config.EMA = {
   // the difference between the EMAs (to act as triggers)
   sellTreshold: -0.1,
   buyTreshold: 0.1
+};
+
+// MACD settings:
+config.MACD = {
+  // timeframe per candle
+  interval: 1, // in minutes
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 10,
+  long: 21,
+  signal: 9,
+  // amount of candles to remember and base initial EMAs on
+  candles: 25,
+  // the difference between the EMAs (to act as triggers)
+  sellTreshold: -0.025,
+  buyTreshold: 0.025,
+  // How many candle intervals until trigger fires
+  persistence: 5,
+  // Provide debugging output / verbose output
+  debug: false,
+  verbose: true
 };
 
 // Monitor the live market
