@@ -55,8 +55,8 @@ if(invalid)
 // write config
 util.setConfig(config);
 
-var TradeAdvisor = require('./actors/price/tradeAdvisor');
-var AdviceLogger = require('./actors/advice/logger');
+var TradeAdvisor = require('./actors/tradeAdvisor');
+var AdviceLogger = require('./actors/logger');
 
 // currently we only support a single 
 // market and a single advisor.
@@ -74,7 +74,7 @@ var MarketActors = [
 ];
 
 if(config.irc.enabled)
-  MarketActors.push(require('./actors/advice/ircbot'));
+  MarketActors.push(require('./actors/ircbot'));
 
 var AdviceActors = [];
 

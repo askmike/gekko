@@ -1,7 +1,7 @@
-var log = require('../../core/log');
+var log = require('../core/log');
 var moment = require('moment');
 var _ = require('lodash');
-var config = require('../../core/util').getConfig();
+var config = require('../core/util').getConfig();
 var utc = moment.utc;
 
 var irc = require("irc");
@@ -49,6 +49,9 @@ Actor.prototype.verifyQuestion = function(from, to, text, message) {
 
   if(text === ';;price')
     this.emitPrice();
+
+  if(text === ';;donate')
+    this.emitDonation();
 }
 
 Actor.prototype.newAdvice = function() {
@@ -101,6 +104,15 @@ Actor.prototype.emitPrice = function() {
       this.priceTime.fromNow(),
     ')'
   ].join('');
+
+  this.bot.say(config.irc.channels[0], message);
+};
+
+// sent advice over to the IRC channel
+Actor.prototype.emitDonation = function() {
+  var message = 'You want to donate? How nice of you! You can send your coins here:';
+  message += '\nBTC:\t13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW';
+  message += '\nDOGE:\tDH3n9PCmi5k2Mqs3LhDAmy4ySQ1N1xUg43';
 
   this.bot.say(config.irc.channels[0], message);
 };

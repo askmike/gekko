@@ -1,4 +1,4 @@
-var log = require('../../core/log');
+var log = require('../core/log');
 var moment = require('moment');
 var _ = require('lodash');
 

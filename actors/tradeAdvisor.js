@@ -1,9 +1,9 @@
-var util = require('../../core/util');
-var log = require('../../core/log');
+var util = require('../core/util');
+var log = require('../core/log');
 var _ = require('lodash');
 
 var config = util.getConfig();
-var Consultant = require('../../methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
+var Consultant = require('../methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
 var Actor = function(done) {
   _.bindAll(this);
