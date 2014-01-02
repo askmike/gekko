@@ -31,7 +31,9 @@ Actor.prototype.processTrade = function(trade) {
 Actor.prototype.processAdvice = function(advice) {
   this.advice = advice.recommandation;
   this.adviceTime = utc();
-  this.newAdvice();
+
+  if(ircbot.emitUpdats)
+    this.newAdvice();
 };
 
 Actor.prototype.verifyQuestion = function(from, to, text, message) {

@@ -108,7 +108,8 @@ config.adviceLogger = {
 
 config.ircbot = {
   enabled: false,
-  channel: '#gekkobot',
+  emitUpdats: false,
+  channel: '#your-channel',
   server: 'irc.freenode.net',
   botName: 'gekkobot'
 }
