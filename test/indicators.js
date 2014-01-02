@@ -58,13 +58,11 @@ var emaResults = [
 
 module.exports = {
   ema: function(test) {
-    // timer.time_now();
     var ema = new EMA(10);
     _.each(prices, function(p, i) {
       ema.update(p);
       test.equals(ema.result, emaResults[i]);
     });
-    // timer.time_now('EMA calculated');
     test.done();
   }
 };
