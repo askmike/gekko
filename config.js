@@ -18,7 +18,7 @@ config.tradingAdvisor = {
   enabled: true,
   method: 'moving average convergence divergence',
   methodSlug: 'MACD',
-  candleSize: 2
+  candleSize: 5
 }
 
 // Exponential Moving Averages settings:
@@ -113,6 +113,21 @@ config.ircbot = {
   server: 'irc.freenode.net',
   botName: 'gekkobot'
 }
+
+
+config.webserver = {
+  enabled: false,
+  ws: {
+    host: 'localhost',
+    port: 1338,
+  },
+  http: {
+    host: 'localhost',
+    port: 1339,
+  }
+
+}
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                           ADVANCED ZONE

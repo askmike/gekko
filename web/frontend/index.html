@@ -1,0 +1,140 @@
+<!doctype>
+<head>
+  <link href="http://nvd3.org/src/nv.d3.css" rel="stylesheet">
+  <style>
+    #chart1 svg {
+      height: 500px;
+      margin: 10px;
+      min-width: 100px;
+      min-height: 100px;
+    /*
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+    }
+  </style>
+</head>
+<body>
+  <h1>Gekko V0.0.0.1!</h1>
+  <h2>{{MARKET}}</h2>
+  <div id="chart1">
+    <svg></svg>
+  </div>
+  <div id='log'></div>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js'></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js'></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.min.js'></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.14-beta/nv.d3.min.js'></script>
+  <script>
+    var host = '{{host}}';
+    var port = '{{port}}';
+
+    var connection = new WebSocket('ws://localhost:1338');
+    // When the connection is open, send some data to the server
+    connection.onopen = function () {
+
+      // connection.send('init'); // Send the message 'Ping' to the server
+    };
+
+    // Log errors
+    connection.onerror = function (error) {
+      console.log('WebSocket Error ', error);
+    };
+
+    // Log messages from the server
+    connection.onmessage = function(e) {
+      var m = JSON.parse(e.data);
+
+      if(m.message === 'history')
+        candlechart(m.data.candles);
+    };
+
+
+
+
+
+
+    // (function() {
+
+
+      window.candlechart = function(data) {
+
+        var testdata = [
+          {
+            "key" : "Quantity" ,
+            "bar": true,
+            "values" : _.map(data, function(c) {
+              return [
+                +moment(c.start),
+                c.v
+              ]
+            })
+          },
+          {
+            "key" : "Price" ,
+            "values" : _.map(data, function(c) {
+              return [
+                +moment(c.start),
+                c.p
+              ]
+            })
+          }
+        ].map(function(series) {
+          // console.log(series.values);
+          // console.log(_.map(series.values, function(d) { return {x: d[0], y: d[1] } }));
+          series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+          // console.log(series.values);
+          return series;
+        });
+
+        // console.log(testdata);
+        // return;
+
+      // }
+
+
+      var chart;
+
+      nv.addGraph(function() {
+          chart = nv.models.linePlusBarChart()
+              .margin({top: 30, right: 60, bottom: 50, left: 70})
+              .x(function(d,i) { return i })
+              .color(d3.scale.category10().range());
+
+          chart.xAxis.tickFormat(function(d) {
+            var dx = testdata[0].values[d] && testdata[0].values[d].x || 0;
+            return dx ? d3.time.format('%x')(new Date(dx)) : '';
+            })
+            .showMaxMin(false);
+
+          chart.y1Axis
+              .tickFormat(d3.format(',f'));
+
+          chart.y2Axis
+              .tickFormat(function(d) { return '$' + d3.format(',.2f')(d) });
+
+          chart.bars.forceY([0]).padData(false);
+          //chart.lines.forceY([0]);
+
+          d3.select('#chart1 svg')
+              .datum(testdata)
+            .transition().duration(500).call(chart);
+
+          nv.utils.windowResize(chart.update);
+
+          chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+
+          return chart;
+      });
+
+    }
+
+
+    // }());
+
+
+  </script>
+
+</body>

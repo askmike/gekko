@@ -1,8 +1,7 @@
 /*
 
   Gekko is a Bitcoin trading bot for popular Bitcoin exchanges written 
-  in node, it features multiple trading methods using 
-  technical analysis.
+  in node, it features multiple trading methods using technical analysis.
 
   Disclaimer:
 
@@ -41,6 +40,9 @@ if(config.normal && config.normal.enabled) {
   if(config.normal.tradingEnabled)
     config.traders.push(config.normal);
 }
+
+var gekkoMode = 'realtime';
+
 // write config
 util.setConfig(config);
 
@@ -68,6 +70,13 @@ var loadActors = function(next) {
 
   var iterator = function(actor, next) {
     var actorConfig = config[actor.slug];
+
+    // only load actors that are supported by
+    // Gekko's current mode
+    if(!_.contains(actor.modes, gekkoMode))
+      return next();
+
+    // if the actor is disabled skip as well
     if(!actorConfig.enabled)
       return next();
 
@@ -154,6 +163,8 @@ var watchFeeds = function(next) {
 
   next();
 }
+
+log.info('Setting up Gekko in', gekkoMode, 'mode');
 
 async.series(
   [

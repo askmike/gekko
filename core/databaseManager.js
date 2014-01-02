@@ -989,7 +989,6 @@ Manager.prototype.loadDay = function(mom, check, next) {
 
     return cb(null, day.string);
   }
-
   // it exists already
   day.handle = new nedb({filename: file, autoload: true});
   day.handle.ensureIndex({fieldName: 's', unique: true});
@@ -999,7 +998,6 @@ Manager.prototype.loadDay = function(mom, check, next) {
   // set meta
   if(!check)
     return cb(null, day.string);
-
   this.setDayMeta(day, cb);
 }
 

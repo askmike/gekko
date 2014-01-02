@@ -61,7 +61,7 @@ var actors = [
   },
   {
     name: 'Profit Simulator',
-    description: 'Setup paper trading and log fake profits.',
+    description: 'Paper trader that logs fake profits.',
     slug: 'profitSimulator',
     subscriptions: ['market feed', 'advice feed'],
     async: false,
@@ -75,6 +75,15 @@ var actors = [
     subscriptions: ['market feed', 'advice feed'],
     async: false,
     silent: true,
+    modes: ['realtime', 'backtest']
+  },
+  {
+    name: 'Webserver',
+    description: 'Interact with Gekko in from your browser',
+    slug: 'webserver',
+    subscriptions: ['market feed', 'advice feed'],
+    async: true,
+    silent: false,
     modes: ['realtime', 'backtest']
   }
 ];
