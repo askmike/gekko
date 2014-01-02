@@ -10,8 +10,6 @@ var irc = require("irc");
 var Actor = function() {
   _.bindAll(this);
 
-  // console.log([ ircbot.channel ]);
-
   this.bot = new irc.Client(ircbot.server, ircbot.botName, {
     channels: [ ircbot.channel ] 
   });
@@ -33,6 +31,7 @@ Actor.prototype.processTrade = function(trade) {
 Actor.prototype.processAdvice = function(advice) {
   this.advice = advice.recommandation;
   this.adviceTime = utc();
+  this.newAdvice();
 };
 
 Actor.prototype.verifyQuestion = function(from, to, text, message) {

@@ -369,7 +369,7 @@ Manager.prototype.processTrades = function(data) {
 
     // add candles:
     //       [midnight][batch]
-    var ghostCandle = _.clone(_.last(firstBatch));
+    var ghostCandle = _.clone(_.last(firstBatch) || this.mostRecentCandle);
     ghostCandle.s = -1;
     secondBatch = this.addEmtpyCandles(secondBatch, ghostCandle);
     this.leftovers = secondBatch.pop();
