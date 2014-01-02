@@ -11,8 +11,22 @@ var _ = require('lodash');
 
 var config = require('./util').getConfig();
 
+var Day = function(day) {
+    this.day = day;
+    this.state = "uninitialized";
+    this.candles = [];
+}
+
+Day.prototype.addCandles = function (candles) {
+  this.candles = this.candles.concat(candles);    
+};
+
 var Store = function() {
   this.directory = config.history.directory;
+  this.oldDay = null;
+  this.day = null;
+  // This is intented to be an array of arrays. 
+  this.queue = [];
  
   //TODO(yin): Make this mockable, or mock the fs in tests.
   // write a daily database
@@ -29,7 +43,52 @@ var Store = function() {
     this.readFile
   );
 }
- 
+
+Store.prototype.openDay = function(day, callback) {
+    // Load only if the open day changed, or we never opened a day
+    if (this.day == null || day != this.day.day) {
+        var filename = filenameForDay(day);
+        prepareNewDay();
+        this.loadDay(function(err, candles) {
+            if (!err) {
+                this.day.addCandles(candles);
+                this.day.state = 'open';
+            }
+            callback(err, candles);
+        });
+    }
+}
+
+Store.prototype.loadDay = function(day, callback) {
+    var filename = filenameForDay(day);
+    this.read(filename, function(err, candles) {
+        callback(err, candles);
+    });
+}
+
+Store.prototype.prepareNewDay = function(day) {
+    if (this.day.state != 'loading') {
+        // Do we need to keep 
+        this.day.state = 'closing';
+        this.day = new Day(day);
+    }
+}
+
+// Queue's candles to be added as soon as a day is loaded
+Store.prototype.addCandles = function(candles) {
+    //NOTE: this.queue is array of arrays.
+    this.queue.push(candles);
+    this.flush();
+}
+
+// If there is a day in open state, append all queued candles to it.
+Store.prototype.flush = function() {
+    if (this.queue.length > 0 && this.day != null && this.day.state = 'open') {
+        this.day.addCandles(_.flatten(this.queue));
+        this.queue = [];
+    }
+}
+
 Store.prototype.toCSV = function(file, candles, next) {
   var csv = _.map(candles, function(properties) {
       return _.values(properties).join(',');
@@ -55,9 +114,6 @@ Store.prototype.writeFile = function(file, gzip, next) {
     next();
   });
 }
- 
- 
- 
  
 Store.prototype.readFile = function(file, next) {
   fs.readFile(this.directory + file, function(err, buffer) {
@@ -94,5 +150,10 @@ Store.prototype.toArray = function(csv, next) {
  
   next(obj);
 }
+
+var filenameForDay = function(day) {
+    //TODO(yin): Missing exchange and currency pair, filenames will conflict.
+    return "history-" + day.toString() + "csv.z";
+};
 
 module.exports = Store;
