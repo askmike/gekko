@@ -86,9 +86,9 @@ Mailer.prototype.processTrade = function(trade) {
 
 Mailer.prototype.processAdvice = function(advice) {
   var text = [
-    'Gekko is watching',
+    'Gekko is watching ',
     config.watch.exchange,
-    'and has detected a new trend, advice is to go',
+    ' and has detected a new trend, advice is to go ',
     advice.recommandation,
     '.\n\nThe current ',
     config.watch.asset,
