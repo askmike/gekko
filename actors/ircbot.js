@@ -65,7 +65,7 @@ Actor.prototype.emitAdvice = function() {
     config.EMA.short,
     ' at ',
     config.EMA.interval,
-    'minute candles, is:\n',
+    ' minute candles, is:\n',
     this.advice,
     ' ',
     config.watch.asset,

@@ -2,7 +2,7 @@
 
 An actor is a module or plugin that can act upon events bubbling 
 through Gekko. If you want to have custom functionality so that your rocket
-flies to the moon as soon as the price hits X you should craete an actor for it.
+flies to the moon as soon as the price hits X you should create an actor for it.
 
 All actors live in `gekko/actors`.
 
@@ -21,15 +21,16 @@ Gekko divides different kinds of events into feeds to which an actor can subscri
 ### Market feed
 
 - `trade`: Everytime Gekko refetched trade data and it has new trades, it will
-  propogate the latest one.
+  propogate the most recent one.
 - `candle`: Everytime Gekko calculated a new candle (as defined by the candleSize),
   it is propogated here.
+- `small candle`: Everytime Gekko calculated a new small candle (always 1 minute size 
+  candles), it is propogated here.
 - `history`: internal event used by the trading method to get historical market data.
 
 ### Advice feed
 
-- `advice`: Everytime an implemented trading method suggests you change your position
-  it is being broadcasted under this event.
+- `advice`: Everytime an implemented trading method suggests you change your position.
 
 ## Implementing a new actor
 
@@ -38,7 +39,7 @@ If you want to add your own actor you need to expose a constructor function insi
 to listen to:
 
 - market feed / trade: `processTrade`.
-  This method will be fed a trade like
+  This method will be fed a trade like:
 
       {
         date: [unix timestamp],
@@ -48,7 +49,7 @@ to listen to:
       }
 
 - market feed / candle: `processCandle`.
-  This method will be fed a candle like
+  This method will be fed a candle like:
 
       {
         start: [moment object],
@@ -60,8 +61,21 @@ to listen to:
         v: [volume]
       }
 
-- advice feed / advice:
-  This method will be fed a candle like
+- market feed / small candle: `processSmallCandle`.
+  This method will be fed a candle like:
+
+      {
+        start: [moment object],
+        o: [open of candle],
+        h: [high of candle],
+        l: [low of candle],
+        c: [close of candle],
+        p: [average weighted price of candle],
+        v: [volume]
+      }
+
+- advice feed / advice `processAdvice`:
+  This method will be fed an advice like:
 
       {
         recommandation: [position to take, either long or short],
