@@ -20,7 +20,6 @@ Indicator.prototype.update = function(price) {
 //  EMA = Price(t) * k + EMA(y) * (1 – k)
 //  t = today, y = yesterday, N = number of days in EMA, k = 2 / (N+1)
 Indicator.prototype.calculate = function(price) {
-
   // weight factor
   var k = 2 / (this.weight + 1);
 
