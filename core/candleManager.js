@@ -38,6 +38,7 @@ Manager.prototype.start = function() {
     this.fetcher.on('new trades', this.relayTrade);
     this.model.on('history', this.processHistory);
     this.model.on('real candle', this.relayCandle);
+    this.model.on('fake candle', this.relaySmallCandle);
 
     this.model.once('history', _.bind(function(history) {
       // the first time the model first needs to calculate
@@ -50,6 +51,10 @@ Manager.prototype.start = function() {
 
 Manager.prototype.relayCandle = function(candle) {
   this.emit('candle', candle);
+}
+
+Manager.prototype.relaySmallCandle = function(candle) {
+ this.emit('small candle', candle); 
 }
 
 // only relay if this has not been relied before.

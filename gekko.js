@@ -44,9 +44,6 @@ if(config.normal && config.normal.enabled) {
 // write config
 util.setConfig(config);
 
-
-// currently Gekko can only watch a single exchange
-
 var exchangeChecker = require(coreDir + 'exchangeChecker');
 // make sure the monitoring exchange is configured correctly for monitoring
 var invalid = exchangeChecker.cantMonitor(config.watch);
@@ -107,8 +104,8 @@ var loadActors = function(next) {
   );
 };
 
-// advisor is a special actor in that it spawns
-// an advice feed.
+// advisor is a special actor in that it spawns an
+// advice feed. Which everyone can subscribe to.
 var setupAdvisor = function(next) {
 
   var settings;
@@ -139,6 +136,8 @@ var watchFeeds = function(next) {
 
       if(actor.processCandle)
         market.on('candle', actor.processCandle);
+      if(actor.processSmallCandle)
+        market.on('small candle', actor.processSmallCandle);
       if(actor.processTrade)
         market.on('trade', actor.processTrade);
       if(actor.init)
