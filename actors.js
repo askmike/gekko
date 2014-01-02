@@ -21,6 +21,9 @@
 //    as soon as Gekko can continue setup.
 // silent: indicated whether Gekko should log when this actor is
 //    configured. Not neccesary for until components.
+// modes: a list indicating in what Gekko modes this actor is
+//    allowed to run. Realtime is during a live market watch and
+//    backtest is during a backtest.
 // originates: does this actor originate a feed (internally used)
 
 var config = require('./core/util').getConfig();
@@ -32,6 +35,7 @@ var actors = [
     subscriptions: ['market feed'],
     async: false,
     silent: false,
+    modes: ['realtime', 'backtest'],
     originates: [{
       feed: 'advice feed',
       object: 'method'
@@ -43,15 +47,17 @@ var actors = [
     slug: 'ircbot',
     subscriptions: ['market feed', 'advice feed'],
     async: false,
-    silent: false
+    silent: false,
+    modes: ['realtime']
   },
   {
     name: 'Mailer',
     description: 'Mail module lets sends you mail yourself everytime Gekko has new advice',
     slug: 'mailer',
-    subscriptions: ['advice feed'],
+    subscriptions: ['advice feed', 'market feed'],
     async: true,
-    silent: false
+    silent: false,
+    modes: ['realtime']
   },
   {
     name: 'Profit Simulator',
@@ -59,7 +65,8 @@ var actors = [
     slug: 'profitSimulator',
     subscriptions: ['market feed', 'advice feed'],
     async: false,
-    silent: false
+    silent: false,
+    modes: ['realtime', 'backtest']
   },
   {
     name: 'Advice logger',
@@ -67,7 +74,8 @@ var actors = [
     slug: 'adviceLogger',
     subscriptions: ['market feed', 'advice feed'],
     async: false,
-    silent: true
+    silent: true,
+    modes: ['realtime', 'backtest']
   }
 ];
 
