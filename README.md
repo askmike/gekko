@@ -8,6 +8,8 @@
 
 Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
 
+[![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
+
 ## Main features
 
 * Paper trading
