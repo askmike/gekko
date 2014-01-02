@@ -7,6 +7,9 @@
     "bot",
     "bitcoin"
   ],
+  "scripts": {
+    "test": "scripts/run_unit_tests"
+  },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
     "mtgox-apiv2": "1.0.x",
