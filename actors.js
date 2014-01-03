@@ -53,7 +53,7 @@ var actors = [
   },
   {
     name: 'Mailer',
-    description: 'Mail module lets sends you mail yourself everytime Gekko has new advice',
+    description: 'Mail module lets sends you email yourself everytime Gekko has new advice',
     slug: 'mailer',
     async: true,
     silent: false,
@@ -61,6 +61,9 @@ var actors = [
     dependencies: [{
       module: 'emailjs',
       version: '0.3.6'
+    }, {
+      module: 'prompt-lite',
+      version: '0.1.1'
     }]
   },
   {
