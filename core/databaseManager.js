@@ -426,8 +426,8 @@ Manager.prototype.storeCandles = function(candles, cb) {
   var day = _.clone(this.current);
 
   // broadcast each fake candle one per tick
-  // they need to be dealt with during this tick
-  // else the state will already be updated
+  // they should be dealt with during this tick
+  // because a new one may come on the next..
   var iterator = function(c, next) {
     this.defer(function() {
       log.debug(
@@ -465,8 +465,22 @@ Manager.prototype.storeCandles = function(candles, cb) {
         this.current.day
       );
 
+      // TODO: this check probably isn't
+      // valid because gekko ~always~
+      // throws after passing this check
+      // 
+      // @link https://gist.github.com/kuzetsa/8230035
       if(this.required.to.m < last)
-        this.recheckHistory();
+        log.info([
+          '\n\n\n',
+          'If you see this please let me know the following:\n\n',
+          this.currentDay,
+          '\n~',
+          this.required.to.m,
+          '\n~',
+          last,
+        ].join(''))
+        // this.recheckHistory();
     }
   }
 
