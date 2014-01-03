@@ -112,11 +112,11 @@ Trader.prototype.cancelOrder = function(order, callback) {
   this.bitstamp.cancel_orders(order, _.bind(cancel, this));
 }
 
-// TODO: finish properly
 Trader.prototype.getTrades = function(since, callback, descending) {
+  var args = _.toArray(arguments);
   var process = function(err, result) {
     if(err)
-      return this.retry(this.bitstamp.transactions, process);
+      return this.retry(this.getTrades, args);
 
     callback(null, result.reverse());
   };
