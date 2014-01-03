@@ -26,6 +26,15 @@ var Server = function() {
 
   this.history = false;
   this.index;
+
+  // static assets Gekko
+  // can pass 
+  this.assets = [
+    '/css/style.css',
+    '/js/d3.chart.js',
+    '/js/d3.candlechart.js',
+    '/js/main.js'
+  ]
 }
 
 Server.prototype.setup = function(next) {
@@ -44,14 +53,12 @@ Server.prototype.cacheIndex = function(next) {
     if(err)
        throw err;
 
+    // The frontend needs to know where the
+    // webserver is. Best way to pass this
+    // for now.
     this.index = file
       .replace('{{port}}', serverConfig.ws.port)
-      .replace('{{host}}', serverConfig.ws.host)
-      .replace('{{MARKET}}', [
-        config.watch.exchange,
-        config.watch.currency,
-        config.watch.asset
-      ].join('/'))
+      .replace('{{host}}', serverConfig.ws.host);
 
     next();
   }, this));
@@ -87,15 +94,11 @@ Server.prototype.broadcastTrade = function(trade) {
 }
 
 Server.prototype.handleHTTPConnection = function(req, res) {
-  var assets = [
-    // '/js/candlechart.js'
-  ]
-
 
   if(req.url === '/') {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end(this.index);
-  } if(_.contains(assets, req.url)) {
+  } if(_.contains(this.assets, req.url)) {
     res.writeHead(200, {'Content-Type': 'application/javascript;'});
     console.log('./frontend' + req.url);
     fs.createReadStream(__dirname + '/frontend' + req.url).pipe(res)

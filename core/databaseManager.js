@@ -220,8 +220,15 @@ Manager.prototype.processTrades = function(data) {
       var day = this.days[this.current.dayString];
       this.mostRecentCandle = day.endCandle;
     } else {
-      // store everything we might need
-      this.minumum = this.required.from.day.clone();
+
+      // store everything we might need 
+      // without yesterday going to yesterday
+      // (because if that day already exists we
+      // are overwriting those candles).
+      this.minumum = _.max([
+        this.required.from.day.clone(),
+        this.this.fetch.end.day.clone()
+      ]);
       // we don't have any candle yet
       this.mostRecentCandle = false;
     }
