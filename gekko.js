@@ -69,6 +69,11 @@ var loadActors = function(next) {
   var actorSettings = require('./actors');
 
   var iterator = function(actor, next) {
+    if(!(actor.slug in config)) {
+      log.warn('unable to find', actor.slug, 'in the config. Is your config up to date?')
+      return next();
+    }
+
     var actorConfig = config[actor.slug];
 
     // only load actors that are supported by

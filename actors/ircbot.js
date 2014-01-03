@@ -89,7 +89,7 @@ Actor.prototype.emitPrice = function() {
     config.watch.currency,
     '/',
     config.watch.asset,
-    ' is:\n',
+    ' is ',
     this.price,
     ' ',
     config.watch.currency,

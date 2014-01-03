@@ -24,6 +24,8 @@
 // modes: a list indicating in what Gekko modes this actor is
 //    allowed to run. Realtime is during a live market watch and
 //    backtest is during a backtest.
+// requires: a list of npm modules this actor requires to be 
+//    installed.
 // originates: does this actor originate a feed (internally used)
 
 var config = require('./core/util').getConfig();
