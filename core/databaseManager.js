@@ -399,7 +399,7 @@ Manager.prototype.processTrades = function(data) {
 
       var startFrom = this.mostRecentCandle;
       if(startFrom.s > _.first(candles).s) {
-        console.log(startFrom.s, _.first(candles).s);
+        console.log(startFrom.s, _.pluck(candles, 's'));
         throw 'Weird error 1';
       }
 
@@ -470,7 +470,7 @@ Manager.prototype.storeCandles = function(candles, cb) {
       // throws after passing this check
       // 
       // @link https://gist.github.com/kuzetsa/8230035
-      if(this.required.to.m < last)
+      if(this.required.to.m < last) {
         log.info([
           '\n\n\n',
           'If you see this please let me know the following:\n\n',
@@ -480,7 +480,8 @@ Manager.prototype.storeCandles = function(candles, cb) {
           '\n~',
           last,
         ].join(''))
-        // this.recheckHistory();
+        this.recheckHistory();
+      }
     }
   }
 
@@ -526,8 +527,10 @@ Manager.prototype.recheckHistory = function() {
   }
 
   var done = function(err) {
-    if(err)
-      throw 'Gekko expected the history to be complete, however it was not :(';
+    if(err) {
+      console.log('Gekko expected the history to be complete, however it was not :(')
+      throw err;
+    }
 
     this.broadcastHistory(err);
   }
