@@ -227,7 +227,7 @@ Manager.prototype.processTrades = function(data) {
       // are overwriting those candles).
       this.minumum = _.max([
         this.required.from.day.clone(),
-        this.this.fetch.end.day.clone()
+        this.fetch.end.day.clone()
       ]);
       // we don't have any candle yet
       this.mostRecentCandle = false;
