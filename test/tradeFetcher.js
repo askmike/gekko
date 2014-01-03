@@ -52,10 +52,7 @@ module.exports = {
 
       test.equal(
         data.timespan,
-        util.calculateTimespan(
-          moment.unix(1381356250),
-          moment.unix(1381356790)
-        )
+        1381356790 * 1000 - 1381356250 * 1000
       );
 
       test.done();
