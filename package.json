@@ -17,14 +17,12 @@
     "moment": "2.4.x",
     "btc-e": "0.0.x",
     "bitcoincharts": "0.0.x",
-    "emailjs": "0.3.6",
     "cexio": "0.0.x",
     "prompt-lite": "0.1.x",
     "bitstamp": "0.1.x",
     "async": "0.2.x",
     "nedb": "*",
-    "line-reader": "0.2.x",
-    "irc": "0.3.6"
+    "line-reader": "0.2.x"
   },
   "devDependencies": {
     "nodeunit": "0.8.2"
