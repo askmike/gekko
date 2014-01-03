@@ -31,15 +31,6 @@ log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 // Normalize the configuration between normal & advanced.
 // 
 var config = util.getConfig();
-if(config.normal && config.normal.enabled) {
-  // if the normal settings are enabled we overwrite the
-  // watcher and traders set in the advanced zone
-  config.watch = config.normal;
-  config.traders = [];
-
-  if(config.normal.tradingEnabled)
-    config.traders.push(config.normal);
-}
 
 var gekkoMode = 'realtime';
 

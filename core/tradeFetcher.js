@@ -157,8 +157,6 @@ Fetcher.prototype.processTrades = function(err, trades) {
   // schedule next fetch
   if(!this.exchange.providesHistory)
     this.scheduleNextFetch();
-  else
-    console.log('wup wup refetching NOW because this exchange supports it');
 
   this.emit('new trades', {
     timespan: this.fetchTimespan,
