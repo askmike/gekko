@@ -14,7 +14,6 @@
 // name: Name of the actor
 // slug: filename of the actor, expected to be in `gekko/actors/`
 // description: text describing the actor. Unused on silent actors.
-// subscriptions: list of feeds that contian the events this actor
 // async: upon creating a new actor instance, does something async
 //    happen where Gekko needs to wait for? If set to true, the
 //    constructor will be passed a callback which it should execute
@@ -32,7 +31,6 @@ var actors = [
     name: 'Trading Advisor',
     description: 'Calculate trading advice based',
     slug: 'tradingAdvisor',
-    subscriptions: ['market feed'],
     async: false,
     silent: false,
     modes: ['realtime', 'backtest'],
@@ -45,7 +43,6 @@ var actors = [
     name: 'IRC bot',
     description: 'IRC module lets you communicate with Gekko on IRC.',
     slug: 'ircbot',
-    subscriptions: ['market feed', 'advice feed'],
     async: false,
     silent: false,
     modes: ['realtime']
@@ -54,7 +51,6 @@ var actors = [
     name: 'Mailer',
     description: 'Mail module lets sends you mail yourself everytime Gekko has new advice',
     slug: 'mailer',
-    subscriptions: ['advice feed', 'market feed'],
     async: true,
     silent: false,
     modes: ['realtime']
@@ -63,7 +59,6 @@ var actors = [
     name: 'Profit Simulator',
     description: 'Paper trader that logs fake profits.',
     slug: 'profitSimulator',
-    subscriptions: ['market feed', 'advice feed'],
     async: false,
     silent: false,
     modes: ['realtime', 'backtest']
@@ -72,18 +67,8 @@ var actors = [
     name: 'Advice logger',
     description: '',
     slug: 'adviceLogger',
-    subscriptions: ['market feed', 'advice feed'],
     async: false,
     silent: true,
-    modes: ['realtime', 'backtest']
-  },
-  {
-    name: 'Webserver',
-    description: 'Interact with Gekko in from your browser',
-    slug: 'webserver',
-    subscriptions: ['market feed', 'advice feed'],
-    async: true,
-    silent: false,
     modes: ['realtime', 'backtest']
   }
 ];

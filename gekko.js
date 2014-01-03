@@ -25,33 +25,28 @@ var async = require('async');
 var util = require(coreDir + 'util');
 var log = require(coreDir + 'log');
 
-log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
-
-//
-// Normalize the configuration between normal & advanced.
-// 
 var config = util.getConfig();
+
+log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 var gekkoMode = 'realtime';
 
-// write config
-util.setConfig(config);
+// currently we only support a single 
+// market and a single advisor.
+
+// make sure the monitoring exchange is configured correctly for monitoring
 
 var exchangeChecker = require(coreDir + 'exchangeChecker');
-// make sure the monitoring exchange is configured correctly for monitoring
 var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
   throw invalid;
 
-// currently we only support a single 
-// market and a single advisor.
-var market;
-var advisor;
 var actors = [];
+var emitters = {};
 
 var setupMarket = function(next) {
   var Market = require(coreDir + 'candleManager');
-  market = new Market;
+  emitters.market = new Market;
   next();
 }
 
@@ -112,7 +107,7 @@ var loadActors = function(next) {
 };
 
 // advisor is a special actor in that it spawns an
-// advice feed. Which everyone can subscribe to.
+// advice feed which everyone can subscribe to.
 var setupAdvisor = function(next) {
 
   var settings;
@@ -130,33 +125,52 @@ var setupAdvisor = function(next) {
     return settings;
   });
 
-  advisor = actor[settings.object];
+  emitters.advisor = actor[settings.object];
 
   next();
 }
 
-var watchFeeds = function(next) {
+var attachActors = function(next) {
+
+  var subscriptions = [
+    {
+      emitter: 'market',
+      event: 'candle',
+      handler: 'processCandle'
+    },
+    {
+      emitter: 'market',
+      event: 'small candle',
+      handler: 'processSmallCandle'
+    },
+    {
+      emitter: 'market',
+      event: 'trade',
+      handler: 'processTrade'
+    },
+    {
+      emitter: 'market',
+      event: 'history',
+      handler: 'init'
+    },
+    {
+      emitter: 'advisor',
+      event: 'advice',
+      handler: 'processAdvice'
+    }
+  ];
+
   _.each(actors, function(actor) {
-    var subscriptions = actor.meta.subscriptions;
+    _.each(subscriptions, function(sub) {
 
-    if(_.contains(subscriptions, 'market feed')) {
+      // if this actor implements a handler
+      // for this subscription add it as a listener.
 
-      if(actor.processCandle)
-        market.on('candle', actor.processCandle);
-      if(actor.processSmallCandle)
-        market.on('small candle', actor.processSmallCandle);
-      if(actor.processTrade)
-        market.on('trade', actor.processTrade);
-      if(actor.init)
-        market.on('history', actor.init);
-    }
+      if(sub.handler in actor)
+        emitters[sub.emitter]
+          .on(sub.event, actor[sub.handler]);
 
-    if(_.contains(subscriptions, 'advice feed')) {
-
-      if(actor.processAdvice)
-        advisor.on('advice', actor.processAdvice);
-      
-    }
+    });
   });
 
   next();
@@ -169,10 +183,10 @@ async.series(
     loadActors,
     setupAdvisor,
     setupMarket,
-    watchFeeds
+    attachActors
   ],
   function() {
     // everything is setup!
-    market.start();
+    emitters.market.start();
   }
 );

@@ -16,20 +16,13 @@ All actors live in `gekko/actors`.
 
 ## What kind of events can I listen to?
 
-Gekko divides different kinds of events into feeds to which an actor can subscribe.
-
-### Market feed
-
-- `trade`: Everytime Gekko refetched trade data and it has new trades, it will
+- `trade`: Everytime Gekko refetched an exchange trade data and it has new trades, it will
   propogate the most recent one.
 - `candle`: Everytime Gekko calculated a new candle (as defined by the candleSize),
   it is propogated here.
 - `small candle`: Everytime Gekko calculated a new small candle (always 1 minute size 
   candles), it is propogated here.
-- `history`: internal event used by the trading method to get historical market data.
-
-### Advice feed
-
+- `history`: internal event used by the trading methods to get historical market data.
 - `advice`: Everytime an implemented trading method suggests you change your position.
 
 ## Implementing a new actor
