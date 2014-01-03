@@ -46,12 +46,11 @@ config.MACD = {
   // amount of candles to remember and base initial EMAs on
   candles: 25,
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.025,
-  buyTreshold: 0.025,
+  sellThreshold: -0.025,
+  buyThreshold: 0.025,
   // How many candle intervals until trigger fires
   persistence: 5,
   // Provide debugging output / verbose output
-  debug: false,
   verbose: true
 };
 
