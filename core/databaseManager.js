@@ -222,7 +222,7 @@ Manager.prototype.processTrades = function(data) {
     } else {
 
       // store everything we might need 
-      // without yesterday going to yesterday
+      // without going to yesterday
       // (because if that day already exists we
       // are overwriting those candles).
       this.minumum = _.max([
@@ -353,8 +353,6 @@ Manager.prototype.processTrades = function(data) {
       }));
     }, this);
 
-    this.firstBatch = true;
-
     // for every trade in a candle we've
     // added the candle, strip out all
     // candles except one candle per
@@ -367,23 +365,24 @@ Manager.prototype.processTrades = function(data) {
     // add candles:
     //       [gap between this batch & last inserted candle][batch][midnight]
     firstBatch = this.addEmtpyCandles(firstBatch, startFrom, MINUTES_IN_DAY);
-    this.storeCandles(firstBatch);
+    this.storeCandles(firstBatch, _.bind(function() {
 
-    this.firstBatch = false;
+      this.setDay(last.clone());
+      this.loadDay(this.current.day);
 
-    this.setDay(last.clone());
-    this.loadDay(this.current.day);
+      // add candles:
+      //       [midnight][batch]
+      var ghostCandle = _.clone(_.last(firstBatch) || this.mostRecentCandle);
+      ghostCandle.s = -1;
+      secondBatch = this.addEmtpyCandles(secondBatch, ghostCandle);
+      this.leftovers = secondBatch.pop();
 
-    // add candles:
-    //       [midnight][batch]
-    var ghostCandle = _.clone(_.last(firstBatch) || this.mostRecentCandle);
-    ghostCandle.s = -1;
-    secondBatch = this.addEmtpyCandles(secondBatch, ghostCandle);
-    this.leftovers = secondBatch.pop();
+      this.storeCandles(secondBatch);
 
-    this.storeCandles(secondBatch);
+    }, this));
 
   } else {
+    // all candles are from today
 
     // part of mega edgecase: we need to insert empty candles
     // from midnight to batch. To do this we need the price of
@@ -400,7 +399,8 @@ Manager.prototype.processTrades = function(data) {
 
       var startFrom = this.mostRecentCandle;
       if(startFrom.s > _.first(candles).s) {
-        throw 'Weird error';
+        console.log(startFrom.s, _.first(candles).s);
+        throw 'Weird error 1';
       }
 
       // add candles:
@@ -417,7 +417,7 @@ Manager.prototype.processTrades = function(data) {
     console.log('why is this called without trades?');
 }
 
-Manager.prototype.storeCandles = function(candles) {
+Manager.prototype.storeCandles = function(candles, cb) {
   if(!_.size(candles))
     return;
 
@@ -449,8 +449,8 @@ Manager.prototype.storeCandles = function(candles) {
   var done = function() {
     // this was not the only batch for this trade
     // batch, another one coming up
-    if(this.firstBatch)
-      return;
+    if(cb)
+      return cb();
 
     if(this.leftovers)
       log.debug('Leftovers:', this.leftovers.s);
@@ -573,7 +573,7 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     var empty, prevClose;
 
     if(min > max)
-      throw 'Weird error...';
+      throw 'Weird error 2';
 
     while(min !== max) {
       empty = _.clone(c);
