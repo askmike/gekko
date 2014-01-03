@@ -45,7 +45,11 @@ var actors = [
     slug: 'ircbot',
     async: false,
     silent: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'irc',
+      version: '0.3.6'
+    }]
   },
   {
     name: 'Mailer',
@@ -53,7 +57,11 @@ var actors = [
     slug: 'mailer',
     async: true,
     silent: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'emailjs',
+      version: '0.3.6'
+    }]
   },
   {
     name: 'Profit Simulator',

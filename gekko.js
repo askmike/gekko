@@ -55,10 +55,37 @@ var loadActors = function(next) {
   var actorSettings = require('./actors');
 
   var iterator = function(actor, next) {
+
+    // verify the actor settings in config
     if(!(actor.slug in config)) {
       log.warn('unable to find', actor.slug, 'in the config. Is your config up to date?')
       return next();
     }
+
+    // verify actor dependencies are installed
+    if('dependencies' in actor)
+      _.each(actor.dependencies, function(dep) {
+        try {
+          require(dep.module);
+        }
+        catch(e) {
+
+          var error = [
+            'The actor',
+            actor.slug,
+            'expects the module',
+            dep.module,
+            'to be installed.',
+            'However it is not, install',
+            'it by running: \n\n',
+            '\tnpm install',
+            dep.module + '@' + dep.version
+          ].join(' ');
+
+          throw error;
+        }
+
+      });
 
     var actorConfig = config[actor.slug];
 
