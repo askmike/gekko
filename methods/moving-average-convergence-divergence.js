@@ -15,11 +15,6 @@ var settings = config.MACD;
 
 var EMA = require('./indicators/exponantial-moving-average.js');
 
-var backtesting = config.backtest.enabled;
-if(backtesting)
-  throw ':(';
-// settings = _.extend(settings, config.backtest);
-
 var TradingMethod = function () {
   _.bindAll(this);
 
@@ -69,14 +64,19 @@ TradingMethod.prototype.calculateEMAs = function (candle) {
   this.ema['signal'].update(this.diff);
 }
 
-// for debugging purposes: log the last calculated
-// EMAs and diff.
+// for debugging purposes log the last 
+// calculated parameters.
 TradingMethod.prototype.log = function () {
-  log.debug('calced EMA properties for candle:');
-  _.each(['short', 'long', 'signal'], function (e) {
-    log.debug('\t', e, 'ema', this.ema[e].result.toFixed(8));
-  }, this);
-  log.debug('\t macd', this.diff.toFixed(4));
+  var digits = 8;
+  var macd = this.diff;
+  var signal = this.ema.signal.result;
+
+  log.debug('calced MACD properties for candle:');
+  log.debug('\t', 'short:', this.ema.short.result.toFixed(digits));
+  log.debug('\t', 'long:', this.ema.long.result.toFixed(digits));
+  log.debug('\t', 'macd:', macd.toFixed(digits));
+  log.debug('\t', 'signal:', signal.toFixed(digits));
+  log.debug('\t', 'macdiff:', (macd - signal).toFixed(digits));  
 }
 
 
@@ -88,17 +88,11 @@ TradingMethod.prototype.calculateEMAdiff = function () {
 }
 
 TradingMethod.prototype.calculateAdvice = function () {
-  // @ cexio we need to be more precise due to low prices
-  // and low margins on trade.  All others use 3 digits.
+  var digits = 8;
 
-
-  var digits = 3;
-  if(config.normal.exchange === 'cexio')
-    digits = 8;
-
-  var macd = this.diff.toFixed(3),
+  var macd = this.diff.toFixed(digits),
     price = this.lastCandle.c.toFixed(digits),
-    signal = this.ema.signal.result.toFixed(3),
+    signal = this.ema.signal.result.toFixed(digits),
     long = this.ema.long.result.toFixed(digits),
     short = this.ema.short.result.toFixed(digits),
     macddiff = macd - signal;

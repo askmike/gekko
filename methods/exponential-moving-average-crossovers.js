@@ -23,11 +23,6 @@ var settings = config.EMA;
 // required indicators
 var EMA = require('./indicators/exponantial-moving-average.js');
 
-var backtesting = config.backtest.enabled;
-if(backtesting)
-  throw ':(';
-  // settings = _.extend(settings, config.backtest);
-
 var TradingMethod = function() {
   _.bindAll(this);
 
@@ -91,11 +86,10 @@ TradingMethod.prototype.calculateEMAdiff = function() {
 }
 
 TradingMethod.prototype.calculateAdvice = function() {
-  // @ cexio we need to be more precise due to low prices
-  // and low margins on trade.  All others use 3 digist.
+  var digits = 8;
 
   var diff = this.diff.toFixed(3),
-      price = this.lastCandle.c.toFixed(8);
+      price = this.lastCandle.c.toFixed(digits);
 
   if(typeof price === 'string')
     price = parseFloat(price);
