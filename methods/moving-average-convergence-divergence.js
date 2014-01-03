@@ -24,7 +24,6 @@ var TradingMethod = function () {
   _.bindAll(this);
 
   this.currentTrend;
-  log.info('Using MACD method');
 
   this.currentTrend;
   this.trendDuration = 1; // Needs to be 1 so trend fires on first candle if persistence=1

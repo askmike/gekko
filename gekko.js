@@ -83,7 +83,6 @@ var loadActors = function(next) {
       log.info('Setting up:');
       log.info('\t', actor.name);
       log.info('\t', actor.description);
-      console.log();
     }
 
     if(actor.async) {
@@ -100,6 +99,9 @@ var loadActors = function(next) {
 
       _.defer(next);
     }
+
+    if(!actor.silent)
+      console.log();
   }
 
   async.eachSeries(

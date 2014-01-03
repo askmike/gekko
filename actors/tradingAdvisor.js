@@ -8,6 +8,8 @@ var Consultant = require('../methods/' + config.tradingAdvisor.method.toLowerCas
 var Actor = function() {
   _.bindAll(this);
 
+  log.info('\t', 'Using ' + config.tradingAdvisor.methodSlug + ' method');
+
   this.method = new Consultant;
 }
 

@@ -27,12 +27,10 @@
 // requires: a list of npm modules this actor requires to be 
 //    installed.
 // originates: does this actor originate a feed (internally used)
-
-var config = require('./core/util').getConfig();
 var actors = [
   {
     name: 'Trading Advisor',
-    description: 'Calculate trading advice based on the ' + config.tradingAdvisor.method,
+    description: 'Calculate trading advice based',
     slug: 'tradingAdvisor',
     subscriptions: ['market feed'],
     async: false,
