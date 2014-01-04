@@ -67,7 +67,9 @@ If you use an email account that requires authentication then Gekko will need to
 Email Settings:
 enabled: true 			Send Emails if true, false to turn off
 sendMailOnStart: true		Send 'Gekko starting' message if true, not if false
-email: 'me@somedomain.com'	Send email to this address (also used as the 'from' address)
+from: 'me@somedomain.com'	Send Email From this address
+to: 'me@somedomain.com, me-again@someotherdomain.com'
+					Send email to these addresses (can be multiple comma separated addresses and you can also use the 'real name <email@domain.com>' format
 
 Email server settings:
 server: 'smtp.somedomain.com'	The name of YOUR outbound (SMTP) mail server.  
@@ -81,6 +83,11 @@ ssl: false			Use true to use an encrypted connection to your email server. Recom
 user: ''			Your Email server user name - usually your (full) email address
 
 password: ''		The password associated with the username - if not supplied Gekko will prompt on startup.
+
+Advanced settings - most users should not need to set these. If you do need to set them you will know what to use!
+port: ''	Set if you don't want to use the default port 
+tls: 		Set to true if you need to use TLS (and set SSL to false?)
+
 
 Example settings:
 GMail

@@ -68,13 +68,14 @@ config.normal = {
 config.mailer = {
   enabled: false,
   sendMailOnStart: true,
-  email: 'me@somedomain.com', // Send email to/from this address
- 
-  // SMTP Server settings. Leave user & password blank for no athentication
-  server: 'smtp.somedomain.com',	//SMTP server to use
-  ssl: false,	//use SSL for connection
-  user: '', 	// SMTP server user name if required.
- 
+  from: 'me@mydomain.com',	// Send mail from this address
+  to: 'me@mydomain.com, me-again@myotherdomain.com', // Send email to these addresses
+
+  // SMTP Server settings. Leave user & password blank for no authentication
+  server: 'smtp.mydomain.com',
+  ssl: false,
+  user: '',
+
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
   //
@@ -84,8 +85,14 @@ config.mailer = {
   //
   // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
   // garantuee that your email address & password are safe!
-  password: ''
+
+  password: '',
+
+  //advanced settings - you should probably not need to change these!
+  port: '',
+  tls: false,
 }
+
 
 // do you want Gekko to calculate the profit of its own advice?
 config.profitSimulator = {

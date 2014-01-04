@@ -21,13 +21,15 @@ Mailer.prototype.setup = function(done) {
       log.info('Got it.');
       mailConfig.password = result.password;
     }
-
+     
     this.server = email.server.connect({
-      user: mailConfig.email,
+      user: mailConfig.user,
       password: mailConfig.password,
       host: mailConfig.server,
-      ssl: mailConfig.ssl
-    });
+      ssl: mailConfig.ssl,
+      port: mailConfig.port,
+      tls: mailConfig.tls
+          });
 
     if(mailConfig.sendMailOnStart) {
       this.mail(
@@ -74,8 +76,8 @@ Mailer.prototype.setup = function(done) {
 Mailer.prototype.mail = function(subject, content, done) {
   this.server.send({
     text: content,
-    from: "Gekko <" + mailConfig.email + ">",
-    to: "Bud Fox <" + mailConfig.email + ">",
+    from: mailConfig.from,
+    to: mailConfig.to,
     subject: subject
   }, done || this.checkResults);
 }
