@@ -46,13 +46,13 @@ Mailer.prototype.setup = function(done) {
           this.done();
         }, this)
       );
-    } else 
+    } else
       this.done();
 
     log.debug('Setup email adviser.');
   }
 
-  if(!config.password) {
+  if(!mailConfig.password) {
     // ask for the mail password
     var prompt = require('prompt-lite');
     prompt.start();
@@ -67,7 +67,7 @@ Mailer.prototype.setup = function(done) {
     log.warn(warning);
     prompt.get({name: 'password', hidden: true}, _.bind(setupMail, this));
   } else {
-    setupMail(false, false);
+    setupMail(null, {password: mailConfig.password});
   }
 }
 
