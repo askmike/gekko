@@ -68,8 +68,13 @@ config.normal = {
 config.mailer = {
   enabled: false,
   sendMailOnStart: true,
-  email: '', // only works for Gmail or Google apps accounts at the moment
-
+  email: 'me@somedomain.com', // Send email to/from this address
+ 
+  // SMTP Server settings. Leave user & password blank for no athentication
+  server: 'smtp.somedomain.com',	//SMTP server to use
+  ssl: false,	//use SSL for connection
+  user: '', 	// SMTP server user name if required.
+ 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
   //

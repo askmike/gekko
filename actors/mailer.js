@@ -25,8 +25,8 @@ Mailer.prototype.setup = function(done) {
     this.server = email.server.connect({
       user: mailConfig.email,
       password: mailConfig.password,
-      host: "smtp.gmail.com",
-      ssl: true
+      host: mailConfig.server,
+      ssl: mailConfig.ssl
     });
 
     if(mailConfig.sendMailOnStart) {
@@ -52,7 +52,7 @@ Mailer.prototype.setup = function(done) {
     log.debug('Setup email adviser.');
   }
 
-  if(!mailConfig.password) {
+  if(!mailConfig.password && mailConfig.user) {
     // ask for the mail password
     var prompt = require('prompt-lite');
     prompt.start();
