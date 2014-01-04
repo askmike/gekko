@@ -8,6 +8,25 @@
 
 Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
 
+## Update jan 2014:
+
+This project is far from dead! We are working on a new version which has a lot more capabilities:
+
+- A datastore that persists data to disk so we don't rely on either exchange APIs providing historical data (almost all exchanges are dropping this support) or third parties (like bitcoincharts). This means support for altcoin markets :).
+- A new [actor system](https://github.com/askmike/gekko/blob/localDB/docs/internals/Actors.md) that makes it trivial to add new modules to Gekko that respond to events (market events or trading advice).
+- A rewrite of basically all internals.
+- This time with a test suite :)
+- An API for trading methods.
+
+All the code is located in the [localDB branch](https://github.com/askmike/gekko/tree/localDB), most of the discussion happened [here](https://github.com/askmike/gekko/issues/90) and on IRC (#gekkobot on freenode). [Here](https://github.com/askmike/gekko/issues/114) is the todo list before it's done.
+
+After that we are thinking about:
+
+- [webbased GUI](http://askmike.org/stuff/webgekko.jpg).
+- More trading methods (using talib for example).
+
+Join the discussion and help out!
+
 ## Main features
 
 * Paper trading
@@ -35,8 +54,8 @@ Gekko uses Technical Analysis (only EMA at this moment) to determine when to ent
 Gekko currently supports paper & live trading at the following exchanges:
 
 * [Mt. Gox](https://mtgox.com/)
-* [BTC-e](https://btc-e.com/)
-* [cex.io](https://cex.io) (commodity exchange for mining power)
+* ~~[BTC-e](https://btc-e.com/)~~
+* ~~[cex.io](https://cex.io) (commodity exchange for mining power)~~
 
 Gekko supports paper trading at the following exchanges:
 
