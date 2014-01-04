@@ -46,7 +46,7 @@ Mailer.prototype.setup = function(done) {
           this.done();
         }, this)
       );
-    } else 
+    } else
       this.done();
 
     log.debug('Setup email adviser.');
@@ -67,7 +67,7 @@ Mailer.prototype.setup = function(done) {
     log.warn(warning);
     prompt.get({name: 'password', hidden: true}, _.bind(setupMail, this));
   } else {
-    setupMail(null, mailConfig.password);
+    setupMail(null, {password: mailConfig.password});
   }
 }
 
