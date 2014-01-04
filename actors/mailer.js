@@ -67,7 +67,7 @@ Mailer.prototype.setup = function(done) {
     log.warn(warning);
     prompt.get({name: 'password', hidden: true}, _.bind(setupMail, this));
   } else {
-    setupMail(null, {password: mailConfig.password});
+    setupMail.call(this, null, {password: mailConfig.password});
   }
 }
 
