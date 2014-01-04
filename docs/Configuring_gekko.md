@@ -60,9 +60,37 @@ You can configure all EMA settings Gekko will use to base its advice on. They ar
 
 ## Mail advice
 
-Gekko will always log the advice it gives. You can also let Gekko mail you new advice to buy or sell. You do need to have a Gmail (of Google Apps) account and Gekko needs to have the password so it can send the email from your account.
+Gekko will always log the advice it gives. You can also let Gekko mail you new advice to buy or sell. 
 
-**WARNING: If you have NOT downloaded Gekko from the original github page we CANNOT garantuee that your email address & password are safe!**
+If you use an email account that requires authentication then Gekko will need to know your email pasword.  If you do not wish to store this in the config.js then gekko will prompt for the password on startup.
+
+Email Settings:
+enabled: true 			Send Emails if true, false to turn off
+sendMailOnStart: true		Send 'Gekko starting' message if true, not if false
+email: 'me@somedomain.com'	Send email to this address (also used as the 'from' address)
+
+Email server settings:
+server: 'smtp.somedomain.com'	The name of YOUR outbound (SMTP) mail server.  
+
+IF you are using a fixed (desktop) machine then this will usually be the one associated with your ISP and is often smtp.<myisp>.com. In this case you usually do NOT need authentication so can leave user and password blank (as an empty string '').
+If you use a hosted email service (EG Gmail / hotmail etc) or want to run Gekko on a portable machine you will probably need to set up authenticated smtp in which case you will need to fill in username and (optionally) password below. In some cases the server for authenticated SMTP may be different to that for 'plain' SMTP.
+If in doubt look at the 'outbound server' settings in your email client or look for those settings in your ISP/EMail provider help pages.
+
+ssl: false			Use true to use an encrypted connection to your email server. Recommended especially if using authentication but not all servers support SSL.
+
+user: ''			Your Email server user name - usually your (full) email address
+
+password: ''		The password associated with the username - if not supplied Gekko will prompt on startup.
+
+Example settings:
+GMail
+email: 'me@gmail.com'
+server: smtp.gmail.com
+ssl: true
+user: 'me@gmail.com' (IE Same as email address)
+password: 'my very secure gmail password'
+
+**WARNING: If you have NOT downloaded Gekko from the original github page we CANNOT guarantee that your email address & password are safe!**
 
 
 ## Profit Calculator
