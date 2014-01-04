@@ -397,10 +397,24 @@ Manager.prototype.processTrades = function(data) {
       candles = this.addEmtpyCandles(candles, ghostCandle);
     } else {
 
-      var startFrom = this.mostRecentCandle;
+      var startFrom = _.clone(this.mostRecentCandle);
       if(startFrom.s > _.first(candles).s) {
-        console.log(startFrom.s, _.pluck(candles, 's'));
-        throw 'Weird error 1';
+        // We're assuming that we've received candles for a new day
+        // with last batch being from previous day only. That's one
+        // possible cause of reaching this.
+        log.warn(
+          'Reached midnight edge case.',
+          'Assuming fresh new day and adding empty candles from midnight.',
+          'issue: https://github.com/askmike/gekko/issues/106',
+          'Most Recent Candle: ', startFrom.s,
+          'Parsing candles', _.pluck(candles, 's')
+        );
+
+        // Force creating of new empty candles
+        startFrom.s = -1;
+
+        // Shouldn't need to throw this exception anymore
+        // throw 'Weird error 1';
       }
 
       // add candles:
