@@ -1,3 +1,16 @@
+# Important note
+
+You are looking at the new and completetly different version of Gekko that is being developed right now. **It is not stable yet, it might crash and we need to validate the advice to be solid.**
+
+What we know doesn't work:
+
+- Real trading (I am not implementing this until I have validated advice).
+- Watching Mt. Gox & BTCCchina.
+
+Here is [the todo](https://github.com/askmike/gekko/issues/114) until it is considered stable.
+
+If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/114) if we are aware of it and if not create a new one :)
+
 # Gekko
 
 *The point is ladies and gentlemen that greed, for lack of a better word, is good.*
