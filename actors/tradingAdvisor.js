@@ -13,7 +13,7 @@ var Actor = function() {
   this.method = new Consultant;
 }
 
-Actor.prototype.init = function(data) {
+Actor.prototype.processHistory = function(data) {
   this.method.init(data);
 }
 

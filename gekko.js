@@ -178,7 +178,7 @@ var attachActors = function(next) {
     {
       emitter: 'market',
       event: 'history',
-      handler: 'init'
+      handler: 'processHistory'
     },
     {
       emitter: 'advisor',
