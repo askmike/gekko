@@ -14,6 +14,7 @@ var Day = function(day) {
   this.day = day;
   this.state = "uninitialized";
   this.candles = [];
+  this.filename = "history-" + day.toString() + ".csv";
 }
 
 Day.prototype.addCandles = function(candles) {
@@ -46,8 +47,7 @@ var Store = function() {
 Store.prototype.openDay = function(day, callback) {
   // Load only if the open day changed, or we never opened a day
   if(this.day == null || day != this.day.day) {
-    var filename = filenameForDay(day);
-    prepareNewDay();
+    prepareNewDay(day);
     this.loadDay(function(err, candles) {
       if(!err) {
         this.day.addCandles(candles);
@@ -59,8 +59,7 @@ Store.prototype.openDay = function(day, callback) {
 }
 
 Store.prototype.loadDay = function(day, callback) {
-  var filename = filenameForDay(day);
-  this.read(filename, function(candles) {
+  this.read(day.filename, function(candles) {
     callback(null, candles);
   });
 }
@@ -84,11 +83,10 @@ Store.prototype.addCandles = function(candles) {
 Store.prototype.flush = function() {
   //TODO(yin): Help, this.day.state can get easily stuck locked.
   if(this.queue.length > 0 && this.day != null && this.day.state = 'open') {
-    var filename = filenameForDay(this.day.day);
     this.day.addCandles(_.flatten(this.queue));
     this.queue = [];
     this.day.state = 'saving';
-    this.write(filename, this.day.cadnles, function(err) {
+    this.write(this.day.filename, this.day.candles, function(err) {
       this.day.state = 'open';
     })
   }
@@ -143,11 +141,6 @@ Store.prototype.toArray = function(csv, next) {
 
   next(obj);
 }
-
-var filenameForDay = function(day) {
-  //TODO(yin): Missing exchange and currency pair, filenames will conflict.
-  return "history-" + day.toString() + ".csv";
-};
 
 //TODO(yin):Exported for tests
 Store.Day = Day
