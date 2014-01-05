@@ -95,6 +95,11 @@ Fetcher.prototype.setFetchMeta = function(trades) {
 // 
 // Returns amount of ms to wait for until next fetch.
 Fetcher.prototype.calculateNextFetch = function(trades) {
+
+  // for now just refetch every minute
+  return this.fetchAfter = util.minToMs(1);
+
+
   // if the timespan per fetch is fixed at this exchange,
   // just return that number.
   if(this.exchange.fetchTimespan) {
@@ -107,7 +112,7 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     // fetch again at 80 min.
     var min = _.min([
       this.exchange.fetchTimespan,
-      config.EMA.interval
+      config.tradingAdvisor.candleSize
     ]);
     this.fetchAfter = util.minToMs(min);
     // debugging bitstamp
@@ -115,7 +120,7 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
     return;  
   }
     
-  var minimalInterval = util.minToMs(config.EMA.interval);
+  var minimalInterval = util.minToMs(config.tradingAdvisor.candleSize);
 
   // if we got the last 100 seconds of trades last
   // time make sure we fetch at least in 55 seconds
@@ -124,8 +129,8 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
   var defaultFetchTime = util.minToMs(1);
 
   if(this.fetchTimespan * safeTreshold > minimalInterval)
-    // If the oldest trade in a fetch call > ema.interval
-    // we can just use ema.interval.
+    // If the oldest trade in a fetch call > candle size
+    // we can just use candle size.
     var fetchAfter = minimalInterval;
   else if(this.fetchTimespan * safeTreshold < defaultFetchTime)
     // If the oldest trade in a fetch call < default time

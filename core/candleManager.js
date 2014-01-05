@@ -68,7 +68,8 @@ Manager.prototype.relayTrade = function(data) {
 }
 
 Manager.prototype.processHistory = function(history) {
-  var requiredHistory = util.minToMs(config.EMA.candles * config.EMA.interval);
+  var requiredHistory = util
+    .minToMs(config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize);
 
   if(!this.exchange.providesHistory) {
     if(history.empty) {

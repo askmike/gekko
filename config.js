@@ -16,9 +16,10 @@ config.history = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'moving average convergence divergence',
-  methodSlug: 'MACD',
-  candleSize: 5
+  method: 'Exponential Moving Average Crossovers',
+  methodSlug: 'EMA',
+  candleSize: 5,
+  historySize: 100
 }
 
 // Exponential Moving Averages settings:
@@ -28,7 +29,6 @@ config.EMA = {
   short: 10,
   long: 21,
   // amount of candles to remember and base initial EMAs on
-  candles: 100,
   // the difference between the EMAs (to act as triggers)
   sellTreshold: -0.1,
   buyTreshold: 0.1
@@ -43,8 +43,6 @@ config.MACD = {
   short: 10,
   long: 21,
   signal: 9,
-  // amount of candles to remember and base initial EMAs on
-  candles: 25,
   // the difference between the EMAs (to act as triggers)
   sellThreshold: -0.025,
   buyThreshold: 0.025,
