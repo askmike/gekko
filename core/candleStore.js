@@ -61,8 +61,8 @@ Store.prototype.openDay = function(day, callback) {
 
 Store.prototype.loadDay = function(day, callback) {
     var filename = filenameForDay(day);
-    this.read(filename, function(err, candles) {
-        callback(err, candles);
+    this.read(filename, function(candles) {
+        callback(null, candles);
     });
 }
 
@@ -83,9 +83,15 @@ Store.prototype.addCandles = function(candles) {
 
 // If there is a day in open state, append all queued candles to it.
 Store.prototype.flush = function() {
+    //TODO(yin): Help, this.day.state can get easily stuck locked.
     if (this.queue.length > 0 && this.day != null && this.day.state = 'open') {
+        var filename = filenameForDay(this.day.day);
         this.day.addCandles(_.flatten(this.queue));
         this.queue = [];
+        this.day.state = 'saving';
+        this.write(filename, this.day.cadnles, function(err) {
+            this.day.state = 'open';
+        })
     }
 }
 
@@ -93,43 +99,31 @@ Store.prototype.toCSV = function(file, candles, next) {
   var csv = _.map(candles, function(properties) {
       return _.values(properties).join(',');
   }).join('\n');
- 
+
   next(null, file, csv);
 }
  
 Store.prototype.deflate = function(file, csv, next) {
   zlib.deflate(csv, function(err, buffer) {
-    if(err)
-      throw 'Unable to deflate CSV';
- 
-    next(null, file, buffer);
+    next(err, file, buffer);
   });
 }
- 
+
 Store.prototype.writeFile = function(file, gzip, next) {
   fs.writeFile(this.directory + file, gzip, function(err) {
-    if(err)
-      throw 'Unable to write CSV';
- 
-    next();
+    next(err);
   });
 }
  
 Store.prototype.readFile = function(file, next) {
   fs.readFile(this.directory + file, function(err, buffer) {
-    if(err)
-      throw 'Unable to read CSV';
- 
-    next(null, buffer);
+    next(err, buffer);
   });
 }
  
 Store.prototype.unzip = function(buffer, next) {
   zlib.unzip(buffer, function(err, buffer) {
-    if(err)
-      throw 'Unable to unzip CSV';
- 
-    next(null, buffer.toString());
+    next(err, buffer.toString());
   });
 }
  
@@ -147,13 +141,16 @@ Store.prototype.toArray = function(csv, next) {
       p: f(l[5])
     }
   });
- 
+
   next(obj);
 }
 
 var filenameForDay = function(day) {
     //TODO(yin): Missing exchange and currency pair, filenames will conflict.
-    return "history-" + day.toString() + "csv.z";
+    return "history-" + day.toString() + ".csv";
 };
+
+//TODO(yin):Exported for tests
+Store.Day = Day
 
 module.exports = Store;
