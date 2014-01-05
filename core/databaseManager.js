@@ -402,7 +402,7 @@ Manager.prototype.processTrades = function(data) {
         // We're assuming that we've received candles for a new day
         // with last batch being from previous day only. That's one
         // possible cause of reaching this.
-        log.warn(
+        log.debug(
           'Reached midnight edge case.',
           'Assuming fresh new day and adding empty candles from midnight.',
           'issue: https://github.com/askmike/gekko/issues/106',
@@ -412,9 +412,6 @@ Manager.prototype.processTrades = function(data) {
 
         // Force creating of new empty candles
         startFrom.s = -1;
-
-        // Shouldn't need to throw this exception anymore
-        // throw 'Weird error 1';
       }
 
       // add candles:
@@ -476,26 +473,11 @@ Manager.prototype.storeCandles = function(candles, cb) {
     if(this.state === 'building history') {
       var last = this.minuteToMoment(
         this.mostRecentCandle.s,
-        this.current.day
+        day.day
       );
 
-      // TODO: this check probably isn't
-      // valid because gekko ~always~
-      // throws after passing this check
-      // 
-      // @link https://gist.github.com/kuzetsa/8230035
-      if(this.required.to.m < last) {
-        log.info([
-          '\n\n\n',
-          'If you see this please let me know the following:\n\n',
-          this.currentDay,
-          '\n~',
-          this.required.to.m,
-          '\n~',
-          last,
-        ].join(''))
+      if(this.required.to.m < last)
         this.recheckHistory();
-      }
     }
   }
 
