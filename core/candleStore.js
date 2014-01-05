@@ -11,8 +11,22 @@ var _ = require('lodash');
 
 var config = require('./util').getConfig();
 
+var Day = function(day) {
+    this.day = day;
+    this.state = "uninitialized";
+    this.candles = [];
+}
+
+Day.prototype.addCandles = function (candles) {
+  this.candles = this.candles.concat(candles);    
+};
+
 var Store = function() {
   this.directory = config.history.directory;
+  this.oldDay = null;
+  this.day = null;
+  // This is intented to be an array of arrays. 
+  this.queue = [];
  
   //TODO(yin): Make this mockable, or mock the fs in tests.
   // write a daily database
@@ -29,51 +43,87 @@ var Store = function() {
     this.readFile
   );
 }
- 
+
+Store.prototype.openDay = function(day, callback) {
+    // Load only if the open day changed, or we never opened a day
+    if (this.day == null || day != this.day.day) {
+        var filename = filenameForDay(day);
+        prepareNewDay();
+        this.loadDay(function(err, candles) {
+            if (!err) {
+                this.day.addCandles(candles);
+                this.day.state = 'open';
+            }
+            callback(err, candles);
+        });
+    }
+}
+
+Store.prototype.loadDay = function(day, callback) {
+    var filename = filenameForDay(day);
+    this.read(filename, function(candles) {
+        callback(null, candles);
+    });
+}
+
+Store.prototype.prepareNewDay = function(day) {
+    if (this.day.state != 'loading') {
+        // Do we need to keep 
+        this.day.state = 'closing';
+        this.day = new Day(day);
+    }
+}
+
+// Queue's candles to be added as soon as a day is loaded
+Store.prototype.addCandles = function(candles) {
+    //NOTE: this.queue is array of arrays.
+    this.queue.push(candles);
+    this.flush();
+}
+
+// If there is a day in open state, append all queued candles to it.
+Store.prototype.flush = function() {
+    //TODO(yin): Help, this.day.state can get easily stuck locked.
+    if (this.queue.length > 0 && this.day != null && this.day.state = 'open') {
+        var filename = filenameForDay(this.day.day);
+        this.day.addCandles(_.flatten(this.queue));
+        this.queue = [];
+        this.day.state = 'saving';
+        this.write(filename, this.day.cadnles, function(err) {
+            this.day.state = 'open';
+        })
+    }
+}
+
 Store.prototype.toCSV = function(file, candles, next) {
   var csv = _.map(candles, function(properties) {
       return _.values(properties).join(',');
   }).join('\n');
- 
+
   next(null, file, csv);
 }
  
 Store.prototype.deflate = function(file, csv, next) {
   zlib.deflate(csv, function(err, buffer) {
-    if(err)
-      throw 'Unable to deflate CSV';
- 
-    next(null, file, buffer);
+    next(err, file, buffer);
   });
 }
- 
+
 Store.prototype.writeFile = function(file, gzip, next) {
   fs.writeFile(this.directory + file, gzip, function(err) {
-    if(err)
-      throw 'Unable to write CSV';
- 
-    next();
+    next(err);
   });
 }
- 
- 
- 
  
 Store.prototype.readFile = function(file, next) {
   fs.readFile(this.directory + file, function(err, buffer) {
-    if(err)
-      throw 'Unable to read CSV';
- 
-    next(null, buffer);
+    next(err, buffer);
   });
 }
  
 Store.prototype.unzip = function(buffer, next) {
   zlib.unzip(buffer, function(err, buffer) {
-    if(err)
-      throw 'Unable to unzip CSV';
- 
-    next(null, buffer.toString());
+    next(err, buffer.toString());
   });
 }
  
@@ -91,8 +141,16 @@ Store.prototype.toArray = function(csv, next) {
       p: f(l[5])
     }
   });
- 
+
   next(obj);
 }
+
+var filenameForDay = function(day) {
+    //TODO(yin): Missing exchange and currency pair, filenames will conflict.
+    return "history-" + day.toString() + ".csv";
+};
+
+//TODO(yin):Exported for tests
+Store.Day = Day
 
 module.exports = Store;
