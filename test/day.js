@@ -7,7 +7,7 @@ module.exports = {
     // NOTE(yin):Yes, usualy you do test for every elementary assumption possible, if
     // not tested by a smaller test.
     // This helps pinpoint the cause faster and aughts to give the developer a meaninful message
-    // for each failed test (including what _should_ be happening, see bellow; upper is bad).
+    // for each assertion test ('should' is the keyword in assertion messages).
     test.equals(day.candles.length, 0, "Day should be initialized empty (no candles).")
     test.equals(day.state, 'uninitialized', "Day should be initialized in state 'uninitialized'.")
     test.done();
