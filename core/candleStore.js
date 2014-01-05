@@ -46,11 +46,11 @@ var Store = function() {
 
 Store.prototype.openDay = function(day, callback) {
     // Load only if the open day changed, or we never opened a day
-    if (this.day == null || day != this.day.day) {
+    if(this.day == null || day != this.day.day) {
         var filename = filenameForDay(day);
         prepareNewDay();
         this.loadDay(function(err, candles) {
-            if (!err) {
+            if(!err) {
                 this.day.addCandles(candles);
                 this.day.state = 'open';
             }
@@ -67,7 +67,7 @@ Store.prototype.loadDay = function(day, callback) {
 }
 
 Store.prototype.prepareNewDay = function(day) {
-    if (this.day.state != 'loading') {
+    if(this.day.state != 'loading') {
         // Do we need to keep 
         this.day.state = 'closing';
         this.day = new Day(day);
@@ -84,7 +84,7 @@ Store.prototype.addCandles = function(candles) {
 // If there is a day in open state, append all queued candles to it.
 Store.prototype.flush = function() {
     //TODO(yin): Help, this.day.state can get easily stuck locked.
-    if (this.queue.length > 0 && this.day != null && this.day.state = 'open') {
+    if(this.queue.length > 0 && this.day != null && this.day.state = 'open') {
         var filename = filenameForDay(this.day.day);
         this.day.addCandles(_.flatten(this.queue));
         this.queue = [];
