@@ -66,15 +66,10 @@ config.normal = {
 
 // want Gekko to send a mail on buy or sell advice?
 config.mailer = {
-  enabled: false,
-  sendMailOnStart: true,
-  from: 'me@mydomain.com',	// Send mail from this address
-  to: 'me@mydomain.com, me-again@myotherdomain.com', // Send email to these addresses
+  enabled: false, 			// Send Emails if true, false to turn off
+  sendMailOnStart: true,		// Send 'Gekko starting' message if true, not if false
 
-  // SMTP Server settings. Leave user & password blank for no authentication
-  server: 'smtp.mydomain.com',
-  ssl: false,
-  user: '',
+  Email: 'me@gmail.com',		// Your GMail address
 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
@@ -84,13 +79,23 @@ config.mailer = {
   // fill in your email and password.
   //
   // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
-  // garantuee that your email address & password are safe!
+  // guarantuee that your email address & password are safe!
 
-  password: '',
+  password: '',				// Your GMail Password - if not supplied Gekko will prompt on startup.
 
-  //advanced settings - you should probably not need to change these!
-  port: '',
-  tls: false,
+  tag: '[GEKKO] ',			// Prefix all EMail subject lines with this
+
+  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
+  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.  
+  smtpauth: true,			// Does SMTP server require authentication (true for GMail)
+					// The following 3 values default to the Email (above) if left blank
+  user: '',				// Your Email server user name - usually your full Email address 'me@mydomain.com'
+  from: '',				// 'me@mydomain.com'
+  to: '',				// 'me@somedomain.com, me@someotherdomain.com'
+  ssl: true,				// Use SSL (true for GMail)
+  port: '',				// Set if you don't want to use the default port 
+  tls: false				// Use TLS if true
+ 
 }
 
 
