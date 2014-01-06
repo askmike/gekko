@@ -26,7 +26,7 @@ var EMA = require('./indicators/exponantial-moving-average.js');
 var TradingMethod = function() {
   _.bindAll(this);
 
-  this.currentTrend;  
+  this.currentTrend;
 
   this.diff;
   this.ema = {
@@ -41,11 +41,14 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
 
 TradingMethod.prototype.init = function(history) {
-  _.each(history.candles, function(candle) {
-    this.calculateEMAs(candle);
-  }, this);
-  this.lastCandle = _.last(history.candles);
-  this.calculateAdvice();
+  var candles = history.candles;
+  var last = candles.pop();
+
+  // insert history
+  _.each(candles, this.calculateEMAs, this);
+
+  // update with last candle
+  this.update(last);
 }
 
 TradingMethod.prototype.update = function(candle) {
@@ -69,12 +72,10 @@ TradingMethod.prototype.calculateEMAs = function(candle) {
 TradingMethod.prototype.log = function() {
   log.debug('calced EMA properties for candle:');
   _.each(['short', 'long'], function(e) {
-    if(config.watch.exchange === 'cexio')
-      log.debug('\t', e, 'ema', this.ema[e].result.toFixed(8));
-    else
-      log.debug('\t', e, 'ema', this.ema[e].result.toFixed(3));
+    log.debug('\t', e, 'ema:', this.ema[e].result.toFixed(8));
   }, this);
-  log.debug('\t diff', this.diff.toFixed(4));
+  log.debug('\t diff:', this.diff.toFixed(5));
+  log.debug('\t ema age:', this.ema.short.age, 'candles');
 }
 
 // @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
@@ -86,24 +87,13 @@ TradingMethod.prototype.calculateEMAdiff = function() {
 }
 
 TradingMethod.prototype.calculateAdvice = function() {
-  var digits = 8;
+  var diff = this.diff;
+  var price = this.lastCandle.c;
 
-  var diff = this.diff.toFixed(3),
-      price = this.lastCandle.c.toFixed(digits);
-
-  if(typeof price === 'string')
-    price = parseFloat(price);
-
-  if(config.normal.exchange !== 'cexio')
-    price = price.toFixed(3);
-
-  var message = '@ ' + price + ' (' + diff + ')';
-
-  if(config.backtest.enabled)
-    message += '\tat \t' + moment.unix(this.currentTimestamp).format('YYYY-MM-DD HH:mm:ss');
+  var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
 
   if(diff > settings.buyTreshold) {
-    log.debug('we are currently in uptrend (' + diff + ')');
+    log.debug('we are currently in uptrend', message);
 
     if(this.currentTrend !== 'up') {
       this.currentTrend = 'up';

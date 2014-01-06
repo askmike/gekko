@@ -105,7 +105,7 @@ Util.inherits(Manager, EventEmitter);
 // load all databases we need based on fetch
 // data (which tells us how for we can currently
 // fetch back and thus what our limits are)
-Manager.prototype.init = function(data) {
+Manager.prototype.checkHistory = function(data) {
   this.setFetchMeta(data);
 
   // what do we need if we want to start right 
@@ -196,12 +196,12 @@ Manager.prototype.today = function() {
 Manager.prototype.processTrades = function(data) {
 
   this.setFetchMeta(data);
-  // first time make sure we have
-  // loaded this day.
+
+  // on the first fetch we need too be sure
+  // to load the daily DB
   if(!this.leftovers)
     this.loadDay(this.current.day);
 
-  // if first time
   if(!this.minumum) {
     // if we have history
     if(this.history.newest) {
@@ -430,7 +430,7 @@ Manager.prototype.processTrades = function(data) {
 
 Manager.prototype.storeCandles = function(candles, cb) {
   if(!_.size(candles))
-    return;
+    return cb();
 
   // because this function is async make
   // sure we are using the right day.
@@ -678,7 +678,14 @@ Manager.prototype.loadDays = function() {
     oldest: false
   };
 
-  var days = _.pluck(this.requiredDays(), 'm');
+  if(config.tradingAdvisor.enabled)
+    // the required history might span multiple
+    // days, get them all
+    var days = _.pluck(this.requiredDays(), 'm');
+  else
+    // the only history we are concerned
+    // about is today.
+    var days = [ this.current.day ];
 
   // load & verify each day
   var iterator = function(day) {
@@ -706,6 +713,14 @@ Manager.prototype.loadDays = function() {
 };
 
 Manager.prototype.broadcastHistory = function(err) {
+  
+  // we don't have to deal with any history.
+  if(!config.tradingAdvisor.enabled) {
+    // this.state = 'realtime updating';
+
+    // return;
+  }
+
   var h = this.history;
 
   // run this when we don't have full history yet. 
@@ -714,7 +729,8 @@ Manager.prototype.broadcastHistory = function(err) {
   var bail = _.bind(function() {
     // in the future we will have the complete history
     // let's update the expectations
-    var requiredHistory = util.minToMs(config.EMA.candles * config.EMA.interval);
+    var requiredHistory = util
+      .minToMs(config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize);
     if(h.oldest)
       var from = h.oldest.m.clone();
     else
@@ -817,7 +833,7 @@ Manager.prototype.calculateRealCandle = function(fakeCandles) {
 
   // create a fake candle based on all real candles
   var candle = _.reduce(
-    this.realCandleContents,
+    fakeCandles,
     function(candle, m) {
       m = m.candle;
       candle.h = _.max([candle.h, m.h]);

@@ -152,7 +152,7 @@ var setupAdvisor = function(next) {
     return settings;
   });
 
-  emitters.advisor = actor[settings.object];
+  emitters.advisor = settings ? actor[settings.object] : false;
 
   next();
 }
@@ -190,12 +190,24 @@ var attachActors = function(next) {
   _.each(actors, function(actor) {
     _.each(subscriptions, function(sub) {
 
-      // if this actor implements a handler
-      // for this subscription add it as a listener.
+      if(sub.handler in actor) {
 
-      if(sub.handler in actor)
-        emitters[sub.emitter]
-          .on(sub.event, actor[sub.handler]);
+        // if the actor wants to listen
+        // to something disabled
+        if(!emitters[sub.emitter])
+          log.warn([
+            actor.meta.name,
+            'wanted to listen to the',
+            sub.emitter + ',',
+            'however the',
+            sub.emitter,
+            'is disabled.'
+          ].join(' '))
+        else
+          // attach handler
+          emitters[sub.emitter]
+            .on(sub.event, actor[sub.handler]);
+      }
 
     });
   });

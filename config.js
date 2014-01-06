@@ -19,7 +19,7 @@ config.tradingAdvisor = {
   method: 'Exponential Moving Average Crossovers',
   methodSlug: 'EMA',
   candleSize: 5,
-  historySize: 100
+  historySize: 20
 }
 
 // Exponential Moving Averages settings:

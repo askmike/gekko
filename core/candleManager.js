@@ -33,7 +33,7 @@ Manager.prototype.start = function() {
 
     // we pass a fetch to the model right away
     // so it knows how new the history needs to be
-    this.fetcher.once('new trades', this.model.init);
+    this.fetcher.once('new trades', this.model.checkHistory);
 
     this.fetcher.on('new trades', this.relayTrade);
     this.model.on('history', this.processHistory);
