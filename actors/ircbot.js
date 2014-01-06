@@ -21,6 +21,16 @@ var Actor = function() {
 
   this.price = 'Dont know yet :(';
   this.priceTime = utc();
+
+  this.commands = {
+    ';;advice': 'emitAdvice',
+    ';;price': 'emitPrice',
+    ';;donate': 'emitDonation',
+    ';;real advice': 'emitRealAdvice',
+    ';;help': 'emitHelp'
+  };
+
+  this.rawCommands = _.keys(this.commands);
 }
 
 Actor.prototype.processTrade = function(trade) {
@@ -37,17 +47,8 @@ Actor.prototype.processAdvice = function(advice) {
 };
 
 Actor.prototype.verifyQuestion = function(from, to, text, message) {
-  if(text === ';;advice')
-    this.emitAdvice();
-
-  if(text === ';;price')
-    this.emitPrice();
-
-  if(text === ';;donate')
-    this.emitDonation();
-
-  if(text === ';;real advice')
-    this.emitRealAdvice();
+  if(text in this.commands)
+    this[this.commands[text]]();
 }
 
 Actor.prototype.newAdvice = function() {
@@ -112,6 +113,21 @@ Actor.prototype.emitDonation = function() {
 
   this.bot.say(ircbot.channel, message);
 };
+
+Actor.prototype.emitHelp = function() {
+  var message = _.reduce(
+    this.rawCommands,
+    function(message, command) {
+      return message + ' ' + command + ',';
+    },
+    'possible commands are:'
+  );
+
+  message = message.substr(0, _.size(message) - 1) + '.';
+
+  this.bot.say(ircbot.channel, message);
+
+}
 
 Actor.prototype.emitRealAdvice = function() {
   // http://www.examiner.com/article/uncaged-a-look-at-the-top-10-quotes-of-gordon-gekko
