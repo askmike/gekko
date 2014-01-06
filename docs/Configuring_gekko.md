@@ -60,9 +60,20 @@ You can configure all EMA settings Gekko will use to base its advice on. They ar
 
 ## Mail advice
 
-Gekko will always log the advice it gives. You can also let Gekko mail you new advice to buy or sell. You do need to have a Gmail (of Google Apps) account and Gekko needs to have the password so it can send the email from your account.
+Gekko will always log the advice it gives. You can also let Gekko mail you new advice to buy or sell. 
 
-**WARNING: If you have NOT downloaded Gekko from the original github page we CANNOT garantuee that your email address & password are safe!**
+Gekko will need to know your email password.  If you do not wish to store this in the config.js then gekko will prompt for the password on startup.
+
+Email Settings:
+enabled: true 			Send Emails if true, false to turn off
+sendMailOnStart: true		Send 'Gekko starting' message if true, not if false
+
+Email: 'me@gmail.com'	Your GMail address
+password: ''		Your GMail Password - if not supplied Gekko will prompt on startup.
+
+If you are not using GMail then you will need to set the advanced settings in the config.js.
+
+**WARNING: If you have NOT downloaded Gekko from the original github page we CANNOT guarantee that your email address & password are safe!**
 
 
 ## Profit Calculator

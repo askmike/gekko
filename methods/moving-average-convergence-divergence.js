@@ -112,6 +112,9 @@ TradingMethod.prototype.calculateAdvice = function () {
     message += '\tat \t' + moment.unix(this.currentTimestamp).format('YYYY-MM-DD HH:mm:ss');
 
   if(macddiff > settings.buyThreshold) {
+
+    if (this.currentTrend === 'down') this.trendDuration = 0;
+
     this.trendDuration += 1;
 
     if (this.trendDuration < settings.persistence )
@@ -126,6 +129,9 @@ TradingMethod.prototype.calculateAdvice = function () {
       this.advice();
     
   } else if(macddiff < settings.sellThreshold) {
+
+    if (this.currentTrend === 'up') this.trendDuration = 0;
+
     this.trendDuration += 1
     if (this.trendDuration < settings.persistence )
        this.currentTrend = 'PendingDown';
