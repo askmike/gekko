@@ -18,7 +18,6 @@
 var coreDir = './core/';
 var actorsDir = './actors/';
 
-var moment = require('moment');
 var _ = require('lodash');
 var async = require('async');
 

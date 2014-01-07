@@ -428,9 +428,13 @@ Manager.prototype.processTrades = function(data) {
     console.log('why is this called without trades?');
 }
 
+
+// store a batch of candles under the day specified by
+// `this.current`. If cb is specified runs this after 
+// inserting all candles (inserts 1 per tick).
 Manager.prototype.storeCandles = function(candles, cb) {
   if(!_.size(candles))
-    return cb();
+    return cb ? cb() : false;
 
   // because this function is async make
   // sure we are using the right day.
@@ -713,13 +717,9 @@ Manager.prototype.loadDays = function() {
 };
 
 Manager.prototype.broadcastHistory = function(err) {
-  
   // we don't have to deal with any history.
-  if(!config.tradingAdvisor.enabled) {
-    // this.state = 'realtime updating';
-
-    // return;
-  }
+  if(!config.tradingAdvisor.enabled)
+    this.state = 'realtime updating';
 
   var h = this.history;
 
@@ -942,7 +942,6 @@ Manager.prototype.verifyDay = function(day, next) {
   // straight away
   if(day.full)
     return next(false);
-
 
   // is this the first day we need data from?
   var startDay = equals(this.required.from.day, day.time);
