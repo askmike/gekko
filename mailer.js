@@ -8,21 +8,24 @@ var server;
 
 module.exports.init = function(callback) {
   var setupMail = function(err, result) {
+    if(!config.from) { config.from = config.email }
+    if(!config.smtp) { config.smtp = 'smtp.gmail.com' }
+    if(!config.user) { config.user = config.email }
     if(result) {
       log.info('Got it.');
       config.password = result.password;
     }
 
     server = email.server.connect({
-      user: config.email,
+      user: config.user,
       password: config.password,
-      host: "smtp.gmail.com",
+      host: config.smtp,
       ssl: true
     });
 
     if(config.sendMailOnStart) {
       server.send({
-        from: "Gekko <" + config.email + ">",
+        from: "Gekko <" + config.from + ">",
         to: "Bud Fox <" + config.email + ">",
         subject: "Gekko has started",
         text: [
@@ -76,7 +79,7 @@ module.exports.send = function(what, price, meta) {
 
   server.send({
     text: text,
-    from: "Gekko <" + config.email + ">",
+    from: "Gekko <" + config.from + ">",
     to: "Bud Fox <" + config.email + ">",
     subject: "New Gekko advice: " + what
   }, send);
