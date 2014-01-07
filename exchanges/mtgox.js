@@ -1,8 +1,8 @@
 var MtGoxClient = require("mtgox-apiv2");
-var util = require('../util.js');
 var _ = require('lodash');
-var log = require('../log.js');
 var moment = require('moment');
+var util = require('../core/util.js');
+var log = require('../core/log.js');
 
 var Trader = function(config) {
   if(_.isObject(config)) {
@@ -57,9 +57,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args);
 
     if(descending)
-      callback(trades.reverse());
+      callback(false, trades.reverse());
     else
-      callback(trades);
+      callback(false, trades);
   }, this));
 }
 

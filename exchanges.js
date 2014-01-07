@@ -49,7 +49,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     minimalOrder: { amount: 0.01, unit: 'asset' },
-    providesHistory: 'date'
+    providesHistory: false
   },
   {
     name: 'BTC-e',

@@ -38,7 +38,7 @@ var gekkoMode = 'realtime';
 var exchangeChecker = require(coreDir + 'exchangeChecker');
 var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
-  throw invalid;
+  util.die(invalid);
 
 var actors = [];
 var emitters = {};
@@ -81,7 +81,7 @@ var loadActors = function(next) {
             dep.module + '@' + dep.version
           ].join(' ');
 
-          throw error;
+          util.die(error);
         }
 
       });

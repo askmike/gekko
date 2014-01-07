@@ -111,6 +111,10 @@ var util = {
       if(_config.normal.tradingEnabled)
         _config.traders.push(_config.normal);
     }
+  },
+  die: function(m) {
+    console.log('\n\n\n', m);
+    process.kill();
   }
 }
 
