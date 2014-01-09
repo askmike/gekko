@@ -42,7 +42,12 @@ config.mail = {
   enabled: false,
   sendMailOnStart: true,
   what: ['BUY', 'SELL'], // send email by type of advice: any combination of 'BUY', 'SELL', 'HOLD'
-  email: '', // only works for Gmail or Google apps accounts at the moment
+  email: '',    // the receiver of the email, e.g. bob@example.com
+  smtp: 'smtp.gmail.com',   // if no smtp server specified, fallback to mail.gmail.com
+  port: 25,     // use a different smtp port
+  ssl: true,    
+  tls: false,   // set to true if want STARTTLS
+  user: '',    // the username, this is the sender of the email, e.g. alice@example.com
 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
