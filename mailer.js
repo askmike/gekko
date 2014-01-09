@@ -8,9 +8,19 @@ var server;
 
 module.exports.init = function(callback) {
   var setupMail = function(err, result) {
-    if(!config.from) { config.from = config.email }
+    if(!config.from) { config.from = config.user }
     if(!config.smtp) { config.smtp = 'smtp.gmail.com' }
-    if(!config.user) { config.user = config.email }
+    if(!config.port) { config.port = 25 }
+    if(!config.ssl)  { config.ssl = false }
+
+    if(config.tls)   { 
+        //some mail server may produce error is ssl and tls are set to true
+        config.ssl = false, 
+        config.tls = true
+    } else {
+        config.tls = false
+    }
+    
     if(result) {
       log.info('Got it.');
       config.password = result.password;
@@ -20,7 +30,9 @@ module.exports.init = function(callback) {
       user: config.user,
       password: config.password,
       host: config.smtp,
-      ssl: true
+      port: config.port,
+      tls: config.tls,
+      ssl: config.ssl
     });
 
     if(config.sendMailOnStart) {
