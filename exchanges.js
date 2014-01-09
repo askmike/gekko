@@ -67,7 +67,7 @@ var exchanges = [
       ['EUR', 'LTC'], ['BTC', 'NMC'], ['USD', 'NMC'],
       ['BTC', 'NVC'], ['USD', 'NVC'], ['RUR', 'USD'],
       ['USD', 'EUR'], ['BTC', 'TRC'], ['BTC', 'PPC'],
-      ['USD', 'PPC'], ['BTC', 'FTC'], ['BTC', 'XPM'],
+      ['USD', 'PPC'], ['BTC', 'FTC'], ['BTC', 'XPM']
     ],
     requires: ['key', 'secret'],
     minimalOrder: { amount: 0.01, unit: 'asset' },

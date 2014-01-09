@@ -26,7 +26,7 @@ var DataProvider = require('../exchanges/' + provider);
 var Fetcher = function() {
   _.bindAll(this);
 
-  // Create a public dataProvides object which can retrieve live 
+  // Create a public dataProvider object which can retrieve live 
   // trade information from an exchange.
 
   this.watcher = new DataProvider(config.watch);
@@ -34,16 +34,16 @@ var Fetcher = function() {
 
   this.exchange = exchangeChecker.settings(config.watch);
 
+  this.pair = [
+    config.watch.asset,
+    config.watch.currency
+  ].join('/');
+
   // console.log(config);
   log.info('Starting to watch the market:',
     this.exchange.name,
-    [
-      config.watch.currency,
-      config.watch.asset
-    ].join('/')
+    this.pair
   );
-
-  this.start();
 
   if(!this.exchange.providesHistory) {
     this.on('new trades', function(a) {
@@ -97,7 +97,7 @@ Fetcher.prototype.setFetchMeta = function(trades) {
 Fetcher.prototype.calculateNextFetch = function(trades) {
 
   // for now just refetch every minute
-  return this.fetchAfter = util.minToMs(1);
+  return this.fetchAfter = util.minToMs(2);
 
 
   // if the timespan per fetch is fixed at this exchange,
@@ -148,8 +148,15 @@ Fetcher.prototype.scheduleNextFetch = function() {
 }
 
 Fetcher.prototype.fetch = function(since) {
-  log.debug('Requested trade data from', this.exchange.name, '...');
+  log.debug('Requested', this.pair ,'trade data from', this.exchange.name, '...');
   this.watcher.getTrades(since, this.processTrades, false);
+  // this.spoofTrades();
+}
+
+Fetcher.prototype.spoofTrades = function() {
+  var fs = require('fs');
+  trades = JSON.parse( fs.readFileSync('./test3.json', 'utf8') );
+  this.processTrades(false, trades);
 }
 
 Fetcher.prototype.processTrades = function(err, trades) {

@@ -44,7 +44,7 @@ var actors = [];
 var emitters = {};
 
 var setupMarket = function(next) {
-  var Market = require(coreDir + 'candleManager');
+  var Market = require(coreDir + 'marketManager');
   emitters.market = new Market;
   next();
 }

@@ -2,7 +2,7 @@ var exchanges = require('../exchanges.js');
 var _ = require('lodash');
 
 var Checker = function() {
-  _.bindAll();
+  _.bindAll(this);
 }
 
 Checker.prototype.notValid = function(conf) {
@@ -74,7 +74,7 @@ Checker.prototype.cantTrade = function(conf) {
 
 Checker.prototype.settings = function(conf) {
   var slug = conf.exchange.toLowerCase();
-  return exchange = _.find(exchanges, function(e) { return e.slug === slug });
+  return _.find(exchanges, function(e) { return e.slug === slug });
 }
 
 module.exports = new Checker();

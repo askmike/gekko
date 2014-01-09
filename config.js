@@ -56,8 +56,8 @@ config.MACD = {
 config.normal = {
   enabled: true,
   exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'BTC',
-  asset: 'TRC',
+  currency: 'USD',
+  asset: 'BTC',
   tradingEnabled: false,
   key: 'your-key',
   secret: 'your-secret',
@@ -157,9 +157,10 @@ config.webserver = {
 //                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
 //                UNTIL THE CODE HAS BEEN PROVED SOLID.
 config.backtest = {
+  enabled: false,
   candleFile: 'candles.csv',
-  from: 0,
-  to: 0
+  from: '2013-10-01 00:00:00', // YYYY-MM-DD HH:mm:ss
+  to: '2013-11-01 00:00:00' // YYYY-MM-DD HH:mm:ss
 }
 
 // For when you want to monitor a market but want to act (trade) on a different one
