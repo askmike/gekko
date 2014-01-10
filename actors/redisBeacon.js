@@ -5,7 +5,7 @@ var redisBeacon = config.redisBeacon;
 var watch = config.watch;
 
 var subscriptions = require('../subscriptions');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var redis = require("redis");
 

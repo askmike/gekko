@@ -62,6 +62,17 @@ var loadActors = function(next) {
       return next();
     }
 
+    var actorConfig = config[actor.slug];
+
+    // only load actors that are supported by
+    // Gekko's current mode
+    if(!_.contains(actor.modes, gekkoMode))
+      return next();
+
+    // if the actor is disabled skip as well
+    if(!actorConfig.enabled)
+      return next();
+
     // verify actor dependencies are installed
     if('dependencies' in actor)
       _.each(actor.dependencies, function(dep) {
@@ -86,17 +97,6 @@ var loadActors = function(next) {
         }
 
       });
-
-    var actorConfig = config[actor.slug];
-
-    // only load actors that are supported by
-    // Gekko's current mode
-    if(!_.contains(actor.modes, gekkoMode))
-      return next();
-
-    // if the actor is disabled skip as well
-    if(!actorConfig.enabled)
-      return next();
 
     var Actor = require(actorsDir + actor.slug);
 
