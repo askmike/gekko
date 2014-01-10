@@ -97,7 +97,7 @@ Fetcher.prototype.setFetchMeta = function(trades) {
 Fetcher.prototype.calculateNextFetch = function(trades) {
 
   // for now just refetch every minute
-  return this.fetchAfter = util.minToMs(2);
+  return this.fetchAfter = util.minToMs(1);
 
   // if the timespan per fetch is fixed at this exchange,
   // just return that number.
