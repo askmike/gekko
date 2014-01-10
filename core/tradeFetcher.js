@@ -149,8 +149,8 @@ Fetcher.prototype.scheduleNextFetch = function() {
 
 Fetcher.prototype.fetch = function(since) {
   log.debug('Requested', this.pair ,'trade data from', this.exchange.name, '...');
-  // this.watcher.getTrades(since, this.processTrades, false);
-  this.spoofTrades();
+  this.watcher.getTrades(since, this.processTrades, false);
+  // this.spoofTrades();
 }
 
 Fetcher.prototype.spoofTrades = function() {
