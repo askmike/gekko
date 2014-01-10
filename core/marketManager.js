@@ -27,13 +27,12 @@ var Manager = function() {
 
   this.candleSize = tradingAdvisor.candleSize;
   this.candleParts = [];
-
+  
   this.state = 'pending';
 
   this.watching = false;
 
   this.model.on('history state', this.processHistoryState);
-  this.model.on('candle', this.processSmallCandle);
   this.fetcher.on('new trades', this.model.processTrades);
   this.fetcher.on('new trades', this.relayTrade);
 }
@@ -47,6 +46,7 @@ Manager.prototype.start = function() {
 }
 
 Manager.prototype.processSmallCandle = function(candle) {
+  console.log('EMIT SMALL CANDLE');
   this.emit('small candle', candle);
 
   if(this.state === 'relaying candles') {
@@ -56,6 +56,11 @@ Manager.prototype.processSmallCandle = function(candle) {
       this.emit('candle', candle); 
     }
   }
+}
+
+Manager.prototype.relayCandles = function() {
+  console.log('RELAY ON');
+  this.model.on('candle', this.processSmallCandle);
 }
 
 Manager.prototype.calculateCandle = function(fakeCandles) {
@@ -102,8 +107,12 @@ Manager.prototype.relayTrade = function(data) {
 }
 
 Manager.prototype.processHistoryState = function(history) {
-  if(history.state === 'full') {
+  if(history.state === 'not required') {
     this.state = 'relaying candles';
+    this.relayCandles();
+  } else if(history.state === 'full') {
+    this.state = 'relaying candles';
+    this.relayCandles();
     log.debug('full history available');
   } else if(history.empty) {
     // TODO: we only know this after fetch, don't relay

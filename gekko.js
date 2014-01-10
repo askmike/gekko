@@ -15,8 +15,9 @@
 
 */
 
-var coreDir = './core/';
-var actorsDir = './actors/';
+var gekkoDir = './';
+var coreDir = gekkoDir + 'core/';
+var actorsDir = gekkoDir + 'actors/';
 
 var _ = require('lodash');
 var async = require('async');
@@ -51,7 +52,7 @@ var setupMarket = function(next) {
 
 // load each actor
 var loadActors = function(next) {
-  var actorSettings = require('./actors');
+  var actorSettings = require(gekkoDir + 'actors');
 
   var iterator = function(actor, next) {
 
@@ -158,33 +159,7 @@ var setupAdvisor = function(next) {
 
 var attachActors = function(next) {
 
-  var subscriptions = [
-    {
-      emitter: 'market',
-      event: 'candle',
-      handler: 'processCandle'
-    },
-    {
-      emitter: 'market',
-      event: 'small candle',
-      handler: 'processSmallCandle'
-    },
-    {
-      emitter: 'market',
-      event: 'trade',
-      handler: 'processTrade'
-    },
-    {
-      emitter: 'market',
-      event: 'history',
-      handler: 'processHistory'
-    },
-    {
-      emitter: 'advisor',
-      event: 'advice',
-      handler: 'processAdvice'
-    }
-  ];
+  var subscriptions = require(gekkoDir + 'subscriptions');
 
   _.each(actors, function(actor) {
     _.each(subscriptions, function(sub) {

@@ -128,6 +128,13 @@ config.ircbot = {
   botName: 'gekkobot'
 }
 
+config.redisBeacon = {
+  enabled: false,
+  broadcast: [
+    'small candle'
+  ]
+}
+
 
 config.webserver = {
   enabled: false,

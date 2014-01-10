@@ -81,6 +81,14 @@ var actors = [
     async: false,
     silent: true,
     modes: ['realtime', 'backtest']
+  },
+  {
+    name: 'Redis beacon',
+    slug: 'redisBeacon',
+    description: 'Publish events over Redis Pub/Sub',
+    async: true,
+    silent: false,
+    modes: ['realtime']
   }
 ];
 

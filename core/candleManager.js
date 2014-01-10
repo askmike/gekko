@@ -67,21 +67,15 @@ var MINUTES_IN_DAY = 1439;
 var Manager = function() {
   _.bindAll(this);
 
-  // all minutes we fetched that are part
-  // of the real candle
-  this.realCandleContents = [];
-
   this.historyPath = config.history.directory || './history/';
   this.days = {};
-  this.realCandleSize = false;
 
-
-  // this is vital state, think out all scenarios
+  // This is vital state, think out all scenarios
   // of what this could be, based on:
   //  - partial history
   //  - full history
   //  - fetch start
-  //  - backtest from
+  //  - backtest enabled
   if(backtest.enabled)
     this.startTime = moment(backtest.from).utc()
   else
@@ -242,15 +236,13 @@ Manager.prototype.setDatabaseMeta = function(mom, cb) {
     return cb();
 
   day.handle.find({s: {$gt: -1}}, _.bind(function(err, minutes) {
-    if(err) {
+    if(err)
       return cb(err);
-    }
 
     day.minutes = _.size(minutes);
 
-    if(!day.minutes) {
+    if(!day.minutes)
       return cb();
-    }
 
     // this day has candles, store stats
     day.empty = false;
@@ -351,6 +343,10 @@ Manager.prototype.checkDaysMeta = function(err, results) {
 //     data).
 //   - broadcast `history state` / building
 Manager.prototype.processHistoryStats = function() {
+  if(!this.history.required) {
+    this.state = 'full history';
+    return this.emit('history state', {state: 'not required'});
+  }
 
   var history = this.history;
 
@@ -707,7 +703,6 @@ Manager.prototype.insertCandles = function(candles, cb) {
       );
 
       var candle = this.transportCandle(c, day);
-      this.realCandleContents.push(candle);
       this.emit('candle', candle);
 
       if(this.state === 'building history') {

@@ -99,7 +99,6 @@ Fetcher.prototype.calculateNextFetch = function(trades) {
   // for now just refetch every minute
   return this.fetchAfter = util.minToMs(2);
 
-
   // if the timespan per fetch is fixed at this exchange,
   // just return that number.
   if(this.exchange.fetchTimespan) {
@@ -164,8 +163,8 @@ Fetcher.prototype.processTrades = function(err, trades) {
     throw err;
 
   this.setFetchMeta(trades);
-
   this.calculateNextFetch();
+
   // schedule next fetch
   if(!this.exchange.providesHistory)
     this.scheduleNextFetch();
