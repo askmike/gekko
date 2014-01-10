@@ -130,6 +130,8 @@ config.ircbot = {
 
 config.redisBeacon = {
   enabled: false,
+  port: 6379, // redis default
+  host: '127.0.0.1', // localhost
   broadcast: [
     'small candle'
   ]

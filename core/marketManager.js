@@ -46,7 +46,6 @@ Manager.prototype.start = function() {
 }
 
 Manager.prototype.processSmallCandle = function(candle) {
-  console.log('EMIT SMALL CANDLE');
   this.emit('small candle', candle);
 
   if(this.state === 'relaying candles') {
@@ -59,7 +58,6 @@ Manager.prototype.processSmallCandle = function(candle) {
 }
 
 Manager.prototype.relayCandles = function() {
-  console.log('RELAY ON');
   this.model.on('candle', this.processSmallCandle);
 }
 

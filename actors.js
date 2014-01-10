@@ -88,7 +88,11 @@ var actors = [
     description: 'Publish events over Redis Pub/Sub',
     async: true,
     silent: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'redis',
+      version: '0.10.0'
+    }]
   }
 ];
 

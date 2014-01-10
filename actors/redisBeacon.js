@@ -5,7 +5,11 @@ var config = util.getConfig();
 var redisBeacon = config.redisBeacon;
 var watch = config.watch;
 
+var log = require('../core/log.js');
+
 var subscriptions = require('../subscriptions');
+
+var redis = require("redis");
 
 var Actor = function(done) {
   _.bindAll(this);
@@ -46,13 +50,15 @@ _.each(redisBeacon.broadcast, function(e) {
 Actor.prototype = proto;
 
 Actor.prototype.init = function(done) {
-  // TODO: setup real redis client
-  _.defer(done);
+  this.client = redis.createClient(redisBeacon.port, redisBeacon.host);
+  this.client.on('ready', done);
 }
 
 Actor.prototype.emit = function(channel, message) {
-  console.log('REDIS EMIT CHANNEL', channel);
-  console.log('REDIS EMIT DATA', message);
+  log.debug('Going to publish to redis channel', channel);
+
+  var data = JSON.stringify(message);
+  this.client.publish(channel, data);
 }
 
 module.exports = Actor;
