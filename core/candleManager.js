@@ -115,7 +115,7 @@ Manager.prototype.requiredDays = function(timespan) {
   var days = [];
 
   var start = this.current.day.clone();
-  var to = start.clone().subtract('m', timespan);
+  var to = start.clone().subtract('m', timespan).startOf('day');
 
   while(start >= to) {
     days.push(this.mom(start.clone()));
@@ -245,7 +245,6 @@ Manager.prototype.setDatabaseMeta = function(mom, cb) {
     if(err) {
       return cb(err);
     }
-      
 
     day.minutes = _.size(minutes);
 
@@ -287,19 +286,20 @@ Manager.prototype.deleteDay = function(day, safe) {
 // loop through this.days and check every meta to
 // see what history we have available
 Manager.prototype.checkDaysMeta = function(err, results) {
-
   var available = {
     minutes: 0,
     first: false
   };
 
   // we check reversed chronologically
-  // and on first error we bail out.
+  // and on first gap we bail out.
   // 
   // result is stored in available
   _.every(this.history.days, function(mom) {
 
     var day = this.days[mom.dayString];
+
+    var isFirstDay = equals(this.current.day, day.time);
 
     if(!day.exists)
       return false;
@@ -308,25 +308,27 @@ Manager.prototype.checkDaysMeta = function(err, results) {
     if(!day.minutes)
       return false;
 
+    if(!isFirstDay && day.endCandle.s !== MINUTES_IN_DAY)
+      // this day doesn't end at midnight
+      return false;
+
     // we have content
     available.minutes += day.minutes;
     available.first = this.mom(day.start);
 
-    var firstDay = equals(this.current.day, day.day);
-
-    if(firstDay)
+    if(isFirstDay)
       available.last = this.mom(day.end);
 
     // if current day it needs to go back to
     // midnight if we want to consider next day
-    if(firstDay && day.startCandle.s !== 0)
+    if(isFirstDay && day.startCandle.s !== 0)
       return false;
 
     // if not current day, it needs to be full
-    if(!firstDay && !day.full)
+    if(!isFirstDay && !day.full)
       return false;
 
-    // this day is aproved, up to next day
+    // this day is approved, up to next day
     return true;
 
   }, this);
@@ -453,8 +455,8 @@ Manager.prototype.processTrades = function(data) {
   var trades = this.filterTrades(data.all);
 
   if(!_.size(trades)) {
-    this.emit('processed');
-    return log.debug('done with this batch (1)');
+    log.debug('done with this batch (1)');
+    return this.emit('processed');
   }
 
   log.debug('processing', _.size(trades), 'trade(s)');
@@ -847,6 +849,8 @@ Manager.prototype.transportCandle = function(c, day) {
   // check whether we got a mom or a moment
   if(!day.m)
     day = this.mom(day.clone());
+
+  delete c._id;
 
   return {
     candle: c,

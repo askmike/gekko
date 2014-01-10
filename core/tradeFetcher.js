@@ -51,9 +51,9 @@ var Fetcher = function() {
         'Fetched',
         _.size(a.all),
         'new trades, from',
-        a.start.format('YYYY-MM-DD HH:mm:ss (UTC)'),
+        a.start.format('YYYY-MM-DD HH:mm:ss UTC'),
         'to',
-        a.end.format('YYYY-MM-DD HH:mm:ss (UTC)')
+        a.end.format('YYYY-MM-DD HH:mm:ss UTC')
       );
     });  
   }
@@ -149,13 +149,13 @@ Fetcher.prototype.scheduleNextFetch = function() {
 
 Fetcher.prototype.fetch = function(since) {
   log.debug('Requested', this.pair ,'trade data from', this.exchange.name, '...');
-  this.watcher.getTrades(since, this.processTrades, false);
-  // this.spoofTrades();
+  // this.watcher.getTrades(since, this.processTrades, false);
+  this.spoofTrades();
 }
 
 Fetcher.prototype.spoofTrades = function() {
   var fs = require('fs');
-  trades = JSON.parse( fs.readFileSync('./test3.json', 'utf8') );
+  trades = JSON.parse( fs.readFileSync('./test7.json', 'utf8') );
   this.processTrades(false, trades);
 }
 

@@ -25,11 +25,17 @@ var Manager = function() {
   this.model = new CandleManager;
   this.fetcher = new TradeFetcher;
 
+  this.candleSize = tradingAdvisor.candleSize;
+  this.candleParts = [];
+
+  this.state = 'pending';
+
   this.watching = false;
 
   this.model.on('history state', this.processHistoryState);
+  this.model.on('candle', this.processSmallCandle);
   this.fetcher.on('new trades', this.model.processTrades);
-  // this.model.on('real candle', this.processCandle);
+  this.fetcher.on('new trades', this.relayTrade);
 }
 
 var Util = require('util');
@@ -37,22 +43,52 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(Manager, EventEmitter);
 
 Manager.prototype.start = function() {
-
   this.model.checkHistory();
-  return;
-
-  this.fetcher.on('new trades', this.relayTrade);
-  this.model.on('history', this.processHistory);
-  this.model.on('real candle', this.relayCandle);
-  this.model.on('fake candle', this.relaySmallCandle);
 }
 
-Manager.prototype.relayCandle = function(candle) {
-  this.emit('candle', candle);
+Manager.prototype.processSmallCandle = function(candle) {
+  this.emit('small candle', candle);
+
+  if(this.state === 'relaying candles') {
+    this.candleParts.push(candle);
+    if(this.candleParts % this.candleSize === 0) {
+      this.calculateCandle(this.candleParts);
+      this.emit('candle', candle); 
+    }
+  }
 }
 
-Manager.prototype.relaySmallCandle = function(candle) {
- this.emit('small candle', candle); 
+Manager.prototype.calculateCandle = function(fakeCandles) {
+  var first = fakeCandles.shift();
+  var firstCandle = _.clone(first.candle);
+
+  firstCandle.p = firstCandle.p * firstCandle.v;
+  firstCandle.start = this.model.minuteToMoment(firstCandle.s, first.day.m);
+
+  // create a fake candle based on all real candles
+  var candle = _.reduce(
+    fakeCandles,
+    function(candle, m) {
+      m = m.candle;
+      candle.h = _.max([candle.h, m.h]);
+      candle.l = _.min([candle.l, m.l]);
+      candle.c = m.c;
+      candle.v += m.v;
+      candle.p += m.p * m.v;
+      return candle;
+    },
+    firstCandle
+  );
+
+  if(candle.v)
+    // we have added up all prices (relative to volume)
+    // now divide by volume to get the Volume Weighted Price
+    candle.p /= candle.v;
+  else
+    // empty candle
+    candle.p = candle.o;
+
+  return candle;
 }
 
 // only relay if this has not been relied before.
@@ -66,10 +102,10 @@ Manager.prototype.relayTrade = function(data) {
 }
 
 Manager.prototype.processHistoryState = function(history) {
-
-  if(history.state === 'full')
+  if(history.state === 'full') {
+    this.state = 'relaying candles';
     log.debug('full history available');
-  else if(history.empty) {
+  } else if(history.empty) {
     // TODO: we only know this after fetch, don't relay
     // we get only trades from now
     log.info(
@@ -81,10 +117,12 @@ Manager.prototype.processHistoryState = function(history) {
     // );
   } else {
     log.info(
-      'Partly history found',
-      '(since',
+      'Partly history found,',
+      'from',
       history.first.m.format('YYYY-MM-DD HH:mm:ss'),
-      'UTC)'
+      'UTC to',
+      history.last.m.format('YYYY-MM-DD HH:mm:ss'),
+      'UTC'
     );
     // TODO: we only know this after fetch, don't relay
     // we get only trades from now
