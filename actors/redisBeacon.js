@@ -1,13 +1,11 @@
-var _ = require('underscore');
-
+var log = require('../core/log.js');
 var util = require('../core/util');
 var config = util.getConfig();
 var redisBeacon = config.redisBeacon;
 var watch = config.watch;
 
-var log = require('../core/log.js');
-
 var subscriptions = require('../subscriptions');
+var _ = require('underscore');
 
 var redis = require("redis");
 
@@ -38,8 +36,10 @@ _.each(redisBeacon.broadcast, function(e) {
   if(!subscription)
     util.die('Gekko does not know this event:' + e);
 
+  var channel = redisBeacon.channelPrefix + subscription.event
+
   proto[subscription.handler] = function(message) {
-    this.emit(subscription.event, {
+    this.emit(channel, {
       market: this.market,
       data: message
     });

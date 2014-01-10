@@ -13,6 +13,7 @@ All actors live in `gekko/actors`.
 - IRC bot: logs Gekko on in an irc channel and lets users communicate with it.
 - Profit simulator: simulates trades and calculates profit over these (and logs profit).
 - Trading advisor (internal): calculates advice based on market data.
+- Redis beacon (advanced): [see below!](#redis-beacon)
 
 ## What kind of events can I listen to?
 
@@ -85,6 +86,15 @@ to `config.js` with atleast:
 
 Besides enabled you can also add other configurables here which users can set themselves. 
 
-
 That's it, don't forget to create a pull request of the awesome actor you've just created!
+
+# Redis Beacon
+
+Gekko also has an actor which can pipe all events through [redis pubsub](http://redis.io/topics/pubsub), this means that you can also build something on top of Gekko's events with the freedom to:
+
+- Write the actors in your language of choice (as long as you can connect it to redis).
+- Run the actor in a sandbox / contained environment.
+- Run the actor on a different machine (scale it, etc)
+- Write one actor which can listen to a cluster Gekkos at the same time.
+- *(Theoretical) Create a cluster of Gekkos where a single one fetches market data and all the ones on top run different trading methods.*
 
