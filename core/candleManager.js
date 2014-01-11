@@ -456,6 +456,12 @@ Manager.prototype.processTrades = function(data) {
   }
 
   log.debug('processing', _.size(trades), 'trade(s)');
+  log.debug(
+    'from',
+    moment.unix(_.first(trades).date).utc().format(),
+    'to',
+    moment.unix(_.last(trades).date).utc().format()
+  );
 
   var candles = this.calculateCandles(trades);
 
@@ -642,8 +648,10 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
 
     var empty, prevClose;
 
-    if(min > max)
+    if(min > max) {
+      console.log('c', candles, 's', start, 'e', end);
       throw 'Weird error 2';
+    }
 
     while(min !== max) {
       empty = _.clone(c);
@@ -793,7 +801,7 @@ Manager.prototype.setDay = function(m) {
 }
 
 // how many days are in this trade batch?
-Manager.prototype.fetchHasNewDay = function(trades) {
+Manager.prototype.fetchHasNewDay = function() {
   return !equals(this.fetch.end.day, this.current.day);
 }
 
