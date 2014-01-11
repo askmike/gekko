@@ -19,7 +19,7 @@
     "cexio": "0.0.x",
     "bitstamp": "0.1.x",
     "async": "0.2.x",
-    "nedb": "*",
+    "nedb": "0.9.4",
     "line-reader": "0.2.x"
   },
   "devDependencies": {
