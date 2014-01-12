@@ -51,7 +51,7 @@ Actor.prototype = proto;
 
 Actor.prototype.init = function(done) {
   this.client = redis.createClient(redisBeacon.port, redisBeacon.host);
-  this.client.on('ready', done);
+  this.client.on('ready', _.once(done));
 }
 
 Actor.prototype.emit = function(channel, message) {
