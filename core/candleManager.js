@@ -121,6 +121,7 @@ Manager.prototype.requiredDays = function(timespan) {
 
 
 Manager.prototype.checkHistory = function() {
+  log.debug('checking history');
   this.history = {}
 
   this.history.required = tradingAdvisor.enabled;
@@ -493,9 +494,9 @@ Manager.prototype.processTrades = function(data) {
   } else {
 
     // we already know they are all from current day
-    
+
     // but if the most recent candle is from yesterday ...
-    if(this.mostRecentCandle.s === MINUTES_IN_DAY) {
+    if(this.mostRecentCandle && this.mostRecentCandle.s === MINUTES_IN_DAY) {
       var ghostCandle = _.clone(this.mostRecentCandle);
       ghostCandle.s = -1;
       var batch = this.addEmtpyCandles(candles, ghostCandle);
