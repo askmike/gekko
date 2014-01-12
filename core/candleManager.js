@@ -354,14 +354,13 @@ Manager.prototype.processHistoryStats = function() {
   // how many more minutes do we need?
   history.toFetch = history.timespan - history.available.minutes;
 
-  if(!history.toFetch) {
-    // we have full history
-    
-    this.state = 'full history';
-    this.emit('history state', {state: 'full'});
+  if(!history.toFetch < 1) {
+    // we have appear to have full history
+    // though we need to verify on fetch
+    // that we don't have a gap
 
-    // todo: broadcast history
-    log.debug('TODO: broadcast history');
+    this.state = 'building history';
+    this.emit('history state', {state: 'full'});
     return;
   }
 
@@ -394,29 +393,29 @@ Manager.prototype.setFetchMeta = function(data) {
 
 // we need to verify after the first fetch
 // that the history in the fetch can be stitched
-// to existing historical data
+// to existing historical data (ungapped).
 Manager.prototype.checkHistoryAge = function(data) {
-  // throw this.history.available.minutes;
-  // if we don't have history, just set to fetch data
-  // or the start of current day
-  if(!this.history.available.minutes) {
+  var history = this.history;
+
+  if(!history.available.minutes) {
+    // if we don't have history, just set to fetch data
+    // or the start of current day
     this.minumum = _.max([
       this.fetch.start.m.clone().subtract('s', 1),
       this.current.day.clone()
     ]);
     
-    return this.processTrades(data);
+    return;
   }
 
-  if(this.history.available.last.minute === MINUTES_IN_DAY)
+  if(history.available.last.minute === MINUTES_IN_DAY)
     this.increaseDay();
 
-
-  this.minumum = this.history.available.last.m.clone().add('m', 1);
+  this.minumum = history.available.last.m.clone().add('m', 1);
 
   if(this.minumum > this.fetch.start.m)
     // we're all good, process normally
-    return this.processTrades(data);
+    return;
 
   // there is a gap, mark current day as corrupted and process
   log.warn('The history we found is to old, we have to build a new one');
@@ -424,14 +423,76 @@ Manager.prototype.checkHistoryAge = function(data) {
   this.deleteDay(this.days[this.current.dayString], true);
 
   // reset available history
-  this.history.available = {
-    minutes: 0,
-    first: false
-  };
+  history.available.gap = true;
+  history.available.minutes = 0
+  history.available.first = false;
+  history.toFetch = history.timespan;
+}
 
-  // minumum is smaller than fetch, we can just process normally
-  // and we'll get all trades
-  this.processTrades(data);
+
+// Calculate when we have enough historical data
+// to provide normal advice
+Manager.prototype.calculateAdviceTime = function() {
+  if(this.state !== 'building history')
+    // we are not building history, either
+    // we don't need to or we're already done
+    return;
+
+  var history = this.history;
+  var toFetch = history.toFetch;
+
+  if(toFetch < 0)
+    // we have full history
+    return this.broadcastHistory();
+
+  // we have partly history
+  log.debug(
+    'We don\'t have enough history yet, expecting to be done at',
+    this.startTime.clone().add('m', toFetch).format('YYYY-MM-DD HH:mm:ss'),
+    'UTC'
+  );
+}
+
+// broadcast full history
+Manager.prototype.broadcastHistory = function() {
+  log.debug('going to broadcast history');
+  this.state = 'full history';
+
+  var history = this.history;
+
+  var last = this.mom(history.available.last.m);
+  var first = this.mom(last.m.clone().subtract('m', history.timespan));
+
+  if(!equals(last.day, first.day))
+    return log.debug('required history spans multiple days, not supported yet');
+
+  if(!equals(last.day, this.current.day))
+    return log.debug('required history is not from today, not supported yet');
+
+  var emit = function(err, candles) {
+    if(err || !candles)
+      throw err;
+
+    this.emit('history', {
+      meta: {
+        first: first,
+        last: last
+      },
+      candles: candles
+    });
+  }
+
+  this.getCandles(first.minute, last.minute, _.bind(emit, this));
+}
+
+// grab candles in current day (from start to to)
+Manager.prototype.getCandles = function(from, to, cb) {
+  this.days[this.current.dayString].handle.find({
+    s: {
+      $lte: to,
+      $gt: from  
+    }
+  }, cb);
 }
 
 // grab a batch of trades and for each full minute
@@ -444,10 +505,14 @@ Manager.prototype.processTrades = function(data) {
     util.die('FATAL: Fetch data appears from the future, don\'t know how to process');
 
   // if first run
-  if(!this.minumum)
-    // this function will rerun processTrades based on
-    // gaps between history & fetch
-    return this.checkHistoryAge(data);
+  if(!this.minumum) {
+    // first calculate some stuff
+    this.checkHistoryAge(data);
+    this.calculateAdviceTime();
+    // rerun
+    return this.processTrades(data);
+  }
+    
 
   var trades = this.filterTrades(data.all);
 
@@ -728,8 +793,7 @@ Manager.prototype.insertCandles = function(candles, cb) {
           // we are done fetching
           
           // todo: broadcast history
-          log.debug('FULL HISTORY');
-          log.debug('todo: broadcast');
+          this.broadcastHistory();
         }
       }
 
@@ -821,7 +885,7 @@ Manager.prototype.sortCandles = function(candles) {
 
 Manager.prototype.minuteToMoment = function(minutes, day) {
   if(!day)
-    day = this.currentDay;
+    day = this.current.day;
   day = day.clone().startOf('day');
   return day.clone().add('minutes', minutes);
 };

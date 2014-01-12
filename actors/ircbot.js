@@ -109,7 +109,6 @@ Actor.prototype.emitPrice = function() {
 Actor.prototype.emitDonation = function() {
   var message = 'You want to donate? How nice of you! You can send your coins here:';
   message += '\nBTC:\t13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW';
-  message += '\nDOGE:\tDH3n9PCmi5k2Mqs3LhDAmy4ySQ1N1xUg43';
 
   this.bot.say(ircbot.channel, message);
 };

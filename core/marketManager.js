@@ -32,6 +32,7 @@ var Manager = function() {
 
   this.watching = false;
 
+  this.model.on('history', this.relayHistory);
   this.model.on('history state', this.processHistoryState);
   this.fetcher.on('new trades', this.model.processTrades);
   this.fetcher.on('new trades', this.relayTrade);
@@ -42,6 +43,7 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(Manager, EventEmitter);
 
 Manager.prototype.start = function() {
+  log.debug('~market start');
   this.model.checkHistory();
 }
 
@@ -57,7 +59,14 @@ Manager.prototype.processSmallCandle = function(candle) {
   }
 }
 
+Manager.prototype.relayHistory = function(history) {
+  log.debug('relaying history');
+  this.state = 'relaying candles';
+  this.emit('history', history);
+}
+
 Manager.prototype.relayCandles = function() {
+  log.debug('~relay candles');
   this.model.on('candle', this.processSmallCandle);
 }
 
@@ -109,19 +118,10 @@ Manager.prototype.processHistoryState = function(history) {
     this.state = 'relaying candles';
     this.relayCandles();
   } else if(history.state === 'full') {
-    this.state = 'relaying candles';
     this.relayCandles();
     log.debug('full history available');
   } else if(history.empty) {
-    // TODO: we only know this after fetch, don't relay
-    // we get only trades from now
-    log.info(
-      'No (recent) history found');
-    // ',',
-    //   'history ready at',
-    //   history.completeAt.format('YYYY-MM-DD HH:mm:ss'),
-    //   'UTC (in ' + history.completeAt.fromNow(true) + ')'
-    // );
+    log.info('No (recent) history found');
   } else {
     log.info(
       'Partly history found,',
@@ -131,13 +131,6 @@ Manager.prototype.processHistoryState = function(history) {
       history.last.m.format('YYYY-MM-DD HH:mm:ss'),
       'UTC'
     );
-    // TODO: we only know this after fetch, don't relay
-    // we get only trades from now
-    // log.info(
-    //   'Expected ready at',
-    //   history.completeAt.format('YYYY-MM-DD HH:mm:ss'),
-    //   'UTC (in ' + history.completeAt.fromNow(true) + ')'
-    // )
   }
 
   if(!this.watching)
@@ -145,12 +138,9 @@ Manager.prototype.processHistoryState = function(history) {
 }
 
 Manager.prototype.watchMarket = function() {
+  log.debug('~watch market');
   this.watching = true;
   this.fetcher.start();
-}
-
-Manager.prototype.fetchHistory = function(since) {
- console.log('we dont got any history, so lets fetch it!', since); 
 }
 
 

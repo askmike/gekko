@@ -135,8 +135,6 @@ Server.prototype.handleWSConnection = function(conn) {
     data: config
   });
 
-
-
   conn.on("text", function(json) {
     // TODO: handle incoming requests
     // from client

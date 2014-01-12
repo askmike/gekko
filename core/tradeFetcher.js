@@ -154,7 +154,15 @@ Fetcher.prototype.fetch = function(since) {
 
 Fetcher.prototype.spoofTrades = function() {
   var fs = require('fs');
-  trades = JSON.parse( fs.readFileSync('./test7.json', 'utf8') );
+  trades = JSON.parse( fs.readFileSync('./a3.json', 'utf8') );
+  this.processTrades(false, trades);
+
+  setTimeout(this.spoofTrades2, 5000);
+}
+
+Fetcher.prototype.spoofTrades2 = function() {
+  var fs = require('fs');
+  trades = JSON.parse( fs.readFileSync('./a4.json', 'utf8') );
   this.processTrades(false, trades);
 }
 
