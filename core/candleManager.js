@@ -493,7 +493,14 @@ Manager.prototype.processTrades = function(data) {
   } else {
 
     // we already know they are all from current day
-    var batch = this.addEmtpyCandles(candles, this.mostRecentCandle);
+    
+    // but if the most recent candle is from yesterday ...
+    if(this.mostRecentCandle.s === MINUTES_IN_DAY) {
+      var ghostCandle = _.clone(this.mostRecentCandle);
+      ghostCandle.s = -1;
+      var batch = this.addEmtpyCandles(candles, ghostCandle);
+    } else
+      var batch = this.addEmtpyCandles(candles, this.mostRecentCandle);
 
     this.leftovers = batch.pop();
 
