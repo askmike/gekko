@@ -105,6 +105,13 @@ config.profitSimulator = {
   fee: 0.6
 }
 
+// Want Gekko to perform real trades on buy or sell advice?
+// Enabling this will activate trades for the market being
+// watched by config.normal
+config.trader = {
+  enabled: true
+}
+
 // want Gekko to send a mail on buy or sell advice?
 config.mailer = {
   enabled: false, 			// Send Emails if true, false to turn off
@@ -126,21 +133,26 @@ config.mailer = {
 
   tag: '[GEKKO] ',			// Prefix all EMail subject lines with this
 
+<<<<<<< HEAD
 
             //       ADVANCED MAIL SETTINGS
             // you can leave those as is if you 
             // want to use gmail
 
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.  
+=======
+  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
+  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
+>>>>>>> f9ee6af... Add support for trading
   smtpauth: true,			// Does SMTP server require authentication (true for GMail)
 					// The following 3 values default to the Email (above) if left blank
   user: '',				// Your Email server user name - usually your full Email address 'me@mydomain.com'
   from: '',				// 'me@mydomain.com'
   to: '',				// 'me@somedomain.com, me@someotherdomain.com'
   ssl: true,				// Use SSL (true for GMail)
-  port: '',				// Set if you don't want to use the default port 
+  port: '',				// Set if you don't want to use the default port
   tls: false				// Use TLS if true
- 
+
 }
 
 config.ircbot = {
@@ -160,7 +172,7 @@ config.redisBeacon = {
     // the name of the event, set
     // an optional prefix to the
     // channel name.
-  channelPrefix: '', 
+  channelPrefix: '',
   broadcast: [
     'small candle'
   ]

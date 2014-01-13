@@ -10,7 +10,7 @@
 var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var Util = require("util");
-var util = require('./util')
+var util = require('./util');
 var events = require("events");
 var log = require('./log');
 var async = require('async');
@@ -22,7 +22,7 @@ var Manager = function(conf) {
   var exchange = _.find(exchanges, function(e) { return e.slug === this.exchangeSlug }, this);
 
   // create an exchange
-  var Exchange = require('./exchanges/' + this.exchangeSlug);
+  var Exchange = require('../exchanges/' + this.exchangeSlug);
   this.exchange = new Exchange(conf);
 
   //    state

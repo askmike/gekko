@@ -67,6 +67,25 @@ var actors = [
     }]
   },
   {
+<<<<<<< HEAD:plugins.js
+=======
+    name: 'Trader',
+    description: 'Trader module that will act on trading advice performing the trades given by the trade advisor',
+    slug: 'trader',
+    async: true,
+    silent: false,
+    modes: ['realtime']
+  },
+  {
+    name: 'Profit Simulator',
+    description: 'Paper trader that logs fake profits.',
+    slug: 'profitSimulator',
+    async: false,
+    silent: false,
+    modes: ['realtime', 'backtest']
+  },
+  {
+>>>>>>> f9ee6af... Add support for trading:actors.js
     name: 'Advice logger',
     description: '',
     slug: 'adviceLogger',
