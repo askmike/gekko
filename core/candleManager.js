@@ -468,7 +468,15 @@ Manager.prototype.calculateAdviceTime = function(next, args) {
 Manager.prototype.broadcastHistory = function(next, args) {
   var history = this.history;
 
-  var last = this.mom(history.available.last.m);
+  if(history.available.last)
+    // first run
+    var last = this.mom(history.available.last.m);
+  else {
+    // after filling full history while fetching live
+    var m = this.minuteToMoment(this.mostRecentCandle.s, this.current.day)
+    var last = this.mom(m);
+  }
+
   var first = this.mom(last.m.clone().subtract('m', history.timespan));
 
   log.debug('going to broadcast history');
