@@ -68,7 +68,10 @@ var actors = [
   },
   {
 <<<<<<< HEAD:plugins.js
+<<<<<<< HEAD:plugins.js
 =======
+=======
+>>>>>>> f9ee6af... Add support for trading:actors.js
     name: 'Trader',
     description: 'Trader module that will act on trading advice performing the trades given by the trade advisor',
     slug: 'trader',
