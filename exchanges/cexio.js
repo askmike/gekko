@@ -90,6 +90,11 @@ Trader.prototype.retry = function(method, args) {
   var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
 
+  if (typeof(method) === 'undefined') {
+    log.error(this.name, 'failed to retry, no method supplied.');
+    return;
+  }
+
   var self = this;
 
   // make sure the callback (and any other fn)
@@ -169,7 +174,7 @@ Trader.prototype.cancelOrder = function(order) {
   var check= function(err, result) {
     if(err)
       log.error('cancel order failed:', err);
-    if(result.error)
+    if(typeof(result) !== 'undefined' && result.error)
       log.error('cancel order failed:', result.error);
   }
   this.cexio.cancel_order(order, check);
