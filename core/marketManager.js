@@ -48,15 +48,16 @@ Manager.prototype.start = function() {
 }
 
 Manager.prototype.processSmallCandle = function(candle) {
-  console.log('processing 1m candle');
   this.emit('small candle', candle);
 
-  if(this.state === 'relaying candles') {
-    this.candleParts.push(candle);
-    if(this.candleParts % this.candleSize === 0) {
-      this.calculateCandle(this.candleParts);
-      this.emit('candle', candle); 
-    }
+  if(this.state !== 'relaying candles')
+    return;
+
+  this.candleParts.push(candle);
+
+  if(_.size(this.candleParts) % this.candleSize === 0) {
+    var candle = this.calculateCandle(this.candleParts);
+    this.emit('candle', candle); 
   }
 }
 

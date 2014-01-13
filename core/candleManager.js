@@ -552,9 +552,8 @@ Manager.prototype.processTrades = function(data) {
     // this function will rerun process
     // trades when done.
     this.calculateAdviceTime(this.processTrades, data);
+    return;
   }
-    
-
   var trades = this.filterTrades(data.all);
 
   if(!_.size(trades)) {
