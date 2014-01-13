@@ -119,6 +119,13 @@ config.trader = {
   enabled: true
 }
 
+// Want Gekko to perform real trades on buy or sell advice?
+// Enabling this will activate trades for the market being
+// watched by config.normal
+config.trader = {
+  enabled: true
+}
+
 // want Gekko to send a mail on buy or sell advice?
 config.mailer = {
   enabled: false, 			// Send Emails if true, false to turn off
@@ -142,12 +149,17 @@ config.mailer = {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             //       ADVANCED MAIL SETTINGS
             // you can leave those as is if you 
             // want to use gmail
 
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.  
+=======
+  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
+  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
+>>>>>>> f9ee6af... Add support for trading
 =======
   // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
@@ -165,7 +177,12 @@ config.mailer = {
   port: '',				// Set if you don't want to use the default port
   tls: false				// Use TLS if true
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+
+}
+>>>>>>> f9ee6af... Add support for trading
 
 }
 >>>>>>> f9ee6af... Add support for trading

@@ -69,7 +69,10 @@ var actors = [
   {
 <<<<<<< HEAD:plugins.js
 <<<<<<< HEAD:plugins.js
+<<<<<<< HEAD:plugins.js
 =======
+=======
+>>>>>>> f9ee6af... Add support for trading:actors.js
 =======
 >>>>>>> f9ee6af... Add support for trading:actors.js
     name: 'Trader',
