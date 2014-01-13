@@ -46,9 +46,7 @@ config.MACD = {
   sellThreshold: -0.025,
   buyThreshold: 0.025,
   // How many candle intervals until trigger fires
-  persistence: 5,
-  // Provide debugging output / verbose output
-  verbose: true
+  persistence: 5
 };
 
 // Monitor the live market

@@ -13,12 +13,13 @@ var methods = {
 var Actor = function() {
   _.bindAll(this);
 
-  var fullMethod = methods[config.tradingAdvisor.method];
+  var method = config.tradingAdvisor.method;
+  var fullMethod = methods[method];
 
   if(!fullMethod)
-    util.die('Gekko doesn\'t know the method' + config.tradingAdvisor.method);
+    util.die('Gekko doesn\'t know the method' + method);
 
-  log.info('\t', 'Using the trading method:' + config.tradingAdvisor.method);
+  log.info('\t', 'Using the trading method:' + method);
 
   var Consultant = require('../methods/' + fullMethod);
 

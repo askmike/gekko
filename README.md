@@ -2,12 +2,20 @@
 
 You are looking at the new and completetly different version of Gekko that is being developed right now. **It is not stable yet, it might crash and we need to validate the advice to be solid.**
 
-What we know doesn't work:
+## What we know doesn't work
 
 - Real trading (I am not implementing this until I have validated advice).
-- Watching Mt. Gox & BTCCchina.
+- Might crash :(
 
-Here is [the todo](https://github.com/askmike/gekko/issues/114) until it is considered stable.
+## What we hope does work
+
+- Give either EMA or MACD advice: in the config, [set method](https://github.com/askmike/gekko/blob/localDB/config.js#L19) to either MACD or EMA and configure the [EMA](https://github.com/askmike/gekko/blob/localDB/config.js#L25-L34) or [MACD](https://github.com/askmike/gekko/blob/localDB/config.js#L37-L51) settings like you want.
+- Mail the advice to you if you [configured the emailer](https://github.com/askmike/gekko/blob/localDB/config.js#L66-L82).
+- Simulate trading if you configured the [simulator](https://github.com/askmike/gekko/blob/localDB/config.js#L101-L115).
+- Create an IRC bot if you configured the [ircbot](https://github.com/askmike/gekko/blob/localDB/config.js#L121-L127).
+- [advanced] emit events over redis pubsub if you configured [it](https://github.com/askmike/gekko/blob/localDB/config.js#L129-L142)
+
+Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new version is considered stable.
 
 If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/114) if we are aware of it and if not create a new one :)
 
@@ -19,46 +27,38 @@ If you encounter a bug: check out in [the issues](https://github.com/askmike/gek
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
+Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it monitors the market and can automate trading using Technical Analysis on top of this.
 
 [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
 ## Main features
 
-* Paper trading
-* ~~Live trading (trade bot)~~
-* ~~Backtesting~~
+* Trading platform:
+ * Paper trading
+ * ~~Live trading (trade bot)~~
+ * ~~Backtesting~~
+* Market API / interface:
+ * Emit market events
+ * Basic IRC Bot
 
 ## What?
 
 This project is a learning excercise of me, a student with *some* experience in programming (mostly web) and zero experience in economics and trading. I figured writing my own trade bot would be the best way to learn about implementing mathematical trading algorithms. So here is **my very first attempt at anything related to trading / algorithmic decision making**.
 
-I'm developing Gekko fully open source in the hope of getting feedback from folks with more experience in this field. Because I not only want to attract programmers I am doing my best to make the code as readable as possible, this includes a lot of comments and probably not the most efficient (but expressive) code.
-
 As this is a learning experience for me all feedback is extremely appreciated. If you don't want to contribute to the code you can always just send me an [email](mailto:mike@mvr.me) or leave feedback in the [Gekko thread on the bitcointalk forum](https://bitcointalk.org/index.php?topic=209149.0).
 
 *Use Gekko at you own risk.*
 
-### Paper & live trading 
+## Trading platform
 
-Gekko uses Technical Analysis (only EMA at this moment) to determine when to enter or leave the live market, at such a moment it can:
+Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (this is automated trading and paper trading). Gekko also stores the market data it sees so you can run the trading methods (and simulate trades) on a set of historical data to see whether they would have been profitable during that time (this is called backtesting).
 
-* Advice on what you should do (for example per email).
-* Calculate the profits of all the advices so far.
-* Automatically trade.
+Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) will not trade more than a couple of times per week.
 
-Gekko currently supports paper ~~& live trading~~ at the following exchanges:
+So Gekko is not:
 
-* ~~[Mt. Gox](https://mtgox.com/)~~
-* [BTC-e](https://btc-e.com/)
-* [Bitstamp](https://bitstamp.net/)
-* [cex.io](https://cex.io) (commodity exchange for mining power)
-
-### ~~Backtesting~~
-
-~~You can also backtest strategies using Gekko. I am currently expanding and improving the backtester and I could use all the feedback I can get. Keep in mind that I currently would not suggest applying strategies for real investments based on the result, consider it alpha stage.~~
-
-~~You can find more detailed information in the [document about Backtesting](https://github.com/askmike/gekko/blob/master/docs/Backtesting.md) as well as how to set it up.~~
+- A trading platform for real traders with a GUI and charts.
+- A High frequency trading bot designed to operate on the < minute range.
 
 ## Installing Gekko
 
