@@ -3,12 +3,24 @@ var log = require('../core/log');
 var _ = require('lodash');
 
 var config = util.getConfig();
-var Consultant = require('../methods/' + config.tradingAdvisor.method.toLowerCase().split(' ').join('-'));
+
+
+var methods = {
+  'MACD': 'moving-average-convergence-divergence',
+  'EMA': 'exponential-moving-average-crossovers'
+}
 
 var Actor = function() {
   _.bindAll(this);
 
-  log.info('\t', 'Using ' + config.tradingAdvisor.methodSlug + ' method');
+  var fullMethod = methods[config.tradingAdvisor.method];
+
+  if(!fullMethod)
+    util.die('Gekko doesn\'t know the method' + config.tradingAdvisor.method);
+
+  log.info('\t', 'Using the trading method:' + config.tradingAdvisor.method);
+
+  var Consultant = require('../methods/' + fullMethod);
 
   this.method = new Consultant;
 }

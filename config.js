@@ -16,8 +16,7 @@ config.history = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'Exponential Moving Average Crossovers',
-  methodSlug: 'EMA',
+  method: 'EMA',
   candleSize: 5,
   historySize: 20
 }

@@ -29,7 +29,7 @@
 var actors = [
   {
     name: 'Trading Advisor',
-    description: 'Calculate trading advice based',
+    description: 'Calculate trading advice',
     slug: 'tradingAdvisor',
     async: false,
     silent: false,

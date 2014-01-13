@@ -101,7 +101,6 @@ var loadActors = function(next) {
     var Actor = require(actorsDir + actor.slug);
 
     if(!actor.silent) {
-      console.log();
       log.info('Setting up:');
       log.info('\t', actor.name);
       log.info('\t', actor.description);
@@ -190,6 +189,7 @@ var attachActors = function(next) {
 }
 
 log.info('Setting up Gekko in', gekkoMode, 'mode');
+console.log();
 
 async.series(
   [
