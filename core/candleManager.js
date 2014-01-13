@@ -828,6 +828,10 @@ Manager.prototype.insertCandles = function(candles, cb) {
   // they should be dealt with during this tick
   // because a new one may come on the next..
   var iterator = function(c, next) {
+    // async func wrapper to not pass error
+    // and halt the async chain
+    var _next = function() { next() };
+
     this.defer(function() {
       log.debug(
         'inserting candle',
@@ -848,7 +852,7 @@ Manager.prototype.insertCandles = function(candles, cb) {
           // we are done fetching
           
           // todo: broadcast history
-          this.broadcastHistory();
+          return this.broadcastHistory(_next);
         }
       }
 
