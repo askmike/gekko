@@ -68,7 +68,8 @@ Util.inherits(Manager, events.EventEmitter);
 Manager.prototype.setPortfolio = function(callback) {
   var set = function(err, portfolio) {
     this.portfolio = portfolio;
-    callback();
+    if (typeof(callback) === 'function')
+      callback();
   };
   this.exchange.getPortfolio(_.bind(set, this));
 }
@@ -76,7 +77,8 @@ Manager.prototype.setPortfolio = function(callback) {
 Manager.prototype.setFee = function(callback) {
   var set = function(err, fee) {
     this.fee = fee;
-    callback();
+    if (typeof(callback) === 'function')
+      callback();
   };
   this.exchange.getFee(_.bind(set, this));
 }
@@ -84,7 +86,8 @@ Manager.prototype.setFee = function(callback) {
 Manager.prototype.setTicker = function(callback) {
   var set = function(err, ticker) {
     this.ticker = ticker;
-    callback();
+    if (typeof(callback) === 'function')
+      callback();
   }
   this.exchange.getTicker(_.bind(set, this));
 }
