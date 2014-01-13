@@ -225,7 +225,13 @@ Manager.prototype.checkOrder = function() {
     if(!filled) {
       log.info(this.action, 'order was not (fully) filled, canceling and creating new order');
       this.exchange.cancelOrder(this.order);
-      return this.trade(this.action);
+
+      // Delay the trade, as cancel -> trade can trigger
+      // an error on cex.io if they happen on the same
+      // unix timestamp second (nonce will not increment).
+      var self = this;
+      setTimeout(function() { self.trade(self.action); }, 1000);
+      return;
     }
 
     log.info(this.action, 'was succesfull');
