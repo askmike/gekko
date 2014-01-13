@@ -13,10 +13,6 @@ var Actor = function() {
   this.method = new Consultant;
 }
 
-Actor.prototype.processHistory = function(data) {
-  this.method.init(data);
-}
-
 Actor.prototype.processCandle = function(candle) {
   this.method.update(candle);
 }

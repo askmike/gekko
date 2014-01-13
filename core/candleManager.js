@@ -498,6 +498,13 @@ Manager.prototype.broadcastHistory = function(next, args) {
     if(err || !batches)
       throw err;
 
+    // transport
+    batches = _.map(batches, function(batch, i) {
+      var day = days[i];
+      return this.transportCandles(batch, day);
+    }, this);
+
+    // flatten
     var candles = _.flatten(batches);
 
     this.emit('history', {
@@ -969,6 +976,7 @@ Manager.prototype.transportCandle = function(c, day) {
 
   return {
     candle: c,
+    time: day.m.clone().add('m', c.s),
     day: day
   }
 }

@@ -6,6 +6,7 @@ var log = require('./log.js');
 var utc = moment.utc;
 var TradeFetcher = require('./tradeFetcher');
 var CandleManager = require('./candleManager');
+var CandleConverter = require('./candleConverter');
 
 var exchangeChecker = require('./exchangeChecker');
 
@@ -24,15 +25,14 @@ var Manager = function() {
 
   this.model = new CandleManager;
   this.fetcher = new TradeFetcher;
-
-  this.candleSize = tradingAdvisor.candleSize;
-  this.candleParts = [];
   
   this.state = 'pending';
 
   this.watching = false;
 
-  this.model.on('history', this.relayHistory);
+  this.candleConverter = new CandleConverter(tradingAdvisor.candleSize);
+
+  this.model.on('history', this.processHistory);
   this.model.on('history state', this.processHistoryState);
   this.fetcher.on('new trades', this.model.processTrades);
   this.fetcher.on('new trades', this.relayTrade);
@@ -53,58 +53,28 @@ Manager.prototype.processSmallCandle = function(candle) {
   if(this.state !== 'relaying candles')
     return;
 
-  this.candleParts.push(candle);
-
-  if(_.size(this.candleParts) % this.candleSize === 0) {
-    var candle = this.calculateCandle(this.candleParts);
-    this.emit('candle', candle); 
-  }
+  this.candleConverter.write(candle);
 }
 
-Manager.prototype.relayHistory = function(history) {
+Manager.prototype.processHistory = function(history) {
   log.debug('relaying history');
   this.relayCandles();
   this.state = 'relaying candles';
-  this.emit('history', history);
+
+  _.each(history.candles, function(c) {
+    this.candleConverter.write(c)
+  }, this);
 }
 
 Manager.prototype.relayCandles = function() {
-  log.debug('~relay candles');
   this.model.on('candle', this.processSmallCandle);
+  this.candleConverter.on('candle', this.relayCandle);
 }
 
-Manager.prototype.calculateCandle = function(fakeCandles) {
-  var first = fakeCandles.shift();
-  var firstCandle = _.clone(first.candle);
-
-  firstCandle.p = firstCandle.p * firstCandle.v;
-  firstCandle.start = this.model.minuteToMoment(firstCandle.s, first.day.m);
-
-  // create a fake candle based on all real candles
-  var candle = _.reduce(
-    fakeCandles,
-    function(candle, m) {
-      m = m.candle;
-      candle.h = _.max([candle.h, m.h]);
-      candle.l = _.min([candle.l, m.l]);
-      candle.c = m.c;
-      candle.v += m.v;
-      candle.p += m.p * m.v;
-      return candle;
-    },
-    firstCandle
-  );
-
-  if(candle.v)
-    // we have added up all prices (relative to volume)
-    // now divide by volume to get the Volume Weighted Price
-    candle.p /= candle.v;
-  else
-    // empty candle
-    candle.p = candle.o;
-
-  return candle;
+Manager.prototype.relayCandle = function(candle) {
+  this.emit('candle', candle);
 }
+
 
 // only relay if this has not been relied before.
 Manager.prototype.relayTrade = function(data) {

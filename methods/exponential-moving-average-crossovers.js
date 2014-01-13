@@ -28,6 +28,8 @@ var TradingMethod = function() {
 
   this.currentTrend;
 
+  this.historySize = config.tradingAdvisor.historySize;
+
   this.diff;
   this.ema = {
     short: new EMA(settings.short),
@@ -40,20 +42,13 @@ var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
 
-TradingMethod.prototype.init = function(history) {
-  var candles = history.candles;
-  var last = candles.pop();
-
-  // insert history
-  _.each(candles, this.calculateEMAs, this);
-
-  // update with last candle
-  this.update(last);
-}
-
 TradingMethod.prototype.update = function(candle) {
   this.lastCandle = candle;
   this.calculateEMAs(candle);
+
+  if(this.ema.short.age < this.historySize)
+    return;
+
   this.log();
   this.calculateAdvice();
 }

@@ -23,7 +23,6 @@ All actors live in `gekko/actors`.
   it is propogated here.
 - `small candle`: Everytime Gekko calculated a new small candle (always 1 minute size 
   candles), it is propogated here.
-- `history`: internal event used by the trading methods to get historical market data.
 - `advice`: Everytime an implemented trading method suggests you change your position.
 
 ## Implementing a new actor
