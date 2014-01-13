@@ -441,18 +441,18 @@ Manager.prototype.checkHistoryAge = function(data) {
 
 // Calculate when we have enough historical data
 // to provide normal advice
-Manager.prototype.calculateAdviceTime = function() {
+Manager.prototype.calculateAdviceTime = function(next, args) {
   if(this.state !== 'building history')
     // we are not building history, either
     // we don't need to or we're already done
-    return;
+    return next(args);
 
   var history = this.history;
   var toFetch = history.toFetch;
 
   if(toFetch < 0)
     // we have full history
-    return this.broadcastHistory();
+    return this.broadcastHistory(next, args);
 
   // we have partly history
   log.debug(
@@ -460,10 +460,12 @@ Manager.prototype.calculateAdviceTime = function() {
     this.startTime.clone().add('m', toFetch + 1).startOf('minute').format('YYYY-MM-DD HH:mm:ss'),
     'UTC'
   );
+
+  next(args);
 }
 
 // broadcast full history
-Manager.prototype.broadcastHistory = function() {
+Manager.prototype.broadcastHistory = function(next, args) {
   var history = this.history;
 
   var last = this.mom(history.available.last.m);
@@ -505,6 +507,8 @@ Manager.prototype.broadcastHistory = function() {
       },
       candles: candles
     });
+
+    next(args);
   }
 
   async.map(
@@ -544,9 +548,10 @@ Manager.prototype.processTrades = function(data) {
   if(!this.minumum) {
     // first calculate some stuff
     this.checkHistoryAge(data);
-    this.calculateAdviceTime();
-    // rerun
-    return this.processTrades(data);
+
+    // this function will rerun process
+    // trades when done.
+    this.calculateAdviceTime(this.processTrades, data);
   }
     
 

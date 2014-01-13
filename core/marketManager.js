@@ -48,6 +48,7 @@ Manager.prototype.start = function() {
 }
 
 Manager.prototype.processSmallCandle = function(candle) {
+  console.log('processing 1m candle');
   this.emit('small candle', candle);
 
   if(this.state === 'relaying candles') {
