@@ -52,7 +52,7 @@ TradingMethod.prototype.update = function (candle) {
 TradingMethod.prototype.calculateEMAs = function (candle) {
   // the two EMAs
   _.each(['short', 'long'], function (type) {
-    this.ema[type].update(candle.p);
+    this.ema[type].update(candle.c);
   }, this);
   // the MACD
   this.calculateEMAdiff();
