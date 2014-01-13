@@ -61,6 +61,7 @@ Manager.prototype.processSmallCandle = function(candle) {
 
 Manager.prototype.relayHistory = function(history) {
   log.debug('relaying history');
+  this.relayCandles();
   this.state = 'relaying candles';
   this.emit('history', history);
 }
@@ -118,7 +119,6 @@ Manager.prototype.processHistoryState = function(history) {
     this.state = 'relaying candles';
     this.relayCandles();
   } else if(history.state === 'full') {
-    this.relayCandles();
     log.debug('full history available');
   } else if(history.empty) {
     log.info('No (recent) history found');

@@ -7,6 +7,17 @@
 //   on fetched trade data.
 // - Get candles out of a database.
 //
+// TODO:
+//
+//    This script does three things:
+//    - calculate 1m candles and add empty ones.
+//    - calculate what candle should go / come from
+//      what daily database.
+//    - communicates with the datastore (nedb)
+//      about inserts / gets.
+//
+//    These should live in 3 seperate modules.
+//
 // Notes:
 //
 //  - All candles are stored in daily format
@@ -23,11 +34,6 @@
 //    keep up with the trades coming in, this
 //    manager cannot tell that the data is
 //    corrupted. And thus assumes it is not.
-//  - The 1m candles are an internal datastructure
-//    (referred to as fake candles), when clients
-//    request candle data we convert the 1m
-//    candles on the fly to the desired X minute
-//    based candles (referred to as real candles).
 //
 // Known issues:
 //  - The manager is unable to correctly process
@@ -105,10 +111,13 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(Manager, EventEmitter);
 
 // return an array of moms representing all required
-Manager.prototype.requiredDays = function(timespan) {
+Manager.prototype.requiredDays = function(timespan, from) {
   var days = [];
 
-  var start = this.current.day.clone();
+  if(!from)
+    var start = this.current.day.clone();
+  else
+    var start = from.clone();
   var to = start.clone().subtract('m', timespan).startOf('day');
 
   while(start >= to) {
@@ -184,7 +193,7 @@ Manager.prototype.createDatabase = function(mom) {
 
 // load a daily database and store it in this.days
 Manager.prototype.loadDatabase = function(mom) {
-  if(mom.dayString in this.days)
+  if(mom.dayString in this.days && this.days[mom.dayString].mounted)
     return log.debug('Skipping loading', mom.dayString, ', it already exists');
 
   var filename = this.databaseName(mom);
@@ -448,30 +457,46 @@ Manager.prototype.calculateAdviceTime = function() {
   // we have partly history
   log.debug(
     'We don\'t have enough history yet, expecting to be done at',
-    this.startTime.clone().add('m', toFetch).format('YYYY-MM-DD HH:mm:ss'),
+    this.startTime.clone().add('m', toFetch + 1).startOf('minute').format('YYYY-MM-DD HH:mm:ss'),
     'UTC'
   );
 }
 
 // broadcast full history
 Manager.prototype.broadcastHistory = function() {
-  log.debug('going to broadcast history');
-  this.state = 'full history';
-
   var history = this.history;
 
   var last = this.mom(history.available.last.m);
   var first = this.mom(last.m.clone().subtract('m', history.timespan));
 
-  if(!equals(last.day, first.day))
-    return log.debug('required history spans multiple days, not supported yet');
+  log.debug('going to broadcast history');
+  this.state = 'full history';
 
-  if(!equals(last.day, this.current.day))
-    return log.debug('required history is not from today, not supported yet');
+  // get the required days in an array of moms
+  var days = this.requiredDays(history.timespan, last.m).reverse();
 
-  var emit = function(err, candles) {
-    if(err || !candles)
+  // get the candles for each required day
+  var iterator = function(mom, next) {
+    var from = 0;
+    var to = MINUTES_IN_DAY;
+
+    if(equals(mom.day, last.day))
+      // on first (most recent) day 
+      to = last.minute;
+
+    if(equals(mom.day, first.day))
+      // on last (oldest) day
+      from = first.minute;
+
+    this.getCandles(mom, from, to, next);
+  }
+
+  // emit all candles together
+  var emit = function(err, batches) {
+    if(err || !batches)
       throw err;
+
+    var candles = _.flatten(batches);
 
     this.emit('history', {
       meta: {
@@ -482,15 +507,26 @@ Manager.prototype.broadcastHistory = function() {
     });
   }
 
-  this.getCandles(first.minute, last.minute, _.bind(emit, this));
+  async.map(
+    days,
+    _.bind(iterator, this),
+    _.bind(emit, this)
+  );
 }
 
-// grab candles in current day (from start to to)
-Manager.prototype.getCandles = function(from, to, cb) {
-  this.days[this.current.dayString].handle.find({
+// grab candles in a specific day
+// 
+// mom = day representation of day to fetch from
+// from = start candle in minutes
+// to = end candle in minutes
+// cb = callback
+Manager.prototype.getCandles = function(mom, from, to, cb) {
+  this.loadDatabase(mom);
+
+  this.days[mom.dayString].handle.find({
     s: {
       $lte: to,
-      $gt: from  
+      $gte: from  
     }
   }, cb);
 }
