@@ -1,16 +1,8 @@
 # Gekko
 
-*The point is ladies and gentlemen that greed, for lack of a better word, is good.*
+## Important note -  jan 2014
 
-![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
-
--Gordon Gekko
-
-Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
-
-## Update jan 2014:
-
-This project is far from dead! We are working on a new version which has a lot more capabilities:
+We are working on a new version of Gekko. **I won't update the stable branch (the one you are looking at) anymore, all new functionality goes into the new version**. The new version has a lot more capabilities:
 
 - A datastore that persists data to disk so we don't rely on either exchange APIs providing historical data (almost all exchanges are dropping this support) or third parties (like bitcoincharts). This means support for altcoin markets :).
 - A new [actor system](https://github.com/askmike/gekko/blob/localDB/docs/internals/Actors.md) that makes it trivial to add new modules to Gekko that respond to events (market events or trading advice).
@@ -24,8 +16,17 @@ After that we are thinking about:
 
 - [webbased GUI](http://askmike.org/stuff/webgekko.jpg).
 - More trading methods (using talib for example).
+- Use a datastore of your choice (like a database etc).
 
 Join the discussion and help out!
+
+*The point is ladies and gentlemen that greed, for lack of a better word, is good.*
+
+![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
+
+-Gordon Gekko
+
+Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it will feature multiple trading methods using technical analysis (at this moment it only knows EMA). It can monitor the live market or backtest strategies on historical data.
 
 ## Main features
 
