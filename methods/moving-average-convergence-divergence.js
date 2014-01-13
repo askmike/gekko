@@ -21,6 +21,8 @@ var TradingMethod = function () {
   this.currentTrend = 'none';
   this.trendDuration = 0;
 
+  this.historySize = config.tradingAdvisor.historySize;
+
   this.diff;
   this.ema = {
     short: new EMA(settings.short),
@@ -33,19 +35,13 @@ var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
 
-TradingMethod.prototype.init = function(history) {
-  _.each(history.candles, function (candle) {
-    this.calculateEMAs(candle);
-  }, this);
-
-  this.lastCandle = _.last(history.candles);
-  this.log();
-  this.calculateAdvice();
-}
-
 TradingMethod.prototype.update = function (candle) {
   this.lastCandle = candle;
   this.calculateEMAs(candle);
+
+  if(this.ema.short.age < this.historySize)
+    return;
+
   this.log();
   this.calculateAdvice();
 }
@@ -54,11 +50,13 @@ TradingMethod.prototype.update = function (candle) {
 // add a price and calculate the EMAs and
 // the diff for that price
 TradingMethod.prototype.calculateEMAs = function (candle) {
+  // the two EMAs
   _.each(['short', 'long'], function (type) {
     this.ema[type].update(candle.p);
   }, this);
+  // the MACD
   this.calculateEMAdiff();
-
+  // the signal
   this.ema['signal'].update(this.diff);
 }
 
@@ -77,7 +75,7 @@ TradingMethod.prototype.log = function () {
   log.debug('\t', 'macdiff:', (macd - signal).toFixed(digits));  
 }
 
-
+// @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
 TradingMethod.prototype.calculateEMAdiff = function () {
   var shortEMA = this.ema.short.result;
   var longEMA = this.ema.long.result;
@@ -86,41 +84,40 @@ TradingMethod.prototype.calculateEMAdiff = function () {
 }
 
 TradingMethod.prototype.calculateAdvice = function () {
-  var digits = 8;
+  var macd = this.diff;
+  var price = this.lastCandle.c;
+  var long = this.ema.long.result;
+  var short = this.ema.short.result;
+  var signal = this.ema.signal.result;
+  var macddiff = macd - signal;
 
-  var macd = this.diff,
-    price = this.lastCandle.c.toFixed(digits),
-    long = this.ema.long.result.toFixed(digits),
-    short = this.ema.short.result.toFixed(digits),
-    signal = this.ema.signal.result,
-    macddiff = macd - signal;
-
-// following figures are all percentages so less digits needed
-    digits = 3;
-    macddiff = macddiff.toFixed(digits);
-    signal = signal.toFixed(digits);
-
-  if(typeof price === 'string')
-    price = parseFloat(price);
-
-  if(config.normal.exchange !== 'cexio')
-    price = price.toFixed(3);
-
-  var message = '@ P:' + price + ' (L:' + long + ', S:' + short + ', M:' + macd + ', s:' + signal + ', D:' + macddiff + ')';
-
-  if(config.backtest.enabled)
-    message += '\tat \t' + moment.unix(this.currentTimestamp).format('YYYY-MM-DD HH:mm:ss');
+  var message = [
+    '@ P:',
+    price.toFixed(3),
+    ' (L:',
+    long.toFixed(3),
+    ', S:',
+    short.toFixed(3),
+    ', M:',
+    macd.toFixed(3),
+    ', s:',
+    signal.toFixed(3),
+    ', D:',
+    macddiff.toFixed(3),
+    ')'
+    ].join('');
 
   if(macddiff > settings.buyThreshold) {
 
-    if (this.currentTrend === 'down') this.trendDuration = 0;
+    if(this.currentTrend === 'down')
+      this.trendDuration = 0;
 
     this.trendDuration += 1;
 
-    if (this.trendDuration < settings.persistence )
+    if(this.trendDuration < settings.persistence )
       this.currentTrend = 'PendingUp';
 
-    if ((this.currentTrend !== 'up') && (this.trendDuration >= settings.persistence)) {
+    if(this.currentTrend !== 'up' && this.trendDuration >= settings.persistence) {
         this.currentTrend = 'up';
         this.advice('long');
         message = 'MACD advice - BUY' + message;
@@ -130,13 +127,13 @@ TradingMethod.prototype.calculateAdvice = function () {
     
   } else if(macddiff < settings.sellThreshold) {
 
-    if (this.currentTrend === 'up') this.trendDuration = 0;
+    if(this.currentTrend === 'up') this.trendDuration = 0;
 
-    this.trendDuration += 1
-    if (this.trendDuration < settings.persistence )
+    this.trendDuration += 1;
+    if(this.trendDuration < settings.persistence )
        this.currentTrend = 'PendingDown';
 
-    if ((this.currentTrend !== 'down')  && (this.trendDuration >= settings.persistence)) {
+    if(this.currentTrend !== 'down' && this.trendDuration >= settings.persistence) {
         this.currentTrend = 'down';
         this.advice('short');
         message = 'MACD Advice - SELL' + message;
@@ -150,12 +147,9 @@ TradingMethod.prototype.calculateAdvice = function () {
     // Trend has ended so reset counter
     this.trendDuration = 0;
   }
-  if(settings.verbose) 
-    log.info('MACD:' + message + ', Trend: ' + this.currentTrend + ', Duration: ' + this.trendDuration);
-
 }
 
-TradingMethod.prototype.advice = function (newPosition) {
+TradingMethod.prototype.advice = function(newPosition) {
   if(!newPosition)
     return this.emit('soft advice');
 
