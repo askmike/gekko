@@ -22,11 +22,11 @@ var Trader = function(config) {
   _.bindAll(this);
 }
 
-Trader.prototype.getTrades = function getTrades(since, callback, descending) {
+Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
     if(err || !trades || trades.length === 0)
-      return this.retry(this.getTrades, args);
+      return this.retry(this.getTrades, args, err);
 
     var f = parseFloat;
 
@@ -86,19 +86,9 @@ Trader.prototype.sell = function(amount, price, callback) {
   this.cexio.place_order('sell', amount, price, _.bind(set, this));
 }
 
-// This function will return the name of a non-anonymous
-// function. This is used to identify what method we're
-// retrying.
-var functionName = function (func) {
-  var name = func.toString();
-  name = name.substr("function ".length);
-  name = name.substr(0, name.indexOf("("));
-  return name;
-};
-
-Trader.prototype.retry = function(method, args) {
+Trader.prototype.retry = function(method, args, err) {
   var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..', functionName(method));
+  log.debug(this.name, 'returned an error, retrying..', err);
 
   if (!_.isFunction(method)) {
     log.error(this.name, 'failed to retry, no method supplied.');
@@ -122,11 +112,11 @@ Trader.prototype.retry = function(method, args) {
   );
 }
 
-Trader.prototype.getPortfolio = function getPortfolio(callback) {
+Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var calculate = function(err, data) {
     if(err)
-      return this.retry(this.getPortfolio, args);
+      return this.retry(this.getPortfolio, args, err);
 
     currency = parseFloat(data.BTC.available)
     if(parseFloat(data.BTC.orders)){
