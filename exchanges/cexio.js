@@ -90,7 +90,7 @@ Trader.prototype.retry = function(method, args) {
   var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
 
-  if (typeof(method) === 'undefined') {
+  if (!_.isFunction(method)) {
     log.error(this.name, 'failed to retry, no method supplied.');
     return;
   }
@@ -113,9 +113,10 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
   var calculate = function(err, data) {
     if(err)
-      return this.retry(this.cexio.getInfo, calculate);
+      return this.retry(this.getPortfolio, args);
 
     currency = parseFloat(data.BTC.available)
     if(parseFloat(data.BTC.orders)){
@@ -125,7 +126,7 @@ Trader.prototype.getPortfolio = function(callback) {
     if( parseFloat(data.GHS.orders)){
 	  assets -= parseFloat(data.GHS.orders);
     }
-	
+
     var portfolio = [];
     portfolio.push({name: 'BTC', amount: currency});
     portfolio.push({name: 'GHS', amount: assets});
