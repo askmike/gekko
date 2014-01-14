@@ -15,6 +15,7 @@ var Actor = function() {
   });
 
   this.bot.addListener("message", this.verifyQuestion);
+  this.bot.addListener("error", this.logError);
 
   this.advice = 'Dont got one yet :(';
   this.adviceTime = utc();
@@ -143,6 +144,10 @@ Actor.prototype.emitRealAdvice = function() {
 
   this.bot.say(ircbot.channel, _.first(_.shuffle(realAdvice)));
 }
+
+Actor.prototype.logError = function(message) {
+  log.error('IRC ERROR:', message);
+};
 
 
 module.exports = Actor;
