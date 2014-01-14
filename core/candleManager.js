@@ -234,7 +234,7 @@ Manager.prototype.databaseExists = function(day) {
     // we have a mom instead
     day.filename = this.databaseName(day);
 
-  return fs.existsSync(day.filename)
+  return fs.existsSync(day.filename);
 }
 
 // calculate stats of a daily database and store state
@@ -906,20 +906,9 @@ Manager.prototype.increaseDay = function() {
   log.debug('shifting past midnight');
 
   // unload old day
-  this.unloadDay();
+  this.unloadDay(this.current.dayString);
 
   this.setDay(this.current.day.clone().add('d', 1));
-
-  // if we are shifting to a new day AND we already
-  // have data for the new day, we are going to
-  // mark it as corrupt
-  if(this.databaseExists(this.current.day)) {
-    log.debug('Database', this.current.dayString, 'already exists, marking as corrupt');
-    this.loadDatabase(this.current);
-
-    var toDelete = !this.days[this.current.dayString].empty;
-    this.deleteDay(this.days[this.current.dayString], toDelete);
-  }
 }
 
 Manager.prototype.finishInsert = function(err, results) {
