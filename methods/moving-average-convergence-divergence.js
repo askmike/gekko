@@ -80,7 +80,7 @@ TradingMethod.prototype.calculateEMAdiff = function () {
   var shortEMA = this.ema.short.result;
   var longEMA = this.ema.long.result;
 
-  this.diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
+  this.diff = shortEMA - longEMA;
 }
 
 TradingMethod.prototype.calculateAdvice = function () {
