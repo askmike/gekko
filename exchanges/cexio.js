@@ -88,7 +88,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.retry = function(method, args, err) {
   var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..', err);
+  log.debug(this.name, 'returned an error, retrying..', err, 'waiting for', wait, 'ms');
 
   if (!_.isFunction(method)) {
     log.error(this.name, 'failed to retry, no method supplied.');
