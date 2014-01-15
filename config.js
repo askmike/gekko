@@ -140,7 +140,8 @@ config.redisBeacon = {
   ]
 }
 
-
+// not in a working state
+// read: https://github.com/askmike/gekko/issues/156
 config.webserver = {
   enabled: false,
   ws: {
