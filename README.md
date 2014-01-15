@@ -9,11 +9,7 @@ You are looking at the new and completetly different version of Gekko that is be
 
 ## What we hope does work
 
-- Give either EMA or MACD advice: in the config, [set method](https://github.com/askmike/gekko/blob/localDB/config.js#L19) to either MACD or EMA and configure the [EMA](https://github.com/askmike/gekko/blob/localDB/config.js#L25-L34) or [MACD](https://github.com/askmike/gekko/blob/localDB/config.js#L37-L51) settings like you want.
-- Mail the advice to you if you [configured the emailer](https://github.com/askmike/gekko/blob/localDB/config.js#L66-L82).
-- Simulate trading if you configured the [simulator](https://github.com/askmike/gekko/blob/localDB/config.js#L101-L115).
-- Create an IRC bot if you configured the [ircbot](https://github.com/askmike/gekko/blob/localDB/config.js#L121-L127).
-- [advanced] emit events over redis pubsub if you configured [it](https://github.com/askmike/gekko/blob/localDB/config.js#L129-L142)
+** Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.**
 
 Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new version is considered stable.
 
@@ -53,12 +49,12 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (this is automated trading and paper trading). Gekko also stores the market data it sees so you can run the trading methods (and simulate trades) on a set of historical data to see whether they would have been profitable during that time (this is called backtesting).
 
-Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) will not trade more than a couple of times per week.
+Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
 So Gekko is not:
 
-- A trading platform for real traders with a GUI and charts.
-- A High frequency trading bot designed to operate on the < minute range.
+- A trading platform for human day traders with a GUI and charts.
+- A High frequency trading bot designed to operate on < minute resolution.
 
 ## Installing Gekko
 
@@ -75,7 +71,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
 ## Configuring Gekko
 
-To change the settings, open up and edit [config.js](https://github.com/askmike/gekko/blob/master/config.js) to change the parameters. Check out doc on [Configuring Gekko](https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md) where everything is explained in more detail.
+Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md).
 
 ## Running Gekko
 
@@ -83,7 +79,7 @@ To run the bot you just have to start Gekko:
 
     node gekko
 
-You can also run Gekko silently, for examples on how to do this check out the [advanced features](https://github.com/askmike/gekko/blob/master/docs/Advanced_features.md).
+You can also run Gekko silently, for examples on how to do this check out the [advanced features](https://github.com/askmike/gekko/tree/localDB/docs/Advanced_features.md).
 
 ## Updating Gekko
 

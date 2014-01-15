@@ -9,10 +9,7 @@
 var moment = require('moment');
 var fmt = require('util').format;
 var _ = require('lodash');
-var util = require('./util.js');
-var config = util.getConfig();
-var debug = config.debug;
-
+var debug = require('./util').getConfig().debug;
 
 var Log = function() {
   _.bindAll(this);

@@ -1,15 +1,3 @@
-/*
-  
-  This method uses `Exponential Moving Average crossovers` to determine the current trend the
-  market is in. Using this information it will suggest to ride the trend. Note that this is
-  not MACD because it just checks whether the longEMA and shortEMA are [threshold]% removed
-  from eachother.
-
-  This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo.
-
-  @link https://bitcointalk.org/index.php?topic=60501.0
- */
-
 // helpers
 var moment = require('moment');
 var _ = require('lodash');
