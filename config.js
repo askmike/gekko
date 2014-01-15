@@ -16,7 +16,7 @@ config.history = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'EMA',
+  method: 'PPO',
   candleSize: 5,
   historySize: 20
 }
@@ -35,8 +35,6 @@ config.EMA = {
 
 // MACD settings:
 config.MACD = {
-  // timeframe per candle
-  interval: 1, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
@@ -47,6 +45,22 @@ config.MACD = {
   buyThreshold: 0.025,
   // How many candle intervals until trigger fires
   persistence: 5
+};
+
+// PPO settings:
+config.PPO = {
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 12,
+  long: 26,
+  signal: 9,
+  // the difference between the EMAs (to act as triggers)
+  sellThreshold: -0.3,
+  buyThreshold: 0.3,
+  // How many candle intervals until trigger fires
+  persistence: 1,
+  // Provide debugging output / verbose output
+  verbose: true
 };
 
 // Monitor the live market

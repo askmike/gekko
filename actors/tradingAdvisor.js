@@ -7,7 +7,8 @@ var config = util.getConfig();
 
 var methods = {
   'MACD': 'moving-average-convergence-divergence',
-  'EMA': 'exponential-moving-average-crossovers'
+  'EMA': 'exponential-moving-average-crossovers',
+  'PPO': 'percentage-price-oscillator'
 }
 
 var Actor = function() {
