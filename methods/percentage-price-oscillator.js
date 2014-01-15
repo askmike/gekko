@@ -59,7 +59,7 @@ TradingMethod.prototype.calculateEMAs = function (candle) {
   // the MACD and PPO
   this.calculatePPO();
   // the signal
-  this.ema['macdSignal'].update(this.ppo);
+  this.ema['macdSignal'].update(this.macd);
   this.ema['ppoSignal'].update(this.ppo);
 }
 
