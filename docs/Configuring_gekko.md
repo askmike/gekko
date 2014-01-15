@@ -13,7 +13,7 @@ Configuring Gekko consists of three parts:
 It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice / price information and other stuff is based on this market. A market is a currency/asset pair on a supported exchange. Examples are:
 
 - USD/BTC on Mt. Gox
-- BTC/USD on BTC-e
+- USD/BTC on BTC-e
 - BTC/LTC on BTC-e
 - BTC/GHS on CEX.io
 
