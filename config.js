@@ -16,7 +16,7 @@ config.history = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'PPO',
+  method: 'EMA',
   candleSize: 5,
   historySize: 20
 }
@@ -29,8 +29,8 @@ config.EMA = {
   long: 21,
   // amount of candles to remember and base initial EMAs on
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.1,
-  buyTreshold: 0.1
+  sellTreshold: -0.025,
+  buyTreshold: 0.025
 };
 
 // MACD settings:
