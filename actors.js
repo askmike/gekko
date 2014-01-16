@@ -67,19 +67,19 @@ var actors = [
     }]
   },
   {
-    name: 'Profit Simulator',
-    description: 'Paper trader that logs fake profits.',
-    slug: 'profitSimulator',
-    async: false,
-    silent: false,
-    modes: ['realtime', 'backtest']
-  },
-  {
     name: 'Advice logger',
     description: '',
     slug: 'adviceLogger',
     async: false,
     silent: true,
+    modes: ['realtime', 'backtest']
+  },
+  {
+    name: 'Profit Simulator',
+    description: 'Paper trader that logs fake profits.',
+    slug: 'profitSimulator',
+    async: false,
+    silent: false,
     modes: ['realtime', 'backtest']
   },
   {

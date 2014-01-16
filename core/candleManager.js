@@ -220,12 +220,12 @@ Manager.prototype.loadDatabase = function(mom) {
   if(!this.databaseExists(day))
     return;
 
+  day.mounted = true;
+  day.exists = true;
   // neDB will throw if the DB is invalid
   // 
   // https://github.com/louischatriot/nedb/issues/117
   try {
-    day.mounted = true;
-    day.exists = true;
     day.handle = new nedb({filename: filename, autoload: true});
   } catch(e) {
     util.die('Database file ' + filename + ' is corrupt, delete or rename that file and try again.');

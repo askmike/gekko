@@ -11,6 +11,9 @@ var Logger = function() {
 
   _.bindAll(this);
 
+  this.historySize = config.tradingAdvisor.historySize;
+  this.historyReceived = 0;
+
   this.verbose = calcConfig.verbose;
   this.fee = 1 - calcConfig.fee / 100;
 
@@ -47,8 +50,22 @@ Logger.prototype.extractFee = function(amount) {
   return amount;
 }
 
+Logger.prototype.round = function(amount) {
+  return amount.toFixed(5);
+}
+
 Logger.prototype.processTrade = function(trade) {
   this.price = trade.price;
+
+  if(!this.start.balance)
+    this.calculateStartBalance()
+}
+
+Logger.prototype.calculateStartBalance = function() {
+  if(this.reportInCurrency)
+    this.start.balance = this.start.currency + this.price * this.start.asset;
+  else
+    this.start.balance = this.start.asset + this.start.currency / this.price;
 }
 
 // after every succesfull trend ride we hopefully end up 
@@ -57,54 +74,83 @@ Logger.prototype.processTrade = function(trade) {
 Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
 
-  var price = this.price;
   var what = advice.recommandation;
-
-  // first time calculate the virtual account balance
-  if(!this.start.balance) {
-    if(this.reportInCurrency)
-      this.start.balance = this.start.currency + price * this.start.asset;
-    else
-      this.start.balance = this.start.asset + this.start.currency / price;
-  }
 
   // virtually trade all USD to BTC at the current price
   if(what === 'long') {
-    this.current.asset += this.extractFee(this.current.currency / price);
+    this.current.asset += this.extractFee(this.current.currency / this.price);
     this.current.currency = 0;
     this.trades++;
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
-    this.current.currency += this.extractFee(this.current.asset * price);
+    this.current.currency += this.extractFee(this.current.asset * this.price);
     this.current.asset = 0;
     this.trades++;
   }
 
+  // without verbose we report after round trip (buy-sell)
+  if(!this.verbose && what === 'short' && !config.backtest.enabled)
+    this.report();
+}
+
+// with verbose we report after every new candle
+if(calcConfig.verbose)
+ Logger.prototype.processCandle = function() {
+  // skip on history
+  if(++this.historyReceived < this.historySize)
+    return;
+
+  this.report();
+ } 
+
+Logger.prototype.report = function(timespan) {
   if(this.reportInCurrency)
-    this.current.balance = this.current.currency + price * this.current.asset;
+    this.current.balance = this.current.currency + this.price * this.current.asset;
   else
-    this.current.balance = this.current.asset + this.current.currency / price;
+    this.current.balance = this.current.asset + this.current.currency / this.price;
 
   this.profit = this.current.balance - this.start.balance;
   this.relativeProfit = this.current.balance / this.start.balance * 100 - 100;
 
-  if(this.tracks === 1)
-    return;
+  log.info(
+    '(PROFIT REPORT)',
+    'original simulated balance:\t',
+    this.round(this.start.balance),
+    this.reportIn
+  );
 
-  if(!this.verbose && what === 'short' && !config.backtest.enabled)
-    this.report();
-  else if(this.verbose && !config.backtest.enabled)
-    this.report();
+  log.info(
+    '(PROFIT REPORT)',
+    'current simulated balance:\t',
+    this.round(this.current.balance),
+    this.reportIn
+  );
+
+  log.info(
+    '(PROFIT REPORT)',
+    'simulated profit:\t\t',
+    this.round(this.profit),
+    this.reportIn,
+    '(' + this.round(this.relativeProfit) + '%)'
+  );
+
+  if(timespan) {
+    var timespanPerYear = 356 / timespan;
+
+    log.info(
+      '(PROFIT REPORT)',
+      'simulated yearly profit:\t',
+      this.round(this.profit * timespanPerYear),
+      this.reportIn,
+      '(' + this.round(this.relativeProfit * timespanPerYear) + '%)'
+    );
+  }
 }
 
 // finish up stats for backtesting
 Logger.prototype.finish = function(data) {
-  var round = function(amount) {
-    return amount.toFixed(6);
-  }
-
   console.log();
   console.log();
   
@@ -154,7 +200,7 @@ Logger.prototype.finish = function(data) {
   log.info(
     '(PROFIT REPORT)',
     'Buy and Hold profit:\t\t',
-    round((data.end - data.start) / data.start * 100) + '%'
+    this.round((data.end - data.start) / data.start * 100) + '%'
   );
 
   console.log();
@@ -166,46 +212,6 @@ Logger.prototype.finish = function(data) {
   );
 
   this.report(timespan);
-}
-
-Logger.prototype.report = function(timespan) {
-  var round = function(amount) {
-    return amount.toFixed(6);
-  }
-
-  log.info(
-    '(PROFIT REPORT)',
-    'original simulated balance:\t',
-    round(this.start.balance),
-    this.reportIn
-  );
-
-  log.info(
-    '(PROFIT REPORT)',
-    'current simulated balance:\t',
-    round(this.current.balance),
-    this.reportIn
-  );
-
-  log.info(
-    '(PROFIT REPORT)',
-    'simulated profit:\t\t',
-    round(this.profit),
-    this.reportIn,
-    '(' + round(this.relativeProfit) + '%)'
-  );
-
-  if(timespan) {
-    var timespanPerYear = 356 / timespan;
-
-    log.info(
-      '(PROFIT REPORT)',
-      'simulated yearly profit:\t',
-      round(this.profit * timespanPerYear),
-      this.reportIn,
-      '(' + round(this.relativeProfit * timespanPerYear) + '%)'
-    );
-  }
 }
 
 
