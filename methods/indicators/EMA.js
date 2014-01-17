@@ -9,7 +9,7 @@ var Indicator = function(weight) {
 Indicator.prototype.update = function(price) {
   // The first time we can't calculate based on previous
   // ema, because we haven't calculated any yet.
-  if(!this.result)
+  if(this.result === false)
     this.result = price;
 
   this.age++;

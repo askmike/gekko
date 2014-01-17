@@ -8,8 +8,6 @@ var Indicator = function(config) {
   this.signal = new EMA(config.signal);
 }
 
-// add a price and calculate the EMAs and
-// the diff for that price
 Indicator.prototype.update = function(price) {
   this.short.update(price);
   this.long.update(price);
@@ -18,7 +16,6 @@ Indicator.prototype.update = function(price) {
   this.result = this.diff - this.signal.result;
 }
 
-// @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
 Indicator.prototype.calculateEMAdiff = function() {
   var shortEMA = this.short.result;
   var longEMA = this.long.result;
