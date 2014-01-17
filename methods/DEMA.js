@@ -1,28 +1,20 @@
 // helpers
-var moment = require('moment');
 var _ = require('lodash');
-var util = require('../core/util.js');
 var Util = require('util');
 var log = require('../core/log.js');
 
-var config = util.getConfig();
+var config = require('../core/util.js').getConfig();
 var settings = config.DEMA;
 
 // required indicators
-var EMA = require('./indicators/EMA.js');
+var DEMA = require('./indicators/DEMA.js');
 
 var TradingMethod = function() {
   _.bindAll(this);
 
   this.currentTrend;
-
   this.historySize = config.tradingAdvisor.historySize;
-
-  this.diff;
-  this.ema = {
-    short: new EMA(settings.short),
-    long: new EMA(settings.long)
-  };
+  this.dema = new DEMA(settings);
 }
 
 // teach our trading method events
@@ -31,47 +23,31 @@ var EventEmitter = require('events').EventEmitter;
 Util.inherits(TradingMethod, EventEmitter);
 
 TradingMethod.prototype.update = function(candle) {
-  this.lastCandle = candle;
-  this.calculateEMAs(candle);
+  var price = candle.c;
 
-  if(this.ema.short.age < this.historySize)
+  this.lastPrice = price;
+  this.dema.update(price);
+
+  if(this.dema.short.age < this.historySize)
     return;
 
   this.log();
   this.calculateAdvice();
 }
 
-// add a price and calculate the EMAs and
-// the diff for that price
-TradingMethod.prototype.calculateEMAs = function(candle) {
-  _.each(['short', 'long'], function(type) {
-    this.ema[type].update(candle.c);
-  }, this);
-  this.calculateEMAdiff();
-}
-
 // for debugging purposes: log the last calculated
 // EMAs and diff.
 TradingMethod.prototype.log = function() {
-  log.debug('calced EMA properties for candle:');
-  _.each(['short', 'long'], function(e) {
-    log.debug('\t', e, 'ema:', this.ema[e].result.toFixed(8));
-  }, this);
-  log.debug('\t diff:', this.diff.toFixed(5));
-  log.debug('\t ema age:', this.ema.short.age, 'candles');
-}
-
-// @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
-TradingMethod.prototype.calculateEMAdiff = function() {
-  var shortEMA = this.ema.short.result;
-  var longEMA = this.ema.long.result;
-
-  this.diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
+  log.debug('calculated DEMA properties for candle:');
+  log.debug('\t', 'long ema:', this.dema.long.result.toFixed(8));
+  log.debug('\t', 'short ema:', this.dema.short.result.toFixed(8));
+  log.debug('\t diff:', this.dema.result.toFixed(5));
+  log.debug('\t DEMA age:', this.dema.short.age, 'candles');
 }
 
 TradingMethod.prototype.calculateAdvice = function() {
-  var diff = this.diff;
-  var price = this.lastCandle.c;
+  var diff = this.dema.result;
+  var price = this.lastPrice;
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
 
