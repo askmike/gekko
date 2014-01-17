@@ -1,6 +1,3 @@
-// helpers
-var _ = require('lodash');
-
 // required indicators
 var EMA = require('./EMA.js');
 
