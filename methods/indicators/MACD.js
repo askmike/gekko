@@ -15,6 +15,7 @@ Indicator.prototype.update = function(price) {
   this.long.update(price);
   this.calculateEMAdiff();
   this.signal.update(this.diff);
+  this.result = this.diff - this.signal.result;
 }
 
 // @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
@@ -22,7 +23,7 @@ Indicator.prototype.calculateEMAdiff = function() {
   var shortEMA = this.short.result;
   var longEMA = this.long.result;
 
-  this.diff = 100 * (shortEMA - longEMA) / ((shortEMA + longEMA) / 2);
+  this.diff = shortEMA - longEMA;
 }
 
 module.exports = Indicator;

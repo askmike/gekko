@@ -49,13 +49,14 @@ TradingMethod.prototype.log = function() {
   var digits = 8;
   var macd = this.macd.diff;
   var signal = this.macd.signal.result;
+  var result = this.macd.result;
 
   log.debug('calced MACD properties for candle:');
   log.debug('\t', 'short:', this.macd.short.result.toFixed(digits));
   log.debug('\t', 'long:', this.macd.long.result.toFixed(digits));
   log.debug('\t', 'macd:', macd.toFixed(digits));
   log.debug('\t', 'signal:', signal.toFixed(digits));
-  log.debug('\t', 'macdiff:', (macd - signal).toFixed(digits));  
+  log.debug('\t', 'macdiff:', result.toFixed(digits));  
 }
 
 TradingMethod.prototype.calculateAdvice = function() {
@@ -64,7 +65,7 @@ TradingMethod.prototype.calculateAdvice = function() {
   var long = this.macd.long.result;
   var short = this.macd.short.result;
   var signal = this.macd.signal.result;
-  var macddiff = macd - signal;
+  var macddiff = this.macd.result;
 
   if(macddiff > settings.buyThreshold) {
 

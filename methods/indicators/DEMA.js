@@ -1,4 +1,4 @@
-) required indicators
+// required indicators
 var EMA = require('./EMA.js');
 
 var Indicator = function(config) {
