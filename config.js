@@ -183,7 +183,7 @@ config.webserver = {
 
 // not working, leave as is
 config.debug = {
-  enabled: false;
+  enabled: false
 }
 
 module.exports = config;
