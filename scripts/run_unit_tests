@@ -3,7 +3,6 @@
 var nodeunit = require('nodeunit');
 var reporter = nodeunit.reporters.default;
 reporter.run([
-  'test/candleStore.js',
   'test/day.js',
   'test/indicators.js',
   'test/tradeFetcher.js'
