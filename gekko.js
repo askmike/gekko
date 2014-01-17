@@ -27,6 +27,12 @@ var log = require(coreDir + 'log');
 
 var config = util.getConfig();
 
+// temp at Fri Jan 17 16:00:19 CET 2014
+if(config.normal)
+  util.die('Please update your config! config.normal is now called config.watch');
+if(config.EMA)
+  util.die('Please update your config! EMA is now called DEMA');
+
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 var gekkoMode = 'realtime';

@@ -47,7 +47,7 @@ TradingMethod.prototype.log = function () {
   var short = this.ppo.short.result;
   var long = this.ppo.long.result;
   var macd = this.ppo.macd;
-  var ppo = this.ppo.result;
+  var ppo = this.ppo.ppo;
   var macdSignal = this.ppo.MACDsignal.result;
   var ppoSignal = this.ppo.PPOsignal.result;
 

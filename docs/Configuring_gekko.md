@@ -22,23 +22,17 @@ It all starts with deciding which market you want Gekko to monitor, Gekko watche
 Open up the config.js file inside the Gekko directory with a text editor and search for these lines:
 
     // Monitor the live market
-    config.normal = {
+    config.watch = {
       enabled: true,
       exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
       currency: 'USD',
-      asset: 'BTC',
-      tradingEnabled: false,
-      key: 'your-key',
-      secret: 'your-secret',
-      username: 0, // your username, only fill in when using bitstamp or cexio
+      asset: 'BTC'
     }
 
-- enabled tells gekko it should monitor a market~~, disable for backtesting.~~
+- enabled tells gekko it should monitor a market, ~~disable for backtesting.~~
 - exchange tells Gekko what exchange this market is on, check in supported markets what exchanges are supported.
 - currency tells Gekko what currency the market you want has*.
 - asset tells Gekko what currency the market you want has*.
-
-**The rest of the config eg. real trading is disabled as this branch is not stable, this means you DON'T need to fill in your API keys / username.**
 
 *Even though Bitcoin is a currency Gekko treats is like an asset when you are trading USD/BTC.
 
@@ -70,7 +64,7 @@ If you want Gekko to provide automated trading advice you need to configure this
 
 Gekko supports a number of technical analysis indicators, currently it supports:
 
-- DEMA (called EMA)
+- DEMA
 - MACD
 - PPO
 
@@ -78,7 +72,7 @@ Open up the config.js file again and look at this part:
 
     config.tradingAdvisor = {
       enabled: true,
-      method: 'EMA',
+      method: 'DEMA',
       candleSize: 5,
       historySize: 20
     }
@@ -105,7 +99,7 @@ This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo
 
 You can configure these parameters for DEMA in config.js:
 
-    config.EMA = {
+    config.DEMA = {
       // EMA weight (α)
       // the higher the weight, the more smooth (and delayed) the line
       short: 10,

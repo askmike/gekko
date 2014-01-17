@@ -4,7 +4,7 @@
 var config = {};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                           NORMAL ZONE
+//                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Gekko stores historical history
@@ -13,6 +13,23 @@ config.history = {
   // and load historical data from?
   directory: './history/'
 }
+config.debug = true; // for additional logging / debugging
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                         WATCHING A MARKET
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Monitor the live market
+config.watch = {
+  enabled: true,
+  exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  currency: 'USD',
+  asset: 'BTC'
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING TRADING ADVICE
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 config.tradingAdvisor = {
   enabled: true,
@@ -63,16 +80,29 @@ config.PPO = {
   verbose: true
 };
 
-// Monitor the live market
-config.normal = {
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING PLUGINS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.adviceLogger = {
+  enabled: true
+}
+
+// do you want Gekko to calculate the profit of its own advice?
+config.profitSimulator = {
   enabled: true,
-  exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'USD',
-  asset: 'BTC',
-  tradingEnabled: false,
-  key: 'your-key',
-  secret: 'your-secret',
-  username: 0, // your username, only fill in when using bitstamp or cexio
+  // report the profit in the currency or the asset?
+  reportInCurrency: true,
+  // start balance, on what the current balance is compared with
+  simulationBalance: {
+    // these are in the unit types configured in the watcher.
+    asset: 1,
+    currency: 100,
+  },
+  // only want report after a sell? set to `false`.
+  verbose: false,
+  // how much fee in % does each trade cost?
+  fee: 0.6
 }
 
 // want Gekko to send a mail on buy or sell advice?
@@ -96,7 +126,11 @@ config.mailer = {
 
   tag: '[GEKKO] ',			// Prefix all EMail subject lines with this
 
-  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
+
+            //       ADVANCED MAIL SETTINGS
+            // you can leave those as is if you 
+            // want to use gmail
+
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.  
   smtpauth: true,			// Does SMTP server require authentication (true for GMail)
 					// The following 3 values default to the Email (above) if left blank
@@ -107,28 +141,6 @@ config.mailer = {
   port: '',				// Set if you don't want to use the default port 
   tls: false				// Use TLS if true
  
-}
-
-
-// do you want Gekko to calculate the profit of its own advice?
-config.profitSimulator = {
-  enabled: true,
-  // report the profit in the currency or the asset?
-  reportInCurrency: true,
-  // start balance, on what the current balance is compared with
-  simulationBalance: {
-    // these are in the unit types configured in the watcher.
-    asset: 1,
-    currency: 100,
-  },
-  // only want report after a sell? set to `false`.
-  verbose: false,
-  // how much fee in % does each trade cost?
-  fee: 0.6
-}
-
-config.adviceLogger = {
-  enabled: true
 }
 
 config.ircbot = {
@@ -166,79 +178,6 @@ config.webserver = {
     host: 'localhost',
     port: 1339,
   }
-
 }
-
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                           ADVANCED ZONE
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// Backtesting strategies against historical data
-//
-// Test a strategy on historical data
-//
-// Read here: https://github.com/askmike/gekko/blob/master/docs/Backtesting.md
-//
-//          NOTE: THIS FEATURE HAS NOT BEEN PROPERELY TESTED YET, IT IS NOT
-//                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
-//                UNTIL THE CODE HAS BEEN PROVED SOLID.
-config.backtest = {
-  enabled: false,
-  candleFile: 'candles.csv',
-  from: '2013-10-01 00:00:00', // YYYY-MM-DD HH:mm:ss
-  to: '2013-11-01 00:00:00' // YYYY-MM-DD HH:mm:ss
-}
-
-// For when you want to monitor a market but want to act (trade) on a different one
-// (or different ones).
-//
-// Check: https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
-
-// monitor what market?
-config.watch = {
-  exchange: 'MtGox',
-  currency: 'USD',
-  asset: 'BTC'
-}
-
-// real trading
-config.traders = [
-  {
-    exchange: 'MtGox',
-    key: '',
-    secret: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
-  },
-  {
-    exchange: 'BTCe',
-    key: '',
-    secret: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
-  },
-  {
-    exchange: 'Bitstamp',
-    user: '',
-    password: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
-  },
-  {
-    exchange: 'cex.io',
-    key: '',
-    secret: '',
-    currency: 'BTC',
-    asset: 'GHS',
-    enabled: false
-  }
-];
-
-config.debug = true; // for additional logging / debugging
 
 module.exports = config;
-
