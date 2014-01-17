@@ -4,25 +4,23 @@ var _ = require('lodash');
 
 var config = util.getConfig();
 
-
-var methods = {
-  'MACD': 'moving-average-convergence-divergence',
-  'EMA': 'exponential-moving-average-crossovers',
-  'PPO': 'percentage-price-oscillator'
-}
+var methods = [
+  'MACD',
+  'DEMA',
+  'PPO'
+];
 
 var Actor = function() {
   _.bindAll(this);
 
   var method = config.tradingAdvisor.method;
-  var fullMethod = methods[method];
 
-  if(!fullMethod)
+  if(!_.contains(methods, method))
     util.die('Gekko doesn\'t know the method' + method);
 
   log.info('\t', 'Using the trading method:' + method);
 
-  var Consultant = require('../methods/' + fullMethod);
+  var Consultant = require('../methods/' + method);
 
   this.method = new Consultant;
 }

@@ -1,6 +1,6 @@
 /*
   
-  PPO - cykedev 15/01/2014
+  MACD - DJM 31/12/2013
 
  */
 // helpers
@@ -11,9 +11,9 @@ var Util = require('util');
 var log = require('../core/log.js');
 
 var config = util.getConfig();
-var settings = config.PPO;
+var settings = config.MACD;
 
-var EMA = require('./indicators/exponantial-moving-average.js');
+var EMA = require('./indicators/EMA.js');
 
 var TradingMethod = function () {
   _.bindAll(this);
@@ -23,13 +23,11 @@ var TradingMethod = function () {
 
   this.historySize = config.tradingAdvisor.historySize;
 
-  this.macd;
-  this.ppo;
+  this.diff;
   this.ema = {
     short: new EMA(settings.short),
     long: new EMA(settings.long),
-    macdSignal: new EMA(settings.signal),
-    ppoSignal: new EMA(settings.signal)
+    signal: new EMA(settings.signal)
   };
 }
 
@@ -56,52 +54,42 @@ TradingMethod.prototype.calculateEMAs = function (candle) {
   _.each(['short', 'long'], function (type) {
     this.ema[type].update(candle.c);
   }, this);
-  // the MACD and PPO
-  this.calculatePPO();
+  // the MACD
+  this.calculateEMAdiff();
   // the signal
-  this.ema['macdSignal'].update(this.macd);
-  this.ema['ppoSignal'].update(this.ppo);
+  this.ema['signal'].update(this.diff);
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
 TradingMethod.prototype.log = function () {
   var digits = 8;
-  var macd = this.macd;
-  var ppo = this.ppo;
-  var macdSignal = this.ema.macdSignal.result;
-  var ppoSignal = this.ema.ppoSignal.result;
+  var macd = this.diff;
+  var signal = this.ema.signal.result;
 
   log.debug('calced MACD properties for candle:');
   log.debug('\t', 'short:', this.ema.short.result.toFixed(digits));
   log.debug('\t', 'long:', this.ema.long.result.toFixed(digits));
   log.debug('\t', 'macd:', macd.toFixed(digits));
-  log.debug('\t', 'macdsignal:', macdSignal.toFixed(digits));
-  log.debug('\t', 'machist:', (macd - macdSignal).toFixed(digits));
-  log.debug('\t', 'ppo:', ppo.toFixed(digits));
-  log.debug('\t', 'pposignal:', ppoSignal.toFixed(digits));
-  log.debug('\t', 'ppohist:', (ppo - ppoSignal).toFixed(digits));  
+  log.debug('\t', 'signal:', signal.toFixed(digits));
+  log.debug('\t', 'macdiff:', (macd - signal).toFixed(digits));  
 }
 
-// @link http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_pp
-TradingMethod.prototype.calculatePPO = function () {
+// @link https://github.com/virtimus/GoxTradingBot/blob/85a67d27b856949cf27440ae77a56d4a83e0bfbe/background.js#L145
+TradingMethod.prototype.calculateEMAdiff = function () {
   var shortEMA = this.ema.short.result;
   var longEMA = this.ema.long.result;
-  this.macd = shortEMA - longEMA;
-  this.ppo = 100 * (this.macd / longEMA);
+
+  this.diff = shortEMA - longEMA;
 }
 
 TradingMethod.prototype.calculateAdvice = function () {
-
+  var macd = this.diff;
   var price = this.lastCandle.c;
   var long = this.ema.long.result;
   var short = this.ema.short.result;
-  var macd = this.macd;
-  var ppo = this.ppo;
-  var macdSignal = this.ema.macdSignal.result;
-  var ppoSignal = this.ema.ppoSignal.result;
-  var macdHist = macd - macdSignal;
-  var ppoHist = ppo - ppoSignal;
+  var signal = this.ema.signal.result;
+  var macddiff = macd - signal;
 
   var message = [
     '@ P:',
@@ -112,20 +100,14 @@ TradingMethod.prototype.calculateAdvice = function () {
     short.toFixed(3),
     ', M:',
     macd.toFixed(3),
-    ', Ms:',
-    macdSignal.toFixed(3),
-    ', Mh:',
-    macdHist.toFixed(3),
-    ', P:',
-    ppo.toFixed(3),
-    ', Ps:',
-    ppoSignal.toFixed(3),
-    ', Ph:',
-    ppoHist.toFixed(3),
+    ', s:',
+    signal.toFixed(3),
+    ', D:',
+    macddiff.toFixed(3),
     ')'
     ].join('');
 
-  if(ppoHist > settings.buyThreshold) {
+  if(macddiff > settings.buyThreshold) {
 
     if(this.currentTrend === 'down')
       this.trendDuration = 0;
@@ -138,12 +120,12 @@ TradingMethod.prototype.calculateAdvice = function () {
     if(this.currentTrend !== 'up' && this.trendDuration >= settings.persistence) {
         this.currentTrend = 'up';
         this.advice('long');
-        message = 'PPO advice - BUY' + message;
+        message = 'MACD advice - BUY' + message;
     }
     else
       this.advice();
     
-  } else if(ppoHist < settings.sellThreshold) {
+  } else if(macddiff < settings.sellThreshold) {
 
     if(this.currentTrend === 'up') this.trendDuration = 0;
 
@@ -154,7 +136,7 @@ TradingMethod.prototype.calculateAdvice = function () {
     if(this.currentTrend !== 'down' && this.trendDuration >= settings.persistence) {
         this.currentTrend = 'down';
         this.advice('short');
-        message = 'PPO Advice - SELL' + message;
+        message = 'MACD Advice - SELL' + message;
     }
     else
       this.advice();

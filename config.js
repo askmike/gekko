@@ -16,13 +16,13 @@ config.history = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'EMA',
+  method: 'DEMA',
   candleSize: 5,
   historySize: 20
 }
 
 // Exponential Moving Averages settings:
-config.EMA = {
+config.DEMA = {
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,

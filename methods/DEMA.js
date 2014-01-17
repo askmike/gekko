@@ -6,10 +6,10 @@ var Util = require('util');
 var log = require('../core/log.js');
 
 var config = util.getConfig();
-var settings = config.EMA;
+var settings = config.DEMA;
 
 // required indicators
-var EMA = require('./indicators/exponantial-moving-average.js');
+var EMA = require('./indicators/EMA.js');
 
 var TradingMethod = function() {
   _.bindAll(this);
