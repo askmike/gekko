@@ -6,11 +6,13 @@
 // Acts as stream: takes
 // 1m candles as input
 // and emits bigger candles
+// 
+// input are transported candles.
 
 var _ = require('lodash');
 var Util = require('util');
 
-var Converter = function(candleSize, historySize) {
+var Converter = function(candleSize) {
   this.candleSize = candleSize;
   this.candles = [];
 }
@@ -18,8 +20,6 @@ var Converter = function(candleSize, historySize) {
 var Util = require('util');
 var EventEmitter = require('events').EventEmitter;
 Util.inherits(Converter, EventEmitter);
-
-var i = 0;
 
 Converter.prototype.write = function(candle) {
   this.candles.push(candle);
@@ -58,6 +58,8 @@ Converter.prototype.calculate = function() {
   else
     // empty candle
     candle.p = candle.o;
+
+  candle.start = first.start;
 
   return candle;
 }

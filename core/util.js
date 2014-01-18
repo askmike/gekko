@@ -10,7 +10,7 @@ var util = {
       return _config;
 
     var path = require('path');
-    var configFile = path.resolve(util.getArgument('config') || 'config.js');
+    var configFile = path.resolve(util.getArgument('config') || __dirname + '/../config.js');
     _config = require(configFile);
     return _config;
   },
