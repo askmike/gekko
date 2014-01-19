@@ -101,7 +101,7 @@ var Manager = function() {
     throw 'Gekko is unable to save historical data, do I have sufficient rights?';
 
   this.on('processed', function() {
-    log.info('Processed trades, sleeping for', this.fetch.next.m.fromNow(true) + '...');
+    log.debug('Processed trades, sleeping for', this.fetch.next.m.fromNow(true) + '...');
   })
     // .on('full history build', this.emitRealtime)
 };
