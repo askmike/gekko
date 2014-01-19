@@ -61,7 +61,7 @@ var async = require('async');
 
 var util = require('./util');
 var config = util.getConfig();
-var backtest = config.backtest;
+// var backtest = config.backtest;
 var tradingAdvisor = config.tradingAdvisor;
 
 var equals = util.equals;
@@ -82,9 +82,9 @@ var Manager = function() {
   //  - full history
   //  - fetch start
   //  - backtest enabled
-  if(backtest.enabled)
-    this.startTime = moment(backtest.from).utc()
-  else
+  // if(backtest.enabled)
+  //   this.startTime = moment(backtest.from).utc()
+  // else
     this.startTime = utc();
 
   // set the start current day
@@ -135,7 +135,7 @@ Manager.prototype.checkHistory = function() {
 
   this.history.required = tradingAdvisor.enabled;
   if(this.history.required)
-    this.history.timespan = tradingAdvisor.candleSize * tradingAdvisor.historySize; 
+    this.history.timespan = tradingAdvisor.candleSize * tradingAdvisor.historySize;
   else
     // load a only the current day
     this.history.timespan = 0;
@@ -223,7 +223,7 @@ Manager.prototype.loadDatabase = function(mom) {
   day.mounted = true;
   day.exists = true;
   // neDB will throw if the DB is invalid
-  // 
+  //
   // https://github.com/louischatriot/nedb/issues/117
   try {
     day.handle = new nedb({filename: filename, autoload: true});
@@ -291,7 +291,7 @@ Manager.prototype.deleteDay = function(day, safe) {
   if(day.string in this.days)
     delete this.days[day.string];
 }
-  
+
 // loop through this.days and check every meta to
 // see what history we have available
 Manager.prototype.checkDaysMeta = function(err, results) {
@@ -302,7 +302,7 @@ Manager.prototype.checkDaysMeta = function(err, results) {
 
   // we check reversed chronologically
   // and on first gap we bail out.
-  // 
+  //
   // result is stored in available
   _.every(this.history.days, function(mom) {
 
@@ -348,14 +348,14 @@ Manager.prototype.checkDaysMeta = function(err, results) {
 
 
 // We know the required history and we know the available
-// history. 
-// 
-// If we have full required history: 
+// history.
+//
+// If we have full required history:
 //   - broadcast `history state` / full
-// If we have partly/no required history: 
+// If we have partly/no required history:
 //   - shift requirements into future
 //     as far as we have to to sync with
-//     available (NOTE: this breaks compat 
+//     available (NOTE: this breaks compat
 //     with exchanges that  support historical
 //     data).
 //   - broadcast `history state` / building
@@ -420,7 +420,7 @@ Manager.prototype.checkHistoryAge = function(data) {
       this.fetch.start.m.clone().subtract('s', 1),
       this.current.day.clone()
     ]);
-    
+
     return;
   }
 
@@ -506,7 +506,7 @@ Manager.prototype.broadcastHistory = function(next, args) {
     var to = MINUTES_IN_DAY;
 
     if(equals(mom.day, last.day))
-      // on first (most recent) day 
+      // on first (most recent) day
       to = last.minute;
 
     if(equals(mom.day, first.day))
@@ -549,7 +549,7 @@ Manager.prototype.broadcastHistory = function(next, args) {
 }
 
 // grab candles in a specific day
-// 
+//
 // mom = day representation of day to fetch from
 // from = start candle in minutes
 // to = end candle in minutes
@@ -560,7 +560,7 @@ Manager.prototype.getCandles = function(mom, from, to, cb) {
   this.days[mom.dayString].handle.find({
     s: {
       $lte: to,
-      $gte: from  
+      $gte: from
     }
   }, cb);
 }
@@ -820,13 +820,13 @@ Manager.prototype.addEmtpyCandles = function(candles, start, end) {
     candles.shift();
 
   var all = candles.concat(emptyCandles);
-  
+
   return this.sortCandles(all);
 }
 
 
 // store a batch of candles under the day specified by
-// `this.current`. If cb is specified runs this after 
+// `this.current`. If cb is specified runs this after
 // inserting all candles (inserts 1 per tick).
 Manager.prototype.insertCandles = function(candles, cb) {
   if(!_.size(candles))
@@ -865,7 +865,7 @@ Manager.prototype.insertCandles = function(candles, cb) {
 
         if(!this.history.toFetch) {
           // we are done fetching
-          
+
           // todo: broadcast history
           return this.broadcastHistory(_next);
         }
