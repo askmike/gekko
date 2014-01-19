@@ -68,8 +68,8 @@ Logger.prototype.calculateStartBalance = function() {
     this.start.balance = this.start.asset + this.start.currency / this.price;
 }
 
-// after every succesfull trend ride we hopefully end up 
-// with more BTC than we started with, this function 
+// after every succesfull trend ride we hopefully end up
+// with more BTC than we started with, this function
 // calculates Gekko's profit in %.
 Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
@@ -91,7 +91,7 @@ Logger.prototype.processAdvice = function(advice) {
   }
 
   // without verbose we report after round trip (buy-sell)
-  if(!this.verbose && what === 'short' && !config.backtest.enabled)
+  if(!this.verbose && what === 'short') // && !config.backtest.enabled)
     this.report();
 }
 
@@ -103,7 +103,7 @@ if(calcConfig.verbose)
     return;
 
   this.report();
- } 
+ }
 
 Logger.prototype.report = function(timespan) {
   if(this.reportInCurrency)
@@ -153,7 +153,7 @@ Logger.prototype.report = function(timespan) {
 Logger.prototype.finish = function(data) {
   console.log();
   console.log();
-  
+
   log.info('\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING')
   log.info('\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!')
 
