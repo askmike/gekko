@@ -8,7 +8,7 @@ var Trader = function(done) {
   _.bindAll(this);
 
   this.price = 'N/A';
-  this.manager = new Manager(config.normal);
+  this.manager = new Manager(config.trader);
 
   log.debug('Setup trader.');
 
@@ -25,14 +25,14 @@ Trader.prototype.processAdvice = function(advice) {
     log.info(
       'Trader',
       'Received advice to go long',
-      'Buying ', config.normal.asset
+      'Buying ', config.trader.asset
     );
   } else if (advice.recommandation == 'short') {
     this.manager.trade('SELL');
     log.info(
       'Trader',
       'Received advice to go short',
-      'Selling ', config.normal.asset
+      'Selling ', config.trader.asset
     );
   }
 }

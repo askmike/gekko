@@ -109,7 +109,13 @@ config.profitSimulator = {
 // Enabling this will activate trades for the market being
 // watched by config.normal
 config.trader = {
-  enabled: true
+  enabled: true,
+  exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  currency: 'USD',
+  asset: 'BTC',
+  key: '',
+  secret: '',
+  username: '' // your username, only fill in when using bitstamp or cexio
 }
 
 // Want Gekko to perform real trades on buy or sell advice?
