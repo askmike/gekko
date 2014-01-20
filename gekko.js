@@ -144,7 +144,7 @@ var setupAdvisor = function(next) {
 
   var settings;
 
-  var plugin = _.find(plugin, function(advisor) {
+  var plugin = _.find(plugins, function(advisor) {
     if(!advisor.meta.originates)
       return false;
 
