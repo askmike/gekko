@@ -22,7 +22,7 @@ config.debug = true; // for additional logging / debugging
 // Monitor the live market
 config.watch = {
   enabled: true,
-  exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  exchange: 'bitstamp', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
   currency: 'USD',
   asset: 'BTC'
 }
@@ -34,8 +34,8 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: 'DEMA',
-  candleSize: 5,
-  historySize: 20
+  candleSize: 30,
+  historySize: 50
 }
 
 // Exponential Moving Averages settings:

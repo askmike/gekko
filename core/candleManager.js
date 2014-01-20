@@ -276,9 +276,9 @@ Manager.prototype.setDatabaseMeta = function(mom, cb) {
 
 Manager.prototype.deleteDay = function(day, safe) {
   log.debug(
-    'Found a corrupted database (',
+    'marking database',
     day.string,
-    '), going to clean it up'
+    'as corrupt'
   );
   if(safe)
     fs.renameSync(
@@ -461,11 +461,16 @@ Manager.prototype.calculateAdviceTime = function(next, args) {
     // we have full history
     return this.broadcastHistory(next, args);
 
+  var doneAt = this.startTime.clone().add('m', toFetch + 1).startOf('minute').local();
   // we have partly history
-  log.debug(
-    'We don\'t have enough history yet, expecting to be done at',
-    this.startTime.clone().add('m', toFetch + 1).startOf('minute').format('YYYY-MM-DD HH:mm:ss'),
-    'UTC'
+  log.info(
+    'We don\'t have enough history yet to start giving advice, I\'ll need to gather more data first.'
+  );
+  log.info(
+    'I will start giving advice around',
+    doneAt.format('YYYY-MM-DD HH:mm:ss'),
+    '(local time, that\'s',
+    doneAt.fromNow() + ').'
   );
 
   next(args);
@@ -486,7 +491,10 @@ Manager.prototype.broadcastHistory = function(next, args) {
 
   var first = this.mom(last.m.clone().subtract('m', history.timespan));
 
-  log.debug('going to broadcast history');
+  log.info(
+    'We have all required history, going',
+    'to calculate advice from this point.'
+  );
   this.state = 'full history';
 
   // get the required days in an array of moms

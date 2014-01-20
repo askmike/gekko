@@ -9,7 +9,7 @@ You are looking at the new and completetly different version of Gekko that is be
 
 ## What we hope does work
 
-** Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.**
+**Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.**
 
 Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new version is considered stable.
 

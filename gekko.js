@@ -17,7 +17,7 @@
 
 var gekkoDir = './';
 var coreDir = gekkoDir + 'core/';
-var actorsDir = gekkoDir + 'actors/';
+var pluginDir = gekkoDir + 'plugins/';
 
 var _ = require('lodash');
 var async = require('async');
@@ -47,7 +47,7 @@ var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
   util.die(invalid);
 
-var actors = [];
+var plugins = [];
 var emitters = {};
 
 var setupMarket = function(next) {
@@ -56,40 +56,40 @@ var setupMarket = function(next) {
   next();
 }
 
-// load each actor
-var loadActors = function(next) {
-  var actorSettings = require(gekkoDir + 'actors');
+// load each plugin
+var loadPlugins = function(next) {
+  var pluginSettings = require(gekkoDir + 'plugins');
 
-  var iterator = function(actor, next) {
+  var iterator = function(plugin, next) {
 
     // verify the actor settings in config
-    if(!(actor.slug in config)) {
-      log.warn('unable to find', actor.slug, 'in the config. Is your config up to date?')
+    if(!(plugin.slug in config)) {
+      log.warn('unable to find', plugin.slug, 'in the config. Is your config up to date?')
       return next();
     }
 
-    var actorConfig = config[actor.slug];
+    var pluginConfig = config[plugin.slug];
 
     // only load actors that are supported by
     // Gekko's current mode
-    if(!_.contains(actor.modes, gekkoMode))
+    if(!_.contains(plugin.modes, gekkoMode))
       return next();
 
     // if the actor is disabled skip as well
-    if(!actorConfig.enabled)
+    if(!pluginConfig.enabled)
       return next();
 
-    // verify actor dependencies are installed
-    if('dependencies' in actor)
-      _.each(actor.dependencies, function(dep) {
+    // verify plugin dependencies are installed
+    if('dependencies' in plugin)
+      _.each(plugin.dependencies, function(dep) {
         try {
           require(dep.module);
         }
         catch(e) {
 
           var error = [
-            'The actor',
-            actor.slug,
+            'The plugin',
+            plugin.slug,
             'expects the module',
             dep.module,
             'to be installed.',
@@ -104,35 +104,35 @@ var loadActors = function(next) {
 
       });
 
-    var Actor = require(actorsDir + actor.slug);
+    var Plugin = require(pluginDir + plugin.slug);
 
-    if(!actor.silent) {
+    if(!plugin.silent) {
       log.info('Setting up:');
-      log.info('\t', actor.name);
-      log.info('\t', actor.description);
+      log.info('\t', plugin.name);
+      log.info('\t', plugin.description);
     }
 
-    if(actor.async) {
-      var instance = new Actor(util.defer(next));
+    if(plugin.async) {
+      var instance = new Plugin(util.defer(next));
 
-      instance.meta = actor;
-      actors.push(instance);
+      instance.meta = plugin;
+      plugins.push(instance);
 
     } else {
-      var instance = new Actor;
+      var instance = new Plugin;
 
-      instance.meta = actor;
-      actors.push(instance);
+      instance.meta = plugin;
+      plugins.push(instance);
 
       _.defer(next);
     }
 
-    if(!actor.silent)
+    if(!plugin.silent)
       console.log();
   }
 
   async.eachSeries(
-    actorSettings,
+    pluginSettings,
     iterator,
     next
   );
@@ -144,7 +144,7 @@ var setupAdvisor = function(next) {
 
   var settings;
 
-  var actor = _.find(actors, function(advisor) {
+  var plugin = _.find(plugin, function(advisor) {
     if(!advisor.meta.originates)
       return false;
 
@@ -157,35 +157,35 @@ var setupAdvisor = function(next) {
     return settings;
   });
 
-  emitters.advisor = settings ? actor[settings.object] : false;
+  emitters.advisor = settings ? plugin[settings.object] : false;
 
   next();
 }
 
-var attachActors = function(next) {
+var attachPlugins = function(next) {
 
   var subscriptions = require(gekkoDir + 'subscriptions');
 
-  _.each(actors, function(actor) {
+  _.each(plugins, function(plugin) {
     _.each(subscriptions, function(sub) {
 
-      if(sub.handler in actor) {
+      if(sub.handler in plugin) {
 
         // if the actor wants to listen
         // to something disabled
         if(!emitters[sub.emitter])
-          log.warn([
-            actor.meta.name,
+          return log.warn([
+            plugin.meta.name,
             'wanted to listen to the',
             sub.emitter + ',',
             'however the',
             sub.emitter,
             'is disabled.'
           ].join(' '))
-        else
-          // attach handler
-          emitters[sub.emitter]
-            .on(sub.event, actor[sub.handler]);
+        
+        // attach handler
+        emitters[sub.emitter]
+          .on(sub.event, plugin[sub.handler]);
       }
 
     });
@@ -199,10 +199,10 @@ console.log();
 
 async.series(
   [
-    loadActors,
+    loadPlugins,
     setupAdvisor,
     setupMarket,
-    attachActors
+    attachPlugins
   ],
   function() {
     // everything is setup!

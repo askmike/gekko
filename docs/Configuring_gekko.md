@@ -310,7 +310,7 @@ The easiest way to configure Gekko is in the normal zone of the config:
 
 ### Redis beacon
 
-This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/localDB/docs/internals/Actors.md#redis-beacon).
+This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/localDB/docs/internals/plugins.md#redis-beacon).
 
     config.redisBeacon = {
       enabled: false,
