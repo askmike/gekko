@@ -16,9 +16,9 @@ var Actor = function() {
   var method = config.tradingAdvisor.method;
 
   if(!_.contains(methods, method))
-    util.die('Gekko doesn\'t know the method' + method);
+    util.die('Gekko doesn\'t know the method ' + method);
 
-  log.info('\t', 'Using the trading method:' + method);
+  log.info('\t', 'Using the trading method: ' + method);
 
   var Consultant = require('../methods/' + method);
 

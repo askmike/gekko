@@ -91,7 +91,7 @@ Manager.prototype.processHistoryState = function(history) {
     this.state = 'relaying candles';
     this.relayCandles();
   } else if(history.state === 'full') {
-    log.debug('full history available');
+    log.info('full history available');
   } else if(history.empty) {
     log.info('No (recent) history found');
   } else {
