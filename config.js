@@ -181,8 +181,10 @@ config.webserver = {
 }
 
 
+
+
 // not working, leave as is
-config.debug = {
+config.backtest = {
   enabled: false
 }
 
