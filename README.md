@@ -15,7 +15,7 @@ Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new ve
 
 If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/114) if we are aware of it and if not create a new one :)
 
-# Gekko
+# Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
 *The point is ladies and gentlemen that greed, for lack of a better word, is good.*
 
@@ -23,9 +23,7 @@ If you encounter a bug: check out in [the issues](https://github.com/askmike/gek
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot for popular exchanges written in javascript running on [nodejs](http://nodejs.org), it monitors the market and can automate trading using Technical Analysis on top of this.
-
-[![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
+Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org).
 
 ## Main features
 
@@ -47,7 +45,7 @@ As this is a learning experience for me all feedback is extremely appreciated. I
 
 ## Trading platform
 
-Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (this is automated trading and paper trading). Gekko also stores the market data it sees so you can run the trading methods (and simulate trades) on a set of historical data to see whether they would have been profitable during that time (this is called backtesting).
+Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (automated trading or paper trading). Gekko also stores the market data it sees so you can run the trading methods with simulate trades on a set of historical data to see whether they would have been profitable during that time (backtesting).
 
 Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
