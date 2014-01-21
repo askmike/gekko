@@ -10,7 +10,7 @@ Configuring Gekko consists of three parts:
 
 ## Watching a realtime market
 
-It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice / price information and other stuff is based on this market. A market is a currency/asset pair on a supported exchange. Examples are:
+It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. Examples are:
 
 - USD/BTC on Mt. Gox
 - USD/BTC on BTC-e
@@ -53,7 +53,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
   assets: BTC  
   markets: USD/BTC
   
-* cex.io:  
+* CEX.io:  
   currencies: BTC, *NMC (not yet supported)*  
   assets: GHS  
   markets: BTC/GHS
@@ -68,7 +68,7 @@ Gekko supports a number of technical analysis indicators, currently it supports:
 - MACD
 - PPO
 
-Open up the config.js file again and look at this part:
+Open up the config.js file again and configure at this part:
 
     config.tradingAdvisor = {
       enabled: true,
