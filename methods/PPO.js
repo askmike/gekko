@@ -63,12 +63,11 @@ TradingMethod.prototype.log = function () {
 }
 
 TradingMethod.prototype.calculateAdvice = function () {
-
   var price = this.lastPrice;
   var long = this.ppo.long.result;
   var short = this.ppo.short.result;
   var macd = this.ppo.macd;
-  var ppo = this.ppo.result;
+  var ppo = this.ppo.ppo;
   var macdSignal = this.ppo.MACDsignal.result;
   var ppoSignal = this.ppo.PPOsignal.result;
   var macdHist = macd - macdSignal;
