@@ -60,7 +60,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
 
 ## Automate trading advice
 
-If you want Gekko to provide automated trading advice you need to configure this here. Note that this has unrelated to automatic trading, ~~though you need to calculate advice if you want to automate trading.~~
+If you want Gekko to provide automated trading advice you need to configure this here. Note that this has unrelated to automatic trading which is a plugin that creates order based on this advice. (So you need to calculate advice if you want to automate trading.)
 
 Gekko supports a number of technical analysis indicators, currently it supports:
 
@@ -169,6 +169,7 @@ Very similar to MACD but also a little different, read more [here](http://stockc
 
 Gekko currently has a couple plugins:
 
+- trader
 - advice logger
 - profit simulator
 - Mailer
@@ -178,6 +179,26 @@ Gekko currently has a couple plugins:
 ### NOTES
 
 When you turn on a plugin for the first time it might be that you need to install some additional dependencies. Copy paste what Gekko tells you!
+
+### Trader
+
+This plugin automatically creates orders based on the advice on the market it is watching. This turns Gekko into an automated trading bot. 
+
+Before Gekko can automatically trade you need to create API keys so that Gekko has the rights to create orders on your behalf, the rights Gekko needs are (naming differs per exchange): get info, get balance/portfolio, get open orders, get fee, buy, sell and cancel order. For all exchanges you need the API key and the API secret, for both Bitstamp and CEX.io you also need your username (which is a number at Bitstamp).
+
+Configure it like this:
+
+    config.trader = {
+      enabled: true,
+      key: 'your-api-key',
+      secret: 'your-api-secret',
+      username: 'your-username' // your username, only fill in when using bitstamp or cexio
+    }
+
+- enabled indicates whether this is on or off.
+- key is your API key.
+- secret is your API secret.
+- username is the username (only required for CEX.io and Bitstamp).
 
 ### Advice logger
 

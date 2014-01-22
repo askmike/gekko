@@ -58,10 +58,10 @@ Checker.prototype.cantTrade = function(conf) {
     return 'At this moment Gekko can\'t trade at ' + name + ', find out more info here:\n\n' + exchange.tradeError;
 
   if(conf.key === 'your-key')
-    throw '"your-key" is not a valid API key';
+    return '"your-key" is not a valid API key';
 
   if(conf.secret === 'your-secret')
-    throw '"your-secret" is not a valid API secret';    
+    return '"your-secret" is not a valid API secret';    
 
   var error = false;
   _.each(exchange.requires, function(req) {

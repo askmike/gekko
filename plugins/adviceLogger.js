@@ -3,6 +3,8 @@ var moment = require('moment');
 var _ = require('lodash');
 
 var Actor = function() {
+  this.price = 'N/A';
+  this.marketTime = {format: function() {return 'N/A'}};
   _.bindAll(this);
 }
 

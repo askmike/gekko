@@ -106,6 +106,9 @@ if(calcConfig.verbose)
  }
 
 Logger.prototype.report = function(timespan) {
+  if(!this.start.balance)
+    return log.warn('Unable to simulate profits without starting balance');
+
   if(this.reportInCurrency)
     this.current.balance = this.current.currency + this.price * this.current.asset;
   else

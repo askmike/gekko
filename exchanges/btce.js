@@ -71,8 +71,6 @@ Trader.prototype.retry = function(method, args) {
       args[i] = _.bind(arg, self);
   });
 
-  console.log(method, args);
-
   // run the failed method again with the same
   // arguments after wait
   setTimeout(
@@ -83,8 +81,14 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var calculate = function(err, data) {
-    if(err)
+
+    if(err) {
+      if(err.message === 'invalid api key')
+        util.die('Your ' + this.name + ' API keys are invalid');
+
       return this.retry(this.btce.getInfo, calculate);
+    }
+      
 
     var portfolio = [];
     _.each(data.funds, function(amount, asset) {

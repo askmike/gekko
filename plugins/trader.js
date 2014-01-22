@@ -1,22 +1,13 @@
 var _ = require('lodash');
 var log = require('../core/log.js');
-var util = require('../core/util.js');
-var config = util.getConfig();
+var config = require('../core/util.js').getConfig();
 var Manager = require('../core/portfolioManager');
 
-var Trader = function(done) {
+var Trader = function(next) {
   _.bindAll(this);
 
-  this.price = 'N/A';
-  this.manager = new Manager(config.trader);
-
-  log.debug('Setup trader.');
-
-  done();
-}
-
-Trader.prototype.processTrade = function(trade) {
-  this.price = trade.price;
+  this.manager = new Manager(_.extend(config.trader, config.watch));
+  this.manager.init(next);
 }
 
 Trader.prototype.processAdvice = function(advice) {

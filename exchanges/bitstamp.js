@@ -5,16 +5,15 @@ var moment = require('moment');
 var log = require('../core/log');
 
 var Trader = function(config) {
+  _.bindAll(this);
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
-    this.clientID = config.clientID;
+    this.clientID = config.username;
   }
   this.name = 'Bitstamp';
   this.balance;
   this.price;
-
-  _.bindAll(this);
 
   this.bitstamp = new Bitstamp(this.key, this.secret, this.clientID);
 }
@@ -62,7 +61,12 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
   var set = function(err, data) {
-    callback(err, data.fee / 100);
+    console.log('~~~', err, data);
+    throw 'a';
+    if(err)
+      callback(err);
+
+    callback(false, data.fee / 100);
   }
   this.bitstamp.balance(_.bind(set, this));
 }

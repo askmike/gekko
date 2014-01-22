@@ -85,7 +85,7 @@ var exchanges = [
     minimalOrder: { amount: 1, unit: 'currency' },
     providesHistory: false,
     fetchTimespan: 60,
-    tradeError: 'https://github.com/askmike/gekko/issues/38#issuecomment-29552100'
+    tradeError: 'ALMOST (need tot test @ bitstamp, cant yet because this IP is banned..)'
   },
   {
     name: 'CEX.io',

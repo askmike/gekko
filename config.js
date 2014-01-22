@@ -22,7 +22,7 @@ config.debug = true; // for additional logging / debugging
 // Monitor the live market
 config.watch = {
   enabled: true,
-  exchange: 'bitstamp', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
   currency: 'USD',
   asset: 'BTC'
 }
@@ -84,6 +84,16 @@ config.PPO = {
 //                       CONFIGURING PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// Want Gekko to perform real trades on buy or sell advice?
+// Enabling this will activate trades for the market being
+// watched by config.watch
+config.trader = {
+  enabled: false,
+  key: '',
+  secret: '',
+  username: '' // your username, only fill in when using bitstamp or cexio
+}
+
 config.adviceLogger = {
   enabled: true
 }
@@ -103,33 +113,6 @@ config.profitSimulator = {
   verbose: false,
   // how much fee in % does each trade cost?
   fee: 0.6
-}
-
-// Want Gekko to perform real trades on buy or sell advice?
-// Enabling this will activate trades for the market being
-// watched by config.normal
-config.trader = {
-  enabled: true,
-  exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'USD',
-  asset: 'BTC',
-  key: '',
-  secret: '',
-  username: '' // your username, only fill in when using bitstamp or cexio
-}
-
-// Want Gekko to perform real trades on buy or sell advice?
-// Enabling this will activate trades for the market being
-// watched by config.normal
-config.trader = {
-  enabled: true
-}
-
-// Want Gekko to perform real trades on buy or sell advice?
-// Enabling this will activate trades for the market being
-// watched by config.normal
-config.trader = {
-  enabled: true
 }
 
 // want Gekko to send a mail on buy or sell advice?
@@ -153,27 +136,12 @@ config.mailer = {
 
   tag: '[GEKKO] ',			// Prefix all EMail subject lines with this
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
             //       ADVANCED MAIL SETTINGS
             // you can leave those as is if you 
             // want to use gmail
 
-  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.  
-=======
   // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
->>>>>>> f9ee6af... Add support for trading
-=======
-  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
-  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
->>>>>>> f9ee6af... Add support for trading
-=======
-  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
-  server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
->>>>>>> f9ee6af... Add support for trading
   smtpauth: true,			// Does SMTP server require authentication (true for GMail)
 					// The following 3 values default to the Email (above) if left blank
   user: '',				// Your Email server user name - usually your full Email address 'me@mydomain.com'
@@ -182,18 +150,8 @@ config.mailer = {
   ssl: true,				// Use SSL (true for GMail)
   port: '',				// Set if you don't want to use the default port
   tls: false				// Use TLS if true
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-
 }
->>>>>>> f9ee6af... Add support for trading
 
-}
->>>>>>> f9ee6af... Add support for trading
-
-}
 
 config.ircbot = {
   enabled: false,

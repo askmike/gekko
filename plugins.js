@@ -53,7 +53,7 @@ var actors = [
   },
   {
     name: 'Mailer',
-    description: 'Mail module lets sends you email yourself everytime Gekko has new advice',
+    description: 'Mail module lets sends you email yourself everytime Gekko has new advice.',
     slug: 'mailer',
     async: true,
     silent: false,
@@ -67,16 +67,8 @@ var actors = [
     }]
   },
   {
-<<<<<<< HEAD:plugins.js
-<<<<<<< HEAD:plugins.js
-<<<<<<< HEAD:plugins.js
-=======
-=======
->>>>>>> f9ee6af... Add support for trading:actors.js
-=======
->>>>>>> f9ee6af... Add support for trading:actors.js
     name: 'Trader',
-    description: 'Trader module that will act on trading advice performing the trades given by the trade advisor',
+    description: 'Trader will follow the advice and create real orders.',
     slug: 'trader',
     async: true,
     silent: false,
@@ -91,7 +83,6 @@ var actors = [
     modes: ['realtime', 'backtest']
   },
   {
->>>>>>> f9ee6af... Add support for trading:actors.js
     name: 'Advice logger',
     description: '',
     slug: 'adviceLogger',

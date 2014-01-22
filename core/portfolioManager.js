@@ -8,39 +8,41 @@
 */
 
 var _ = require('lodash');
-var EventEmitter = require('events').EventEmitter;
-var Util = require("util");
 var util = require('./util');
 var events = require("events");
 var log = require('./log');
 var async = require('async');
-var exchangeChecker = require('./exchangeChecker.js');
-var exchanges = require('../exchanges.js');
+var checker = require('./exchangeChecker.js');
 
 var Manager = function(conf) {
-  this.exchangeSlug = conf.exchange.toLowerCase();
-  var exchange = _.find(exchanges, function(e) { return e.slug === this.exchangeSlug }, this);
+  _.bindAll(this);
+
+  var error = checker.cantTrade(conf)
+  if(error)
+    util.die(error);
+
+  var exchangeMeta = checker.settings(conf);
+  this.exchangeSlug = exchangeMeta.slug;
 
   // create an exchange
   var Exchange = require('../exchanges/' + this.exchangeSlug);
   this.exchange = new Exchange(conf);
 
-  //    state
   this.conf = conf;
   this.portfolio = {};
   this.fee;
   this.order;
   this.action;
 
-  this.directExchange = exchange.direct;
-  this.infinityOrderExchange = exchange.infinityOrder;
-  this.minimalOrder = exchange.minimalOrder;
+  this.directExchange = exchangeMeta.direct;
+  this.infinityOrderExchange = exchangeMeta.infinityOrder;
+  this.minimalOrder = exchangeMeta.minimalOrder;
 
-  this.currency = conf.currency || 'USD';
-  this.asset = conf.asset || 'BTC';
+  this.currency = conf.currency;
+  this.asset = conf.asset;
+}
 
-  _.bindAll(this);
-
+Manager.prototype.init = function(callback) {
   log.debug('getting balance & fee from', this.exchange.name);
   var prepare = function() {
     this.starting = false;
@@ -48,7 +50,8 @@ var Manager = function(conf) {
     log.info('trading at', this.exchange.name, 'ACTIVE');
     log.info(this.exchange.name, 'trading fee will be:', this.fee * 100 + '%');
     this.logPortfolio();
-    this.emit('ready');
+
+    callback();
   };
 
   async.series([
@@ -57,18 +60,16 @@ var Manager = function(conf) {
   ], _.bind(prepare, this));
 
   // Because on cex.io your asset grows refresh and
-  // display portfolio stats every 11 minutes
+  // display portfolio stats every 5 minutes
   if(this.exchange.name === 'cex.io')
-    setInterval(this.displayPortfolio, util.minToMs( 11 ));
+    setInterval(this.displayPortfolio, util.minToMs(5));  
 }
-
-// teach our Manager events
-Util.inherits(Manager, events.EventEmitter);
 
 Manager.prototype.setPortfolio = function(callback) {
   var set = function(err, portfolio) {
     this.portfolio = portfolio;
-    if (typeof(callback) === 'function')
+    
+    if(_.isFunction(callback))
       callback();
   };
   this.exchange.getPortfolio(_.bind(set, this));
@@ -77,7 +78,8 @@ Manager.prototype.setPortfolio = function(callback) {
 Manager.prototype.setFee = function(callback) {
   var set = function(err, fee) {
     this.fee = fee;
-    if (typeof(callback) === 'function')
+    
+    if(_.isFunction(callback))
       callback();
   };
   this.exchange.getFee(_.bind(set, this));
@@ -86,7 +88,8 @@ Manager.prototype.setFee = function(callback) {
 Manager.prototype.setTicker = function(callback) {
   var set = function(err, ticker) {
     this.ticker = ticker;
-    if (typeof(callback) === 'function')
+    
+    if(_.isFunction(callback))
       callback();
   }
   this.exchange.getTicker(_.bind(set, this));
@@ -175,17 +178,40 @@ Manager.prototype.buy = function(amount, price) {
 
   var currency = this.getFund(this.currency);
   var minimum = this.getMinimum(price);
+  var availabe = this.getBalance(this.currency) / price;
 
-  if(amount > minimum) {
-    log.info('attempting to BUY',
-             amount, this.asset,
-             'at', this.exchange.name);
-    this.exchange.buy(amount, price, this.noteOrder);
-    this.action = 'BUY';
-  } else
-    log.info('wanted to buy but insufficient',
-             this.currency,
-             '(' + amount * price + ') at', this.exchange.name);
+  // if not suficient funds
+  if(amount > availabe) {
+    return log.info(
+      'wanted to buy but insufficient',
+      this.currency,
+      '(' + availabe + ')',
+      'at',
+      this.exchange.name
+    );
+  }
+
+  // if order to small
+  if(amount < minimum) {
+    return log.info(
+      'wanted to buy',
+      this.currency,
+      'but the amount is to small',
+      '(' + amount + ')',
+      'at',
+      this.exchange.name
+    );
+  }
+
+  log.info(
+    'attempting to BUY',
+    amount,
+    this.asset,
+    'at',
+    this.exchange.name
+  );
+  this.exchange.buy(amount, price, this.noteOrder);
+  this.action = 'BUY';
 }
 
 // first do a quick check to see whether we can sell
@@ -197,18 +223,42 @@ Manager.prototype.sell = function(amount, price) {
   price = Math.ceil(price);
   price /= 100000000;
 
-  var asset = this.getFund(this.asset);
   var minimum = this.getMinimum(price);
-  if(amount > minimum) {
-    log.info('attempting to SELL',
-             amount, this.asset,
-             'at', this.exchange.name);
-    this.exchange.sell(amount, price, this.noteOrder);
-    this.action = 'SELL';
-  } else
-    log.info('wanted to sell but insufficient',
-             this.asset,
-             '(' + amount + ') at', this.exchange.name);
+  var availabe = this.getBalance(this.asset);
+
+  // if not suficient funds
+  if(amount > availabe) {
+    return log.info(
+      'wanted to buy but insufficient',
+      this.asset,
+      '(' + availabe + ')',
+      'at',
+      this.exchange.name
+    );
+  }
+
+  // if order to small
+  if(amount < minimum) {
+    return log.info(
+      'wanted to buy',
+      this.asset,
+      'but the amount is to small',
+      '(' + amount + ')',
+      'at',
+      this.exchange.name
+    );
+  }
+
+  log.info(
+    'attempting to SELL',
+    amount,
+    this.asset,
+    'at',
+    this.exchange.name
+  );
+  this.exchange.sell(amount, price, this.noteOrder);
+  this.action = 'SELL';
+ 
 }
 
 Manager.prototype.noteOrder = function(order) {
@@ -223,7 +273,7 @@ Manager.prototype.noteOrder = function(order) {
 Manager.prototype.checkOrder = function() {
   var finish = function(err, filled) {
     if(!filled) {
-      log.info(this.action, 'order was not (fully) filled, canceling and creating new order');
+      log.info(this.action, 'order was not (fully) filled, cancelling and creating new order');
       this.exchange.cancelOrder(this.order);
 
       // Delay the trade, as cancel -> trade can trigger
@@ -241,7 +291,7 @@ Manager.prototype.checkOrder = function() {
 }
 
 Manager.prototype.logPortfolio = function() {
-  log.info('refreshed', this.exchange.name, 'portfolio:');
+  log.info(this.exchange.name, 'portfolio:');
   _.each(this.portfolio, function(fund) {
     log.info('\t', fund.name + ':', fund.amount);
   });

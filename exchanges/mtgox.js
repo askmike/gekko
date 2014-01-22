@@ -2,7 +2,7 @@ var MtGoxClient = require("mtgox-apiv2");
 var _ = require('lodash');
 var moment = require('moment');
 var util = require('../core/util.js');
-var log = require('../core/log.js');
+var log = require('../core/log');
 
 var Trader = function(config) {
   if(_.isObject(config)) {
@@ -88,7 +88,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.checkUnauthorized = function(err) {
   if(err && err.message === 'Request failed with 403')
-    throw 'It appears your ' + this.name + ' API key and secret are incorrect';
+    util.die('It appears your ' + this.name + ' API key and secret are incorrect');
 }
 
 // calls callback with the following data structure:
