@@ -4,12 +4,21 @@ You are looking at the new and completetly different version of Gekko that is be
 
 ## What we know doesn't work
 
-- Real trading (I am not implementing this until I have validated advice).
-- Might crash :(
+- Not 100% this is stable. Let me know if there is a bug!
 
 ## What we hope does work
 
-**Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.**
+**Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.** The list boils down to:
+
+- watch any market on BTC-e, Bitstamp, Mt. Gox, CEX.io.
+- calculate MACD, DEMO or PPO over this market.
+- use the following plugins:
+    - real trader (automatic trading on advice)
+    - advice logger
+    - profit simulator
+    - Mailer (on advice)
+    - IRC bot
+    - Redis beacon
 
 Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new version is considered stable.
 
