@@ -84,8 +84,7 @@ var exchanges = [
     requires: ['key', 'secret', 'username'],
     minimalOrder: { amount: 1, unit: 'currency' },
     providesHistory: false,
-    fetchTimespan: 60,
-    tradeError: 'ALMOST (need tot test @ bitstamp, cant yet because this IP is banned..)'
+    fetchTimespan: 60
   },
   {
     name: 'CEX.io',
