@@ -32,6 +32,9 @@ if(config.normal)
   util.die('Please update your config! config.normal is now called config.watch');
 if(config.EMA)
   util.die('Please update your config! EMA is now called DEMA');
+// temp at Wed Jan 22 12:18:08 CET 2014
+if(!config.profitSimulator.slippage)
+  util.die('Please update your config! The profit simulator is missing slippage');
 
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 

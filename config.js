@@ -112,7 +112,9 @@ config.profitSimulator = {
   // only want report after a sell? set to `false`.
   verbose: false,
   // how much fee in % does each trade cost?
-  fee: 0.6
+  fee: 0.6,
+  // how much slippage should Gekko assume per trade?
+  slippage: 0.05
 }
 
 // want Gekko to send a mail on buy or sell advice?

@@ -15,7 +15,7 @@ var Logger = function() {
   this.historyReceived = 0;
 
   this.verbose = calcConfig.verbose;
-  this.fee = 1 - calcConfig.fee / 100;
+  this.fee = 1 - (calcConfig.fee + calcConfig.slippage) / 100;
 
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;

@@ -237,14 +237,24 @@ Go to the config and configure it like this:
       // only want report after a sell? set to `false`.
       verbose: false,
       // how much fee in % does each trade cost?
-      fee: 0.6
+      fee: 0.6,
+      // how much slippage should Gekko assume per trade?
+      slippage: 0.1
     }
 
 - enabled indicates whether this is on or off.
-- reportInCurrency tells Gekko whether it should report in asset or in currency.
+- reportInCurrency tells Gekko whether it should report in asset or in the currency.
 - simulationBalance tells Gekko with what balance it should start.
-- verbose specifies how often Gekko should log the results.
+- verbose specifies how often Gekko should log the results (false is after every trade, true is after every candle).
 - fee is the exchange fee (in %) Gekko should take into considarion when simulating orders.
+- slippage is the costs in (in %) associated with not being able to buy / sell at market price.*
+
+
+*If you are trading a lot and you are buying 100% currency you might not get it all at market price and you have to walk the book in order to take that position. Also note that Gekko uses the candle close price and is unaware of the top asks bids, also take this into account. It is important that you set this number correctly or the resulted calculated profit be very wrong. Read more information [here](http://www.investopedia.com/terms/s/slippage.asp). Take these into consideration when setting a slippage:
+
+- How much spread is there normally on this market?
+- How thick is the top of the book normally?
+- How volatile is this market (the more volatility the bigger the change you will not get the price you expected)?
 
 The output will be something like:
 
