@@ -25,6 +25,16 @@ var async = require('async');
 var util = require(coreDir + 'util');
 var log = require(coreDir + 'log');
 
+// make sure the current node version is recent enough
+if(!util.recentNode())
+  util.die([
+    'Your local version of nodejs is to old for Gekko. ',
+    'You have ',
+    process.version,
+    ' and you need atleast ',
+    util.getRequiredNodeVersion()
+  ].join(''));
+
 var config = util.getConfig();
 
 // temp at Fri Jan 17 16:00:19 CET 2014

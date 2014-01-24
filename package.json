@@ -20,12 +20,13 @@
     "bitstamp": "0.1.x",
     "async": "0.2.x",
     "nedb": "0.9.4",
-    "line-reader": "0.2.x"
+    "line-reader": "0.2.x",
+    "semver": "2.2.1"
   },
   "devDependencies": {
     "nodeunit": "0.8.2"
   },
-  "engines": { "node": "0.10.x" },
+  "engines": { "node": ">=0.10.x" },
   "repository": {
     "type": "git",
     "url": "https://github.com/askmike/gekko.git"

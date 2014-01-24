@@ -1,7 +1,12 @@
 var moment = require('moment');
 var _ = require('lodash');
+var path = require('path');
+var fs = require('fs');
+var semver = require('semver');
 
 var _config = false;
+var _package = false;
+var _nodeVersion = false;
 
 // helper functions
 var util = {
@@ -9,7 +14,6 @@ var util = {
     if(_config)
       return _config;
 
-    var path = require('path');
     var configFile = path.resolve(util.getArgument('config') || __dirname + '/../config.js');
     _config = require(configFile);
     return _config;
@@ -23,6 +27,20 @@ var util = {
       _config[parent][key] = value;
     else
       _config[key] = value;
+  },
+  getPackage: function() {
+    if(_package)
+      return _package;
+
+    _package = JSON.parse( fs.readFileSync(__dirname + '/../package.json', 'utf8') );
+    return _package;
+  },
+  getRequiredNodeVersion: function() {
+    return util.getPackage().engines.node;
+  },
+  recentNode: function() {
+    var required = util.getRequiredNodeVersion();
+    return semver.satisfies(process.version, required);
   },
   getArgument: function(argument) {
     var ret;
