@@ -227,7 +227,7 @@ Manager.prototype.sell = function(amount, price) {
   var availabe = this.getBalance(this.asset);
 
   // if not suficient funds
-  if(amount > availabe) {
+  if(amount < availabe) {
     return log.info(
       'wanted to buy but insufficient',
       this.asset,
