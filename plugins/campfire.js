@@ -32,6 +32,7 @@ var Actor = function() {
 
   this.client = Ranger.createClient(config.account, config.apiKey);
   this.client.room(config.roomId, this.joinRoom);
+  this.client.me(this.whoAmI);
 };
 
 Actor.prototype = {
@@ -99,15 +100,29 @@ Actor.prototype = {
   },
 
   executeCommands: function(message) {
-    var nickname = new RegExp(config.nickname, 'i'), handler;
+    if (message.userId === this.user.id) return false; // Make the bot ignore itself
+    if (message.body === null) return false; // Handle weird cases where body is null sometimes
 
     _.each(this.commands, function(command) {
-      handler = new RegExp(command.handler, 'i');
-
-      if (message.body.match(nickname) && message.body.match(handler)) {
+      if (this.textHasCommandForBot(message.body, config.nickname, command.handler)) {
         command.callback();
       }
     }, this);
+  },
+
+  textHasCommandForBot: function(text, nickname, handler) {
+    var normalizedText = text.toLowerCase(),
+        normalizedNickname = nickname.toLowerCase(),
+        normalizedHandler = handler.toLowerCase();
+
+    var nicknameWasMentioned = normalizedText.indexOf(normalizedNickname) >= 0,
+        handlerWasMentioned = normalizedText.indexOf(normalizedHandler) >= 0;
+
+    return nicknameWasMentioned && handlerWasMentioned;
+  },
+
+  whoAmI: function(user) {
+    this.user = user;
   }
 };
 
