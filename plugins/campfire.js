@@ -73,7 +73,7 @@ Actor.prototype = {
     this.room.speak(message.join(' '));
   },
 
-  sayDonation: function() {
+  sayDonate: function() {
     this.room.speak("If you'd like to donate a few coins, you can send them here: 13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW");
   },
 
