@@ -163,6 +163,15 @@ config.ircbot = {
   botName: 'gekkobot'
 }
 
+config.campfire = {
+  enabled: false,
+  emitUpdates: false,
+  nickname: 'Gordon',
+  roomId: null,
+  apiKey: '',
+  account: ''
+}
+
 config.redisBeacon = {
   enabled: false,
   port: 6379, // redis default
