@@ -63,6 +63,32 @@ Trader.prototype.setAssetPair = function() {
   this.pair = assetPrefix + this.asset + currencyPrefix + this.currency;
 };
 
+Trader.prototype.retry = function(method, args, err) {
+  var wait = +moment.duration(10, 'seconds');
+  log.debug(this.name, 'returned an error, retrying..', err);
+
+  if (!_.isFunction(method)) {
+    log.error(this.name, 'failed to retry, no method supplied.');
+    return;
+  }
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait
+  setTimeout(
+    function() { method.apply(self, args) },
+    wait
+  );
+};
+
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
