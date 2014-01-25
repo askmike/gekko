@@ -343,21 +343,6 @@ Campfire bot is a small plugin that connects Gekko to a Campfire room and lets u
 - apiKey is the API key for the Campfire user Gekko will connect using.
 - account is the subdomain for the account that the room belongs to.
 
-This file will explain all different parameters you can set in the [config](https://github.com/askmike/gekko/blob/master/config.js).
-
-The easiest way to configure Gekko is in the normal zone of the config:
-
-    config.normal = {
-      enabled: true,
-      exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-      currency: 'USD',
-      asset: 'BTC',
-      tradingEnabled: false,
-      key: '',
-      secret: '',
-      username: 0 // only fill this is when using Bitstamp or cexio
-    }
-
 ### Redis beacon
 
 This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/localDB/docs/internals/plugins.md#redis-beacon).
