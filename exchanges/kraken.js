@@ -46,7 +46,6 @@ var Trader = function(config) {
   this.since = null;
 
   this.kraken = new Kraken(this.key, this.secret);
-
 }
 
 Trader.prototype.setAssetPair = function() {
@@ -119,6 +118,102 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     reqData.since = this.since;
 
   this.kraken.api('Trades', reqData, _.bind(process, this));
+};
+
+Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
+  var set = function(err, data) {
+    if (err || !_.isEmpty(data.error))
+      return this.retry(this.getPortfolio, args, JSON.stringify(data.error));
+
+    var portfolio = [];
+    _.each(data.result, function(amount, asset) {
+      portfolio.push({name: asset.substr(1), amount: parseFloat(amount)});
+    });
+    callback(err, portfolio);
+  };
+
+  this.kraken.api('Balance', {}, _.bind(set, this));
+};
+
+Trader.prototype.getFee = function(callback) {
+  callback(false, 0.002);
+};
+
+Trader.prototype.getTicker = function(callback) {
+  var set = function(err, data) {
+    if (err || !_.isEmpty(data.error))
+      return log.error('unable to get ticker', JSON.stringify(data.error));
+
+    var result = data.result[this.pair];
+    var ticker = {
+      ask: result.a[0],
+      bid: result.b[0]
+    };
+    callback(err, ticker);
+  };
+
+  this.kraken.api('Ticker', {pair: this.pair}, _.bind(set, this));
+};
+
+
+var roundAmount = function(amount) {
+  // Prevent "You incorrectly entered one of fields."
+  // because of more than 8 decimals.
+  amount *= 100000000;
+  amount = Math.floor(amount);
+  amount /= 100000000;
+  return amount;
+};
+
+Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
+  amount = roundAmount(amount);
+  log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
+
+  var set = function(err, data) {
+    if (err || !_.isEmpty(data.error))
+      return log.error('unable to', tradeType.toLowerCase(), JSON.stringify(data.error));
+
+    callback(err, data.result.txid[0]);
+  };
+
+  this.kraken.api('AddOrder', {
+    pair: this.pair,
+    type: tradeType.toLowerCase(),
+    ordertype: 'limit',
+    price: price,
+    volume: amount.toString()
+  }, _.bind(set, this));
+};
+
+Trader.prototype.buy = function(amount, price, callback) {
+  this.addOrder('buy', amount, price, callback);
+};
+
+Trader.prototype.sell = function(amount, price, callback) {
+  this.addOrder('sell', amount, price, callback);
+};
+
+Trader.prototype.checkOrder = function(order, callback) {
+  var check = function(err, data) {
+    if (err || !_.isEmpty(data.error))
+      return log.error('unable to check order', order, JSON.stringify(data.error));
+
+    var result = data.result[order];
+    var stillThere = result.status === 'open' || result.status === 'pending';
+    callback(err, !stillThere);
+  };
+
+  this.kraken.api('QueryOrders', {txid:order}, _.bind(check, this));
+};
+
+Trader.prototype.cancelOrder = function(order) {
+  var cancel = function(err, data) {
+    if (err || !_.isEmpty(data.error))
+      log.error('unable to cancel order', order, '(', err, JSON.stringify(data.error), ')');
+  };
+
+  this.kraken.api('CancelOrder', {txid: order}, _.bind(cancel, this));
 };
 
 module.exports = Trader;
