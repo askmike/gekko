@@ -22,7 +22,7 @@ config.debug = false; // for additional logging / debugging
 // Monitor the live market
 config.watch = {
   enabled: true,
-  exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp', 'cexio' or 'kraken'
   currency: 'USD',
   asset: 'BTC'
 }
