@@ -174,6 +174,7 @@ Gekko currently has a couple plugins:
 - profit simulator
 - Mailer
 - IRC bot
+- Campfire bot
 - Redis beacon
 
 ### NOTES
@@ -323,21 +324,24 @@ IRC bot is a small plugin that connects Gekko to an IRC channel and lets users i
 - server is the IRC server.
 - botName is the username Gekko will use.
 
+### Campfire bot
 
-This file will explain all different parameters you can set in the [config](https://github.com/askmike/gekko/blob/master/config.js).
+Campfire bot is a small plugin that connects Gekko to a Campfire room and lets users interact with it using basic commands.
 
-The easiest way to configure Gekko is in the normal zone of the config:
-
-    config.normal = {
-      enabled: true,
-      exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-      currency: 'USD',
-      asset: 'BTC',
-      tradingEnabled: false,
-      key: '',
-      secret: '',
-      username: 0 // only fill this is when using Bitstamp or cexio
+    config.campfire = {
+      enabled: false,
+      emitUpdats: false,
+      nickname: 'Gordon',
+      roomId: 673783,
+      apiKey: 'e3b0c44298fc1c149afbf4c8996',
+      account: 'your-subdomain'
     }
+
+- enabled indicates whether this is on or off.
+- emitUpdates tells Gekko that whenever there is a new advice it should broadcast this in the room.
+- roomId is the ID of the Campfire room the bot will connect to.
+- apiKey is the API key for the Campfire user Gekko will connect using.
+- account is the subdomain for the account that the room belongs to.
 
 ### Redis beacon
 
