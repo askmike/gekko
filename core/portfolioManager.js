@@ -195,7 +195,7 @@ Manager.prototype.buy = function(amount, price) {
   if(amount < minimum) {
     return log.info(
       'wanted to buy',
-      this.currency,
+      this.asset,
       'but the amount is to small',
       '(' + amount + ')',
       'at',
@@ -241,7 +241,7 @@ Manager.prototype.sell = function(amount, price) {
   if(amount < minimum) {
     return log.info(
       'wanted to buy',
-      this.asset,
+      this.currency,
       'but the amount is to small',
       '(' + amount + ')',
       'at',
