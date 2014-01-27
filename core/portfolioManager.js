@@ -36,7 +36,11 @@ var Manager = function(conf) {
 
   this.directExchange = exchangeMeta.direct;
   this.infinityOrderExchange = exchangeMeta.infinityOrder;
-  this.minimalOrder = exchangeMeta.minimalOrder;
+
+  this.marketConfig = _.find(exchangeMeta.markets, function(p) {
+    return p.pair[0] === conf.currency && p.pair[1] === conf.asset;
+  });
+  this.minimalOrder = this.marketConfig.minimalOrder;
 
   this.currency = conf.currency;
   this.asset = conf.asset;
@@ -181,15 +185,15 @@ Manager.prototype.buy = function(amount, price) {
   var availabe = this.getBalance(this.currency) / price;
 
   // if not suficient funds
-  if(amount > availabe) {
-    return log.info(
-      'wanted to buy but insufficient',
-      this.currency,
-      '(' + availabe + ')',
-      'at',
-      this.exchange.name
-    );
-  }
+  // if(amount > availabe) {
+  //   return log.info(
+  //     'wanted to buy but insufficient',
+  //     this.currency,
+  //     '(' + availabe + ')',
+  //     'at',
+  //     this.exchange.name
+  //   );
+  // }
 
   // if order to small
   if(amount < minimum) {
@@ -284,7 +288,7 @@ Manager.prototype.checkOrder = function() {
       return;
     }
 
-    log.info(this.action, 'was succesfull');
+    log.info(this.action, 'was successfull');
   }
 
   this.exchange.checkOrder(this.order, _.bind(finish, this));

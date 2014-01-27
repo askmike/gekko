@@ -63,6 +63,16 @@ So Gekko is not:
 - A trading platform for human day traders with a GUI and charts.
 - A High frequency trading bot designed to operate on < minute resolution.
 
+## Supported exchanges
+
+Gekko works on the following exchanges:
+
+- Mt. Gox
+- Bitstamp
+- CEX.io
+- Kraken
+- BTC-e
+
 ## Installing Gekko
 
 Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.

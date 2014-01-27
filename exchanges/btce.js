@@ -16,16 +16,23 @@ var Trader = function(config) {
   this.btce = new BTCE(this.key, this.secret);
 }
 
-Trader.prototype.buy = function(amount, price, callback) {
+Trader.prototype.round = function(amount) {
   // Prevent "You incorrectly entered one of fields."
   // because of more than 8 decimals.
   amount *= 100000000;
   amount = Math.floor(amount);
   amount /= 100000000;
 
+  return amount;
+}
+
+Trader.prototype.buy = function(amount, price, callback) {
+  // amount = this.round(amount);
+  amount = 0.123456;
+
   var set = function(err, data) {
     if(err)
-      log.error('unable to buy:', err);
+      return log.error('unable to buy:', err);
 
     callback(err, data.order_id);
   };
@@ -37,15 +44,11 @@ Trader.prototype.buy = function(amount, price, callback) {
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  // Prevent "You incorrectly entered one of fields."
-  // because of more than 8 decimals.
-  amount *= 100000000;
-  amount = Math.floor(amount);
-  amount /= 100000000;
+  amount = this.round(amount);
 
   var set = function(err, data) {
     if(err)
-      log.error('unable to sell:', err);
+      return log.error('unable to sell:\n\n', err);
 
     callback(err, data.order_id);
   };

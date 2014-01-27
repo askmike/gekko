@@ -40,15 +40,48 @@ var exchanges = [
       'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
     ],
     assets: ['BTC'],
-    pairs: [
-      ['USD', 'BTC'], ['EUR', 'BTC'], ['GBP', 'BTC'],
-      ['AUD', 'BTC'], ['CAD', 'BTC'], ['CHF', 'BTC'],
-      ['CNY', 'BTC'], ['DKK', 'BTC'], ['HKD', 'BTC'],
-      ['PLN', 'BTC'], ['RUB', 'BTC'], ['SGD', 'BTC'],
-      ['THB', 'BTC']
+    markets: [
+      {
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['CHF', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['DKK', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['HKD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['PLN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['RUB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['SGD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['THB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      }
     ],
     requires: ['key', 'secret'],
-    minimalOrder: { amount: 0.01, unit: 'asset' },
     providesHistory: false
   },
   {
@@ -61,16 +94,63 @@ var exchanges = [
       'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR',
       'TRC', 'PPC', 'FTC', 'XPM'
     ],
-    pairs: [
-      ['USD', 'BTC'], ['RUR', 'BTC'], ['EUR', 'BTC'],
-      ['BTC', 'LTC'], ['USD', 'LTC'], ['RUR', 'LTC'],
-      ['EUR', 'LTC'], ['BTC', 'NMC'], ['USD', 'NMC'],
-      ['BTC', 'NVC'], ['USD', 'NVC'], ['RUR', 'USD'],
-      ['USD', 'EUR'], ['BTC', 'TRC'], ['BTC', 'PPC'],
-      ['USD', 'PPC'], ['BTC', 'FTC'], ['BTC', 'XPM']
+    markets: [
+      {
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['RUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['RUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'NMC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['USD', 'NMC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['USD', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['RUR', 'USD'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['USD', 'EUR'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'TRC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['USD', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'FTC'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      },
+      {
+        pair: ['BTC', 'XPM'], minimalOrder: { amount: 0.1, unit: 'asset' }
+      }
     ],
     requires: ['key', 'secret'],
-    minimalOrder: { amount: 0.01, unit: 'asset' },
     providesHistory: false
   },
   {
@@ -80,9 +160,12 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['USD'],
     assets: ['BTC'],
-    pairs: [['USD', 'BTC']],
+    markets: [
+      {
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+      }
+    ],
     requires: ['key', 'secret', 'username'],
-    minimalOrder: { amount: 1, unit: 'currency' },
     providesHistory: false,
     fetchTimespan: 60
   },
@@ -93,9 +176,12 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['BTC'],
     assets: ['GHS'],
-    pairs: [['BTC', 'GHS']],
+    markets: [
+      {
+        pair: ['BTC', 'GHS'], minimalOrder: { amount: 0.000001, unit: 'currency' }
+      }
+    ],
     requires: ['key', 'secret', 'username'],
-    minimalOrder: { amount: 0.000001, unit: 'currency' },
     providesHistory: false
   },
   {
@@ -105,16 +191,72 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['XRP', 'EUR', 'KRW', 'USD', 'LTC', 'XVN'],
     assets: ['LTC', 'NMC', 'XBT', 'XVN', 'EUR', 'KRW', 'USD'],
-    pairs: [
-      [ 'XRP', 'LTC' ], [ 'EUR', 'LTC' ], [ 'KRW', 'LTC' ], [ 'USD', 'LTC' ],
-      [ 'XRP', 'NMC' ], [ 'EUR', 'NMC' ], [ 'KRW', 'NMC' ], [ 'USD', 'NMC' ],
-      [ 'LTC', 'XBT' ], [ 'NMC', 'XBT' ], [ 'XRP', 'XBT' ], [ 'XVN', 'XBT' ],
-      [ 'EUR', 'XBT' ], [ 'KRW', 'XBT' ], [ 'USD', 'XBT' ], [ 'XRP', 'XVN' ],
-      [ 'XRP', 'EUR' ], [ 'XVN', 'EUR' ], [ 'XRP', 'KRW' ], [ 'XRP', 'USD' ],
-      [ 'XVN', 'USD' ]
+    markets: [
+      {
+        pair: ['XRP', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['KRW', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'NMC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['EUR', 'NMC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['KRW', 'NMC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['USD', 'NMC'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['LTC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['NMC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XVN', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['KRW', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['USD', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'XVN'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'EUR'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XVN', 'EUR'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'KRW'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XRP', 'USD'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      },
+      {
+        pair: ['XVN', 'USD'], minimalOrder: { amount: 0.01, unit: 'currency' }
+      }
     ],
     requires: ['key', 'secret'],
-    minimalOrder: { amount: 0.01, unit: 'currency' },
     providesHistory: false
   }
 ];
