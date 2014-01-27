@@ -103,14 +103,6 @@ var actors = [
     modes: ['realtime', 'backtest']
   },
   {
-    name: 'Profit Simulator',
-    description: 'Paper trader that logs fake profits.',
-    slug: 'profitSimulator',
-    async: false,
-    silent: false,
-    modes: ['realtime', 'backtest']
-  },
-  {
     name: 'Redis beacon',
     slug: 'redisBeacon',
     description: 'Publish events over Redis Pub/Sub',
