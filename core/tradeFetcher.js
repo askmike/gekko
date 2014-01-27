@@ -171,7 +171,7 @@ Fetcher.prototype.processTrades = function(err, trades) {
     throw err;
 
   // Make sure we have trades to process
-  if (trades.length < 1) {
+  if(_.isEmpty(trades)) {
     log.debug('Trade fetch came back empty. Rescheduling...');
     this.calculateNextFetch();
     this.scheduleNextFetch();

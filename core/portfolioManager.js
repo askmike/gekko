@@ -185,15 +185,15 @@ Manager.prototype.buy = function(amount, price) {
   var availabe = this.getBalance(this.currency) / price;
 
   // if not suficient funds
-  // if(amount > availabe) {
-  //   return log.info(
-  //     'wanted to buy but insufficient',
-  //     this.currency,
-  //     '(' + availabe + ')',
-  //     'at',
-  //     this.exchange.name
-  //   );
-  // }
+  if(amount > availabe) {
+    return log.info(
+      'wanted to buy but insufficient',
+      this.currency,
+      '(' + availabe + ')',
+      'at',
+      this.exchange.name
+    );
+  }
 
   // if order to small
   if(amount < minimum) {
