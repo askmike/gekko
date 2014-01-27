@@ -28,6 +28,9 @@ var util = {
     else
       _config[key] = value;
   },
+  getVersion: function() {
+    return util.getPackage().version;
+  },
   getPackage: function() {
     if(_package)
       return _package;
@@ -45,10 +48,14 @@ var util = {
   getArgument: function(argument) {
     var ret;
     _.each(process.argv, function(arg) {
+      // check if it's a configurable
       var pos = arg.indexOf(argument + '=');
-      if(pos !== -1) {
+      if(pos !== -1)
         ret = arg.substr(argument.length + 1);
-      }
+      // check if it's a toggle
+      pos = arg.indexOf('-' + argument);
+      if(pos !== -1 && !ret)
+        ret = true;
     });
     return ret;
   },
@@ -118,8 +125,17 @@ var util = {
       return _.defer(function() { fn.apply(this, args) });
     }
   },
+  logVersion: function() {
+    console.log('Gekko version:', util.getVersion());
+    console.log('Nodejs version:', process.version);
+  },
   die: function(m) {
-    console.log('\n\n\n', m);
+    if(m) {
+      console.log('\n\nGekko encountered an error and can\'t continue');
+      console.log('\nmeta debug info:\n');
+      util.logVersion();
+      console.log('\n\nerror:', m, '\n\n');
+    }
     process.kill();
   }
 }

@@ -25,10 +25,16 @@ var async = require('async');
 var util = require(coreDir + 'util');
 var log = require(coreDir + 'log');
 
+// if the user just wants to see the current version
+if(util.getArgument('v')) {
+  util.logVersion();
+  util.die();
+}
+
 // make sure the current node version is recent enough
 if(!util.recentNode())
   util.die([
-    'Your local version of nodejs is to old for Gekko. ',
+    'Your local version of nodejs is to old. ',
     'You have ',
     process.version,
     ' and you need atleast ',
@@ -46,6 +52,9 @@ if(config.EMA)
 if(!config.profitSimulator.slippage)
   util.die('Please update your config! The profit simulator is missing slippage');
 
+// START
+
+log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 var gekkoMode = 'realtime';
