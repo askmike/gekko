@@ -27,8 +27,7 @@ Trader.prototype.round = function(amount) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  // amount = this.round(amount);
-  amount = 0.123456;
+  amount = this.round(amount);
 
   var set = function(err, data) {
     if(err)
