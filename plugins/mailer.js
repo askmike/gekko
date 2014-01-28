@@ -18,13 +18,16 @@ var Mailer = function(done) {
 Mailer.prototype.setup = function(done) {
   var setupMail = function(err, result) {
     if(result) {
-      log.info('Got it.');
+      console.log('Got it.');
       mailConfig.password = result.password;
     }
 
-    if (mailConfig.to === '' )  mailConfig.to = mailConfig.Email;
-    if (mailConfig.from === '' )  mailConfig.from = mailConfig.Email;
-    if ((mailConfig.user === '') && mailConfig.smtpauth)  mailConfig.user = mailConfig.Email;
+    if(_.isEmpty(mailConfig.to))
+      mailConfig.to = mailConfig.email;
+    if(_.isEmpty(mailConfig.from))
+      mailConfig.from = mailConfig.email;
+    if(_.isEmpty(mailConfig.user) && mailConfig.smtpauth)
+      mailConfig.user = mailConfig.email;
 
     this.server = email.server.connect({
       user: mailConfig.user,
@@ -33,7 +36,7 @@ Mailer.prototype.setup = function(done) {
       ssl: mailConfig.ssl,
       port: mailConfig.port,
       tls: mailConfig.tls
-          });
+    });
 
     if(mailConfig.sendMailOnStart) {
       this.mail(
@@ -58,7 +61,7 @@ Mailer.prototype.setup = function(done) {
     log.debug('Setup email adviser.');
   }
 
-  if(!mailConfig.password && mailConfig.user) {
+  if(!mailConfig.password) {
     // ask for the mail password
     var prompt = require('prompt-lite');
     prompt.start();
@@ -73,7 +76,7 @@ Mailer.prototype.setup = function(done) {
     log.warn(warning);
     prompt.get({name: 'password', hidden: true}, _.bind(setupMail, this));
   } else {
-    setupMail.call(this, false, false);
+    setupMail.call(this);
   }
 }
 

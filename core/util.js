@@ -126,15 +126,16 @@ var util = {
     }
   },
   logVersion: function() {
-    console.log('Gekko version:', util.getVersion());
+    console.log('Gekko version:', 'v' + util.getVersion());
     console.log('Nodejs version:', process.version);
   },
   die: function(m) {
     if(m) {
       console.log('\n\nGekko encountered an error and can\'t continue');
-      console.log('\nmeta debug info:\n');
+      console.log('\nMeta debug info:\n');
       util.logVersion();
-      console.log('\n\nerror:', m, '\n\n');
+      console.log('\nError:\n');
+      console.log(m, '\n\n');
     }
     process.kill();
   }

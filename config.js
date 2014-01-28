@@ -122,7 +122,7 @@ config.mailer = {
   enabled: false, 			// Send Emails if true, false to turn off
   sendMailOnStart: true,		// Send 'Gekko starting' message if true, not if false
 
-  Email: 'me@gmail.com',		// Your GMail address
+  email: '',		// Your Gmail address
 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
@@ -134,22 +134,21 @@ config.mailer = {
   // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
   // guarantuee that your email address & password are safe!
 
-  password: '',				// Your GMail Password - if not supplied Gekko will prompt on startup.
+  password: '',				// Your Gmail Password - if not supplied Gekko will prompt on startup.
 
-  tag: '[GEKKO] ',			// Prefix all EMail subject lines with this
+  tag: '[GEKKO] ',			// Prefix all email subject lines with this
 
             //       ADVANCED MAIL SETTINGS
             // you can leave those as is if you 
-            // want to use gmail
+            // just want to use Gmail
 
-  // Non-GMail settings - If you are not using GMail you will need to enter the appropriate values below.
   server: 'smtp.gmail.com',		// The name of YOUR outbound (SMTP) mail server.
-  smtpauth: true,			// Does SMTP server require authentication (true for GMail)
+  smtpauth: true,			// Does SMTP server require authentication (true for Gmail)
 					// The following 3 values default to the Email (above) if left blank
   user: '',				// Your Email server user name - usually your full Email address 'me@mydomain.com'
   from: '',				// 'me@mydomain.com'
   to: '',				// 'me@somedomain.com, me@someotherdomain.com'
-  ssl: true,				// Use SSL (true for GMail)
+  ssl: true,				// Use SSL (true for Gmail)
   port: '',				// Set if you don't want to use the default port
   tls: false				// Use TLS if true
 }
