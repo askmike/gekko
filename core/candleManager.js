@@ -895,7 +895,7 @@ Manager.prototype.insertCandles = function(candles, cb) {
         err.key,
         err
       );
-      throw err;
+      util.die(err);
     }
 
     async.eachSeries(
