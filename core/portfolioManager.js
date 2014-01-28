@@ -177,7 +177,7 @@ Manager.prototype.getMinimum = function(price) {
 Manager.prototype.buy = function(amount, price) {
   // sometimes cex.io specifies a price w/ > 8 decimals
   price *= 100000000;
-  price = Math.ceil(price);
+  price = Math.floor(price);
   price /= 100000000;
 
   var currency = this.getFund(this.currency);
