@@ -206,12 +206,22 @@ config.webserver = {
   }
 }
 
-
-
-
 // not working, leave as is
 config.backtest = {
   enabled: false
 }
+
+// set this to true if you understand that Gekko will 
+// invest according to how you configured the indicators.
+// None of the advice in the output is Gekko telling you
+// to take a certain position. Instead it is the result 
+// of running the indicators you configured automatically.
+// 
+// In other words: Gekko automates your trading strategies,
+// it doesn't advice on itself, only set to true if you truly
+// understand this.
+// 
+// Not sure? Read this first: https://github.com/askmike/gekko/issues/201
+config['I understand that Gekko only automates MY OWN trading strategies'] = false;
 
 module.exports = config;

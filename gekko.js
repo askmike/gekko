@@ -56,6 +56,12 @@ if(!config.DEMA.thresholds)
   util.die('Please update your config!');
 
 
+if(
+  config.trader.enabled &&
+  !config['I understand that Gekko only automates MY OWN trading strategies']
+)
+  util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
+
 // START
 
 log.info('Gekko v' + util.getVersion(), 'started');
