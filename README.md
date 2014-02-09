@@ -11,7 +11,7 @@ You are looking at the new and completetly different version of Gekko that is be
 **Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.** The list boils down to:
 
 - watch any market on BTC-e, Bitstamp, Mt. Gox, CEX.io.
-- calculate MACD, DEMO or PPO over this market.
+- calculate MACD, DEMA or PPO over this market.
 - use the following plugins:
     - real trader (automatic trading on advice)
     - advice logger
