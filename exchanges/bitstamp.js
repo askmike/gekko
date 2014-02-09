@@ -77,6 +77,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     callback(err, result.id);
   };
 
+  // TODO: fees are hardcoded here?
   amount *= 0.995; // remove fees
   // prevent: Ensure that there are no more than 8 digits in total.
   amount *= 100000000;
@@ -111,7 +112,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
       log.error('unable to cancel order', order, '(', err, result, ')');
   };
 
-  this.bitstamp.cancel_orders(order, _.bind(cancel, this));
+  this.bitstamp.cancel_order(order, _.bind(cancel, this));
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
