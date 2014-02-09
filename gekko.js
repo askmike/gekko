@@ -51,6 +51,10 @@ if(config.EMA)
 // temp at Wed Jan 22 12:18:08 CET 2014
 if(!config.profitSimulator.slippage)
   util.die('Please update your config! The profit simulator is missing slippage');
+// temp at Sun Feb  9 17:13:45 CET 2014
+if(!config.DEMA.thresholds)
+  util.die('Please update your config!');
+
 
 // START
 

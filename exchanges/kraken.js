@@ -35,7 +35,7 @@ var Trader = function(config) {
   this.currency = "EUR";
   this.asset = "XBT";
 
-  if (_.isObject(config)) {
+  if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
     this.currency = config.currency.toUpperCase();

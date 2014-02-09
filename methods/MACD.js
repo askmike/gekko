@@ -18,11 +18,14 @@ var MACD = require('./indicators/MACD.js');
 var TradingMethod = function () {
   _.bindAll(this);
 
-  this.currentTrend = 'none';
-  this.trendDuration = 0;
+  this.trend = {
+    direction: 'none',
+    duration: 0,
+    persisted: false,
+    adviced: false
+  };
 
   this.historySize = config.tradingAdvisor.historySize;
-
   this.macd = new MACD(settings);
 }
 
@@ -33,7 +36,7 @@ Util.inherits(TradingMethod, EventEmitter);
 TradingMethod.prototype.update = function(candle) {
   var price = candle.c;
 
-  this.lastPrice = price;;
+  this.lastPrice = price;
   this.macd.update(price);
 
   if(this.macd.short.age < this.historySize)
@@ -51,7 +54,7 @@ TradingMethod.prototype.log = function() {
   var signal = this.macd.signal.result;
   var result = this.macd.result;
 
-  log.debug('calced MACD properties for candle:');
+  log.debug('calculated MACD properties for candle:');
   log.debug('\t', 'short:', this.macd.short.result.toFixed(digits));
   log.debug('\t', 'long:', this.macd.long.result.toFixed(digits));
   log.debug('\t', 'macd:', macd.toFixed(digits));
@@ -67,42 +70,73 @@ TradingMethod.prototype.calculateAdvice = function() {
   var signal = this.macd.signal.result;
   var macddiff = this.macd.result;
 
-  if(macddiff > settings.buyThreshold) {
+  if(macddiff > settings.thresholds.up) {
 
-    if(this.currentTrend === 'down')
-      this.trendDuration = 0;
+    // new trend detected
+    if(this.trend.direction !== 'up')
+      this.trend = {
+        duration: 0,
+        persisted: false,
+        direction: 'up',
+        adviced: false
+      };
 
-    this.trendDuration += 1;
+    this.trend.duration++;
 
-    if(this.trendDuration < settings.persistence)
-      this.currentTrend = 'PendingUp';
+    log.debug('In uptrend since', this.trend.duration, 'candle(s)');
 
-    if(this.currentTrend !== 'up' && this.trendDuration >= settings.persistence) {
-      this.currentTrend = 'up';
+    if(this.trend.duration >= settings.thresholds.persistence)
+      this.trend.persisted = true;
+
+    if(this.trend.persisted && !this.trend.adviced) {
+      this.trend.adviced = true;
       this.advice('long');
     } else
       this.advice();
-    
-  } else if(macddiff < settings.sellThreshold) {
 
-    if(this.currentTrend === 'up') this.trendDuration = 0;
+  } else if(macddiff < settings.thresholds.down) {
 
-    this.trendDuration += 1;
-    if(this.trendDuration < settings.persistence)
-       this.currentTrend = 'PendingDown';
+    // new trend detected
+    if(this.trend.direction !== 'down')
+      this.trend = {
+        duration: 0,
+        persisted: false,
+        direction: 'down',
+        adviced: false
+      };
 
-    if(this.currentTrend !== 'down' && this.trendDuration >= settings.persistence) {
-      this.currentTrend = 'down';
+    this.trend.duration++;
+
+    log.debug('In downtrend since', this.trend.duration, 'candle(s)');
+
+    if(this.trend.duration >= settings.thresholds.persistence)
+      this.trend.persisted = true;
+
+    if(this.trend.persisted && !this.trend.adviced) {
+      this.trend.adviced = true;
       this.advice('short');
-    }
-    else
+    } else
       this.advice();
 
   } else {
-    this.currentTrend = 'none';
+
+    log.debug('In no trend');
+
+    // we're not in an up nor in a downtrend
+    // but for now we ignore sideways trends
+    // 
+    // read more @link:
+    // 
+    // https://github.com/askmike/gekko/issues/171
+
+    // this.trend = {
+    //   direction: 'none',
+    //   duration: 0,
+    //   persisted: false,
+    //   adviced: false
+    // };
+
     this.advice();
-    // Trend has ended so reset counter
-    this.trendDuration = 0;
   }
 }
 

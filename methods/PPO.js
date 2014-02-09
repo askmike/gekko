@@ -13,11 +13,15 @@ var settings = config.PPO;
 
 var PPO = require('./indicators/PPO.js');
 
-var TradingMethod = function () {
+var TradingMethod = function() {
   _.bindAll(this);
 
-  this.currentTrend = 'none';
-  this.trendDuration = 0;
+  this.trend = {
+    direction: 'none',
+    duration: 0,
+    persisted: false,
+    adviced: false
+  };
 
   this.historySize = config.tradingAdvisor.historySize;
   this.ppo = new PPO(settings);
@@ -42,7 +46,7 @@ TradingMethod.prototype.update = function(candle) {
 
 // for debugging purposes log the last 
 // calculated parameters.
-TradingMethod.prototype.log = function () {
+TradingMethod.prototype.log = function() {
   var digits = 8;
   var short = this.ppo.short.result;
   var long = this.ppo.long.result;
@@ -51,7 +55,7 @@ TradingMethod.prototype.log = function () {
   var macdSignal = this.ppo.MACDsignal.result;
   var ppoSignal = this.ppo.PPOsignal.result;
 
-  log.debug('calced MACD properties for candle:');
+  log.debug('calculated MACD properties for candle:');
   log.debug('\t', 'short:', short.toFixed(digits));
   log.debug('\t', 'long:', long.toFixed(digits));
   log.debug('\t', 'macd:', macd.toFixed(digits));
@@ -62,7 +66,7 @@ TradingMethod.prototype.log = function () {
   log.debug('\t', 'ppohist:', (ppo - ppoSignal).toFixed(digits));  
 }
 
-TradingMethod.prototype.calculateAdvice = function () {
+TradingMethod.prototype.calculateAdvice = function() {
   var price = this.lastPrice;
   var long = this.ppo.long.result;
   var short = this.ppo.short.result;
@@ -70,45 +74,82 @@ TradingMethod.prototype.calculateAdvice = function () {
   var ppo = this.ppo.ppo;
   var macdSignal = this.ppo.MACDsignal.result;
   var ppoSignal = this.ppo.PPOsignal.result;
+
+  // TODO: is this part of the indicator or not?
+  // if it is it should move there
   var macdHist = macd - macdSignal;
   var ppoHist = ppo - ppoSignal;
 
-  if(ppoHist > settings.buyThreshold) {
+  if(ppoHist > settings.thresholds.up) {
 
-    if(this.currentTrend === 'down')
-      this.trendDuration = 0;
+    // new trend detected
+    if(this.trend.direction !== 'up')
+      this.trend = {
+        duration: 0,
+        persisted: false,
+        direction: 'up',
+        adviced: false
+      };
 
-    this.trendDuration += 1;
+    this.trend.duration++;
 
-    if(this.trendDuration < settings.persistence)
-      this.currentTrend = 'PendingUp';
+    log.debug('In uptrend since', this.trend.duration, 'candle(s)');
 
-    if(this.currentTrend !== 'up' && this.trendDuration >= settings.persistence) {
-      this.currentTrend = 'up';
+    if(this.trend.duration >= settings.thresholds.persistence)
+      this.trend.persisted = true;
+
+    if(this.trend.persisted && !this.trend.adviced) {
+      this.trend.adviced = true;
       this.advice('long');
     } else
       this.advice();
     
-  } else if(ppoHist < settings.sellThreshold) {
+  } else if(ppoHist < settings.thresholds.down) {
 
-    if(this.currentTrend === 'up') this.trendDuration = 0;
+    // new trend detected
+    if(this.trend.direction !== 'down')
+      this.trend = {
+        duration: 0,
+        persisted: false,
+        direction: 'down',
+        adviced: false
+      };
 
-    this.trendDuration += 1;
-    if(this.trendDuration < settings.persistence)
-       this.currentTrend = 'PendingDown';
+    this.trend.duration++;
 
-    if(this.currentTrend !== 'down' && this.trendDuration >= settings.persistence) {
-      this.currentTrend = 'down';
+    log.debug('In downtrend since', this.trend.duration, 'candle(s)');
+
+    if(this.trend.duration >= settings.thresholds.persistence)
+      this.trend.persisted = true;
+
+    if(this.trend.persisted && !this.trend.adviced) {
+      this.trend.adviced = true;
       this.advice('short');
     } else
       this.advice();
 
+
   } else {
-    this.currentTrend = 'none';
+
+    log.debug('In no trend');
+
+    // we're not in an up nor in a downtrend
+    // but for now we ignore sideways trends
+    // 
+    // read more @link:
+    // 
+    // https://github.com/askmike/gekko/issues/171
+
+    // this.trend = {
+    //   direction: 'none',
+    //   duration: 0,
+    //   persisted: false,
+    //   adviced: false
+    // };
+
     this.advice();
-    // Trend has ended so reset counter
-    this.trendDuration = 0;
   }
+
 }
 
 TradingMethod.prototype.advice = function(newPosition) {

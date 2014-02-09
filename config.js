@@ -13,7 +13,7 @@ config.history = {
   // and load historical data from?
   directory: './history/'
 }
-config.debug = false; // for additional logging / debugging
+config.debug = true; // for additional logging / debugging
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                         WATCHING A MARKET
@@ -34,7 +34,7 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: 'DEMA',
-  candleSize: 30,
+  candleSize: 60,
   historySize: 50
 }
 
@@ -46,8 +46,10 @@ config.DEMA = {
   long: 21,
   // amount of candles to remember and base initial EMAs on
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.025,
-  buyTreshold: 0.025
+  thresholds: {
+    down: -0.025,
+    up: 0.025
+  }
 };
 
 // MACD settings:
@@ -58,10 +60,13 @@ config.MACD = {
   long: 21,
   signal: 9,
   // the difference between the EMAs (to act as triggers)
-  sellThreshold: -0.025,
-  buyThreshold: 0.025,
-  // How many candle intervals until trigger fires
-  persistence: 5
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
 };
 
 // PPO settings:
@@ -72,12 +77,13 @@ config.PPO = {
   long: 26,
   signal: 9,
   // the difference between the EMAs (to act as triggers)
-  sellThreshold: -0.3,
-  buyThreshold: 0.3,
-  // How many candle intervals until trigger fires
-  persistence: 1,
-  // Provide debugging output / verbose output
-  verbose: true
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 2
+  }
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
