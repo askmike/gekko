@@ -55,7 +55,7 @@ Trader.prototype.buy = function(amount, price, callback) {
       return log.error('unable to buy:', data.error);
 
     log.debug('BUY order placed.  Order ID', data.id);
-    callback(data.id);
+    callback(null, data.id);
   };
 
   this.cexio.place_order('buy', amount, price, _.bind(set, this));
@@ -80,7 +80,7 @@ Trader.prototype.sell = function(amount, price, callback) {
       return log.error('unable to sell:', data.error);
 
     log.debug('SELL order placed.  Order ID', data.id);
-    callback(data.id);
+    callback(null, data.id);
   };
 
   this.cexio.place_order('sell', amount, price, _.bind(set, this));

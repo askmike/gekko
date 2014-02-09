@@ -74,7 +74,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     if(err || result.error)
       return log.error('unable to buy:', err, result);
 
-    callback(err, result.id);
+    callback(null, result.id);
   };
 
   // TODO: fees are hardcoded here?
@@ -91,7 +91,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     if(err || result.error)
       return log.error('unable to sell:', err, result);
 
-    callback(err, result.id);
+    callback(null, result.id);
   };
 
   this.bitstamp.sell(amount, price, _.bind(set, this));

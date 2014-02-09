@@ -33,7 +33,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     if(err)
       return log.error('unable to buy:', err);
 
-    callback(err, data.order_id);
+    callback(null, data.order_id);
   };
 
   // workaround for nonce error
@@ -49,7 +49,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     if(err)
       return log.error('unable to sell:\n\n', err);
 
-    callback(err, data.order_id);
+    callback(null, data.order_id);
   };
 
   // workaround for nonce error

@@ -26,7 +26,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     if(err || result.result === 'error')
       log.error('unable to buy (', err, result, ')');
 
-    callback(err, result.data);
+    callback(null, result.data);
   };
   this.mtgox.add('bid', amount, price, _.bind(process, this));
 }
@@ -38,7 +38,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     if(err || result.result === 'error')
       log.error('unable to sell (', err, result, ')');
 
-    callback(err, result.data);
+    callback(null, result.data);
   };
   this.mtgox.add('ask', amount, price, _.bind(process, this));
 }
