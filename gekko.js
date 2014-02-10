@@ -43,6 +43,9 @@ if(!util.recentNode())
 
 var config = util.getConfig();
 
+// Temporary checks to make sure everything we need is
+// up to date and present on the system.
+
 // temp at Fri Jan 17 16:00:19 CET 2014
 if(config.normal)
   util.die('Please update your config! config.normal is now called config.watch');
@@ -54,7 +57,11 @@ if(!config.profitSimulator.slippage)
 // temp at Sun Feb  9 17:13:45 CET 2014
 if(!config.DEMA.thresholds)
   util.die('Please update your config!');
-
+try {
+  require('kraken-api');
+} catch(err) {
+  util.die('Kraken module cannot be found, if you are on Windows read this:\n\nhttps://github.com/askmike/gekko/issues/202');
+}
 
 if(
   config.trader.enabled &&

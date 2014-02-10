@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -21,7 +21,9 @@
     "async": "0.2.x",
     "nedb": "0.9.4",
     "line-reader": "0.2.x",
-    "semver": "2.2.1",
+    "semver": "2.2.1"
+  },
+  "optionalDependencies": {
     "kraken-api" :"0.1.x"
   },
   "devDependencies": {

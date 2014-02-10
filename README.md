@@ -1,28 +1,6 @@
 # Important note
 
-You are looking at the new and completetly different version of Gekko that is being developed right now. **It is not stable yet, it might crash and we need to validate the advice to be solid.**
-
-## What we know doesn't work
-
-- Not 100% this is stable. Let me know if there is a bug!
-
-## What we hope does work
-
-**Everything listed in the [Configuring Gekko Doc](https://github.com/askmike/gekko/tree/localDB/docs/Configuring_gekko.md). This document lists everything you can do with Gekko and how to do it.** The list boils down to:
-
-- watch any market on BTC-e, Bitstamp, Mt. Gox, CEX.io.
-- calculate MACD, DEMA or PPO over this market.
-- use the following plugins:
-    - real trader (automatic trading on advice)
-    - advice logger
-    - profit simulator
-    - Mailer (on advice)
-    - IRC bot
-    - Redis beacon
-
-Here is [the todo](https://github.com/askmike/gekko/issues/114) until the new version is considered stable.
-
-If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/114) if we are aware of it and if not create a new one :)
+You are looking at the brand new and completetly different version of Gekko. We've tested it for quite a while though it might be possible that you encounter bugs. If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/) if we are aware of it and if not create a new one :)
 
 # Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
@@ -32,25 +10,21 @@ If you encounter a bug: check out in [the issues](https://github.com/askmike/gek
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org).
+Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org). 
+
+You are looking at the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know.
+
+*Use Gekko at you own risk.*
 
 ## Main features
 
 * Trading platform:
  * Paper trading
- * ~~Live trading (trade bot)~~
- * ~~Backtesting~~
+ * Live trading (trade bot)
+ * ~~Backtester~~
 * Market API / interface:
  * Emit market events
  * Basic IRC Bot
-
-## What?
-
-This project is a learning excercise of me, a student with *some* experience in programming (mostly web) and zero experience in economics and trading. I figured writing my own trade bot would be the best way to learn about implementing mathematical trading algorithms. So here is **my very first attempt at anything related to trading / algorithmic decision making**.
-
-As this is a learning experience for me all feedback is extremely appreciated. If you don't want to contribute to the code you can always just send me an [email](mailto:mike@mvr.me) or leave feedback in the [Gekko thread on the bitcointalk forum](https://bitcointalk.org/index.php?topic=209149.0).
-
-*Use Gekko at you own risk.*
 
 ## Trading platform
 
@@ -62,6 +36,7 @@ So Gekko is not:
 
 - A trading platform for human day traders with a GUI and charts.
 - A High frequency trading bot designed to operate on < minute resolution.
+- A fully automated trading bot that you turn on and will generate profit withouth you having to do anything.
 
 ## Supported exchanges
 
@@ -72,6 +47,7 @@ Gekko works on the following exchanges:
 - CEX.io
 - Kraken
 - BTC-e
+- ~~Cryptsy~~ (In the [pipeline](https://github.com/askmike/gekko/pull/200))
 
 ## Installing Gekko
 
