@@ -57,8 +57,13 @@ if(!config.profitSimulator.slippage)
 // temp at Sun Feb  9 17:13:45 CET 2014
 if(!config.DEMA.thresholds)
   util.die('Please update your config!');
+
+// see @link:
+// https://github.com/askmike/gekko/issues/202
 try {
-  require('kraken-api');
+  // only worry about this when the user wants to watch kraken
+  if(config.watch.exchange.toLowerCase() === 'kraken')
+    require('kraken-api');
 } catch(err) {
   util.die('Kraken module cannot be found, if you are on Windows read this:\n\nhttps://github.com/askmike/gekko/issues/202');
 }
