@@ -4,7 +4,7 @@ You are looking at the brand new and completetly different version of Gekko. We'
 
 # Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
-*The point is ladies and gentlemen that greed, for lack of a better word, is good.*
+*The most valuable commodity I know of is information.*
 
 ![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
 
@@ -12,7 +12,7 @@ You are looking at the brand new and completetly different version of Gekko. We'
 
 Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org). 
 
-This is the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know once it's open.
+This is the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know once it's out.
 
 *Use Gekko at you own risk.*
 
@@ -37,6 +37,7 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 - A trading platform for human day traders with a GUI and charts.
 - A High frequency trading bot designed to operate on < minute resolution.
 - A fully automated trading bot that you turn on and will generate profit withouth you having to do anything.
+- An exchange.
 
 ## Market interface
 
@@ -88,7 +89,7 @@ To run the bot you just have to start Gekko:
 
     node gekko
 
-You can also run Gekko silently, for examples on how to do this check out the [advanced features](https://github.com/askmike/gekko/tree/localDB/docs/Advanced_features.md).
+You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/localDB/docs/Advanced_features.md).
 
 ## Updating Gekko
 

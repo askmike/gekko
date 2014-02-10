@@ -306,15 +306,15 @@ Mailer will automatically email you whenever Gekko has a new advice.
 - Email is your email address from which Gekko will send emails (to the same address).
 - password is the email password: Gekko needs to login to your account to send emails to you:
 
-  You don't have to set your password here, if you leave it blank we will ask it
-  when Gekko's starts.
-  
-  NOTE: Gekko is an open source project < https://github.com/askmike/gekko >,
-  make sure you looked at the code or trust the maintainer of this bot when you
-  fill in your email and password.
-  
-  WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
-  guarantuee that your email address & password are safe!
+  > You don't have to set your password here, if you leave it blank we will ask it
+  > when Gekko's starts.
+  >
+  > NOTE: Gekko is an open source project < https://github.com/askmike/gekko >,
+  > make sure you looked at the code or trust the maintainer of this bot when you
+  > fill in your email and password.
+  >
+  > WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
+  > guarantuee that your email address & password are safe!
 
 - tag is some text that Gekko will put in all subject lines so you can easily group all advices together.
 
