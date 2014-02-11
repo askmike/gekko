@@ -51,7 +51,7 @@ TradingMethod.prototype.calculateAdvice = function() {
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
 
-  if(diff > settings.buyTreshold) {
+  if(diff > settings.thresholds.up) {
     log.debug('we are currently in uptrend', message);
 
     if(this.currentTrend !== 'up') {
@@ -60,7 +60,7 @@ TradingMethod.prototype.calculateAdvice = function() {
     } else
       this.advice();
 
-  } else if(diff < settings.sellTreshold) {
+  } else if(diff < settings.thresholds.down) {
     log.debug('we are currently in a downtrend', message);
 
     if(this.currentTrend !== 'down') {
