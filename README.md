@@ -56,7 +56,7 @@ Gekko works on the following exchanges:
 - Mt. Gox
 - Bitstamp
 - CEX.io
-- Kraken ([possibly not on Windows](https://github.com/askmike/gekko/issues/202))
+- Kraken
 - BTC-e
 - ~~Cryptsy~~ (In the [pipeline](https://github.com/askmike/gekko/pull/200))
 
