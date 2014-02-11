@@ -4,9 +4,9 @@ You are looking at the brand new and completetly different version of Gekko. We'
 
 # Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
-*The most valuable commodity I know of is information.*
-
 ![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
+
+*The most valuable commodity I know of is information.*
 
 -Gordon Gekko
 
