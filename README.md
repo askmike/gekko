@@ -97,6 +97,16 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
     git pull && npm update
 
+## How does Gekko work?
+
+![Gekko 0.1.0 architecture](http://data.wizb.it/misc/gekko-0.1.0-architecture.jpg)
+
+If you want to contribute or are interested in how Gekko works:
+
+- Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/master/docs/internals/architecture.md).
+- Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/master/docs/internals/exchanges.md).
+- Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/master/docs/internals/plugins.md).
+
 ## TODO
 
 * Backtester
