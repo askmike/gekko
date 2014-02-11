@@ -5,7 +5,7 @@ Advanced options:
 * [Running Gekko headlessly](#running-gekko-headlessly)
 * [Specify a config file](#specify-a-config-file)
 * [Helper files](#helper-files)
-* [Building on top of the Gekko platform](#building-on-top-of-the-Gekko-platform)
+* [Building on top of the Gekko platform](#building-on-top-of-the-gekko-platform)
 
 # Running Gekko headlessly
 
