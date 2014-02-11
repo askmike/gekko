@@ -9,11 +9,9 @@
 var moment = require('moment');
 var fmt = require('util').format;
 var _ = require('lodash');
-var util = require('./util.js');
-var config = util.getConfig();
+var debug = require('./util').getConfig().debug;
 
 var Log = function() {
-  this._debug = config.debug;
   _.bindAll(this);
 };
 
@@ -36,11 +34,14 @@ Log.prototype = {
   },
   info: function() {
     this._write('info', arguments);
-  },
-  debug: function() {
-    if(this._debug)
-      this._write('info', arguments, 'DEBUG');  
   }
 }
+
+if(debug)
+  Log.prototype.debug = function() {
+    this._write('info', arguments, 'DEBUG');  
+  }
+else
+  Log.prototype.debug = function() {};
 
 module.exports = new Log;

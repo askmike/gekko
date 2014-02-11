@@ -1,8 +1,7 @@
 /*
 
-  Gekko is a Bitcoin trading bot for Mt. Gox written 
-  in node, it features multiple trading methods using 
-  technical analysis.
+  Gekko is a Bitcoin trading bot for popular Bitcoin exchanges written 
+  in node, it features multiple trading methods using technical analysis.
 
   Disclaimer:
 
@@ -16,114 +15,231 @@
 
 */
 
-// helpers
-var moment = require('moment');
+var gekkoDir = './';
+var coreDir = gekkoDir + 'core/';
+var pluginDir = gekkoDir + 'plugins/';
+
 var _ = require('lodash');
-var util = require('./util');
-var log = require('./log');
 var async = require('async');
-var Manager = require('./portfolioManager');
-var exchangeChecker = require('./exchangeChecker');
+
+var util = require(coreDir + 'util');
+var log = require(coreDir + 'log');
+
+// if the user just wants to see the current version
+if(util.getArgument('v')) {
+  util.logVersion();
+  util.die();
+}
+
+// make sure the current node version is recent enough
+if(!util.recentNode())
+  util.die([
+    'Your local version of nodejs is to old. ',
+    'You have ',
+    process.version,
+    ' and you need atleast ',
+    util.getRequiredNodeVersion()
+  ].join(''));
 
 var config = util.getConfig();
-var Consultant = require('./methods/' + config.tradingMethod.toLowerCase().split(' ').join('-'));
 
-log.info('I\'m gonna make you rich, Bud Fox.');
-log.info('Let me show you some ' + config.tradingMethod + '.\n\n');
+// Temporary checks to make sure everything we need is
+// up to date and present on the system.
 
-//
-// Normalize the configuration between normal & advanced.
-// 
-if(config.normal && config.normal.enabled) {
-  // if the normal settings are enabled we overwrite the
-  // watcher and traders set in the advanced zone
-  log.info('Using normal settings to monitor the live market');
-  config.watch = config.normal;
-  config.traders = [];
+// temp at Fri Jan 17 16:00:19 CET 2014
+if(config.normal)
+  util.die('Please update your config! config.normal is now called config.watch');
+if(config.EMA)
+  util.die('Please update your config! EMA is now called DEMA');
+// temp at Wed Jan 22 12:18:08 CET 2014
+if(!config.profitSimulator.slippage)
+  util.die('Please update your config! The profit simulator is missing slippage');
+// temp at Sun Feb  9 17:13:45 CET 2014
+if(!config.DEMA.thresholds)
+  util.die('Please update your config!');
 
-  if(config.normal.tradingEnabled)
-    config.traders.push( config.normal );
-  else
-    log.info('NOT trading with real money');
-} else {
-  log.info('Using advanced settings');
-}
+if(
+  config.trader.enabled &&
+  !config['I understand that Gekko only automates MY OWN trading strategies']
+)
+  util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
 
-//
-// Create a public exchange object which can retrieve live 
-// trade information.
-// 
+// START
+
+log.info('Gekko v' + util.getVersion(), 'started');
+log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
+
+var gekkoMode = 'realtime';
+
+// currently we only support a single 
+// market and a single advisor.
 
 // make sure the monitoring exchange is configured correctly for monitoring
+
+var exchangeChecker = require(coreDir + 'exchangeChecker');
 var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
-  throw invalid;
+  util.die(invalid);
 
-var provider = config.watch.exchange.toLowerCase();
-if(provider === 'btce' || provider === 'bitstamp') {
-  // we can't fetch historical data from btce directly so we use bitcoincharts
-  // @link http://bitcoincharts.com/about/markets-api/
-  config.watch.market = provider;
-  provider = 'bitcoincharts';
+var plugins = [];
+var emitters = {};
+
+var setupMarket = function(next) {
+  var Market = require(coreDir + 'marketManager');
+  emitters.market = new Market;
+  next();
 }
-var DataProvider = require('./exchanges/' + provider);
-var watcher = new DataProvider(config.watch);
 
-// implement a trading method to create a consultant, we pass it a config and a 
-// public mtgox object which the method can use to get data on past trades
-var consultant = new Consultant(watcher);
+// load each plugin
+var loadPlugins = function(next) {
+  var pluginSettings = require(gekkoDir + 'plugins');
 
-// log advice
-var Logger = require('./logger');
-var logger = new Logger(_.extend(config.profitCalculator, config.watch));
-consultant.on('advice', logger.inform);
-if(config.profitCalculator.enabled)
-  consultant.on('advice', logger.trackProfits);
+  var iterator = function(plugin, next) {
 
-//
-// Configure automatic traders based on advice,
-// after they are all prepared we continue.
-// 
-var managers = _.filter(config.traders, function(t) { return t.enabled });
-var configureManagers = function(_next) {
-  var amount = _.size(managers);
-  if(!amount)
-    return _next();
+    // verify the actor settings in config
+    if(!(plugin.slug in config)) {
+      log.warn('unable to find', plugin.slug, 'in the config. Is your config up to date?')
+      return next();
+    }
 
-  var next = _.after(amount, _next);
-  _.each(managers, function(conf) {
-    conf.exchange = conf.exchange.toLowerCase();
+    var pluginConfig = config[plugin.slug];
 
-    // make sure we the exchange is configured correctly
-    // for trading.
-    var invalid = exchangeChecker.cantTrade(conf);
-    if(invalid)
-      throw invalid;
+    // only load actors that are supported by
+    // Gekko's current mode
+    if(!_.contains(plugin.modes, gekkoMode))
+      return next();
 
-    var manager = new Manager(conf);
+    // if the actor is disabled skip as well
+    if(!pluginConfig.enabled)
+      return next();
 
-    consultant.on('advice', manager.trade);
-    manager.on('ready', next);
+    // verify plugin dependencies are installed
+    if('dependencies' in plugin)
+      _.each(plugin.dependencies, function(dep) {
+        try {
+          require(dep.module);
+        }
+        catch(e) {
+
+          var error = [
+            'The plugin',
+            plugin.slug,
+            'expects the module',
+            dep.module,
+            'to be installed.',
+            'However it is not, install',
+            'it by running: \n\n',
+            '\tnpm install',
+            dep.module + '@' + dep.version
+          ].join(' ');
+
+          util.die(error);
+        }
+
+      });
+
+    var Plugin = require(pluginDir + plugin.slug);
+
+    if(!plugin.silent) {
+      log.info('Setting up:');
+      log.info('\t', plugin.name);
+      log.info('\t', plugin.description);
+    }
+
+    if(plugin.async) {
+      var instance = new Plugin(util.defer(next));
+
+      instance.meta = plugin;
+      plugins.push(instance);
+
+    } else {
+      var instance = new Plugin;
+
+      instance.meta = plugin;
+      plugins.push(instance);
+
+      _.defer(next);
+    }
+
+    if(!plugin.silent)
+      console.log();
+  }
+
+  async.eachSeries(
+    pluginSettings,
+    iterator,
+    next
+  );
+};
+
+// advisor is a special actor in that it spawns an
+// advice feed which everyone can subscribe to.
+var setupAdvisor = function(next) {
+
+  var settings;
+
+  var plugin = _.find(plugins, function(advisor) {
+    if(!advisor.meta.originates)
+      return false;
+
+    settings = _.find(
+      advisor.meta.originates,
+      function(o) {
+        return o.feed === 'advice feed'
+      }
+    );
+    return settings;
   });
+
+  emitters.advisor = settings ? plugin[settings.object] : false;
+
+  next();
 }
 
+var attachPlugins = function(next) {
 
-//
-// Configure automatic email on advice.
-//
-var configureMail = function(next) {
-  if(config.mail.enabled && config.mail.email) {
-    var mailer = require('./mailer');
-    mailer.init(function() {
-      consultant.on('advice', mailer.send);
-      next();
+  var subscriptions = require(gekkoDir + 'subscriptions');
+
+  _.each(plugins, function(plugin) {
+    _.each(subscriptions, function(sub) {
+
+      if(sub.handler in plugin) {
+
+        // if the actor wants to listen
+        // to something disabled
+        if(!emitters[sub.emitter])
+          return log.warn([
+            plugin.meta.name,
+            'wanted to listen to the',
+            sub.emitter + ',',
+            'however the',
+            sub.emitter,
+            'is disabled.'
+          ].join(' '))
+        
+        // attach handler
+        emitters[sub.emitter]
+          .on(sub.event, plugin[sub.handler]);
+      }
+
     });
-  } else
-    next();
+  });
+
+  next();
 }
 
-var start = function() {
-  consultant.emit('prepare');
-}
+log.info('Setting up Gekko in', gekkoMode, 'mode');
+console.log();
 
-async.series([configureMail, configureManagers], start);
+async.series(
+  [
+    loadPlugins,
+    setupAdvisor,
+    setupMarket,
+    attachPlugins
+  ],
+  function() {
+    // everything is setup!
+    emitters.market.start();
+  }
+);

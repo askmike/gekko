@@ -1,68 +1,111 @@
-// Everything is explained here:
+﻿// Everything is explained here:
 // https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
 
 var config = {};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                           NORMAL ZONE
+//                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Gekko currently only supports Exponential Moving Averages
-config.tradingMethod = 'Exponential Moving Averages';
+// Gekko stores historical history
+config.history = {
+  // in what directory should Gekko store
+  // and load historical data from?
+  directory: './history/'
+}
+config.debug = true; // for additional logging / debugging
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                         WATCHING A MARKET
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Monitor the live market
+config.watch = {
+  enabled: true,
+  exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp', 'cexio' or 'kraken'
+  currency: 'USD',
+  asset: 'BTC'
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING TRADING ADVICE
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.tradingAdvisor = {
+  enabled: true,
+  method: 'DEMA',
+  candleSize: 60,
+  historySize: 50
+}
 
 // Exponential Moving Averages settings:
-config.EMA = {
-  // timeframe per candle
-  interval: 60, // in minutes
+config.DEMA = {
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
   long: 21,
   // amount of candles to remember and base initial EMAs on
-  candles: 100,
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.25,
-  buyTreshold: 0.25
+  thresholds: {
+    down: -0.025,
+    up: 0.025
+  }
 };
 
-// Monitor the live market
-config.normal = {
-  enabled: true,
-  exchange: 'MtGox', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'USD',
-  asset: 'BTC',
-  tradingEnabled: false,
-  key: 'your-key',
-  secret: 'your-secret',
-  username: 0, // your username, only fill in when using bitstamp or cexio
+// MACD settings:
+config.MACD = {
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 10,
+  long: 21,
+  signal: 9,
+  // the difference between the EMAs (to act as triggers)
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// PPO settings:
+config.PPO = {
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 12,
+  long: 26,
+  signal: 9,
+  // the difference between the EMAs (to act as triggers)
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 2
+  }
+};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING PLUGINS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Want Gekko to perform real trades on buy or sell advice?
+// Enabling this will activate trades for the market being
+// watched by config.watch
+config.trader = {
+  enabled: false,
+  key: '',
+  secret: '',
+  username: '' // your username, only fill in when using bitstamp or cexio
 }
 
-// want Gekko to send a mail on buy or sell advice?
-config.mail = {
-  enabled: false,
-  sendMailOnStart: true,
-  what: ['BUY', 'SELL'], // send email by type of advice: any combination of 'BUY', 'SELL', 'HOLD'
-  email: '',    // the receiver of the email, e.g. bob@example.com
-  smtp: 'smtp.gmail.com',   // if no smtp server specified, fallback to mail.gmail.com
-  port: 25,     // use a different smtp port
-  ssl: true,    
-  tls: false,   // set to true if want STARTTLS
-  user: '',    // the username, this is the sender of the email, e.g. alice@example.com
-
-  // You don't have to set your password here, if you leave it blank we will ask it
-  // when Gekko's starts.
-  //
-  // NOTE: Gekko is an open source project < https://github.com/askmike/gekko >,
-  // make sure you looked at the code or trust the maintainer of this bot when you
-  // fill in your email and password.
-  //
-  // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
-  // garantuee that your email address & password are safe!
-  password: ''
+config.adviceLogger = {
+  enabled: true
 }
 
 // do you want Gekko to calculate the profit of its own advice?
-config.profitCalculator = {
+config.profitSimulator = {
   enabled: true,
   // report the profit in the currency or the asset?
   reportInCurrency: true,
@@ -75,77 +118,110 @@ config.profitCalculator = {
   // only want report after a sell? set to `false`.
   verbose: false,
   // how much fee in % does each trade cost?
-  fee: 0.6
+  fee: 0.6,
+  // how much slippage should Gekko assume per trade?
+  slippage: 0.05
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                           ADVANCED ZONE
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// Backtesting strategies against historical data
-//
-// Test a strategy on historical data
-//
-// Read here: https://github.com/askmike/gekko/blob/master/docs/Backtesting.md
-//
-//          NOTE: THIS FEATURE HAS NOT BEEN PROPERELY TESTED YET, IT IS NOT
-//                ADVISED TO MAKE REAL WORLD DECISIONS BASED ON THE RESULTS
-//                UNTIL THE CODE HAS BEEN PROVED SOLID.
-config.backtest = {
-  candleFile: 'candles.csv',
-  from: 0,
-  to: 0
+// want Gekko to send a mail on buy or sell advice?
+config.mailer = {
+  enabled: false,       // Send Emails if true, false to turn off
+  sendMailOnStart: true,    // Send 'Gekko starting' message if true, not if false
+
+  email: '',    // Your Gmail address
+
+  // You don't have to set your password here, if you leave it blank we will ask it
+  // when Gekko's starts.
+  //
+  // NOTE: Gekko is an open source project < https://github.com/askmike/gekko >,
+  // make sure you looked at the code or trust the maintainer of this bot when you
+  // fill in your email and password.
+  //
+  // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
+  // guarantuee that your email address & password are safe!
+
+  password: '',       // Your Gmail Password - if not supplied Gekko will prompt on startup.
+
+  tag: '[GEKKO] ',      // Prefix all email subject lines with this
+
+            //       ADVANCED MAIL SETTINGS
+            // you can leave those as is if you 
+            // just want to use Gmail
+
+  server: 'smtp.gmail.com',   // The name of YOUR outbound (SMTP) mail server.
+  smtpauth: true,     // Does SMTP server require authentication (true for Gmail)
+          // The following 3 values default to the Email (above) if left blank
+  user: '',       // Your Email server user name - usually your full Email address 'me@mydomain.com'
+  from: '',       // 'me@mydomain.com'
+  to: '',       // 'me@somedomain.com, me@someotherdomain.com'
+  ssl: true,        // Use SSL (true for Gmail)
+  port: '',       // Set if you don't want to use the default port
+  tls: false        // Use TLS if true
 }
 
-// For when you want to monitor a market but want to act (trade) on a different one
-// (or different ones).
-//
-// Check: https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
 
-// monitor what market?
-config.watch = {
-  exchange: 'MtGox',
-  currency: 'USD',
-  asset: 'BTC'
+config.ircbot = {
+  enabled: false,
+  emitUpdats: false,
+  channel: '#your-channel',
+  server: 'irc.freenode.net',
+  botName: 'gekkobot'
 }
 
-// real trading
-config.traders = [
-  {
-    exchange: 'MtGox',
-    key: '',
-    secret: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
+config.campfire = {
+  enabled: false,
+  emitUpdates: false,
+  nickname: 'Gordon',
+  roomId: null,
+  apiKey: '',
+  account: ''
+}
+
+config.redisBeacon = {
+  enabled: false,
+  port: 6379, // redis default
+  host: '127.0.0.1', // localhost
+    // On default Gekko broadcasts
+    // events in the channel with
+    // the name of the event, set
+    // an optional prefix to the
+    // channel name.
+  channelPrefix: '',
+  broadcast: [
+    'small candle'
+  ]
+}
+
+// not in a working state
+// read: https://github.com/askmike/gekko/issues/156
+config.webserver = {
+  enabled: false,
+  ws: {
+    host: 'localhost',
+    port: 1338,
   },
-  {
-    exchange: 'BTCe',
-    key: '',
-    secret: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
-  },
-  {
-    exchange: 'Bitstamp',
-    user: '',
-    password: '',
-    currency: 'USD',
-    asset: 'BTC',
-    enabled: false
-  },
-  {
-    exchange: 'cex.io',
-    key: '',
-    secret: '',
-    currency: 'BTC',
-    asset: 'GHS',
-    enabled: false
+  http: {
+    host: 'localhost',
+    port: 1339,
   }
-];
+}
 
-config.debug = false; // for additional logging / debugging
+// not working, leave as is
+config.backtest = {
+  enabled: false
+}
+
+// set this to true if you understand that Gekko will 
+// invest according to how you configured the indicators.
+// None of the advice in the output is Gekko telling you
+// to take a certain position. Instead it is the result 
+// of running the indicators you configured automatically.
+// 
+// In other words: Gekko automates your trading strategies,
+// it doesn't advice on itself, only set to true if you truly
+// understand this.
+// 
+// Not sure? Read this first: https://github.com/askmike/gekko/issues/201
+config['I understand that Gekko only automates MY OWN trading strategies'] = false;
 
 module.exports = config;
-

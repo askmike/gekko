@@ -4,6 +4,8 @@ Advanced options:
 
 * [Running Gekko headlessly](#running-gekko-headlessly)
 * [Specify a config file](#specify-a-config-file)
+* [Helper files](#helper-files)
+* [Building on top of the Gekko platform](#building-on-top-of-the-gekko-platform)
 
 # Running Gekko headlessly
 
@@ -84,3 +86,7 @@ Use `gekko_launch_screen.sh` to launch a headless instance of gekko using the ou
 Use `gekko_screen_grab.sh` to grab the screen for the config.  The syntax is `bin/gekko_screen_grab.sh alternative-config`
 
 Use `gekko_log_grab.sh` to start tailing the log instead of via screen.  The syntax is `bin/gekko_log_grab.sh alternative-config`
+
+# Building on top of the Gekko platform
+
+Gekko is built around an event emitting architecture. Those events glue core together and provide an API for [additional plugins](https://github.com/askmike/gekko/blob/master/docs/internals/plugins.md). On default the events stay within a single Gekko (a single nodejs process), though using the [Redis Beacon plugin](https://github.com/askmike/gekko/blob/master/docs/internals/plugins.md#redis-beacon) all events can be broadcasted on the Redis Pub/Sub system. This makes it a breeze to integrate Gekko in your own applications (which can live outside the Gekko process, outside any nodejs environment and across a network / cluster on different hosts - use your imagination).

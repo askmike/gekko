@@ -1,3 +1,5 @@
+**These are old docs referrring to the old stable master branch on Gekko. The backtester is broken in this branch**
+
 # Backtesting with Gekko
 
 **Note that this functionality should only be used for testing purposes at this moment as it's in early development stage**

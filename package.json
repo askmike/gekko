@@ -1,28 +1,33 @@
 {
   "name": "gekko",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
     "bot",
     "bitcoin"
   ],
+  "scripts": {
+    "test": "scripts/run_unit_tests"
+  },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
     "mtgox-apiv2": "1.0.x",
     "lodash": "2.x",
-    "moment": "2.0.x",
+    "moment": "2.4.x",
     "btc-e": "0.0.x",
-    "bitcoincharts": "0.0.x",
-    "emailjs": "0.3.6",
     "cexio": "0.0.x",
-    "prompt-lite": "0.1.x",
     "bitstamp": "0.1.x",
     "async": "0.2.x",
-    "nedb": "*",
-    "line-reader": "0.2.x"
+    "nedb": "0.9.4",
+    "line-reader": "0.2.x",
+    "semver": "2.2.1",
+    "kraken-api" :"0.1.x"
   },
-  "engines": { "node": "0.10.x" },
+  "devDependencies": {
+    "nodeunit": "0.8.2"
+  },
+  "engines": { "node": ">=0.10.x" },
   "repository": {
     "type": "git",
     "url": "https://github.com/askmike/gekko.git"

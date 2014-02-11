@@ -1,14 +1,14 @@
 var BTCE = require('btc-e');
 
 var moment = require('moment');
-var util = require('../util');
+var util = require('../core/util');
 var _ = require('lodash');
-var log = require('../log')
+var log = require('../core/log')
 
 var Trader = function(config) {
   this.key = config.key;
   this.secret = config.secret;
-  this.pair = 'btc_' + config.currency.toLowerCase();
+  this.pair = [config.asset, config.currency].join('_').toLowerCase();
   this.name = 'BTC-E';
 
   _.bindAll(this);
@@ -16,18 +16,24 @@ var Trader = function(config) {
   this.btce = new BTCE(this.key, this.secret);
 }
 
-Trader.prototype.buy = function(amount, price, callback) {
+Trader.prototype.round = function(amount) {
   // Prevent "You incorrectly entered one of fields."
   // because of more than 8 decimals.
   amount *= 100000000;
   amount = Math.floor(amount);
   amount /= 100000000;
 
+  return amount;
+}
+
+Trader.prototype.buy = function(amount, price, callback) {
+  amount = this.round(amount);
+
   var set = function(err, data) {
     if(err)
-      log.error('unable to buy:', err);
+      return log.error('unable to buy:', err);
 
-    callback(err, data.order_id);
+    callback(null, data.order_id);
   };
 
   // workaround for nonce error
@@ -37,17 +43,13 @@ Trader.prototype.buy = function(amount, price, callback) {
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  // Prevent "You incorrectly entered one of fields."
-  // because of more than 8 decimals.
-  amount *= 100000000;
-  amount = Math.floor(amount);
-  amount /= 100000000;
+  amount = this.round(amount);
 
   var set = function(err, data) {
     if(err)
-      log.error('unable to sell:', err);
+      return log.error('unable to sell:\n\n', err);
 
-    callback(err, data.order_id);
+    callback(null, data.order_id);
   };
 
   // workaround for nonce error
@@ -56,22 +58,39 @@ Trader.prototype.sell = function(amount, price, callback) {
   }, this), 1000);
 }
 
-// if BTC-e errors we try the same call again after
-// 5 seconds or half a second if there is haste
-Trader.prototype.retry = function(method, callback, haste) {
-  var wait = +moment.duration(haste ? 0.5 : 5, 'seconds');
-  log.debug(this.name , 'returned an error, retrying..');
+// if the exchange errors we try the same call again after
+// waiting 10 seconds
+Trader.prototype.retry = function(method, args) {
+  var wait = +moment.duration(10, 'seconds');
+  log.debug(this.name, 'returned an error, retrying..');
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait
   setTimeout(
-    _.bind(method, this),
-    wait,
-    _.bind(callback, this)
+    function() { method.apply(self, args) },
+    wait
   );
 }
 
 Trader.prototype.getPortfolio = function(callback) {
   var calculate = function(err, data) {
-    if(err)
+
+    if(err) {
+      if(err.message === 'invalid api key')
+        util.die('Your ' + this.name + ' API keys are invalid');
+
       return this.retry(this.btce.getInfo, calculate);
+    }
+      
 
     var portfolio = [];
     _.each(data.funds, function(amount, asset) {
@@ -107,7 +126,7 @@ Trader.prototype.checkOrder = function(order, callback) {
     // right now we assume on every error that the order
     // was filled.
     //
-    // TODO: check whether the error stats that there are no
+    // TODO: check whether the error states that there are no
     // open trades or that there is something else.
     if(err)
       callback(false, true);
@@ -122,6 +141,20 @@ Trader.prototype.cancelOrder = function(order) {
   // TODO: properly test
   var devNull = function() {}
   this.btce.orderList(order, devNull);
+}
+
+Trader.prototype.getTrades = function(since, callback, descending) {
+  var args = _.toArray(arguments);
+  var process = function(err, trades) {
+    if(err)
+      return this.retry(this.getTrades, args);
+
+    if(descending)
+      callback(false, trades);
+    else
+      callback(false, trades.reverse());
+  }
+  this.btce.trades(this.pair, _.bind(process, this));
 }
 
 module.exports = Trader;
