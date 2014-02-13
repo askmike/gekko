@@ -2,51 +2,43 @@
   
   PPO - cykedev 15/01/2014
 
+  (updated a couple of times since, check git history)
+
  */
 // helpers
 var _ = require('lodash');
-var Util = require('util');
 var log = require('../core/log.js');
 
+// configuration
 var config = require('../core/util.js').getConfig();
-var settings = config.PPO;
+var settings = config.MACD;
 
-var PPO = require('./indicators/PPO.js');
+// indicators
+var MACD = require('./indicators/MACD.js');
 
-var TradingMethod = function() {
-  _.bindAll(this);
-
-  this.trend = {
-    direction: 'none',
-    duration: 0,
-    persisted: false,
-    adviced: false
-  };
+// let's create our own method
+var method = {};
+method.init = function() {
+ this.trend = {
+   direction: 'none',
+   duration: 0,
+   persisted: false,
+   adviced: false
+ };
 
   this.historySize = config.tradingAdvisor.historySize;
   this.ppo = new PPO(settings);
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
+method.update = function(candle) {
   var price = candle.c;
-
   this.lastPrice = price;
   this.ppo.update(price);
-
-  if(this.ppo.short.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
-TradingMethod.prototype.log = function() {
+method.log = function() {
   var digits = 8;
   var short = this.ppo.short.result;
   var long = this.ppo.long.result;
@@ -66,7 +58,7 @@ TradingMethod.prototype.log = function() {
   log.debug('\t', 'ppohist:', (ppo - ppoSignal).toFixed(digits));  
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
+method.check = function() {
   var price = this.lastPrice;
   var long = this.ppo.long.result;
   var short = this.ppo.short.result;
@@ -152,14 +144,4 @@ TradingMethod.prototype.calculateAdvice = function() {
 
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;

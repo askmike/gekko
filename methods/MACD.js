@@ -2,22 +2,24 @@
   
   MACD - DJM 31/12/2013
 
+  (updated a couple of times since, check git history)
+
  */
+
 // helpers
-var moment = require('moment');
 var _ = require('lodash');
-var util = require('../core/util.js');
-var Util = require('util');
 var log = require('../core/log.js');
 
-var config = util.getConfig();
+// configuration
+var config = require('../core/util.js').getConfig();
 var settings = config.MACD;
 
+// indicators
 var MACD = require('./indicators/MACD.js');
 
-var TradingMethod = function () {
-  _.bindAll(this);
-
+// let's create our own method
+var method = {};
+method.init = function() {
   this.trend = {
     direction: 'none',
     duration: 0,
@@ -29,26 +31,15 @@ var TradingMethod = function () {
   this.macd = new MACD(settings);
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
+method.update = function(candle) {
   var price = candle.c;
-
   this.lastPrice = price;
   this.macd.update(price);
-
-  if(this.macd.short.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
 }
 
-// for debugging purposes log the last 
-// calculated parameters.
-TradingMethod.prototype.log = function() {
+// for debugging purposes: log the last calculated
+// EMAs and diff.
+method.log = function() {
   var digits = 8;
   var macd = this.macd.diff;
   var signal = this.macd.signal.result;
@@ -62,8 +53,7 @@ TradingMethod.prototype.log = function() {
   log.debug('\t', 'macdiff:', result.toFixed(digits));  
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
-  var macd = this.diff;
+method.check = function() {
   var price = this.lastPrice;
   var long = this.macd.long.result;
   var short = this.macd.short.result;
@@ -140,14 +130,4 @@ TradingMethod.prototype.calculateAdvice = function() {
   }
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;

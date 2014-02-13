@@ -1,43 +1,31 @@
 // helpers
 var _ = require('lodash');
-var Util = require('util');
 var log = require('../core/log.js');
 
+// configuration
 var config = require('../core/util.js').getConfig();
 var settings = config.DEMA;
 
-// required indicators
-var DEMA = require('./indicators/DEMA.js');
+// indicators
+var DEMA = require('./indicators/DEMA');
 
-var TradingMethod = function() {
-  _.bindAll(this);
-
+// let's create our own method
+var method = {};
+method.init = function() {
   this.currentTrend;
-  this.historySize = config.tradingAdvisor.historySize;
+  this.requiredHistory = config.tradingAdvisor.historySize;
   this.dema = new DEMA(settings);
 }
 
-// teach our trading method events
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
+method.update = function(candle) {
   var price = candle.c;
-
   this.lastPrice = price;
   this.dema.update(price);
-
-  if(this.dema.short.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
 }
 
 // for debugging purposes: log the last calculated
 // EMAs and diff.
-TradingMethod.prototype.log = function() {
+method.log = function() {
   log.debug('calculated DEMA properties for candle:');
   log.debug('\t', 'long ema:', this.dema.long.result.toFixed(8));
   log.debug('\t', 'short ema:', this.dema.short.result.toFixed(8));
@@ -45,7 +33,7 @@ TradingMethod.prototype.log = function() {
   log.debug('\t DEMA age:', this.dema.short.age, 'candles');
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
+method.check = function() {
   var diff = this.dema.result;
   var price = this.lastPrice;
 
@@ -75,14 +63,4 @@ TradingMethod.prototype.calculateAdvice = function() {
   }
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;
