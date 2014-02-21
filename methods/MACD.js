@@ -19,6 +19,8 @@ var MACD = require('./indicators/MACD.js');
 
 // let's create our own method
 var method = {};
+
+// prepare everything our method needs
 method.init = function() {
   this.trend = {
     direction: 'none',
@@ -27,38 +29,42 @@ method.init = function() {
     adviced: false
   };
 
-  this.historySize = config.tradingAdvisor.historySize;
-  this.macd = new MACD(settings);
+  this.requiredHistory = config.tradingAdvisor.historySize;
+
+  // define the indicators we need
+  this.indicators.macd = new MACD(settings);
 }
 
+// what happens on every new candle?
 method.update = function(candle) {
-  var price = candle.c;
-  this.lastPrice = price;
-  this.macd.update(price);
+  // nothing!
 }
 
 // for debugging purposes: log the last calculated
 // EMAs and diff.
 method.log = function() {
   var digits = 8;
-  var macd = this.macd.diff;
-  var signal = this.macd.signal.result;
-  var result = this.macd.result;
+  var macd = this.indicators.macd;
+
+  var diff = macd.diff;
+  var signal = macd.signal.result;
 
   log.debug('calculated MACD properties for candle:');
-  log.debug('\t', 'short:', this.macd.short.result.toFixed(digits));
-  log.debug('\t', 'long:', this.macd.long.result.toFixed(digits));
-  log.debug('\t', 'macd:', macd.toFixed(digits));
+  log.debug('\t', 'short:', macd.short.result.toFixed(digits));
+  log.debug('\t', 'long:', macd.long.result.toFixed(digits));
+  log.debug('\t', 'macd:', diff.toFixed(digits));
   log.debug('\t', 'signal:', signal.toFixed(digits));
-  log.debug('\t', 'macdiff:', result.toFixed(digits));  
+  log.debug('\t', 'macdiff:', macd.result.toFixed(digits));  
 }
 
 method.check = function() {
   var price = this.lastPrice;
-  var long = this.macd.long.result;
-  var short = this.macd.short.result;
-  var signal = this.macd.signal.result;
-  var macddiff = this.macd.result;
+  var macd = this.indicators.macd;
+
+  var long = macd.long.result;
+  var short = macd.short.result;
+  var signal = macd.signal.result;
+  var macddiff = macd.result;
 
   if(macddiff > settings.thresholds.up) {
 

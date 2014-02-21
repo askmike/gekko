@@ -11,30 +11,36 @@ var DEMA = require('./indicators/DEMA');
 
 // let's create our own method
 var method = {};
+
+// prepare everything our method needs
 method.init = function() {
   this.currentTrend;
   this.requiredHistory = config.tradingAdvisor.historySize;
-  this.dema = new DEMA(settings);
+
+  // define the indicators we need
+  this.indicators.dema = new DEMA(settings);
 }
 
+// what happens on every new candle?
 method.update = function(candle) {
-  var price = candle.c;
-  this.lastPrice = price;
-  this.dema.update(price);
+  // nothing!
 }
 
 // for debugging purposes: log the last calculated
 // EMAs and diff.
 method.log = function() {
+  var dema = this.indicators.dema;
+
   log.debug('calculated DEMA properties for candle:');
-  log.debug('\t', 'long ema:', this.dema.long.result.toFixed(8));
-  log.debug('\t', 'short ema:', this.dema.short.result.toFixed(8));
-  log.debug('\t diff:', this.dema.result.toFixed(5));
-  log.debug('\t DEMA age:', this.dema.short.age, 'candles');
+  log.debug('\t', 'long ema:', dema.long.result.toFixed(8));
+  log.debug('\t', 'short ema:', dema.short.result.toFixed(8));
+  log.debug('\t diff:', dema.result.toFixed(5));
+  log.debug('\t DEMA age:', dema.short.age, 'candles');
 }
 
 method.check = function() {
-  var diff = this.dema.result;
+  var dema = this.indicators.dema;
+  var diff = dema.result;
   var price = this.lastPrice;
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';

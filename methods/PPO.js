@@ -5,19 +5,22 @@
   (updated a couple of times since, check git history)
 
  */
+
 // helpers
 var _ = require('lodash');
-var log = require('../core/log.js');
+var log = require('../core/log');
 
 // configuration
-var config = require('../core/util.js').getConfig();
+var config = require('../core/util').getConfig();
 var settings = config.MACD;
 
 // indicators
-var MACD = require('./indicators/MACD.js');
+var PPO = require('./indicators/PPO');
 
 // let's create our own method
 var method = {};
+
+// prepare everything our method needs
 method.init = function() {
  this.trend = {
    direction: 'none',
@@ -26,26 +29,28 @@ method.init = function() {
    adviced: false
  };
 
-  this.historySize = config.tradingAdvisor.historySize;
-  this.ppo = new PPO(settings);
+  this.requiredHistory = config.tradingAdvisor.historySize;
+
+  // define the indicators we need
+  this.indicators.ppo = new PPO(settings);
 }
 
+// what happens on every new candle?
 method.update = function(candle) {
-  var price = candle.c;
-  this.lastPrice = price;
-  this.ppo.update(price);
+  // nothing!
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
 method.log = function() {
   var digits = 8;
-  var short = this.ppo.short.result;
-  var long = this.ppo.long.result;
-  var macd = this.ppo.macd;
-  var ppo = this.ppo.ppo;
-  var macdSignal = this.ppo.MACDsignal.result;
-  var ppoSignal = this.ppo.PPOsignal.result;
+  var ppo = this.indicators.ppo;
+  var short = ppo.short.result;
+  var long = ppo.long.result;
+  var macd = ppo.macd;
+  var result = ppo.ppo;
+  var macdSignal = ppo.MACDsignal.result;
+  var ppoSignal = ppo.PPOsignal.result;
 
   log.debug('calculated MACD properties for candle:');
   log.debug('\t', 'short:', short.toFixed(digits));
@@ -53,23 +58,24 @@ method.log = function() {
   log.debug('\t', 'macd:', macd.toFixed(digits));
   log.debug('\t', 'macdsignal:', macdSignal.toFixed(digits));
   log.debug('\t', 'machist:', (macd - macdSignal).toFixed(digits));
-  log.debug('\t', 'ppo:', ppo.toFixed(digits));
+  log.debug('\t', 'ppo:', result.toFixed(digits));
   log.debug('\t', 'pposignal:', ppoSignal.toFixed(digits));
-  log.debug('\t', 'ppohist:', (ppo - ppoSignal).toFixed(digits));  
+  log.debug('\t', 'ppohist:', (result - ppoSignal).toFixed(digits));  
 }
 
 method.check = function() {
   var price = this.lastPrice;
-  var long = this.ppo.long.result;
-  var short = this.ppo.short.result;
-  var macd = this.ppo.macd;
-  var ppo = this.ppo.ppo;
-  var macdSignal = this.ppo.MACDsignal.result;
-  var ppoSignal = this.ppo.PPOsignal.result;
+
+  var ppo = this.indicators.ppo;
+  var long = ppo.long.result;
+  var short = ppo.short.result;
+  var macd = ppo.macd;
+  var result = ppo.ppo;
+  var macdSignal = ppo.MACDsignal.result;
+  var ppoSignal = ppo.PPOsignal.result;
 
   // TODO: is this part of the indicator or not?
   // if it is it should move there
-  var macdHist = macd - macdSignal;
   var ppoHist = ppo - ppoSignal;
 
   if(ppoHist > settings.thresholds.up) {
