@@ -36,10 +36,7 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.macd = {
-    type: 'MACD',
-    parameters: settings
-  };
+  this.addIndicator('macd', 'MACD', settings);
 
 }
 

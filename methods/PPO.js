@@ -29,10 +29,7 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.ppo = {
-    type: 'PPO',
-    parameters: settings
-  }
+  this.addIndicator('ppo', 'PPO', settings);
 }
 
 // what happens on every new candle?

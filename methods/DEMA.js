@@ -15,10 +15,7 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.dema = {
-    type: 'DEMA',
-    parameters: settings
-  }
+  this.addIndicator('dema', 'DEMA', settings);
 }
 
 // what happens on every new candle?
@@ -39,6 +36,7 @@ method.log = function() {
 }
 
 method.check = function() {
+
   var dema = this.indicators.dema;
   var diff = dema.result;
   var price = this.lastPrice;

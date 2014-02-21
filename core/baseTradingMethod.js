@@ -15,8 +15,10 @@ var allowedIndicators = _.keys(Indicators);
 
 var Base = function() {
   _.bindAll(this);
+
   // properties
   this.age = 0;
+  this.setup = false;
 
   // defaults
   this.requiredHistory = 0;
@@ -35,16 +37,6 @@ var Base = function() {
   // let's run the implemented starting point
   this.init();
 
-  // create the indicator instances we need
-  var realIndicators = {};
-  _.each(this.indicators, function(indicator, name) {
-    if(!_.contains(allowedIndicators, indicator.type))
-      util.die('I do not know the indicator ' + indicator.type);
-
-    realIndicators[name] = new Indicators[indicator.type](indicator.parameters);
-  });
-  this.indicators = realIndicators;
-
   // should be set up now, check some things
   // to make sure everything is implemented
   // correctly.
@@ -53,6 +45,8 @@ var Base = function() {
 
   if(!config.debug || !this.log)
     this.log = function() {};
+
+  this.setup = true;
 }
 
 // teach our base trading method events
@@ -71,7 +65,7 @@ Base.prototype.tick = function(candle) {
 
   this.update(candle);
 
-  if(this.requiredHistory < this.age) {
+  if(this.requiredHistory <= this.age) {
     this.log();
     this.check();
   }
@@ -79,6 +73,16 @@ Base.prototype.tick = function(candle) {
   // update previous price
   this.lastPrice = price;
 }
+
+Base.prototype.addIndicator = function(name, type, settings) {
+  if(!_.contains(allowedIndicators, type))
+    util.die('I do not know the indicator ' + indicator.type);
+
+  if(this.setup)
+    util.die('Can only add indicators in the init method!');
+
+  this.indicators[name] = new Indicators[type](settings);
+} 
 
 Base.prototype.advice = function(newPosition) {
   if(!newPosition)
