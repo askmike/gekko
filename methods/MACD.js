@@ -14,14 +14,16 @@ var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
 var settings = config.MACD;
 
-// indicators
-var MACD = require('./indicators/MACD.js');
-
 // let's create our own method
 var method = {};
 
 // prepare everything our method needs
 method.init = function() {
+
+  // keep state about the current trend
+  // here, on every new candle we use this
+  // state object to check if we need to
+  // report it.
   this.trend = {
     direction: 'none',
     duration: 0,
@@ -29,10 +31,16 @@ method.init = function() {
     adviced: false
   };
 
+  // how many candles do we need as a base
+  // before we can start giving advice?
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.macd = new MACD(settings);
+  this.indicators.macd = {
+    type: 'MACD',
+    parameters: settings
+  };
+
 }
 
 // what happens on every new candle?

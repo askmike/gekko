@@ -6,9 +6,6 @@ var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
 var settings = config.DEMA;
 
-// indicators
-var DEMA = require('./indicators/DEMA');
-
 // let's create our own method
 var method = {};
 
@@ -18,7 +15,10 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.dema = new DEMA(settings);
+  this.indicators.dema = {
+    type: 'DEMA',
+    parameters: settings
+  }
 }
 
 // what happens on every new candle?

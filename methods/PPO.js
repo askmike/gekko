@@ -12,10 +12,7 @@ var log = require('../core/log');
 
 // configuration
 var config = require('../core/util').getConfig();
-var settings = config.MACD;
-
-// indicators
-var PPO = require('./indicators/PPO');
+var settings = config.PPO;
 
 // let's create our own method
 var method = {};
@@ -32,7 +29,10 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.indicators.ppo = new PPO(settings);
+  this.indicators.ppo = {
+    type: 'PPO',
+    parameters: settings
+  }
 }
 
 // what happens on every new candle?

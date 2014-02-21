@@ -3,6 +3,16 @@ var util = require('../core/util.js');
 var config = util.getConfig();
 var log = require('../core/log.js');
 
+var indicatorsPath = '../methods/indicators/';
+
+var Indicators = {
+  MACD: require(indicatorsPath + 'MACD'),
+  DEMA: require(indicatorsPath + 'DEMA'),
+  PPO: require(indicatorsPath + 'PPO')
+};
+
+var allowedIndicators = _.keys(Indicators);
+
 var Base = function() {
   _.bindAll(this);
   // properties
@@ -24,6 +34,16 @@ var Base = function() {
 
   // let's run the implemented starting point
   this.init();
+
+  // create the indicator instances we need
+  var realIndicators = {};
+  _.each(this.indicators, function(indicator, name) {
+    if(!_.contains(allowedIndicators, indicator.type))
+      util.die('I do not know the indicator ' + indicator.type);
+
+    realIndicators[name] = new Indicators[indicator.type](indicator.parameters);
+  });
+  this.indicators = realIndicators;
 
   // should be set up now, check some things
   // to make sure everything is implemented
@@ -51,11 +71,10 @@ Base.prototype.tick = function(candle) {
 
   this.update(candle);
 
-  if(this.requiredHistory >= this.age)
-    return this.lastPrice = price;
-
-  this.log();
-  this.check();
+  if(this.requiredHistory < this.age) {
+    this.log();
+    this.check();
+  }
 
   // update previous price
   this.lastPrice = price;
