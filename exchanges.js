@@ -257,6 +257,7 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
+    monitorError: 'https://github.com/askmike/gekko/issues/210',
     providesHistory: false
   }
 ];
