@@ -66,7 +66,7 @@ Manager.prototype.init = function(callback) {
   // Because on cex.io your asset grows refresh and
   // display portfolio stats every 5 minutes
   if(this.exchange.name === 'cex.io')
-    setInterval(this.displayPortfolio, util.minToMs(5));  
+    setInterval(this.recheckPortfolio, util.minToMs(1));  
 }
 
 Manager.prototype.setPortfolio = function(callback) {
@@ -120,6 +120,8 @@ Manager.prototype.getBalance = function(fund) {
 Manager.prototype.trade = function(what) {
   if(what !== 'BUY' && what !== 'SELL')
     return;
+
+  this.action = what;
 
   var act = function() {
     var amount, price;
@@ -215,7 +217,6 @@ Manager.prototype.buy = function(amount, price) {
     this.exchange.name
   );
   this.exchange.buy(amount, price, this.noteOrder);
-  this.action = 'BUY';
 }
 
 // first do a quick check to see whether we can sell
@@ -261,8 +262,6 @@ Manager.prototype.sell = function(amount, price) {
     this.exchange.name
   );
   this.exchange.sell(amount, price, this.noteOrder);
-  this.action = 'SELL';
- 
 }
 
 Manager.prototype.noteOrder = function(err, order) {
@@ -297,12 +296,26 @@ Manager.prototype.checkOrder = function() {
 Manager.prototype.logPortfolio = function() {
   log.info(this.exchange.name, 'portfolio:');
   _.each(this.portfolio, function(fund) {
-    log.info('\t', fund.name + ':', fund.amount);
+    log.info('\t', fund.name + ':', fund.amount.toFixed());
   });
 }
 
-Manager.prototype.displayPortfolio = function() {
-  this.setPortfolio(this.logPorfolio);
+// On cex.io the portfolio gets updated as new blocks
+// come in when we are holding the asset.
+Manager.prototype.recheckPortfolio = function() {
+  this.setPortfolio(this.enforcePosition);
+}
+
+
+// If we are in a long position we are bullish
+// and thus want to reinvest earnings back into
+// the asset (GHS) as we are assuming the value
+// of the asset will go up.
+Manager.prototype.enforcePosition = function() {
+  if(this.action !== 'BUY')
+    return;
+
+  this.trade('BUY');
 }
 
 module.exports = Manager;
