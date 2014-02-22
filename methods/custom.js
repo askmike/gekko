@@ -8,6 +8,8 @@
 // a 10% chance it will recommand to change your position (to either
 // long or short).
 
+var config = require('../core/util.js').getConfig();
+var settings = config.custom;
 
 // Let's create our own method
 var method = {};

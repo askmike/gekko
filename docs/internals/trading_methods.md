@@ -61,6 +61,19 @@ The check function is executed after the required history period is over: Most m
 
     this.requiredHistory = 5; // require 5 candles before giving advice
 
+If you find out in the check function that you want to give a new advice to the trader or any other part you can use the advice function:
+
+    this.advice('short');
+    // or
+    this.advice('long');
+
+## Trading method rules
+
+- You can activate your own method by setting `config.tradingAdvisor.method` to `custom` in the loaded config.
+- Gekko will execute the functions for every candle. A candle is the size configured at `config.tradingAdvisor.candleSize` in the loaded config.
+- It is advised to set history `config.tradingAdvisor.historySize` the same as the requiredHistory as Gekko will use this property to create an initial batch of candles.
+- Never rely on anything based on system or candle time because each method can run on live markets as well as during backtesting.
+
 ## Trading method tools
 
 In these functions you write your trading method. To help you with this Gekko has a number of tools to make it easier for you.
@@ -82,8 +95,45 @@ In your check or update method:
 
     var result = this.indicators.mymacd.result;
 
-### Configuration parameters
+### Configurables
 
-[todo]
+You can create configurable parameters for your method which allows you to adjust the behaviour for your trading method. This way you can create one method but have different implementations running at the same time on different markets. You can achieve this by creating some parameters which can be changed in the config.js file:
 
-**TODO: finish documentation, for now check out the examples in `gekko/methods`.**
+    // custom settings:
+    config.custom = {
+      my_custom_setting: 10,
+    };
+
+And in your method you can use them again (for example to pass to an indicator):
+
+    // in the init:
+    var config = require('../core/util.js').getConfig();
+    this.settings = config.custom;
+
+    // anywhere in your code:
+    this.settings.my_custom_setting; // is now 10
+
+### Tool libraries
+
+Gekko uses a few general purpose libraries a lot internally, you can use those in your methods as well. Most notable libraries are [lodash](http://lodash.com/) (similar as underscore) and [async](https://github.com/caolan/async).
+
+You can load them like so:
+
+    // before any methods
+    var _ = require('lodash');
+    var async = require('async');
+
+### Logging
+
+Gekko has a small logger you can use (preferably in your log method):
+
+    // before any methods
+    var log = require('../core/log.js');
+
+    // in your log method
+    log.debug('hello world');
+
+
+-----
+
+Take a look at the existing methods, if you have questions feel free to create an issue.
