@@ -7,7 +7,8 @@ var config = util.getConfig();
 var methods = [
   'MACD',
   'DEMA',
-  'PPO'
+  'PPO',
+  'custom'
 ];
 
 var Actor = function() {

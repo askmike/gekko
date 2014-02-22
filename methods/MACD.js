@@ -75,6 +75,7 @@ method.check = function() {
 
     // new trend detected
     if(this.trend.direction !== 'up')
+      // reset the state for the new trend
       this.trend = {
         duration: 0,
         persisted: false,
@@ -99,6 +100,7 @@ method.check = function() {
 
     // new trend detected
     if(this.trend.direction !== 'down')
+      // reset the state for the new trend
       this.trend = {
         duration: 0,
         persisted: false,

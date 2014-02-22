@@ -74,14 +74,14 @@ Base.prototype.tick = function(candle) {
   this.lastPrice = price;
 }
 
-Base.prototype.addIndicator = function(name, type, settings) {
+Base.prototype.addIndicator = function(name, type, parameters) {
   if(!_.contains(allowedIndicators, type))
     util.die('I do not know the indicator ' + indicator.type);
 
   if(this.setup)
     util.die('Can only add indicators in the init method!');
 
-  this.indicators[name] = new Indicators[type](settings);
+  this.indicators[name] = new Indicators[type](parameters);
 } 
 
 Base.prototype.advice = function(newPosition) {
