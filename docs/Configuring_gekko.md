@@ -213,6 +213,10 @@ Configure it like this:
 - secret is your API secret.
 - username is the username (only required for CEX.io and Bitstamp).
 
+#### Special note for CEX.io users
+
+When you have GHS on cexio you will get payouts in the form of mining rewards, however those rewards are always in the form of the currency (BTC). For as long as the advice is to go long (buy GHS) Gekko will check every five minutes if new payout has been earned, if it is Gekko will reinvest this into GHS.
+
 ### Advice logger
 
 The advice logger is a small plugin that logs new advice calculated by Gekko as soon as there is any. Go to the config and configure it like this:
@@ -262,7 +266,6 @@ Go to the config and configure it like this:
 - fee is the exchange fee (in %) Gekko should take into considarion when simulating orders.
 - slippage is the costs in (in %) associated with not being able to buy / sell at market price.*
 
-
 *If you are trading a lot and you are buying 100% currency you might not get it all at market price and you have to walk the book in order to take that position. Also note that Gekko uses the candle close price and is unaware of the top asks bids, also take this into account. It is important that you set this number correctly or the resulted calculated profit be very wrong. Read more information [here](http://www.investopedia.com/terms/s/slippage.asp). Take these into consideration when setting a slippage:
 
 - How much spread is there normally on this market?
@@ -275,6 +278,11 @@ The output will be something like:
     2013-06-02 18:21:15 (INFO): (PROFIT REPORT) original balance:    207.465 USD
     2013-06-02 18:21:15 (INFO): (PROFIT REPORT) current balance:     217.465 USD
     2013-06-02 18:21:15 (INFO): (PROFIT REPORT) profit:          10.000 USD (4.820%)
+
+#### Special note for CEX.io users
+
+At CEX.io the asset is bound to devalue over time, however investers are compensated with mining rewards. Because
+the size of this reward depends on factors outside the market **this reward is not taken into consideration when simulating the profit.**
 
 ### Mailer
 
