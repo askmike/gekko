@@ -32,11 +32,11 @@ Gekko can watch the realtime markets. You can apply automated trading methods to
 
 Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
-**So Gekko is not**
+**So Gekko is not:**
 
 - A trading platform for human day traders with a GUI and charts.
 - A High frequency trading bot designed to operate on < minute resolution.
-- A fully automated trading bot that you turn on and will generate profit withouth you having to do anything.
+- A fully automated trading bot that you turn on and will generate profit without you having to do anything.
 - An exchange.
 
 ## Market interface
