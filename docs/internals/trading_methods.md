@@ -2,7 +2,7 @@
 
 The trading methods are the core of Gekko's trading bot. They look at the market and decide what to do based on technical analysis. The trading methods can calculate indicators on top of the market data to come up with an advice for a position to take in the market. As of now the trading method is limited to a single market on a single exchange.
 
-Gekko currently has three indicators ready, only implementing a single indicator: DEMA, MACD and PPO. Besides those you can also create your own trading method by using javascript. The easiest way to do this is open the file `gekko/methods/custom.js` and write your own trading method.
+Gekko currently has a couple of methods already, only implementing a single indicator: DEMA, MACD, RSI and PPO. Besides those you can also create your own trading method by using javascript. The easiest way to do this is open the file `gekko/methods/custom.js` and write your own trading method.
 
 ## Creating a trading method
 
@@ -94,6 +94,10 @@ In your init method:
 In your check or update method:
 
     var result = this.indicators.mymacd.result;
+
+#### Supported indicators
+
+Gekko currently supports EMA, SMA, PPO, RSI and MACD.
 
 ### Configurables
 

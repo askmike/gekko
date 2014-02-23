@@ -72,6 +72,7 @@ Gekko supports a number of technical analysis indicators, currently it supports 
 - DEMA
 - MACD
 - PPO
+- RSI
 
 Open up the config.js file again and configure at this part:
 
@@ -175,6 +176,26 @@ Very similar to MACD but also a little different, read more [here](http://stockc
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
 - signal is the EMA weight calculated over the difference from short/long.
 - the down treshold and the up treshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
+- persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
+
+### RSI
+
+The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:relative_strength_in). Configure it like so:
+
+    // RSI settings:
+    config.RSI = {
+      interval: 14,
+      thresholds: {
+        low: 30,
+        high: 70,
+        // How many candle intervals should a trend persist
+        // before we consider it real?
+        persistence: 1
+      }
+    };
+
+- The interval is the amount of periods the RSI should use.
+- The thresholds determine what level of RSI would trigger an up or downtrend.
 - persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
 
 ## Enabling plugins
