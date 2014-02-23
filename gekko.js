@@ -57,6 +57,9 @@ if(!config.profitSimulator.slippage)
 // temp at Sun Feb  9 17:13:45 CET 2014
 if(!config.DEMA.thresholds)
   util.die('Please update your config!');
+// temp at Sun Feb 23 14:39:09 CET 2014
+if(!config.RSI)
+  util.die('Please update your config!');
 
 if(
   config.trader.enabled &&

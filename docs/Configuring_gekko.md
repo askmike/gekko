@@ -67,7 +67,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
 
 If you want Gekko to provide automated trading advice you need to configure this here. Note that this has unrelated to automatic trading which is a plugin that creates order based on this advice. (So you need to calculate advice if you want to automate trading.)
 
-Gekko supports a number of technical analysis indicators, currently it supports:
+Gekko supports a number of technical analysis indicators, currently it supports trading methods for the indicators:
 
 - DEMA
 - MACD

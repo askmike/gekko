@@ -2,10 +2,11 @@
   
   RSI - cykedev 14/02/2014
 
+  (updated a couple of times since, check git history)
+
  */
 // helpers
 var _ = require('lodash');
-var Util = require('util');
 var log = require('../core/log.js');
 
 var config = require('../core/util.js').getConfig();
@@ -13,9 +14,11 @@ var settings = config.RSI;
 
 var RSI = require('./indicators/RSI.js');
 
-var TradingMethod = function() {
-  _.bindAll(this);
+// let's create our own method
+var method = {};
 
+// prepare everything our method needs
+method.init = function() {
   this.trend = {
     direction: 'none',
     duration: 0,
@@ -23,37 +26,26 @@ var TradingMethod = function() {
     adviced: false
   };
 
-  this.historySize = config.tradingAdvisor.historySize;
-  this.rsi = new RSI(settings.interval);
-}
+  this.requiredHistory = config.tradingAdvisor.historySize;
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
-  this.lastPrice = candle.c;
-  this.rsi.update(candle.o, candle.c);
-
-  if(this.rsi.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
+  // define the indicators we need
+  this.addIndicator('rsi', 'RSI', settings.interval);
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
-TradingMethod.prototype.log = function() {
+method.log = function() {
   var digits = 8;
+  var rsi = this.indicators.rsi;
 
   log.debug('calculated RSI properties for candle:');
-  log.debug('\t', 'rsi:', this.rsi.rsi.toFixed(digits));
+  log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
   log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
-  var rsiVal = this.rsi.rsi;
+method.check = function() {
+  var rsi = this.indicators.rsi;
+  var rsiVal = rsi.rsi;
 
   if(rsiVal > settings.thresholds.high) {
 
@@ -109,17 +101,6 @@ TradingMethod.prototype.calculateAdvice = function() {
 
     this.advice();
   }
-
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;

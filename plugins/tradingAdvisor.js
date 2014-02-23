@@ -8,6 +8,7 @@ var methods = [
   'MACD',
   'DEMA',
   'PPO',
+  'RSI',
   'custom'
 ];
 

@@ -6,9 +6,22 @@ var log = require('../core/log.js');
 var indicatorsPath = '../methods/indicators/';
 
 var Indicators = {
-  MACD: require(indicatorsPath + 'MACD'),
-  DEMA: require(indicatorsPath + 'DEMA'),
-  PPO: require(indicatorsPath + 'PPO')
+  MACD: {
+    factory: require(indicatorsPath + 'MACD'),
+    input: 'price'
+  },
+  DEMA: {
+    factory: require(indicatorsPath + 'DEMA'),
+    input: 'price'
+  },
+  PPO: {
+    factory: require(indicatorsPath + 'PPO'),
+    input: 'price'
+  },
+  RSI: {
+    factory: require(indicatorsPath + 'RSI'),
+    input: 'candle'
+  }
 };
 
 var allowedIndicators = _.keys(Indicators);
@@ -60,7 +73,10 @@ Base.prototype.tick = function(candle) {
   // update all indicators
   var price = candle[this.priceValue];
   _.each(this.indicators, function(i) {
-    i.update(price);
+    if(i.input === 'price')
+      i.update(price);
+    if(i.input === 'candle')
+      i.update(candle);
   });
 
   this.update(candle);
@@ -76,12 +92,15 @@ Base.prototype.tick = function(candle) {
 
 Base.prototype.addIndicator = function(name, type, parameters) {
   if(!_.contains(allowedIndicators, type))
-    util.die('I do not know the indicator ' + indicator.type);
+    util.die('I do not know the indicator ' + type);
 
   if(this.setup)
     util.die('Can only add indicators in the init method!');
 
-  this.indicators[name] = new Indicators[type](parameters);
+  this.indicators[name] = new Indicators[type].factory(parameters);
+
+  // some indicators need a price stream, others need full candles
+  this.indicators[name].input = Indicators[type].input;
 } 
 
 Base.prototype.advice = function(newPosition) {

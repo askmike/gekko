@@ -19,12 +19,12 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
- this.trend = {
+  this.trend = {
    direction: 'none',
    duration: 0,
    persisted: false,
    adviced: false
- };
+  };
 
   this.requiredHistory = config.tradingAdvisor.historySize;
 

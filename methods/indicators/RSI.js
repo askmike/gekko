@@ -14,8 +14,11 @@ var Indicator = function(weight) {
   this.age = 0;
 }
 
-Indicator.prototype.update = function(open, close) {
-  if (close > open) {
+Indicator.prototype.update = function(candle) {
+  var open = candle.o;
+  var close = candle.c;
+
+  if(close > open) {
     this.u = close - open;
     this.d = 0;
   } else {
