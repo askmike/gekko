@@ -41,7 +41,7 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 
 **Automated trading**
 
-Gekko comes with three trading methods that implement a single indicator (DEMA, MACD and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/master/docs/internals/trading_methods.md).
+Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/master/docs/internals/trading_methods.md).
 
 ## Market interface
 
