@@ -59,8 +59,8 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
   markets: BTC/GHS
 
 * Kraken:
-  currencies: XRP, EUR, KRW, USD, LTC, XVN
-  assets: LTC, NMC, XBT, XVN, EUR, KRW, USD
+  currencies: XRP, EUR, KRW, USD, LTC, XVN  
+  assets: LTC, NMC, XBT, XVN, EUR, KRW, USD  
   markets: XRP/LTC, EUR/LTC, KRW/LTC, USD/LTC, XRP/NMC, EUR/NMC, KRW/NMC, USD/NMC, LTC/XBT, NMC/XBT, XRP/XBT, XVN/XBT, EUR/XBT, KRW/XBT, USD/XBT, XRP/XVN, XRP/EUR, XVN/EUR, XRP/KRW, XRP/USD, XVN/USD.
 
 ## Automate trading advice

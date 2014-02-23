@@ -12,7 +12,7 @@ You are looking at the brand new and completetly different version of Gekko. We'
 
 Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org). 
 
-This is the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know once it's out.
+This is the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know once it's out!
 
 *Use Gekko at you own risk.*
 
@@ -26,7 +26,7 @@ This is the open source do-it-yourself version, we are planning on running hoste
  * Emit market events
  * Basic IRC Bot
 
-## Trading platform
+## Automated Trading platform
 
 Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (automated trading or paper trading). Gekko also stores the market data it sees so you can run the trading methods with simulate trades on a set of historical data to see whether they would have been profitable during that time (backtesting).
 
@@ -38,6 +38,10 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 - A High frequency trading bot designed to operate on < minute resolution.
 - A fully automated trading bot that you turn on and will generate profit withouth you having to do anything.
 - An exchange.
+
+**Automated trading**
+
+Gekko comes with three trading methods that implement a single indicator (DEMA, MACD and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/tree/master/docs/internal.md).
 
 ## Market interface
 
@@ -106,6 +110,7 @@ If you want to contribute or are interested in how Gekko works:
 - Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/master/docs/internals/architecture.md).
 - Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/master/docs/internals/exchanges.md).
 - Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/master/docs/internals/plugins.md).
+- Implement [your own trading method](https://github.com/askmike/gekko/blob/master/docs/internals/trading_methods.md) and share it back.
 
 ## TODO
 
