@@ -7,26 +7,35 @@ var config = util.getConfig();
 var methods = [
   'MACD',
   'DEMA',
-  'PPO'
+  'PPO',
+  'custom'
 ];
 
 var Actor = function() {
   _.bindAll(this);
 
-  var method = config.tradingAdvisor.method;
+  var methodName = config.tradingAdvisor.method;
 
-  if(!_.contains(methods, method))
-    util.die('Gekko doesn\'t know the method ' + method);
+  if(!_.contains(methods, methodName))
+    util.die('Gekko doesn\'t know the method ' + methodName);
 
-  log.info('\t', 'Using the trading method: ' + method);
+  log.info('\t', 'Using the trading method: ' + methodName);
 
-  var Consultant = require('../methods/' + method);
+  var Consultant = require('../core/baseTradingMethod');
+
+  var method = require('../methods/' + methodName);
+
+  // bind all trading method specific functions
+  // to the Consultant.
+  _.each(method, function(fn, name) {
+    Consultant.prototype[name] = fn;
+  });
 
   this.method = new Consultant;
 }
 
 Actor.prototype.processCandle = function(candle) {
-  this.method.update(candle);
+  this.method.tick(candle);
 }
 
 module.exports = Actor;

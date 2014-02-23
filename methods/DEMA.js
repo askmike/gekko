@@ -1,52 +1,44 @@
 // helpers
 var _ = require('lodash');
-var Util = require('util');
 var log = require('../core/log.js');
 
+// configuration
 var config = require('../core/util.js').getConfig();
 var settings = config.DEMA;
 
-// required indicators
-var DEMA = require('./indicators/DEMA.js');
+// let's create our own method
+var method = {};
 
-var TradingMethod = function() {
-  _.bindAll(this);
-
+// prepare everything our method needs
+method.init = function() {
   this.currentTrend;
-  this.historySize = config.tradingAdvisor.historySize;
-  this.dema = new DEMA(settings);
+  this.requiredHistory = config.tradingAdvisor.historySize;
+
+  // define the indicators we need
+  this.addIndicator('dema', 'DEMA', settings);
 }
 
-// teach our trading method events
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
-  var price = candle.c;
-
-  this.lastPrice = price;
-  this.dema.update(price);
-
-  if(this.dema.short.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
+// what happens on every new candle?
+method.update = function(candle) {
+  // nothing!
 }
 
 // for debugging purposes: log the last calculated
 // EMAs and diff.
-TradingMethod.prototype.log = function() {
+method.log = function() {
+  var dema = this.indicators.dema;
+
   log.debug('calculated DEMA properties for candle:');
-  log.debug('\t', 'long ema:', this.dema.long.result.toFixed(8));
-  log.debug('\t', 'short ema:', this.dema.short.result.toFixed(8));
-  log.debug('\t diff:', this.dema.result.toFixed(5));
-  log.debug('\t DEMA age:', this.dema.short.age, 'candles');
+  log.debug('\t', 'long ema:', dema.long.result.toFixed(8));
+  log.debug('\t', 'short ema:', dema.short.result.toFixed(8));
+  log.debug('\t diff:', dema.result.toFixed(5));
+  log.debug('\t DEMA age:', dema.short.age, 'candles');
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
-  var diff = this.dema.result;
+method.check = function() {
+
+  var dema = this.indicators.dema;
+  var diff = dema.result;
   var price = this.lastPrice;
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
@@ -75,14 +67,4 @@ TradingMethod.prototype.calculateAdvice = function() {
   }
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;

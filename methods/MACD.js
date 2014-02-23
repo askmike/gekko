@@ -2,22 +2,28 @@
   
   MACD - DJM 31/12/2013
 
+  (updated a couple of times since, check git history)
+
  */
+
 // helpers
-var moment = require('moment');
 var _ = require('lodash');
-var util = require('../core/util.js');
-var Util = require('util');
 var log = require('../core/log.js');
 
-var config = util.getConfig();
+// configuration
+var config = require('../core/util.js').getConfig();
 var settings = config.MACD;
 
-var MACD = require('./indicators/MACD.js');
+// let's create our own method
+var method = {};
 
-var TradingMethod = function () {
-  _.bindAll(this);
+// prepare everything our method needs
+method.init = function() {
 
+  // keep state about the current trend
+  // here, on every new candle we use this
+  // state object to check if we need to
+  // report it.
   this.trend = {
     direction: 'none',
     duration: 0,
@@ -25,55 +31,51 @@ var TradingMethod = function () {
     adviced: false
   };
 
-  this.historySize = config.tradingAdvisor.historySize;
-  this.macd = new MACD(settings);
+  // how many candles do we need as a base
+  // before we can start giving advice?
+  this.requiredHistory = config.tradingAdvisor.historySize;
+
+  // define the indicators we need
+  this.addIndicator('macd', 'MACD', settings);
+
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradingMethod, EventEmitter);
-
-TradingMethod.prototype.update = function(candle) {
-  var price = candle.c;
-
-  this.lastPrice = price;
-  this.macd.update(price);
-
-  if(this.macd.short.age < this.historySize)
-    return;
-
-  this.log();
-  this.calculateAdvice();
+// what happens on every new candle?
+method.update = function(candle) {
+  // nothing!
 }
 
-// for debugging purposes log the last 
-// calculated parameters.
-TradingMethod.prototype.log = function() {
+// for debugging purposes: log the last calculated
+// EMAs and diff.
+method.log = function() {
   var digits = 8;
-  var macd = this.macd.diff;
-  var signal = this.macd.signal.result;
-  var result = this.macd.result;
+  var macd = this.indicators.macd;
+
+  var diff = macd.diff;
+  var signal = macd.signal.result;
 
   log.debug('calculated MACD properties for candle:');
-  log.debug('\t', 'short:', this.macd.short.result.toFixed(digits));
-  log.debug('\t', 'long:', this.macd.long.result.toFixed(digits));
-  log.debug('\t', 'macd:', macd.toFixed(digits));
+  log.debug('\t', 'short:', macd.short.result.toFixed(digits));
+  log.debug('\t', 'long:', macd.long.result.toFixed(digits));
+  log.debug('\t', 'macd:', diff.toFixed(digits));
   log.debug('\t', 'signal:', signal.toFixed(digits));
-  log.debug('\t', 'macdiff:', result.toFixed(digits));  
+  log.debug('\t', 'macdiff:', macd.result.toFixed(digits));  
 }
 
-TradingMethod.prototype.calculateAdvice = function() {
-  var macd = this.diff;
+method.check = function() {
   var price = this.lastPrice;
-  var long = this.macd.long.result;
-  var short = this.macd.short.result;
-  var signal = this.macd.signal.result;
-  var macddiff = this.macd.result;
+  var macd = this.indicators.macd;
+
+  var long = macd.long.result;
+  var short = macd.short.result;
+  var signal = macd.signal.result;
+  var macddiff = macd.result;
 
   if(macddiff > settings.thresholds.up) {
 
     // new trend detected
     if(this.trend.direction !== 'up')
+      // reset the state for the new trend
       this.trend = {
         duration: 0,
         persisted: false,
@@ -98,6 +100,7 @@ TradingMethod.prototype.calculateAdvice = function() {
 
     // new trend detected
     if(this.trend.direction !== 'down')
+      // reset the state for the new trend
       this.trend = {
         duration: 0,
         persisted: false,
@@ -140,14 +143,4 @@ TradingMethod.prototype.calculateAdvice = function() {
   }
 }
 
-TradingMethod.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
-
-  this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
-  });
-}
-
-module.exports = TradingMethod;
+module.exports = method;
