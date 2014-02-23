@@ -86,10 +86,22 @@ config.PPO = {
   }
 };
 
+// RSI settings:
+config.RSI = {
+  interval: 14,
+  thresholds: {
+    low: 30,
+    high: 70,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
 // custom settings:
 config.custom = {
   my_custom_setting: 10,
-};
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING PLUGINS
