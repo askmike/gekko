@@ -132,7 +132,7 @@ If Gekko helped you in any way, you can always leave me a tip at (BTC) 13r1jyivi
 
 The MIT License (MIT)
 
-Copyright (c) 2013 Mike van Rossum <mike@mvr.me>
+Copyright (c) 2014 Mike van Rossum <mike@mvr.me>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
