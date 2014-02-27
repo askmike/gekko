@@ -204,6 +204,17 @@ config.ircbot = {
   botName: 'gekkobot'
 }
 
+config.xmppbot = {
+  enabled: false,
+  emitUpdats: false,
+  client_id: 'jabber_id',
+  client_pwd: 'jabber_pw',
+  client_host: 'jabber_server',
+  client_port: 5222,
+  status_msg: 'I\'m online',
+  receiver: 'jabber_id_for_updates'
+}
+
 config.campfire = {
   enabled: false,
   emitUpdates: false,
