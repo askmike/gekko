@@ -23,8 +23,6 @@ var Actor = function() {
   this.price = 'Dont know yet :(';
   this.priceTime = utc();
 
-  this.from=xmppbot.receiver;
-
   this.commands = {
     ';;advice': 'emitAdvice',
     ';;price': 'emitPrice',
@@ -49,21 +47,21 @@ Actor.prototype.setState = function() {
 Actor.prototype.rawStanza = function(stanza) {
  if (stanza.is('presence') && (stanza.attrs.type == 'subscribe')) {
             this.bot.send(new xmpp.Element('presence', { to: stanza.attrs.from, type: 'subscribed' }));
-    }
-    if (stanza.is('message') &&
-       // Important: never reply to errors!
-       stanza.attrs.type !== 'error') {
+ }
+ if (stanza.is('message') &&
+     // Important: never reply to errors!
+     stanza.attrs.type !== 'error') {
 
-       // Swap addresses...
-       this.from = stanza.attrs.from;
-       var body = stanza.getChild('body');
-       if (!body) {
-         return;
-       }
+     // Swap addresses...
+     var from = stanza.attrs.from;
+     var body = stanza.getChild('body');
+     if (!body) {
+       return;
+     }
 
-       var message_recv = body.getText();   //Get Incoming Message
-       this.verifyQuestion(message_recv);	
-    }
+     var message_recv = body.getText();   //Get Incoming Message
+     this.verifyQuestion(from, message_recv);	
+  }
 };
 
 Actor.prototype.sendMessageTo = function(receiver, message){
@@ -85,21 +83,21 @@ Actor.prototype.processAdvice = function(advice) {
   this.adviceTime = utc();
 
   if(xmppbot.emitUpdats)
-    this.newAdvice();
+    this.newAdvice(xmppbot.receiver);
 };
 
-Actor.prototype.verifyQuestion = function(text) {
+Actor.prototype.verifyQuestion = function(receiver, text) {
   if(text in this.commands)
-    this[this.commands[text]]();
+    this[this.commands[text]](receiver);
 }
 
-Actor.prototype.newAdvice = function() {
-  this.sendMessage('Guys! Important news!');
-  this.emitAdvice();
+Actor.prototype.newAdvice = function(receiver) {
+  this.sendMessageTo(receiver, 'Important news!');
+  this.emitAdvice(receiver);
 }
 
-// sent advice over to the IRC channel
-Actor.prototype.emitAdvice = function() {
+// sent advice 
+Actor.prototype.emitAdvice = function(receiver) {
   var message = [
     'Advice for ',
     config.watch.exchange,
@@ -120,11 +118,11 @@ Actor.prototype.emitAdvice = function() {
     ')'
   ].join('');
 
-  this.sendMessage(message);
+  this.sendMessageTo(receiver, message);
 };
 
-// sent price over to the IRC channel
-Actor.prototype.emitPrice = function() {
+// sent price 
+Actor.prototype.emitPrice = function(receiver) {
 
   var message = [
     'Current price at ',
@@ -142,18 +140,18 @@ Actor.prototype.emitPrice = function() {
     ')'
   ].join('');
 
-  this.sendMessage(message);
+  this.sendMessageTo(receiver, message);
 };
 
-// sent donation info over to the IRC channel
-Actor.prototype.emitDonation = function() {
+// sent donation info 
+Actor.prototype.emitDonation = function(receiver) {
   var message = 'You want to donate? How nice of you! You can send your coins here:';
-  message += '\nBTC:\t13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW';
+  message += '\nBTC:\t19UGvmFPfFyFhPMHu61HTMGJqXRdVcHAj3';
 
-  this.sendMessage(message);
+  this.sendMessageTo(receiver, message);
 };
 
-Actor.prototype.emitHelp = function() {
+Actor.prototype.emitHelp = function(receiver) {
   var message = _.reduce(
     this.rawCommands,
     function(message, command) {
@@ -164,11 +162,11 @@ Actor.prototype.emitHelp = function() {
 
   message = message.substr(0, _.size(message) - 1) + '.';
 
-  this.sendMessage(message);
+  this.sendMessageTo(receiver, message);
 
 }
 
-Actor.prototype.emitRealAdvice = function() {
+Actor.prototype.emitRealAdvice = function(receiver) {
   // http://www.examiner.com/article/uncaged-a-look-at-the-top-10-quotes-of-gordon-gekko
   // http://elitedaily.com/money/memorable-gordon-gekko-quotes/
   var realAdvice = [
@@ -181,7 +179,7 @@ Actor.prototype.emitRealAdvice = function() {
     'When I get a hold of the son of a bitch who leaked this, I’m gonna tear his eyeballs out and I’m gonna suck his fucking skull.'
   ];
 
-  this.sendMessage(_.first(_.shuffle(realAdvice)));
+  this.sendMessageTo(receiver, _.first(_.shuffle(realAdvice)));
 }
 
 Actor.prototype.logError = function(message) {
