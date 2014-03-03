@@ -73,7 +73,7 @@ method.check = function() {
 
   // TODO: is this part of the indicator or not?
   // if it is it should move there
-  var ppoHist = ppo - ppoSignal;
+  var ppoHist = result - ppoSignal;
 
   if(ppoHist > settings.thresholds.up) {
 
