@@ -5,7 +5,6 @@
 // 
 // - `trades batch` - all new trades.
 // - `trade` - the most recent trade after every fetch
-// 
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -59,8 +58,6 @@ Util.inherits(Fetcher, EventEmitter);
 Fetcher.prototype.start = function() {
   if(this.exchange.providesHistory)
     return util.die('Not supported yet');
-  
-  // console.log(this.heartrate, +moment.duration(this.heartrate, 's'));
 
   setInterval(this.tick, +moment.duration(this.heartrate, 's'));
   this.tick();
@@ -87,10 +84,7 @@ Fetcher.prototype.processTrades = function(err, trades) {
   // Make sure we have trades to check
   if(_.isEmpty(trades)) {
     log.debug('Trade fetch came back empty, assuming no new trades.');
-
-    // Kraken only gives back new trades, refetching will
-    // cross rate limits
-    // setTimeout(this.fetch, +moment.duration('s', 1));
+    setTimeout(this.fetch, +moment.duration('s', 1));
     return;
   }
 
@@ -101,6 +95,5 @@ Fetcher.prototype.relayTrades = function(batch) {
   this.emit('trades batch', batch);
   this.emit('trade', batch.last);
 }
-
 
 module.exports = Fetcher;

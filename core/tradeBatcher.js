@@ -4,7 +4,7 @@
 // Expects trade batches to be written like:
 // [
 //  {
-//    tid: x,
+//    tid: x, // tid is preferred, but if none available date will also work
 //    price: x,
 //    date: (timestamp),
 //    amount: x

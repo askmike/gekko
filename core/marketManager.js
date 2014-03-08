@@ -1,9 +1,20 @@
+// 
+// The market manager broadcasts market events about the 
+// realtime market:
+// 
+// - `candles`: array of minutly candles
+// - `candle`: after Gekko got new candles,
+//   this will be the most recent one.
+// - `trades`: batch of newly detected trades
+// - `trade`: after Gekko fetched new trades, this
+//   will be the most recent one.
 
 var _ = require('lodash');
 var moment = require('moment');
-
-var log = require('./log.js');
 var utc = moment.utc;
+
+var util = require('./util');
+var log = require('./log.js');
 var TradeFetcher = require('./tradeFetcher');
 var CandleManager = require('./candleManager');
 var CandleConverter = require('./candleConverter');
@@ -11,34 +22,26 @@ var CandleBatcher = require('./candleBatcher');
 
 var exchangeChecker = require('./exchangeChecker');
 
-var moment = require('moment');
-var utc = moment.utc;
-var util = require('./util');
-
 var config = util.getConfig();
-var backtest = config.backtest;
-var tradingAdvisor = config.tradingAdvisor;
 
 var Manager = function() {
   _.bindAll(this);
 
+  // exchange settings
   this.exchange = exchangeChecker.settings(config.watch);
 
   // fetch trades
   this.fetcher = new TradeFetcher;
-  // convert trades to candles
+  // convert trades to minutly candles
   this.candleBatcher = new CandleBatcher;
-
-
-  // convert all 1min candles to required size
-  // this.candleConverter = new CandleConverter(tradingAdvisor.candleSize);
 
   // process newly fetched trades trades
   this.fetcher.on('trades batch', this.relayTrades);
   this.fetcher.on('trades batch', this.candleBatcher.write);
 
-  // process small candles
-  // this.candleBatcher.on('')
+  // relay candles
+  this.candleBatcher.on('candles', this.relayCandles);
+  this.candleBatcher.on('candles', this.relayCandle);
 }
 
 var Util = require('util');
@@ -49,27 +52,20 @@ Manager.prototype.start = function() {
   this.fetcher.start();
 }
 
-Manager.prototype.processSmallCandle = function(candle) {
-  this.emit('small candle', candle);
-  this.candleConverter.write(candle);
-}
-
-Manager.prototype.relayCandles = function() {
-  this.candleConverter.on('candle', this.relayCandle);
-}
-
-Manager.prototype.relayCandle = function(candle) {
-  this.emit('candle', candle);
+Manager.prototype.relayCandles = function(candles) {
+  this.emit('candles', candles);
 }
 
 Manager.prototype.relayTrades = function(batch) {
   this.emit('trades', batch);
 }
 
+Manager.prototype.relayCandle = function(candles) {
+  this.emit('candle', _.last(candles));
+}
+
 Manager.prototype.relayTrade = function(trade) {
   this.emit('trade', trade);
 }
 
-
-// var a = new Manager;
 module.exports = Manager;
