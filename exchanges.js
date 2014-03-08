@@ -151,7 +151,8 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
-    providesHistory: false
+    providesHistory: false,
+    tid: 'tid'
   },
   {
     name: 'Bitstamp',
@@ -167,7 +168,8 @@ var exchanges = [
     ],
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
-    fetchTimespan: 60
+    fetchTimespan: 60,
+    tid: 'tid'
   },
   {
     name: 'CEX.io',
@@ -182,7 +184,8 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret', 'username'],
-    providesHistory: false
+    providesHistory: false,
+    tid: 'tid'
   },
   {
     name: 'Kraken',
@@ -257,8 +260,9 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
-    monitorError: 'https://github.com/askmike/gekko/issues/210',
-    providesHistory: false
+    // monitorError: 'https://github.com/askmike/gekko/issues/210',
+    providesHistory: false,
+    tid: 'date'
   }
 ];
 

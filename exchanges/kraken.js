@@ -67,7 +67,7 @@ Trader.prototype.retry = function(method, args, err) {
   var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..', err);
 
-  if (!_.isFunction(method)) {
+  if(!_.isFunction(method)) {
     log.error(this.name, 'failed to retry, no method supplied.');
     return;
   }
@@ -92,6 +92,7 @@ Trader.prototype.retry = function(method, args, err) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
+    
     if (err || !trades || trades.length === 0)
       return this.retry(this.getTrades, args, err);
 
@@ -106,7 +107,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
     this.since = trades.result.last;
 
-    if (descending)
+    if(descending)
       callback(null, parsedTrades.reverse());
     else
       callback(null, parsedTrades);
@@ -115,8 +116,12 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var reqData = {
     pair: this.pair
   };
-  if (!_.isNull(this.since))
-    reqData.since = this.since;
+  // This appears to not work correctly
+  // skipping for now so we have the same
+  // behaviour cross exchange.
+  // 
+  // if(!_.isNull(this.since))
+  //   reqData.since = this.since;
 
   this.kraken.api('Trades', reqData, _.bind(process, this));
 };
