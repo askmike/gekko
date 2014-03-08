@@ -55,15 +55,13 @@ Manager.prototype.start = function() {
 Manager.prototype.relayCandles = function(candles) {
   this.emit('candles', candles);
 }
-
-Manager.prototype.relayTrades = function(batch) {
-  this.emit('trades', batch);
-}
-
 Manager.prototype.relayCandle = function(candles) {
   this.emit('candle', _.last(candles));
 }
 
+Manager.prototype.relayTrades = function(batch) {
+  this.emit('trades', batch);
+}
 Manager.prototype.relayTrade = function(trade) {
   this.emit('trade', trade);
 }
