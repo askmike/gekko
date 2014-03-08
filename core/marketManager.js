@@ -32,10 +32,11 @@ var Manager = function() {
 
   // fetch trades
   this.fetcher = new TradeFetcher;
+
   // convert trades to minutly candles
   this.candleBatcher = new CandleBatcher;
 
-  // process newly fetched trades trades
+  // relay newly fetched trades
   this.fetcher.on('trades batch', this.relayTrades);
   this.fetcher.on('trades batch', this.candleBatcher.write);
 
