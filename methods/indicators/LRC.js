@@ -23,11 +23,14 @@ var Indicator = function(settings) {
 Indicator.prototype.update = function(price) {
   
   // We need sufficient history to get the right result. 
-  if(this.result === false || this.age < this.depth) {
+  if(this.result === false && this.age < this.depth) {
+
+    this.history[this.age] = price;
     this.age++;
-    this.result = price;
-    // log.debug("Waiting for sufficient age: ", this.age, " out of ", this.depth); 
-    return this.result;
+    this.result = false;
+     // log.debug("Waiting for sufficient age: ", this.age, " out of ", this.depth); 
+    //
+    return;
   }
 
   this.age++;
@@ -41,7 +44,7 @@ Indicator.prototype.update = function(price) {
 
 
   // log.debug("Checking LRC: ", this.result.toFixed(8), "\tH: ", this.age);
-  return this.result;
+  return;
 }
 
 /*
@@ -105,7 +108,7 @@ Indicator.prototype.calculate = function(price) {
     var reg = linreg(this.x, this.history);
 
     // y = a * x + b
-    this.result = (this.depth * reg[0]) + reg[1];
+    this.result = ((this.depth-1) * reg[0]) + reg[1];
 }
 
 module.exports = Indicator;
