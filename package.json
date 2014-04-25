@@ -21,7 +21,8 @@
     "kraken-api": "0.1.x",
     "poloniex.js": "0.0.6",
     "btc-e": "0.0.x",
-    "cexio": "0.0.x"
+    "cexio": "0.0.x",
+    "bitfinex": "git+https://github.com/naddison36/bitfinex.git"
   },
   "devDependencies": {
     "chai": "^2.0.0",

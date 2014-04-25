@@ -136,4 +136,3 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 }
 
 module.exports = Trader;
-
