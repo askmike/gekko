@@ -17,6 +17,7 @@ var methods = [
   'PPO',
   'RSI',
   'CCI',
+  'StochRSI',
   'custom'
 ];
 
