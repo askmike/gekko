@@ -117,6 +117,19 @@ config.CCI = {
     }
 };
 
+// StochRSI settings 
+config.StochRSI = {
+  interval: 3,
+  thresholds: {
+    low: 20,
+    high: 80,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 3
+  }
+};
+
+
 // custom settings:
 config.custom = {
   my_custom_setting: 10,
