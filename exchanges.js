@@ -190,6 +190,23 @@ var exchanges = [
     requires: ['key', 'secret', 'username'],
     providesHistory: 'date',
     tid: 'tid'
+  },
+  {
+    name: 'LakeBTC',
+    slug: 'lakebtc',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['USD'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+      }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    fetchTimespan: 60,
+    tid: 'tid'
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
