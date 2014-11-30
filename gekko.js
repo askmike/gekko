@@ -133,9 +133,9 @@ var setupEmitters = function(next) {
   next();
 }
 
-var attachModules = function(next) {
+var subscribeModules = function(next) {
 
-  var subscriptions = require(dirs.gekko + 'subscriptions');
+  var subscriptions = require(dirs.core + 'subscriptions');
 
   _.each(modules, function(module) {
     _.each(subscriptions, function(sub) {
@@ -181,7 +181,7 @@ async.series(
   [
     loadModules,
     setupEmitters,
-    attachModules
+    subscribeModules
   ],
   function() {
     // everything is setup!

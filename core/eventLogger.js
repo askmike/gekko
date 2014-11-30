@@ -8,7 +8,7 @@ var EventLogger = function() {
   _.bindAll(this);
 }
 
-var subscriptions = require(dirs.gekko + 'subscriptions');
+var subscriptions = require(dirs.core + 'subscriptions');
 _.each(subscriptions, function(subscription) {
   EventLogger.prototype[subscription.handler] = function(e) {
     if(subscription.event === 'tick')
