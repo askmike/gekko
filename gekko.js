@@ -15,15 +15,15 @@
 
 */
 
-var gekkoDir = './';
-var coreDir = gekkoDir + 'core/';
-var pluginDir = gekkoDir + 'plugins/';
+var util = require('./core/util');
+var dirs = util.dirs();
 
 var _ = require('lodash');
 var async = require('async');
 
-var util = require(coreDir + 'util');
-var log = require(coreDir + 'log');
+var log = require(dirs.core + 'log');
+
+var moduleHelper = require(dirs.core + 'moduleHelper');
 
 // if the user just wants to see the current version
 if(util.getArgument('v')) {
@@ -72,157 +72,100 @@ if(
 log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
-var gekkoMode = 'realtime';
-
 // currently we only support a single 
 // market and a single advisor.
 
 // make sure the monitoring exchange is configured correctly for monitoring
 
-var exchangeChecker = require(coreDir + 'exchangeChecker');
+var exchangeChecker = require(dirs.core + 'exchangeChecker');
 var invalid = exchangeChecker.cantMonitor(config.watch);
 if(invalid)
   util.die(invalid);
 
-var plugins = [];
+var modules = [];
 var emitters = {};
 
-var setupMarket = function(next) {
-  var Market = require(coreDir + 'marketManager');
-  emitters.market = new Market;
-  next();
-}
+// load each module (plugins and internal parts)
+var loadModules = function(next) {
+  // get internal modules
+  var moduleSettings = _.map(require(dirs.core + 'modules'), function(s) {
+    s.internal = true;
+    s.path = dirs.core + s.slug;
+    return s;
+  });
 
-// load each plugin
-var loadPlugins = function(next) {
-  var pluginSettings = require(gekkoDir + 'plugins');
+  // transform plugins into modules
+  var pluginSettings = _.map(require(dirs.gekko + 'plugins'), function(s) {
+    s.path = dirs.plugins + s.slug;
+    return s;
+  });
 
-  var iterator = function(plugin, next) {
+  // only load enabled plugin
+  pluginSettings = _.filter(pluginSettings, function(s) {
+    return s.enabled;
+  });
 
-    // verify the actor settings in config
-    if(!(plugin.slug in config)) {
-      log.warn('unable to find', plugin.slug, 'in the config. Is your config up to date?')
-      return next();
+  // append enabled plugins to modules
+  moduleSettings = moduleSettings.concat(pluginSettings);
+
+  // load all modules
+  async.mapSeries(
+    moduleSettings,
+    moduleHelper.load,
+    function(error, _modules) {
+      if(error)
+        return util.die(error);
+
+      modules = _modules;
+      next();
     }
-
-    var pluginConfig = config[plugin.slug];
-
-    // only load actors that are supported by
-    // Gekko's current mode
-    if(!_.contains(plugin.modes, gekkoMode))
-      return next();
-
-    // if the actor is disabled skip as well
-    if(!pluginConfig.enabled)
-      return next();
-
-    // verify plugin dependencies are installed
-    if('dependencies' in plugin)
-      _.each(plugin.dependencies, function(dep) {
-        try {
-          require(dep.module);
-        }
-        catch(e) {
-
-          var error = [
-            'The plugin',
-            plugin.slug,
-            'expects the module',
-            dep.module,
-            'to be installed.',
-            'However it is not, install',
-            'it by running: \n\n',
-            '\tnpm install',
-            dep.module + '@' + dep.version
-          ].join(' ');
-
-          util.die(error);
-        }
-
-      });
-
-    var Plugin = require(pluginDir + plugin.slug);
-
-    if(!plugin.silent) {
-      log.info('Setting up:');
-      log.info('\t', plugin.name);
-      log.info('\t', plugin.description);
-    }
-
-    if(plugin.async) {
-      var instance = new Plugin(util.defer(next));
-
-      instance.meta = plugin;
-      plugins.push(instance);
-
-    } else {
-      var instance = new Plugin;
-
-      instance.meta = plugin;
-      plugins.push(instance);
-
-      _.defer(next);
-    }
-
-    if(!plugin.silent)
-      console.log();
-  }
-
-  async.eachSeries(
-    pluginSettings,
-    iterator,
-    next
   );
 };
 
-// advisor is a special actor in that it spawns an
-// advice feed which everyone can subscribe to.
-var setupAdvisor = function(next) {
+// Emitters are modules that emit events to which others can subscribe.
+var setupEmitters = function(next) {
 
-  var settings;
-
-  var plugin = _.find(plugins, function(advisor) {
-    if(!advisor.meta.originates)
-      return false;
-
-    settings = _.find(
-      advisor.meta.originates,
-      function(o) {
-        return o.feed === 'advice feed'
-      }
-    );
-    return settings;
+  _.each(modules, function(module) {
+    if(module.meta.emits)
+      emitters[module.meta.slug] = module;
   });
-
-  emitters.advisor = settings ? plugin[settings.object] : false;
 
   next();
 }
 
-var attachPlugins = function(next) {
+var attachModules = function(next) {
 
-  var subscriptions = require(gekkoDir + 'subscriptions');
+  var subscriptions = require(dirs.gekko + 'subscriptions');
 
-  _.each(plugins, function(plugin) {
+  _.each(modules, function(module) {
     _.each(subscriptions, function(sub) {
 
-      if(sub.handler in plugin) {
+      if(_.has(module, sub.handler)) {
 
         // if the actor wants to listen
         // to something disabled
-        if(!emitters[sub.emitter])
-          return log.warn([
-            plugin.meta.name,
-            'wanted to listen to the',
-            sub.emitter + ',',
-            'however the',
-            sub.emitter,
-            'is disabled.'
-          ].join(' '))
-        
+        if(!emitters[sub.emitter]) {
+          if(!module.meta.internal)
+            return log.warn([
+              module.meta.name,
+              'wanted to listen to the',
+              sub.emitter + ',',
+              'however the',
+              sub.emitter,
+              'is disabled.'
+            ].join(' '))
+
+          return;
+        }
+
         // attach handler
         emitters[sub.emitter]
-          .on(sub.event, plugin[sub.handler]);
+          .on(sub.event,
+            util.defer(
+              module[
+                sub.handler
+              ])
+            );
       }
 
     });
@@ -231,18 +174,17 @@ var attachPlugins = function(next) {
   next();
 }
 
-log.info('Setting up Gekko in', gekkoMode, 'mode');
-console.log();
+log.info('Setting up Gekko in', util.gekkoMode(), 'mode');
+log.empty();
 
 async.series(
   [
-    loadPlugins,
-    setupAdvisor,
-    setupMarket,
-    attachPlugins
+    loadModules,
+    setupEmitters,
+    attachModules
   ],
   function() {
     // everything is setup!
-    emitters.market.start();
+    emitters.heart.start();
   }
 );

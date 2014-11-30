@@ -25,7 +25,7 @@
 //   first: (trade),
 //   last: (trade),
 //   timespan: x,
-//   all: [
+//   data: [
 //      // batch of new trades with 
 //      // moments instead of timestamps
 //   ]
@@ -80,7 +80,7 @@ TradeBatcher.prototype.write = function(batch) {
     end: last.date,
     last: last,
     first: first,
-    all: batch
+    data: batch
   });
 
   this.last = last.tid;

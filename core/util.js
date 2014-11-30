@@ -14,7 +14,7 @@ var util = {
     if(_config)
       return _config;
 
-    var configFile = path.resolve(util.getArgument('config') || __dirname + '/../config.js');
+    var configFile = path.resolve(util.getArgument('config') || util.dirs().gekko + 'config');
     _config = require(configFile);
     return _config;
   },
@@ -138,6 +138,29 @@ var util = {
       console.log(m, '\n\n');
     }
     process.kill();
+  },
+  // TODO:
+  gekkoMode: function() {
+    return 'realtime';
+  },
+  dirs: function() {
+    var ROOT = process.cwd() + '/';
+
+    return {
+      gekko: ROOT,
+      core: ROOT + 'core/',
+      plugins: ROOT + 'plugins/',
+      methods: ROOT + 'methods/'
+    }
+  },
+  inherit: function(dest, source) {
+    require('util').inherits(
+      dest,
+      source
+    );
+  },
+  makeEventEmitter: function(dest) {
+    util.inherit(dest, require('events').EventEmitter);
   }
 }
 

@@ -47,7 +47,7 @@ var Store = function() {
 Store.prototype.openDay = function(day, callback) {
   // Load only if the open day changed, or we never opened a day
   if(this.day == null || day != this.day.day) {
-    prepareNewDay(day);
+    this.prepareNewDay(day);
     this.loadDay(function(err, candles) {
       if(!err) {
         this.day.addCandles(candles);
@@ -82,14 +82,14 @@ Store.prototype.addCandles = function(candles) {
 // If there is a day in open state, append all queued candles to it.
 Store.prototype.flush = function() {
   //TODO(yin): Help, this.day.state can get easily stuck locked.
-  if(this.queue.length > 0 && this.day != null && this.day.state = 'open') {
-    this.day.addCandles(_.flatten(this.queue));
-    this.queue = [];
-    this.day.state = 'saving';
-    this.write(this.day.filename, this.day.candles, function(err) {
-      this.day.state = 'open';
-    })
-  }
+  // if(this.queue.length > 0 && this.day != null && this.day.state = 'open') {
+  //   this.day.addCandles(_.flatten(this.queue));
+  //   this.queue = [];
+  //   this.day.state = 'saving';
+  //   this.write(this.day.filename, this.day.candles, function(err) {
+  //     this.day.state = 'open';
+  //   })
+  // }
 }
 
 Store.prototype.toCSV = function(file, candles, next) {
@@ -143,6 +143,6 @@ Store.prototype.toArray = function(csv, next) {
 }
 
 //TODO(yin):Exported for tests
-Store.Day = Day
+Store.Day = Day;
 
 module.exports = Store;

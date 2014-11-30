@@ -17,6 +17,8 @@ var Log = function() {
 
 Log.prototype = {
   _write: function(method, args, name) {
+    this.output = console;
+
     if(!name)
       name = method.toUpperCase();
 
@@ -24,7 +26,7 @@ Log.prototype = {
     message += ' (' + name + '):\t';
     message += fmt.apply(null, args);
 
-    console[method](message);
+    this.output[method](message);
   },
   error: function() {
     this._write('error', arguments);
@@ -34,6 +36,9 @@ Log.prototype = {
   },
   info: function() {
     this._write('info', arguments);
+  },
+  empty: function() {
+    this.output.info('');
   }
 }
 

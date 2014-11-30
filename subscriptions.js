@@ -5,30 +5,47 @@
 // to events and where those events
 // are emitted from (internally).
 // 
+// 
+// TODO: STREAMS!
 
 var subscriptions = [
+
+  // heart
   {
-    emitter: 'market',
-    event: 'candle',
-    handler: 'processCandle'
+    emitter: 'heart',
+    event: 'start',
+    handler: 'onStart'
   },
   {
-    emitter: 'market',
-    event: 'small candle',
-    handler: 'processSmallCandle'
+    emitter: 'heart',
+    event: 'tick',
+    handler: 'onTick'
+  },
+
+  // marketDataProvider
+  {
+    emitter: 'marketDataProvider',
+    event: 'trades',
+    handler: 'onTrades'
+  },
+
+
+  // candleManager
+  {
+    emitter: 'candleManager',
+    event: 'candles',
+    handler: 'processCandles'
   },
   {
-    emitter: 'market',
-    event: 'trade',
-    handler: 'processTrade'
+    emitter: 'candleManager',
+    event: 'ready',
+    handler: 'onReady'
   },
+
+
+  // tradingAdvisor
   {
-    emitter: 'market',
-    event: 'history',
-    handler: 'processHistory'
-  },
-  {
-    emitter: 'advisor',
+    emitter: 'tradingAdvisor',
     event: 'advice',
     handler: 'processAdvice'
   }

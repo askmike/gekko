@@ -11,6 +11,8 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
+  this.name = 'DEMA';
+
   this.currentTrend;
   this.requiredHistory = config.tradingAdvisor.historySize;
 

@@ -1,50 +1,36 @@
-// what kind of actors does Gekko support?
+// All plugins supported by Gekko.
 // 
-// An actor is a module/plugin that acts whenever an event happens.
-// In Gekko there are two types of events and each type originates
-// from a feed:
-// 
-// - Market Events: the market feed.
-// - Advice Events: the advice feed.
-// 
-// Each type has it's own feed.
+// A plugin is a module/plugin that acts whenever an event happens.
 // 
 // Required parameters per actor.
 // 
 // name: Name of the actor
 // slug: filename of the actor, expected to be in `gekko/actors/`
-// description: text describing the actor. Unused on silent actors.
+//     description: text describing the actor.
 // async: upon creating a new actor instance, does something async
 //    happen where Gekko needs to wait for? If set to true, the
 //    constructor will be passed a callback which it should execute
 //    as soon as Gekko can continue setup.
-// silent: indicated whether Gekko should log when this actor is
-//    configured. Not neccesary for until components.
 // modes: a list indicating in what Gekko modes this actor is
 //    allowed to run. Realtime is during a live market watch and
 //    backtest is during a backtest.
 // requires: a list of npm modules this actor requires to be 
 //    installed.
-// originates: does this actor originate a feed (internally used)
-var actors = [
+// emits: does this actor emits events?
+var plugins = [
   {
     name: 'Trading Advisor',
     description: 'Calculate trading advice',
     slug: 'tradingAdvisor',
     async: false,
-    silent: false,
     modes: ['realtime', 'backtest'],
-    originates: [{
-      feed: 'advice feed',
-      object: 'method'
-    }]
+    emits: ['advice']
   },
   {
     name: 'IRC bot',
     description: 'IRC module lets you communicate with Gekko on IRC.',
     slug: 'ircbot',
     async: false,
-    silent: false,
     modes: ['realtime'],
     dependencies: [{
       module: 'irc',
@@ -53,10 +39,9 @@ var actors = [
   },
   {
     name: 'Campfire bot',
-    description: 'Campfire module lets you communicate with Gekko on Campfire.',
+    description: 'Lets you communicate with Gekko on Campfire.',
     slug: 'campfire',
     async: false,
-    silent: false,
     modes: ['realtime'],
     dependencies: [{
       module: 'ranger',
@@ -65,10 +50,9 @@ var actors = [
   },
   {
     name: 'Mailer',
-    description: 'Mail module lets sends you email yourself everytime Gekko has new advice.',
+    description: 'Sends you email yourself everytime Gekko has new advice.',
     slug: 'mailer',
     async: true,
-    silent: false,
     modes: ['realtime'],
     dependencies: [{
       module: 'emailjs',
@@ -80,10 +64,9 @@ var actors = [
   },
   {
     name: 'Trader',
-    description: 'Trader will follow the advice and create real orders.',
+    description: 'Follows the advice and create real orders.',
     slug: 'trader',
     async: true,
-    silent: false,
     modes: ['realtime']
   },
   {
@@ -99,7 +82,6 @@ var actors = [
     description: 'Paper trader that logs fake profits.',
     slug: 'profitSimulator',
     async: false,
-    silent: false,
     modes: ['realtime', 'backtest']
   },
   {
@@ -107,7 +89,6 @@ var actors = [
     slug: 'redisBeacon',
     description: 'Publish events over Redis Pub/Sub',
     async: true,
-    silent: false,
     modes: ['realtime'],
     dependencies: [{
       module: 'redis',
@@ -116,4 +97,4 @@ var actors = [
   }
 ];
 
-module.exports = actors;
+module.exports = plugins;

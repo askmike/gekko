@@ -8,7 +8,8 @@ All plugins live in `gekko/plugins`.
 
 ## Existing plugins:
 
-- Advice logger: log trading advice in stdout.
+- Candle Store: save trades to disk.
+- Advice logger: log trading advice in your terminal (stdout).
 - Mailer: mail trading advice to your gmail account.
 - IRC bot: logs Gekko on in an irc channel and lets users communicate with it.
 - Profit simulator: simulates trades and calculates profit over these (and logs profit).
@@ -17,15 +18,16 @@ All plugins live in `gekko/plugins`.
 
 ## What kind of events can I listen to?
 
-- `trade`: Everytime Gekko refetched an exchange trade data and it has new trades, it will
-  propogate the most recent one.
-- `candle`: Everytime Gekko calculated a new candle (as defined by the candleSize),
-  it is propogated here.
-- `small candle`: Everytime Gekko calculated a new small candle (always 1 minute size 
-  candles), it is propogated here.
+- `tick`: Most of the time Gekko is idling, however once in a while (around minutly) Gekko will get fetch new data and start propogating. This process starts by this event and you can use it as an interval hook.
+- `trades`: Everytime Gekko refetched an exchange trade data and it has *new* trades.
+- `trade`: Everytime Gekko refetched an exchange trade data and it has new trades, it will propogate the most recent one.
+- `candles`: Everytime Gekko calculated new 1 min candles, they are propogated here.
+- `candle`: Everytime Gekko calculated new candles, the most recent one is propogated here.
 - `advice`: Everytime an implemented trading method suggests you change your position.
 
 ## Implementing a new plugin
+
+**TODO: update**
 
 If you want to add your own plugin you need to expose a constructor function inside
 `plugins/[slugname of plugin].js`. The object needs methods based on which event you want
