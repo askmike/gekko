@@ -1,6 +1,6 @@
 # Important note
 
-You are looking at the brand new and completetly different version of Gekko. We've tested it for quite a while though it might be possible that you encounter bugs. If you encounter a bug: check out in [the issues](https://github.com/askmike/gekko/issues/) if we are aware of it and if not create a new one :)
+You are looking at Gekko 0.2, this version is in the works and not working completely. [Check here](https://github.com/askmike/gekko/issues/255) for status!
 
 # Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
