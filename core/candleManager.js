@@ -1,7 +1,6 @@
 // The candleManager consumes trades and emits:
-// - `candles`: array of minutly candles
-// - `candle`: after Gekko got new candles,
-//   this will be the most recent one.
+// - `candles`: array of minutly candles.
+// - `candle`: the most recent candle after a fetch Gekko.
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -22,10 +21,6 @@ var Manager = function() {
 
   this.candleCreator
     .on('candles', this.relayFreshCandles);
-
-  // TODO:
-  // if config.tradingAdvisor is enabled we need to
-  // 
 };
 
 util.makeEventEmitter(Manager);

@@ -10,7 +10,7 @@
 // input are transported candles.
 
 var _ = require('lodash');
-var Util = require('util');
+var util = require('./util');
 
 var CandleBatcher = function(candleSize) {
   if(!_.isNumber(candleSize))
@@ -21,9 +21,7 @@ var CandleBatcher = function(candleSize) {
   this.candles = [];
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(CandleBatcher, EventEmitter);
+util.makeEventEmitter(CandleBatcher);
 
 CandleBatcher.prototype.write = function(candles) {
   if(!_.isArray(candles.data))

@@ -50,9 +50,7 @@ var Fetcher = function() {
   this.batcher.on('new batch', this.relayTrades);
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(Fetcher, EventEmitter);
+util.makeEventEmitter(Fetcher);
 
 Fetcher.prototype._fetch = function(since) {
   if(++this.tries >= this.limit)

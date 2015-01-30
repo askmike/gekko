@@ -66,7 +66,7 @@ Manager.prototype.init = function(callback) {
   // Because on cex.io your asset grows refresh and
   // display portfolio stats every 5 minutes
   if(this.exchange.name === 'cex.io')
-    setInterval(this.recheckPortfolio, util.minToMs(5));  
+    setInterval(this.recheckPortfolio, +moment.duration(5, 'm'));
 }
 
 Manager.prototype.setPortfolio = function(callback) {

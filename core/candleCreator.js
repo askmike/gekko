@@ -1,7 +1,8 @@
-// Small wrapper that creates one minute based candles based on trade batches. Note 
+// The CandleCreator creates one minute candles based on trade batches. Note 
 // that it also adds empty candles to fill gaps with no volume.
 // 
 // Expects trade batches to be written like:
+// 
 // {
 //   amount: x,
 //   start: (moment),
@@ -54,9 +55,9 @@ var CandleCreator = function() {
   _.bindAll(this);
 
   // TODO: remove fixed date
-  this.threshold = moment("2000-01-01", "YYYY-MM-DD");
+  this.threshold = moment("1970-01-01", "YYYY-MM-DD");
 
-  // This also holds the leftover between fehtches
+  // This also holds the leftover between fetches
   this.buckets = {};
 }
 
@@ -115,7 +116,7 @@ CandleCreator.prototype.calculateCandles = function() {
   var candles = _.map(this.buckets, function(bucket, name) {
     var candle = this.calculateCandle(bucket);
     
-    // clean all buckets, except the last
+    // clean all buckets, except the last one:
     // this candle is not complete
     if(name !== lastMinute)
       delete this.buckets[name];

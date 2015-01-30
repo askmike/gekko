@@ -42,9 +42,7 @@ var TradeBatcher = function(tid) {
   this.last = -1;
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(TradeBatcher, EventEmitter);
+util.makeEventEmitter(TradeBatcher);
 
 TradeBatcher.prototype.write = function(batch) {
   if(_.isEmpty(batch))
