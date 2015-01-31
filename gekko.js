@@ -79,8 +79,14 @@ log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 var exchangeChecker = require(dirs.core + 'exchangeChecker');
 var invalid = exchangeChecker.cantMonitor(config.watch);
-if(invalid)
-  util.die(invalid);
+
+var BudFox = require(dirs.budfox + 'budfox');
+
+var a = new BudFox(config.watch);
+a.start();
+
+return;
+
 
 var modules = [];
 var emitters = {};

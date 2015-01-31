@@ -144,13 +144,14 @@ var util = {
     return 'realtime';
   },
   dirs: function() {
-    var ROOT = process.cwd() + '/';
+    var ROOT = __dirname + '/../';
 
     return {
       gekko: ROOT,
       core: ROOT + 'core/',
       plugins: ROOT + 'plugins/',
-      methods: ROOT + 'methods/'
+      methods: ROOT + 'methods/',
+      budfox: ROOT + 'core/budfox/'
     }
   },
   inherit: function(dest, source) {

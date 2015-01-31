@@ -1,11 +1,6 @@
-// The heart does two things:
-//  - emit a start event used for the candleManager 
-//  to prepare (load history, and find out if we can
-//  use it or not).
-//  - (on ready) emit tick events and that the loop.
+// The heart schedules and emit ticks every 20 seconds.
 
-var util = require('./util');
-var config = util.getConfig();
+var util = require(__dirname + '/../util');
 var log = require(util.dirs().core + 'log');
 
 var _ = require('lodash');
@@ -15,19 +10,9 @@ var Heart = function() {
   _.bindAll(this);
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(Heart, EventEmitter);
+util.makeEventEmitter(Heart);
 
-Heart.prototype.start = function() {
-  // TODO: STREAMS!
-  if(!config.watch.enabled)
-    throw 'Watching a live market is the only supported mode right now.';
-
-  this.emit('start');
-}
-
-Heart.prototype.onReady = function() {
+Heart.prototype.pump = function() {
   log.debug('scheduling ticks');
   this.scheduleTicks();
 }

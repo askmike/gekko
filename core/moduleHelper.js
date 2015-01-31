@@ -57,18 +57,18 @@ var moduleHelper = {
   //    callback
   load: function(module, next) {
 
+    if(!module.silent && !module.internal) {
+      log.info('Setting up:');
+      log.info('\t', module.name);
+      log.info('\t', module.description);
+    }
+
     var isInvalid = moduleHelper.isInvalid(module);
 
     if(isInvalid)
       return next(isInvalid);
 
     var Module = require(module.path);
-
-    if(!module.silent && !module.internal) {
-      log.info('Setting up:');
-      log.info('\t', module.name);
-      log.info('\t', module.description);
-    }
 
     if(module.async) {
       var instance = new Module(util.defer(function(err) {

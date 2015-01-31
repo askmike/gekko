@@ -9,31 +9,35 @@
 var _ = require('lodash');
 var moment = require('moment');
 var utc = moment.utc;
-var log = require('./log.js');
+var util = require(__dirname + '/../util');
 
-var util = require('./util');
-var config = util.getConfig();
+var log = require(util.dirs().core + 'log');
 
-var exchangeChecker = require('./exchangeChecker');
-var TradeBatcher = require('./tradeBatcher');
+var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+var TradeBatcher = require(util.dirs().core + 'tradeBatcher');
 
-var provider = config.watch.exchange.toLowerCase();
-var DataProvider = require('../exchanges/' + provider);
+var Fetcher = function(config) {
 
-var Fetcher = function() {
+  var provider = config.exchange.toLowerCase();
+  var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
+
+  var invalid = exchangeChecker.cantMonitor(config);
+  if(invalid)
+    util.die(invalid);
+
   _.bindAll(this);
 
   // Create a public dataProvider object which can retrieve live 
   // trade information from an exchange.
-  this.watcher = new DataProvider(config.watch);
+  this.watcher = new DataProvider(config);
 
-  this.exchange = exchangeChecker.settings(config.watch);
+  this.exchange = exchangeChecker.settings(config);
 
   this.batcher = new TradeBatcher(this.exchange.tid);
 
   this.pair = [
-    config.watch.asset,
-    config.watch.currency
+    config.asset,
+    config.currency
   ].join('/');
 
   log.info('Starting to watch the market:',
@@ -45,7 +49,7 @@ var Fetcher = function() {
   // we will keep on retrying until next
   // scheduled fetch.
   this.tries = 0;
-  this.limit = util.getConfig().watch.interval;
+  this.limit = 20; // [TODO]
 
   this.batcher.on('new batch', this.relayTrades);
 }

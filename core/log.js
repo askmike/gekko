@@ -13,12 +13,11 @@ var debug = require('./util').getConfig().debug;
 
 var Log = function() {
   _.bindAll(this);
+  this.output = console;
 };
 
 Log.prototype = {
   _write: function(method, args, name) {
-    this.output = console;
-
     if(!name)
       name = method.toUpperCase();
 

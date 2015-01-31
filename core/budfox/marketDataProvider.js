@@ -6,37 +6,26 @@
 //   will be the most recent one.
 
 var _ = require('lodash');
-var util = require('./util');
+var util = require(__dirname + '/../util');
 
 var MarketFetcher = require('./marketFetcher');
 
-// TODO: this doesnt really belong here
-var exchangeChecker = require('./exchangeChecker');
-
-var config = util.getConfig();
-
-var Manager = function() {
+var Manager = function(config) {
 
   _.bindAll(this);
 
-  // exchange settings
-  this.exchange = exchangeChecker.settings(config.watch);
-
   // fetch trades
-  // TODO: make conditional
-  this.source = new MarketFetcher;
+  this.source = new MarketFetcher(config);
 
   // relay newly fetched trades
   this.source
     .on('trades batch', this.relayTrades);
 }
 
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(Manager, EventEmitter);
+util.makeEventEmitter(Manager);
 
 // HANDLERS
-Manager.prototype.onTick = function() {
+Manager.prototype.retrieve = function() {
   this.source.fetch();
 }
 

@@ -49,7 +49,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var util = require('./util');
+var util = require(__dirname + '/../util');
 
 var CandleCreator = function() {
   _.bindAll(this);
