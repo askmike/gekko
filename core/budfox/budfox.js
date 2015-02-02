@@ -46,14 +46,15 @@ var BudFox = function(config) {
   //    Budfox also reports:
 
   // Trades & last trade
-  this.marketDataProvider.on(
-    'trades',
-    this.broadcast('trades')
-  );
-  this.marketDataProvider.on(
-    'trades',
-    this.broadcastTrade
-  );
+  //
+  // this.marketDataProvider.on(
+  //   'trades',
+  //   this.broadcast('trades')
+  // );
+  // this.marketDataProvider.on(
+  //   'trades',
+  //   this.broadcastTrade
+  // );
 }
 
 BudFox.prototype = Object.create(Readable.prototype, {
@@ -69,7 +70,7 @@ BudFox.prototype.start = function() {
 }
 
 BudFox.prototype.pushCandles = function(candles) {
-  _.each(candles.data, this.push);
+  _.each(candles, this.push);
 }
 
 BudFox.prototype.broadcastTrade = function(trades) {

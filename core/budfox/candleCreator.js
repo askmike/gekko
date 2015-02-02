@@ -78,10 +78,7 @@ CandleCreator.prototype.write = function(batch) {
   // the last candle is not complete
   this.threshold = candles.pop().start;
 
-  this.emit('candles', {
-    amount: _.size(candles),
-    data: candles
-  });
+  this.emit('candles', candles);
 }
 
 CandleCreator.prototype.filter = function(trades) {
