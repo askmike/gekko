@@ -139,10 +139,6 @@ var util = {
     }
     process.kill();
   },
-  // TODO:
-  gekkoMode: function() {
-    return 'realtime';
-  },
   dirs: function() {
     var ROOT = __dirname + '/../';
 
@@ -162,7 +158,27 @@ var util = {
   },
   makeEventEmitter: function(dest) {
     util.inherit(dest, require('events').EventEmitter);
-  }
+  },
+
+  // @link https://stackoverflow.com/questions/21124701/creating-a-node-js-readable-stream-from-a-javascript-object-the-simplest-possi#answer-21127245
+  StringifyStream: (function() {
+    var StringifyStream = function() {
+        require('stream').Transform.call(this);
+        this._readableState.objectMode = false;
+        this._writableState.objectMode = true;
+    }
+    require('util').inherits(StringifyStream, require('stream').Transform);
+    StringifyStream.prototype._transform = function(obj, encoding, cb){
+        this.push(JSON.stringify(obj) + '\n');
+        cb();
+    };
+
+    return StringifyStream;
+  })(),
+  // TODO:
+  gekkoMode: function() {
+    return 'realtime';
+  },
 }
 
 var config = util.getConfig();
