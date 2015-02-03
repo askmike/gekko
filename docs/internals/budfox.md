@@ -19,7 +19,7 @@ BudFox is a small part of Gekko's core that aggregates realtime market data from
     new BudFox(config)
       .start()
       // convert JS objects to JSON string
-      .pipe(new util.StringifyStream())
+      .pipe(new require('stringify-stream')())
       // output to standard out
       .pipe(process.stdout);
 

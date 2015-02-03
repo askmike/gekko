@@ -95,7 +95,7 @@ StringifyStream.prototype._transform = function(obj, encoding, cb){
 
 new BudFox(config.watch)
   .start()
-  .pipe(new util.StringifyStream())
+  .pipe(new require('stringify-stream')())
   .pipe(process.stdout);
 
 return;
