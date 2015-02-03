@@ -82,17 +82,6 @@ var invalid = exchangeChecker.cantMonitor(config.watch);
 
 var BudFox = require(dirs.budfox + 'budfox');
 
-function StringifyStream(){
-    require('stream').Transform.call(this);
-    this._readableState.objectMode = false;
-    this._writableState.objectMode = true;
-}
-require('util').inherits(StringifyStream, require('stream').Transform);
-StringifyStream.prototype._transform = function(obj, encoding, cb){
-    this.push(JSON.stringify(obj) + '\n');
-    cb();
-};
-
 new BudFox(config.watch)
   .start()
   .pipe(new require('stringify-stream')())
