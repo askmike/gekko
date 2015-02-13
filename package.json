@@ -22,7 +22,8 @@
     "poloniex.js": "0.0.6",
     "btc-e": "0.0.x",
     "cexio": "0.0.x",
-    "bitfinex": "git+https://github.com/naddison36/bitfinex.git"
+    "bitfinex": "git+https://github.com/naddison36/bitfinex.git",
+    "mexbt": "0.0.x"
   },
   "devDependencies": {
     "chai": "^2.0.0",
