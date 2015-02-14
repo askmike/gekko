@@ -1,7 +1,13 @@
 var _ = require('lodash');
-var CandleConverter = require('../core/candleConverter');
 var moment = require('moment');
+
 var utils = require('../core/util');
+var dirs = utils.dirs();
+var CandleConverter = require(dirs.core + 'candleConverter');
+
+return;
+
+
 
 var candles = [
   {

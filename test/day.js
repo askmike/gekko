@@ -1,3 +1,5 @@
+return;
+
 var Day = require('../core/candleStore.js').Day;
 
 module.exports = {

@@ -1,3 +1,5 @@
+return;
+
 var _ = require('lodash');
  
 var EMA = require('../methods/indicators/EMA.js');

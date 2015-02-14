@@ -1,3 +1,5 @@
+return;
+
 var fs = require('fs');
 var zlib = require('zlib');
 var async = require('async');

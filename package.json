@@ -8,7 +8,7 @@
     "bitcoin"
   ],
   "scripts": {
-    "test": "scripts/run_unit_tests"
+    "test": "make test"
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
@@ -23,12 +23,15 @@
     "nedb-logger": "0.1.0",
     "line-reader": "0.2.x",
     "semver": "2.2.1",
-    "kraken-api" :"0.1.x"
+    "kraken-api": "0.1.x"
   },
   "devDependencies": {
+    "mocha": "^2.1.0",
     "nodeunit": "0.8.2"
   },
-  "engines": { "node": ">=0.10.x" },
+  "engines": {
+    "node": ">=0.10.x"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/askmike/gekko.git"
