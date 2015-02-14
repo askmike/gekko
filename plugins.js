@@ -1,12 +1,10 @@
 // All plugins supported by Gekko.
 // 
-// A plugin is a module/plugin that acts whenever an event happens.
-// 
-// Required parameters per actor.
+// Required parameters per plugin.
 // 
 // name: Name of the actor
-// slug: filename of the actor, expected to be in `gekko/actors/`
-//     description: text describing the actor.
+// slug: filename of the actor, expected to be in `gekko/plugins/`
+//     description: text describing the plugin.
 // async: upon creating a new actor instance, does something async
 //    happen where Gekko needs to wait for? If set to true, the
 //    constructor will be passed a callback which it should execute
@@ -14,9 +12,9 @@
 // modes: a list indicating in what Gekko modes this actor is
 //    allowed to run. Realtime is during a live market watch and
 //    backtest is during a backtest.
-// requires: a list of npm modules this actor requires to be 
-//    installed.
-// emits: does this actor emits events?
+// dependencies: a list of external npm modules this plugin requires to
+//    be installed.
+// emits: does this plugin emits events?
 var plugins = [
   {
     name: 'Trading Advisor',

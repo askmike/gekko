@@ -35,7 +35,7 @@ var Base = function() {
 
   // defaults
   this.requiredHistory = 0;
-  this.priceValue = 'c';
+  this.priceValue = 'close';
   this.indicators = {};
 
   // make sure we have all methods

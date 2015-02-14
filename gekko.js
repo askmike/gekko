@@ -11,11 +11,11 @@
   by this software. There can be bugs and the bot may not perform as expected 
   or specified. Please consider testing it first with paper trading / 
   backtesting on historical data. Also look at the code to see what how 
-  it's working.
+  it is working.
 
 */
 
-var util = require('./core/util');
+var util = require(__dirname + '/core/util');
 var dirs = util.dirs();
 
 var _ = require('lodash');
@@ -23,7 +23,7 @@ var async = require('async');
 
 var log = require(dirs.core + 'log');
 
-var moduleHelper = require(dirs.core + 'moduleHelper');
+var pluginHelper = require(dirs.core + 'pluginUtil');
 
 // if the user just wants to see the current version
 if(util.getArgument('v')) {
@@ -75,124 +75,129 @@ log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 // currently we only support a single 
 // market and a single advisor.
 
-// make sure the monitoring exchange is configured correctly for monitoring
+var Market = require(dirs.budfox + 'budfox');
+var GekkoStream = new require(dirs.core + 'gekkoStream');
 
-var exchangeChecker = require(dirs.core + 'exchangeChecker');
-var invalid = exchangeChecker.cantMonitor(config.watch);
-
-var BudFox = require(dirs.budfox + 'budfox');
-
-new BudFox(config.watch)
-  .start()
-  .pipe(new require('stringify-stream')())
-  .pipe(process.stdout);
-
-return;
-
-
-var modules = [];
+// all plugins
+var plugins = [];
+// all emitting plugins
 var emitters = {};
+// all plugins interested in candles
+var candleProcessors = [];
 
-// load each module (plugins and internal parts)
-var loadModules = function(next) {
-  // get internal modules
-  var moduleSettings = _.map(require(dirs.core + 'modules'), function(s) {
-    s.internal = true;
-    s.path = dirs.core + s.slug;
-    return s;
-  });
+// Instantiate each enabled plugin
+var loadPlugins = function(next) {
+  // parameters for every plugin that tell us
+  // what we are dealing with.
+  var pluginParameters = require(dirs.gekko + 'plugins');
 
-  // transform plugins into modules
-  var pluginSettings = _.map(require(dirs.gekko + 'plugins'), function(s) {
-    s.path = dirs.plugins + s.slug;
-    return s;
-  });
-
-  // only load enabled plugin
-  pluginSettings = _.filter(pluginSettings, function(s) {
-    return s.enabled;
-  });
-
-  // append enabled plugins to modules
-  moduleSettings = moduleSettings.concat(pluginSettings);
-
-  // load all modules
+  // load all plugins
   async.mapSeries(
-    moduleSettings,
-    moduleHelper.load,
-    function(error, _modules) {
+    pluginParameters,
+    pluginHelper.load,
+    function(error, _plugins) {
       if(error)
         return util.die(error);
 
-      modules = _modules;
+      plugins = _.compact(_plugins);
       next();
     }
   );
 };
 
-// Emitters are modules that emit events to which others can subscribe.
-var setupEmitters = function(next) {
+// Some plugins emit their own events, store
+// a reference to those plugins.
+var referenceEmitters = function(next) {
 
-  _.each(modules, function(module) {
-    if(module.meta.emits)
-      emitters[module.meta.slug] = module;
+  _.each(plugins, function(plugin) {
+    if(plugin.meta.emits)
+      emitters[plugin.meta.slug] = plugin;
   });
 
   next();
 }
 
-var subscribeModules = function(next) {
+var subscribePlugins = function(next) {
 
-  var subscriptions = require(dirs.core + 'subscriptions');
+  var subscriptions = require(dirs.gekko + 'subscriptions');
 
-  _.each(modules, function(module) {
-    _.each(subscriptions, function(sub) {
+  // events broadcasted by plugins
+  var pluginSubscriptions = _.filter(
+    subscriptions,
+    function(sub) {
+      return sub.emitter !== 'market';
+    }
+  );
 
-      if(_.has(module, sub.handler)) {
+  // subscribe interested plugins to
+  // emitting plugins
+  _.each(plugins, function(plugin) {
+    _.each(pluginSubscriptions, function(sub) {
+      if(_.has(plugin, sub.handler)) {
 
-        // if the actor wants to listen
+        // if a plugin wants to listen
         // to something disabled
         if(!emitters[sub.emitter]) {
-          if(!module.meta.internal)
-            return log.warn([
-              module.meta.name,
-              'wanted to listen to the',
-              sub.emitter + ',',
-              'however the',
-              sub.emitter,
-              'is disabled.'
-            ].join(' '))
-
-          return;
+          return log.warn([
+            plugin.meta.name,
+            'wanted to listen to the',
+            sub.emitter + ',',
+            'however the',
+            sub.emitter,
+            'is disabled.'
+          ].join(' '));
         }
 
         // attach handler
         emitters[sub.emitter]
           .on(sub.event,
-            util.defer(
-              module[
-                sub.handler
-              ])
-            );
+            plugin[
+              sub.handler
+            ])
       }
 
     });
+
+    // events broadcasted by the market
+    var marketSubscriptions = _.filter(
+      subscriptions,
+      {emitter: 'market'}
+    );
+
+    // subscribe plugins to the market
+    _.each(plugins, function(plugin) {
+      _.each(marketSubscriptions, function(sub) {
+
+        // for now, only subscribe to candles
+        if(sub.event !== 'candle')
+          return;
+
+        if(_.has(plugin, sub.handler))
+          candleProcessors.push(plugin);
+      });
+    });
+
   });
 
   next();
 }
 
 log.info('Setting up Gekko in', util.gekkoMode(), 'mode');
-log.empty();
+log.info('');
 
 async.series(
   [
-    loadModules,
-    setupEmitters,
-    subscribeModules
+    loadPlugins,
+    referenceEmitters,
+    subscribePlugins
   ],
   function() {
+
     // everything is setup!
-    emitters.heart.start();
+
+    market = new Market(config.watch)
+      // .start()
+      .pipe(new GekkoStream(candleProcessors));
+
   }
 );

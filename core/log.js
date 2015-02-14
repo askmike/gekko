@@ -35,9 +35,6 @@ Log.prototype = {
   },
   info: function() {
     this._write('info', arguments);
-  },
-  empty: function() {
-    this.output.info('');
   }
 }
 

@@ -15,7 +15,7 @@ var Readable = require('stream').Readable;
 var BudFox = function(config) {
   _.bindAll(this);
 
-  Readable.call(this, { objectMode: true });
+  Readable.call(this, {objectMode: true});
 
   // BudFox internal modules:
   
