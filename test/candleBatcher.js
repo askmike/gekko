@@ -1,9 +1,9 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var utils = require('../core/util');
+var utils = require(__dirname + '/../core/util');
 var dirs = utils.dirs();
-var CandleConverter = require(dirs.core + 'candleConverter');
+var CandleBatcher = require(dirs.core + 'candleBatcher');
 
 return;
 
