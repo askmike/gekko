@@ -18,32 +18,29 @@
 // 
 // Emits 'new candles' event with:
 // 
-// {
-//   amount: x,
-//   data:[
-//         {
-//            start: (moment),
-//            end: (moment),
-//            high: (float),
-//            open: (float),
-//            low: (float),
-//            close: (float)
-//            volume: (float)
-//            vwp: (float) // volume weighted price
-//         },
-//         {
-//            start: (moment), // + 1
-//            end: (moment),
-//            high: (float),
-//            open: (float),
-//           low: (float),
-//           close: (float)
-//            volume: (float)
-//            vwp: (float) // volume weighted price
-//         }
-//         // etc.
-//      ]
-//  }
+// [
+//     {
+//       start: (moment),
+//       end: (moment),
+//       high: (float),
+//       open: (float),
+//       low: (float),
+//       close: (float)
+//       volume: (float)
+//       vwp: (float) // volume weighted price
+//    },
+//    {
+//       start: (moment), // + 1
+//       end: (moment),
+//       high: (float),
+//       open: (float),
+//      low: (float),
+//      close: (float)
+//       volume: (float)
+//       vwp: (float) // volume weighted price
+//    }
+//    // etc.
+// ]
 // 
 
 var _ = require('lodash');
@@ -144,7 +141,7 @@ CandleCreator.prototype.calculateCandle = function(trades) {
     candle.high = _.max([candle.high, f(trade.price)]);
     candle.low = _.min([candle.low, f(trade.price)]);
     candle.volume += f(trade.amount);
-    candle.vwp += f(trade.price) * candle.volume;
+    candle.vwp += f(trade.price) * f(trade.amount);
   });
 
   candle.vwp /= candle.volume;
