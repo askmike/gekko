@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var should = chai.should;
-var sinon = require('sinon')
+var sinon = require('sinon');
 
 var _ = require('lodash');
 var moment = require('moment');
