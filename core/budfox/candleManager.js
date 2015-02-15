@@ -12,7 +12,6 @@ var config = util.getConfig();
 var log = require(dirs.core + 'log');
 
 var CandleCreator = require(dirs.budfox + 'candleCreator');
-var CandleBatcher = require(dirs.budfox + 'candleBatcher');
 
 var Manager = function() {
   _.bindAll(this);
