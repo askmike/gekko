@@ -48,7 +48,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
-    var portfolio = _.map(body, function (asset) {
+    var portfolio = _.map(data, function (asset) {
       return {
         name: asset.currency.toUpperCase(),
         // TODO: use .amount instead of .available?
