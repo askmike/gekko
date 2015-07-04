@@ -92,7 +92,6 @@ var exchange = _.find(exchanges, function(e) {
 });
 // Update tradingAdvisor.historySize if the exchange is able to send more data.
 var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
-console.log(requiredHistory,exchange.maxTradesAge)
 if(requiredHistory < exchange.maxTradesAge) {
   var properHistorySize = Math.ceil(
     exchange.maxTradesAge / config.tradingAdvisor.candleSize
@@ -199,7 +198,6 @@ var subscribePlugins = function(next) {
     });
   });
 
-  console.log(candleConsumers.length);
   next();
 }
 

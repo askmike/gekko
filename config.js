@@ -124,7 +124,7 @@ config.adviceLogger = {
 
 // do you want Gekko to calculate the profit of its own advice?
 config.profitSimulator = {
-  enabled: true,
+  enabled: false,
   // report the profit in the currency or the asset?
   reportInCurrency: true,
   // start balance, on what the current balance is compared with
