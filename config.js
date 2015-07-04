@@ -25,7 +25,7 @@ config.watch = {
   exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp', 'cexio' or 'kraken'
   currency: 'USD',
   asset: 'BTC',
-  interval: 20, // seconds between fetches
+  interval: 20, // seconds between fetches TODO: currently unused
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,7 +36,7 @@ config.tradingAdvisor = {
   enabled: true,
   method: 'DEMA',
   candleSize: 3,
-  historySize: 50
+  historySize: 10
 }
 
 // Exponential Moving Averages settings:

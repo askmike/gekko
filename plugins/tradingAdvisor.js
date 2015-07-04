@@ -1,9 +1,10 @@
 var util = require('../core/util');
-var dirs = util.dirs();
-var log = require('../core/log');
 var _ = require('lodash');
 
 var config = util.getConfig();
+var dirs = util.dirs();
+var log = require(dirs.core + '/log');
+var CandleBatcher = require(dirs.core + 'candleBatcher');
 
 var methods = [
   'MACD',
@@ -13,9 +14,9 @@ var methods = [
   'custom'
 ];
 
-// TODO: emit event
-
 var Actor = function() {
+  this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
+
   _.bindAll(this);
 
   var methodName = config.tradingAdvisor.method;
@@ -36,6 +37,8 @@ var Actor = function() {
   });
 
   this.method = new Consultant;
+  this.batcher
+    .on('candle', this.processCustomCandle)
 
   this.method
     .on('advice', this.relayAdvice);
@@ -44,7 +47,13 @@ var Actor = function() {
 util.makeEventEmitter(Actor);
 
 // HANDLERS
+// process the 1m candles
 Actor.prototype.processCandle = function(candle) {
+  this.batcher.write([candle]);
+}
+
+// propogate a custom sized candle to the trading method
+Actor.prototype.processCustomCandle = function(candle) {
   this.method.tick(candle);
 }
 

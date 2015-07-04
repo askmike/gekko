@@ -83,36 +83,6 @@ var util = {
     var total = _.reduce(list, function(m, n) { return m + n }, 0);
     return total / list.length;
   },
-  // calculate the average trade price out of a sample of trades.
-  // The sample consists of all trades that happened after the treshold.
-  calculatePriceSince: function(treshold, trades) {
-    var sample = [];
-    _.every(trades, function(trade) {
-      if(moment.unix(trade.date) < treshold)
-        return false;
-
-      var price = parseFloat(trade.price);
-      sample.push(price);
-      return true;
-    });
-
-    return util.average(sample);
-  },
-  // calculate the average trade price out of a sample of trades.
-  // The sample consists of all trades that happened before the treshold.
-  calculatePriceTill: function(treshold, trades) {
-    var sample = [];
-    _.every(trades, function(trade) {
-      if(moment.unix(trade.date) > treshold)
-        return false;
-
-      var price = parseFloat(trade.price);
-      sample.push(price);
-      return true;
-    });
-
-    return util.average(sample);
-  },
   calculateTimespan: function(a, b) {
     if(a < b)
       return b.diff(a);

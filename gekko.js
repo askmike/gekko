@@ -83,7 +83,28 @@ var plugins = [];
 // all emitting plugins
 var emitters = {};
 // all plugins interested in candles
-var candleProcessors = [];
+var candleConsumers = [];
+
+// TODO, this is not the proper place to do this.
+var exchanges = require(dirs.gekko + 'exchanges');
+var exchange = _.find(exchanges, function(e) {
+  return e.name === config.watch.exchange;
+});
+// Update tradingAdvisor.historySize if the exchange is able to send more data.
+var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
+console.log(requiredHistory,exchange.maxTradesAge)
+if(requiredHistory < exchange.maxTradesAge) {
+  var properHistorySize = Math.ceil(
+    exchange.maxTradesAge / config.tradingAdvisor.candleSize
+  ) - 1;
+
+  log.debug('Overwriting historySize to', properHistorySize, 'due to exchange.')
+  util.setConfigProperty(
+    'tradingAdvisor',
+    'historySize',
+    properHistorySize
+  );
+}
 
 // Instantiate each enabled plugin
 var loadPlugins = function(next) {
@@ -118,7 +139,6 @@ var referenceEmitters = function(next) {
 }
 
 var subscribePlugins = function(next) {
-
   var subscriptions = require(dirs.gekko + 'subscriptions');
 
   // events broadcasted by plugins
@@ -157,28 +177,29 @@ var subscribePlugins = function(next) {
       }
 
     });
-
-    // events broadcasted by the market
-    var marketSubscriptions = _.filter(
-      subscriptions,
-      {emitter: 'market'}
-    );
-
-    // subscribe plugins to the market
-    _.each(plugins, function(plugin) {
-      _.each(marketSubscriptions, function(sub) {
-
-        // for now, only subscribe to candles
-        if(sub.event !== 'candle')
-          return;
-
-        if(_.has(plugin, sub.handler))
-          candleProcessors.push(plugin);
-      });
-    });
-
   });
 
+  // events broadcasted by the market
+  var marketSubscriptions = _.filter(
+    subscriptions,
+    {emitter: 'market'}
+  );
+
+  // subscribe plugins to the market
+  _.each(plugins, function(plugin) {
+    _.each(marketSubscriptions, function(sub) {
+
+      // for now, only subscribe to candles
+      if(sub.event !== 'candle')
+        return;
+
+      if(_.has(plugin, sub.handler))
+        candleConsumers.push(plugin);
+
+    });
+  });
+
+  console.log(candleConsumers.length);
   next();
 }
 
@@ -196,8 +217,13 @@ async.series(
     // everything is setup!
 
     market = new Market(config.watch)
-      // .start()
-      .pipe(new GekkoStream(candleProcessors));
+      .start()
+      .pipe(new GekkoStream(candleConsumers));
+
+      // convert JS objects to JSON string
+      // .pipe(new require('stringify-stream')())
+      // output to standard out
+      // .pipe(process.stdout);
 
   }
 );

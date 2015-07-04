@@ -38,7 +38,6 @@ method.log = function() {
 }
 
 method.check = function() {
-
   var dema = this.indicators.dema;
   var diff = dema.result;
   var price = this.lastPrice;

@@ -1,11 +1,11 @@
 // Small writable stream wrapper that
-// passes data to all `candleProcessors`.
+// passes data to all `candleConsumers`.
 
 var Writable = require('stream').Writable;
 var _ = require('lodash');
 
-var Gekko = function(candleProcessors) {
-  this.candleProcessors = candleProcessors;
+var Gekko = function(candleConsumers) {
+  this.candleConsumers = candleConsumers;
   Writable.call(this, {objectMode: true});
 }
 
@@ -14,8 +14,9 @@ Gekko.prototype = Object.create(Writable.prototype, {
 });
 
 Gekko.prototype._write = function(chunk, encoding, callback) {
-  _.each(this.candleProcessors, function(p) {
-    p.processCandle(chunk);
+  // TODO: use different ticks and pause until all are done
+  _.each(this.candleConsumers, function(c) {
+    c.processCandle(chunk);
   });
 
   callback();
