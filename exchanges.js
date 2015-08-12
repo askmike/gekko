@@ -263,6 +263,21 @@ var exchanges = [
     tid: 'date',
     tradeError: 'NOT IMPLEMENTED YET',
     monitorError: 'Very old code, not working currently.'
+  },
+  {
+    name: 'BitX',
+    slug: 'bitx',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['MYR'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['MYR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
