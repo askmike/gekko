@@ -11,7 +11,7 @@ var Trader = function(config) {
     this.secret = config.secret;
   }
   this.name = 'BitX';
-  this.pair = "XBT" + config.currency;
+  this.pair = config.asset + config.currency;
   this.bitx = new BitX(this.key, this.secret, { pair: this.pair });
 
 }
@@ -62,6 +62,35 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   };
 
   this.bitx.getTrades(_.bind(process, this));
+}
+
+
+Trader.prototype.buy = function(amount, price, callback) {
+
+}
+
+Trader.prototype.sell = function(amount, price, callback) {
+
+}
+
+Trader.prototype.getPortfolio = function(callback) {
+
+}
+
+Trader.prototype.getTicker = function(callback) {
+
+}
+
+Trader.prototype.getFee = function(callback) {
+  
+}
+
+Trader.prototype.checkOrder = function(order, callback) {
+
+}
+
+Trader.prototype.cancelOrder = function(order) {
+
 }
 
 
