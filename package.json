@@ -23,7 +23,8 @@
     "nedb-logger": "0.1.0",
     "line-reader": "0.2.x",
     "semver": "2.2.1",
-    "kraken-api": "0.1.x"
+    "kraken-api": "0.1.x",
+    "poloniex.js": "0.0.6"
   },
   "devDependencies": {
     "chai": "^2.0.0",

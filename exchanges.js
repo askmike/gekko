@@ -213,6 +213,7 @@ var exchanges = [
     requires: ['key', 'secret'],
     // monitorError: 'https://github.com/askmike/gekko/issues/210',
     providesHistory: false,
+<<<<<<< HEAD
     tid: 'date'
   }
   // ,
@@ -272,6 +273,44 @@ var exchanges = [
   //   requires: ['key', 'secret'],
   //   providesHistory: false
   // }
+=======
+    fetchTimespan: 60
+  },
+  {
+    name: 'meXBT',
+    slug: 'mexbt',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['MXN'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['MXN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: false
+  },
+  {
+    name: 'Poloniex',
+    slug: 'poloniex',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['BTC', 'XMR', 'USDT'],
+    assets: ['BTC', 'XMR', 'ETH', 'FCT', 'MAID', 'DASH', 'XVC', 'GRC'],
+    markets: [
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'FCT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'MAID'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'XVC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'GRC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: 'date',
+  },
+>>>>>>> 6791778... poloniex exchange
 ];
 
 module.exports = exchanges;
