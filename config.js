@@ -9,10 +9,18 @@ var config = {};
 
 // Gekko stores historical history
 config.history = {
-  // in what directory should Gekko store
+  // what directory should Gekko store
   // and load historical data from?
   directory: './history/'
 }
+
+config.sqliteWriter = {
+  enabled: true,
+  storeCandles: true,
+  storeTrades: false, // NOT IMPLEMENTED
+  storeAdvice: false // NOT IMPLEMENTED
+}
+
 config.debug = true; // for additional logging / debugging
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

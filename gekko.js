@@ -116,8 +116,9 @@ var loadPlugins = function(next) {
     pluginParameters,
     pluginHelper.load,
     function(error, _plugins) {
+
       if(error)
-        return util.die(error);
+        return util.die(error, true);
 
       plugins = _.compact(_plugins);
       next();
@@ -214,9 +215,9 @@ async.series(
 
     // everything is setup!
 
-    market = new Market(config.watch)
+    var market = new Market(config.watch)
       .start()
-      .pipe(new GekkoStream(candleConsumers));
+      .pipe(new GekkoStream(candleConsumers))
 
       // convert JS objects to JSON string
       // .pipe(new require('stringify-stream')())

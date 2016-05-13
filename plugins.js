@@ -14,8 +14,20 @@
 //    backtest is during a backtest.
 // dependencies: a list of external npm modules this plugin requires to
 //    be installed.
-// emits: does this plugin emits events?
+// emits: events emitted by this plugin that other plugins can subscribe to.
 var plugins = [
+  {
+    name: 'SQLite Datastore',
+    description: 'Store candles, trades and advices in a SQLite database',
+    slug: 'sqliteWriter',
+    version: 0.1,
+    async: true,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'sqlite3',
+      version: '3.1.3'
+    }]
+  },
   {
     name: 'Trading Advisor',
     description: 'Calculate trading advice',
@@ -48,7 +60,7 @@ var plugins = [
   },
   {
     name: 'Mailer',
-    description: 'Sends you email yourself everytime Gekko has new advice.',
+    description: 'Sends you an email everytime Gekko has new advice.',
     slug: 'mailer',
     async: true,
     modes: ['realtime'],

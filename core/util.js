@@ -99,15 +99,21 @@ var util = {
     console.log('Gekko version:', 'v' + util.getVersion());
     console.log('Nodejs version:', process.version);
   },
-  die: function(m) {
+  die: function(m, soft) {
+    console.log('death');
     if(m) {
-      console.log('\n\nGekko encountered an error and can\'t continue');
-      console.log('\nMeta debug info:\n');
-      util.logVersion();
-      console.log('\nError:\n');
-      console.log(m, '\n\n');
+      if(soft) {
+        console.log('\n', m, '\n\n');
+      } else {
+        console.log('\n\nGekko encountered an error and can\'t continue');
+        console.log('\nError:\n');
+        console.log(m, '\n\n');
+        console.log('\nMeta debug info:\n');
+        util.logVersion();
+        console.log('');
+      }
     }
-    process.kill();
+    process.exit(0);
   },
   dirs: function() {
     var ROOT = __dirname + '/../';

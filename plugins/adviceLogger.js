@@ -16,7 +16,7 @@ Actor.prototype.processTrade = function(trade) {
 Actor.prototype.processAdvice = function(advice) {
   console.log()
   log.info('We have new trading advice!');
-  log.info('\t Position to take:', advice.recommandation);
+  log.info('\t Position:', advice.recommandation);
   log.info('\t Market price:', this.price);
   log.info('\t Based on market time:', this.marketTime.format('YYYY-MM-DD HH:mm:ss'));
   console.log()

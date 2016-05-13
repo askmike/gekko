@@ -20,14 +20,16 @@ var pluginHelper = {
   cannotLoad: function(plugin) {
     // verify plugin dependencies are installed
     if(_.has(plugin, 'dependencies'))
+      var error = false;
+
       _.each(plugin.dependencies, function(dep) {
         try {
-          require(dep.module);
+          var a = require(dep.module);
         }
         catch(e) {
-          return [
+          error = [
             'The plugin',
-            module.slug,
+            plugin.slug,
             'expects the module',
             dep.module,
             'to be installed.',
@@ -35,9 +37,11 @@ var pluginHelper = {
             'it by running: \n\n',
             '\tnpm install',
             dep.module + '@' + dep.version
-          ];
+          ].join(' ');
         }
       });
+
+    return error;
   },
   // loads a plugin
   // 
@@ -72,10 +76,10 @@ var pluginHelper = {
     if(plugin.async) {
       var instance = new Constructor(util.defer(function(err) {
         next(err, instance);
-      }));
+      }), plugin);
       instance.meta = plugin;
     } else {
-      var instance = new Constructor;
+      var instance = new Constructor(plugin);
       instance.meta = plugin;
       _.defer(function() {
         next(null, instance); 
