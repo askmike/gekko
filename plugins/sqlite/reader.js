@@ -29,7 +29,6 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     }
 
     if(rows.length === maxAmount) {
-      log.debug('All required historical data is locally present.');
       return next(from);
     }
 

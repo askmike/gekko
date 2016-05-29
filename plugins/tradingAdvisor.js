@@ -92,7 +92,6 @@ Actor.prototype.prepareHistoricalData = function(done) {
       return done();
     }
 
-    // preferably we have locally stored candles
     var exchangeTo = moment.unix(window.to).startOf('minute').unix();
     var exchangeFrom = moment.unix(window.from).add(1, 'm').startOf('minute').unix();
     var optimalFrom = exchangeTo - requiredHistory;
