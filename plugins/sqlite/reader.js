@@ -23,8 +23,6 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     if(err)
       return util.die('DB error while reading mostRecentWindow');
 
-    console.log(rows.length);
-
     if(rows.length === 0) {
       log.debug('Cannot use any local historical data.');
       return next(false);
@@ -62,7 +60,7 @@ Reader.prototype.get = function(from, to, next) {
   `, function(err, rows) {
     if(err)
       return util.die('DB error while reading mostRecentWindow');
-    
+
     next(rows);
   });
 }

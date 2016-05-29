@@ -31,16 +31,42 @@ var checkExchangeTrades = function(next) {
   });
 }
 
-
-// var targetHistoryTo = moment().unix();
-// var targetHistoryFrom = targetHistoryTo - config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
-
-
 var Actor = function(done) {
   _.bindAll(this);
 
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
+  this.prepareHistoricalData(done);
+
+  var methodName = config.tradingAdvisor.method;
+
+  if(!_.contains(methods, methodName))
+    util.die('Gekko doesn\'t know the method ' + methodName);
+
+  log.info('\t', 'Using the trading method: ' + methodName);
+
+  var method = require(dirs.methods + methodName);
+
+  // bind all trading method specific functions
+  // to the Consultant.
+  var Consultant = require(dirs.core + 'baseTradingMethod');
+
+  _.each(method, function(fn, name) {
+    Consultant.prototype[name] = fn;
+  });
+
+  this.method = new Consultant;
+
+  this.batcher
+    .on('candle', this.processCustomCandle)
+
+  this.method
+    .on('advice', this.relayAdvice);
+}
+
+util.makeEventEmitter(Actor);
+
+Actor.prototype.prepareHistoricalData = function(done) {
   // - step 1: check oldest trade reachable by API
   // - step 2: check most recent stored candle window
   // - step 3: see if overlap
@@ -60,7 +86,6 @@ var Actor = function(done) {
       'seconds.'
     );
 
-
     if(window.to - window.from > requiredHistory) {
       log.debug('Solely relying on historical data from exchange.');
       // all required historical data is send by the exchange.
@@ -70,55 +95,27 @@ var Actor = function(done) {
     // preferably we have locally stored candles
     var exchangeTo = moment.unix(window.to).startOf('minute').unix();
     var exchangeFrom = moment.unix(window.from).add(1, 'm').startOf('minute').unix();
-    var optimalFrom = exchangeTo - (requiredHistory * 60);
+    var optimalFrom = exchangeTo - requiredHistory;
 
     reader.mostRecentWindow(exchangeFrom, optimalFrom, function(result) {
       if(!result) {
-        log.debug('Unable to use locally stored data.');
+        log.debug('Unable to use locally stored candles.');
         return done();
       }
 
-      // seed the batcher with locally stored historical data
-      log.debug('Using locally stored historical data.');
+      // seed the batcher with locally stored historical candles
+      log.debug('Using locally stored historical candles.');
+
       reader.get(result, exchangeFrom, function(rows) {
         this.batcher.write(rows);
         reader.close();
         done();
+
       }.bind(this));
     }.bind(this));
   }.bind(this));
-
-
-  var methodName = config.tradingAdvisor.method;
-
-  if(!_.contains(methods, methodName))
-    util.die('Gekko doesn\'t know the method ' + methodName);
-
-  log.info('\t', 'Using the trading method: ' + methodName);
-
-  var method = require(dirs.methods + methodName);
-
-
-  // bind all trading method specific functions
-  // to the Consultant.
-  var Consultant = require(dirs.core + 'baseTradingMethod');
-
-  _.each(method, function(fn, name) {
-    Consultant.prototype[name] = fn;
-  });
-
-  this.method = new Consultant;
-
-  this.batcher
-    .on('candle', this.processCustomCandle)
-
-  this.method
-    .on('advice', this.relayAdvice);
-
-  // next();
 }
 
-util.makeEventEmitter(Actor);
 
 // HANDLERS
 // process the 1m candles
