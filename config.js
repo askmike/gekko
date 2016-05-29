@@ -7,21 +7,18 @@ var config = {};
 //                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Gekko stores historical history
-config.history = {
-  // what directory should Gekko store
-  // and load historical data from?
-  directory: './history/'
-}
+config.debug = true; // for additional logging / debugging
 
 config.sqliteWriter = {
+  // what directory should Gekko store
+  // and load historical data from?
+  directory: './history/',
+
   enabled: true,
   storeCandles: true,
   storeTrades: false, // NOT IMPLEMENTED
   storeAdvice: false // NOT IMPLEMENTED
 }
-
-config.debug = true; // for additional logging / debugging
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                         WATCHING A MARKET
@@ -43,8 +40,10 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: 'DEMA',
-  candleSize: 3,
-  historySize: 10
+  candleSize: 5,
+  historySize: 24,
+  adapter: 'sqlite',
+  directory: '.history'
 }
 
 // Exponential Moving Averages settings:

@@ -1,38 +1,45 @@
 // All plugins supported by Gekko.
 // 
-// Required parameters per plugin.
+//  Required parameters per plugin.
 // 
-// name: Name of the actor
-// slug: filename of the actor, expected to be in `gekko/plugins/`
-//     description: text describing the plugin.
-// async: upon creating a new actor instance, does something async
+// name: Name of the plugin
+// slug: name of the plugin mapped to the config key. Expected
+//    filename to exist in `gekko/plugins/` (only if path is not
+//    specified)
+// async: upon creating a new plugin instance, does something async
 //    happen where Gekko needs to wait for? If set to true, the
 //    constructor will be passed a callback which it should execute
-//    as soon as Gekko can continue setup.
-// modes: a list indicating in what Gekko modes this actor is
+//    as soon as Gekko can continue.
+// modes: a list indicating in what Gekko modes this plugin is
 //    allowed to run. Realtime is during a live market watch and
 //    backtest is during a backtest.
+//    
+//  Optional parameters per plugin.
+//    
+// description: text describing the plugin.
 // dependencies: a list of external npm modules this plugin requires to
 //    be installed.
 // emits: events emitted by this plugin that other plugins can subscribe to.
+// path: path of file of the plugin (overwrites `gekko/plugins/{slug}`)
 var plugins = [
   {
     name: 'SQLite Datastore',
     description: 'Store candles, trades and advices in a SQLite database',
     slug: 'sqliteWriter',
-    version: 0.1,
     async: true,
     modes: ['realtime'],
     dependencies: [{
       module: 'sqlite3',
       version: '3.1.3'
-    }]
+    }],
+    path: 'sqlite/writer',
+    version: 0.1,
   },
   {
     name: 'Trading Advisor',
     description: 'Calculate trading advice',
     slug: 'tradingAdvisor',
-    async: false,
+    async: true,
     modes: ['realtime', 'backtest'],
     emits: ['advice']
   },

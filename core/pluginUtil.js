@@ -71,7 +71,10 @@ var pluginHelper = {
     if(cannotLoad)
       return next(cannotLoad);
 
-    var Constructor = require(pluginDir + plugin.slug);
+    if(plugin.path)
+      var Constructor = require(pluginDir + plugin.path);
+    else
+      var Constructor = require(pluginDir + plugin.slug);
 
     if(plugin.async) {
       var instance = new Constructor(util.defer(function(err) {

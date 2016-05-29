@@ -1,49 +1,22 @@
 var _ = require('lodash');
+var config = require('../../core/util.js').getConfig().sqliteWriter;
 
-var util = require('../core/util.js');
-var config = util.getConfig();
-
-if(config.debug)
-  var sqlite3 = require('sqlite3').verbose();
-else
-  var sqlite3 = require('sqlite3');
-
-var fs = require('fs');
-var semver = require('semver');
-
-var watch = config.watch;
-var settings = {
-  exchange: watch.exchange,
-  pair: [watch.currency, watch.asset],
-  historyPath: config.history.directory
-}
-
-
-
-var table = function(name) {
-  return [name, settings.pair.join('_')].join('_');
-}
+var handle = require('./handle');
+var sqliteUtil = require('./util');
 
 var Store = function(done, pluginMeta) {
   _.bindAll(this);
-
-  if(!fs.existsSync(settings.historyPath))
-    fs.mkdirSync(settings.historyPath);
-
-  var dbName = pluginMeta.version + '.db';
-
   this.done = done;
 
-  this.db = new sqlite3.Database(config.history.directory + dbName + '.db');
+  this.db = handle;
   this.db.serialize(this.upsertTables);
 }
 
 Store.prototype.upsertTables = function() {
-
   var createQueries = [
     `
       CREATE TABLE IF NOT EXISTS
-      ${table('candles')} (
+      ${sqliteUtil.table('candles')} (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start INTEGER UNIQUE,
         open REAL NOT NULL,
@@ -51,6 +24,7 @@ Store.prototype.upsertTables = function() {
         low REAL NOT NULL,
         close REAL NOT NULL,
         vwp REAL NOT NULL,
+        volume REAL NOT NULL,
         trades INTERGER NOT NULL
       );
     `,
@@ -71,7 +45,7 @@ Store.prototype.upsertTables = function() {
 
 var processCandle = function(candle) {
   var stmt = this.db.prepare(`
-    INSERT OR IGNORE INTO ${table('candles')} VALUES (?,?,?,?,?,?,?,?)
+    INSERT OR IGNORE INTO ${sqliteUtil.table('candles')} VALUES (?,?,?,?,?,?,?,?,?)
   `);
 
   stmt.run(
@@ -82,6 +56,7 @@ var processCandle = function(candle) {
     candle.low,
     candle.close,
     candle.vwp,
+    candle.volume,
     candle.trades
   );
 
@@ -96,13 +71,13 @@ var processAdvice = function(candles) {
   util.die('NOT IMPLEMENTED');
 }
 
-if(config.sqliteWriter.storeCandles)
+if(config.storeCandles)
   Store.prototype.processCandle = processCandle;
 
-if(config.sqliteWriter.storeTrades)
+if(config.storeTrades)
  Store.prototype.processTrades = processTrades;
 
-if(config.sqliteWriter.storeAdvice)
+if(config.storeAdvice)
   Store.prototype.processAdvice = processAdvice;
 
 module.exports = Store;

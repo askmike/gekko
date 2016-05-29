@@ -90,6 +90,7 @@ var exchanges = require(dirs.gekko + 'exchanges');
 var exchange = _.find(exchanges, function(e) {
   return e.name === config.watch.exchange;
 });
+
 // Update tradingAdvisor.historySize if the exchange is able to send more data.
 var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
 if(requiredHistory < exchange.maxTradesAge) {
