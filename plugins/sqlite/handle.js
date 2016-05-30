@@ -13,7 +13,7 @@ var plugins = require(util.dirs().gekko + 'plugins');
 
 var version = _.find(plugins, {slug: 'sqliteWriter'}).version;
 
-var dbName = config.watch.exchange + '_' + version + '.db';
+var dbName = config.watch.exchange.toLowerCase() + '_' + version + '.db';
 
 var dir = config.sqliteWriter.directory;
 
