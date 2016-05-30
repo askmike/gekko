@@ -54,13 +54,6 @@ Logger.prototype.round = function(amount) {
   return amount.toFixed(5);
 }
 
-Logger.prototype.processTrade = function(trade) {
-  this.price = trade.price;
-
-  if(!this.start.balance)
-    this.calculateStartBalance()
-}
-
 Logger.prototype.calculateStartBalance = function() {
   if(this.reportInCurrency)
     this.start.balance = this.start.currency + this.price * this.start.asset;
@@ -90,20 +83,26 @@ Logger.prototype.processAdvice = function(advice) {
     this.trades++;
   }
 
-  // without verbose we report after round trip (buy-sell)
-  if(!this.verbose && what === 'short') // && !config.backtest.enabled)
+  if(!this.verbose) // && !config.backtest.enabled)
     this.report();
 }
 
-// with verbose we report after every new candle
-if(calcConfig.verbose)
- Logger.prototype.processCandle = function() {
+Logger.prototype.processCandle = function(candle) {
+
+  this.price = candle.close;
+
+  if(!this.start.balance)
+    this.calculateStartBalance()
+
+  if(!calcConfig.verbose)
+    return;
+
   // skip on history
   if(++this.historyReceived < this.historySize)
     return;
 
   this.report();
- }
+}
 
 Logger.prototype.report = function(timespan) {
   if(!this.start.balance)

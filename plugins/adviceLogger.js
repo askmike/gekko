@@ -8,9 +8,9 @@ var Actor = function() {
   _.bindAll(this);
 }
 
-Actor.prototype.processTrade = function(trade) {
-  this.price = trade.price;
-  this.marketTime = moment.unix(trade.date);
+Actor.prototype.processCandle = function(candle) {
+  this.price = candle.close;
+  this.marketTime = candle.start;
 };
 
 Actor.prototype.processAdvice = function(advice) {

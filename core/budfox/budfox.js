@@ -73,18 +73,18 @@ BudFox.prototype.pushCandles = function(candles) {
   _.each(candles, this.push);
 }
 
-BudFox.prototype.broadcastTrade = function(trades) {
-  _.defer(function() {
-    this.emit('trade', trades.last);
-  }.bind(this));
-}
+// BudFox.prototype.broadcastTrade = function(trades) {
+//   _.defer(function() {
+//     this.emit('trade', trades.last);
+//   }.bind(this));
+// }
 
-BudFox.prototype.broadcast = function(message) {
-  return function(payload) {
-    _.defer(function() {
-      this.emit(message, payload);
-    }.bind(this));
-  }.bind(this);
-}
+// BudFox.prototype.broadcast = function(message) {
+//   return function(payload) {
+//     _.defer(function() {
+//       this.emit(message, payload);
+//     }.bind(this));
+//   }.bind(this);
+// }
 
 module.exports = BudFox;

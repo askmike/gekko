@@ -41,7 +41,7 @@ config.tradingAdvisor = {
   enabled: true,
   method: 'DEMA',
   candleSize: 5,
-  historySize: 20,
+  historySize: 25,
   adapter: 'sqlite',
   directory: '.history'
 }
@@ -131,7 +131,7 @@ config.adviceLogger = {
 
 // do you want Gekko to calculate the profit of its own advice?
 config.profitSimulator = {
-  enabled: false,
+  enabled: true,
   // report the profit in the currency or the asset?
   reportInCurrency: true,
   // start balance, on what the current balance is compared with
@@ -213,28 +213,28 @@ config.redisBeacon = {
     // channel name.
   channelPrefix: '',
   broadcast: [
-    'small candle'
+    'candle'
   ]
 }
 
 // not in a working state
 // read: https://github.com/askmike/gekko/issues/156
-config.webserver = {
-  enabled: false,
-  ws: {
-    host: 'localhost',
-    port: 1338,
-  },
-  http: {
-    host: 'localhost',
-    port: 1339,
-  }
-}
+// config.webserver = {
+//   enabled: false,
+//   ws: {
+//     host: 'localhost',
+//     port: 1338,
+//   },
+//   http: {
+//     host: 'localhost',
+//     port: 1339,
+//   }
+// }
 
 // not working, leave as is
-config.backtest = {
-  enabled: false
-}
+// config.backtest = {
+//   enabled: false
+// }
 
 // set this to true if you understand that Gekko will 
 // invest according to how you configured the indicators.
