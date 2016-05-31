@@ -13,6 +13,8 @@
 // assets: all the assets supported by the exchange implementation
 //    in gekko.
 // pairs: all allowed currency / asset combinatinos that form a market
+// maxHistoryFetch: the parameter fed to the getTrades call to get the max
+//    history.
 // providesHistory: If the getTrades can be fed a since parameter
 //    that Gekko can use to get historical data, set this to:
 //
@@ -98,6 +100,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
+    maxHistoryFetch: 2000,
     tid: 'tid'
   },
   {
@@ -108,6 +111,7 @@ var exchanges = [
     currencies: ['USD'],
     assets: ['BTC'],
     maxTradesAge: 60,
+    maxHistoryFetch: null,
     markets: [
       {
         pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }

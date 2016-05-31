@@ -88,12 +88,12 @@ var candleConsumers = [];
 // TODO, this is not the proper place to do this.
 var exchanges = require(dirs.gekko + 'exchanges');
 var exchange = _.find(exchanges, function(e) {
-  return e.name === config.watch.exchange;
+  return e.slug === config.watch.exchange.toLowerCase();
 });
 
 // Update tradingAdvisor.historySize if the exchange is able to send more data.
 var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
-if(requiredHistory < exchange.maxTradesAge) {
+if(exchange.maxTradesAge && requiredHistory < exchange.maxTradesAge) {
   var properHistorySize = Math.ceil(
     exchange.maxTradesAge / config.tradingAdvisor.candleSize
   ) - 1;

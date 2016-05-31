@@ -31,7 +31,7 @@
     "sinon": "^1.12.2"
   },
   "engines": {
-    "node": ">=0.10.x"
+    "node": ">=4.0"
   },
   "repository": {
     "type": "git",

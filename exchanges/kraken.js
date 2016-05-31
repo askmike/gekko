@@ -105,7 +105,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       });
     }, this);
 
-    this.since = trades.result.last;
+    // this.since = trades.result.last;
 
     if(descending)
       callback(null, parsedTrades.reverse());

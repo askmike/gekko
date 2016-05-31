@@ -27,7 +27,7 @@ config.sqliteWriter = {
 // Monitor the live market
 config.watch = {
   enabled: true,
-  exchange: 'Bitstamp', // 'MtGox', 'BTCe', 'Bitstamp', 'cexio' or 'kraken'
+  exchange: 'Bitstamp', // see gekko/docs/supported_exchanges.md
   currency: 'USD',
   asset: 'BTC',
   interval: 20, // seconds between fetches TODO: currently unused
