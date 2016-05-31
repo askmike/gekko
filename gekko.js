@@ -75,21 +75,19 @@ log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 // currently we only support a single 
 // market and a single advisor.
 
-var Market = require(dirs.budfox + 'budfox');
-var GekkoStream = new require(dirs.core + 'gekkoStream');
-
-// all plugins
-var plugins = [];
-// all emitting plugins
-var emitters = {};
-// all plugins interested in candles
-var candleConsumers = [];
-
-// TODO, this is not the proper place to do this.
 var exchanges = require(dirs.gekko + 'exchanges');
 var exchange = _.find(exchanges, function(e) {
   return e.slug === config.watch.exchange.toLowerCase();
 });
+
+if(!exchange)
+  util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)
+
+var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+
+var error = exchangeChecker.cantMonitor(config.watch);
+if(error)
+  util.die(error, true);
 
 // Update tradingAdvisor.historySize if the exchange is able to send more data.
 var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
@@ -105,6 +103,16 @@ if(exchange.maxTradesAge && requiredHistory < exchange.maxTradesAge) {
     properHistorySize
   );
 }
+
+var Market = require(dirs.budfox + 'budfox');
+var GekkoStream = new require(dirs.core + 'gekkoStream');
+
+// all plugins
+var plugins = [];
+// all emitting plugins
+var emitters = {};
+// all plugins interested in candles
+var candleConsumers = [];
 
 // Instantiate each enabled plugin
 var loadPlugins = function(next) {
@@ -216,7 +224,7 @@ async.series(
 
     // everything is setup!
 
-    var market = new Market(config.watch)
+    var market = new Market(config)
       .start()
       .pipe(new GekkoStream(candleConsumers))
 

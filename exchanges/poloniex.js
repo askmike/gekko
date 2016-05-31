@@ -121,13 +121,16 @@ Trader.prototype.cancelOrder = function(order, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, result) {
-    if(err)
+    if(err) {
       return this.retry(this.getTrades, args);
+    }
 
-    result = result.map(function(trade) {
-	trade.date = moment.utc(trade.date).format('X');
-	trade.price = trade.rate;
-	return trade;
+    result = _.map(result, function(trade) {
+    	return {
+        date: moment.utc(trade.date).format('X'),
+        price: trade.rate,
+        tid: trade.tradeID
+      };
     });
 
     callback(null, result.reverse());

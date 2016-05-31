@@ -19,7 +19,7 @@ var methods = [
   'custom'
 ];
 
-var checkExchangeTrades = function(next) {
+var checkExchangeTrades = function(requiredHistory, next) {
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
@@ -27,7 +27,14 @@ var checkExchangeTrades = function(next) {
   var exchangeSettings = exchangeChecker.settings(config.watch)
 
   var watcher = new DataProvider(config.watch);
-  watcher.getTrades(exchangeSettings.maxHistoryFetch, function(e, d) {
+
+  if(exchangeSettings.maxHistoryFetch)
+    var since = exchangeSettings.maxHistoryFetch;
+  else if(exchangeSettings.providesHistory === 'date')
+    // NOTE: we use current time
+    var since = moment().subtract(requiredHistory, 'seconds').subtract(30, 'minutes');
+
+  watcher.getTrades(since, function(e, d) {
     next(e, {
       from: _.first(d).date,
       to: _.last(d).date
@@ -86,7 +93,7 @@ Actor.prototype.prepareHistoricalData = function(done) {
   var reader = new Reader;
 
   // TODO: refactor cb hell
-  checkExchangeTrades(function(err, window) {
+  checkExchangeTrades(requiredHistory, function(err, window) {
     log.debug(
       'Exchange has data spanning',
       window.to - window.from,

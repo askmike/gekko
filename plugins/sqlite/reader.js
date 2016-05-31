@@ -20,8 +20,10 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     WHERE start <= ${to} AND start >= ${from}
     ORDER BY start DESC
   `, function(err, rows) {
-    if(err)
+    if(err) {
+      log.debug('ERROR!', err);
       return util.die('DB error while reading mostRecentWindow');
+    }
 
     if(rows.length === 0) {
       log.debug('Cannot use any local historical data.');

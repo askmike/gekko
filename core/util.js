@@ -100,7 +100,6 @@ var util = {
     console.log('Nodejs version:', process.version);
   },
   die: function(m, soft) {
-    console.log('death');
     if(m) {
       if(soft) {
         console.log('\n', m, '\n\n');

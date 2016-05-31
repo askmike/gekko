@@ -12,26 +12,35 @@ var utc = moment.utc;
 var util = require(__dirname + '/../util');
 
 var log = require(util.dirs().core + 'log');
-
 var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+
 var TradeBatcher = require(util.dirs().core + 'tradeBatcher');
 
 var Fetcher = function(config) {
 
-  var provider = config.exchange.toLowerCase();
+  var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
-
-  var invalid = exchangeChecker.cantMonitor(config);
-  if(invalid)
-    util.die(invalid);
-
   _.bindAll(this);
 
   // Create a public dataProvider object which can retrieve live 
   // trade information from an exchange.
-  this.watcher = new DataProvider(config);
+  this.watcher = new DataProvider(config.watch);
 
-  this.exchange = exchangeChecker.settings(config);
+  this.exchange = exchangeChecker.settings(config.watch);
+
+  var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
+
+  // TODO:
+  // push start data into budfox straight from the tradingAdvisor::init
+  if(config.tradingAdvisor.enabled) {
+    if(this.exchange.maxHistoryFetch)
+      this.firstSince = exchangeSettings.maxHistoryFetch;
+    else if(this.exchange.providesHistory === 'date')
+      // NOTE: don't use current time
+      this.firstSince = moment()
+        .subtract(requiredHistory, 'minutes')
+        .subtract(config.tradingAdvisor.candleSize, 'minutes');
+  }
 
   this.batcher = new TradeBatcher(this.exchange.tid);
 
@@ -51,6 +60,8 @@ var Fetcher = function(config) {
   this.tries = 0;
   this.limit = 20; // [TODO]
 
+  this.firstFetch = true;
+
   this.batcher.on('new batch', this.relayTrades);
 }
 
@@ -63,7 +74,14 @@ Fetcher.prototype._fetch = function(since) {
   this.watcher.getTrades(since, this.processTrades, false);
 }
 
-Fetcher.prototype.fetch = function(since) {
+Fetcher.prototype.fetch = function() {
+  var since = false;
+  if(this.firstFetch) {
+    since = this.firstSince;
+    this.firstFetch = false;
+  } else
+    since = false;
+
   this.tries = 0;
   log.debug('Requested', this.pair, 'trade data from', this.exchange.name, '...');
   this._fetch(since);

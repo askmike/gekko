@@ -211,7 +211,6 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
-    // monitorError: 'https://github.com/askmike/gekko/issues/210',
     providesHistory: false,
     tid: 'date'
   },
@@ -233,6 +232,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: 'date',
+    tid: 'tid'
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
