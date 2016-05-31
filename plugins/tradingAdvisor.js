@@ -6,6 +6,7 @@ var dirs = util.dirs();
 var log = require(dirs.core + '/log');
 var CandleBatcher = require(dirs.core + 'candleBatcher');
 
+var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
 var Reader = require(dirs.plugins + config.tradingAdvisor.adapter + '/reader');
 
 var moment = require('moment');
@@ -22,8 +23,11 @@ var checkExchangeTrades = function(next) {
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
+  // todo: move to gekko.js init
+  var exchangeSettings = exchangeChecker.settings(config.watch)
+
   var watcher = new DataProvider(config.watch);
-  watcher.getTrades(null, function(e, d) {
+  watcher.getTrades(exchangeSettings.maxHistoryFetch, function(e, d) {
     next(e, {
       from: _.first(d).date,
       to: _.last(d).date
@@ -36,32 +40,37 @@ var Actor = function(done) {
 
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
-  this.prepareHistoricalData(done);
+  this.prepareHistoricalData(function() {
 
-  var methodName = config.tradingAdvisor.method;
+    var methodName = config.tradingAdvisor.method;
 
-  if(!_.contains(methods, methodName))
-    util.die('Gekko doesn\'t know the method ' + methodName);
+    if(!_.contains(methods, methodName))
+      util.die('Gekko doesn\'t know the method ' + methodName);
 
-  log.info('\t', 'Using the trading method: ' + methodName);
+    log.info('\t', 'Using the trading method: ' + methodName);
 
-  var method = require(dirs.methods + methodName);
+    var method = require(dirs.methods + methodName);
 
-  // bind all trading method specific functions
-  // to the Consultant.
-  var Consultant = require(dirs.core + 'baseTradingMethod');
+    // bind all trading method specific functions
+    // to the Consultant.
+    var Consultant = require(dirs.core + 'baseTradingMethod');
 
-  _.each(method, function(fn, name) {
-    Consultant.prototype[name] = fn;
-  });
+    _.each(method, function(fn, name) {
+      Consultant.prototype[name] = fn;
+    });
 
-  this.method = new Consultant;
+    this.method = new Consultant;
 
-  this.batcher
-    .on('candle', this.processCustomCandle)
+    this.batcher
+      .on('candle', this.processCustomCandle)
 
-  this.method
-    .on('advice', this.relayAdvice);
+    this.method
+      .on('advice', this.relayAdvice);
+
+
+    done();
+  }.bind(this));
+
 }
 
 util.makeEventEmitter(Actor);
@@ -87,8 +96,22 @@ Actor.prototype.prepareHistoricalData = function(done) {
     );
 
     if(window.to - window.from > requiredHistory) {
-      log.debug('Solely relying on historical data from exchange.');
-      // all required historical data is send by the exchange.
+      // calc new required history
+      var dif = window.to - window.from;
+      requiredHistory = Math.floor(dif / 60 / config.tradingAdvisor.candleSize);
+
+      log.debug(
+        'Exchange returns more data than we need, shift required history to',
+        requiredHistory,
+        '.'
+      );
+
+      util.setConfigProperty(
+        'tradingAdvisor',
+        'historySize',
+        requiredHistory
+      );
+
       return done();
     }
 
