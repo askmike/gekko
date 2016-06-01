@@ -89,21 +89,6 @@ var error = exchangeChecker.cantMonitor(config.watch);
 if(error)
   util.die(error, true);
 
-// Update tradingAdvisor.historySize if the exchange is able to send more data.
-var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
-if(exchange.maxTradesAge && requiredHistory < exchange.maxTradesAge) {
-  var properHistorySize = Math.ceil(
-    exchange.maxTradesAge / config.tradingAdvisor.candleSize
-  ) - 1;
-
-  log.debug('Overwriting historySize to', properHistorySize, 'due to exchange.')
-  util.setConfigProperty(
-    'tradingAdvisor',
-    'historySize',
-    properHistorySize
-  );
-}
-
 var Market = require(dirs.budfox + 'budfox');
 var GekkoStream = new require(dirs.core + 'gekkoStream');
 

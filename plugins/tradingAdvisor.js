@@ -31,8 +31,16 @@ var checkExchangeTrades = function(requiredHistory, next) {
   if(exchangeSettings.maxHistoryFetch)
     var since = exchangeSettings.maxHistoryFetch;
   else if(exchangeSettings.providesHistory === 'date')
-    // NOTE: we use current time
-    var since = moment().subtract(requiredHistory, 'seconds').subtract(30, 'minutes');
+    // NOTE: uses current time
+    var since = moment()
+      .subtract(requiredHistory, 'seconds')
+      .subtract(config.tradingAdvisor.candleSize, 'minutes');
+
+  util.setConfigProperty(
+    'tradingAdvisor',
+    'firstFetchSince',
+    since
+  );
 
   watcher.getTrades(since, function(e, d) {
     next(e, {

@@ -30,16 +30,10 @@ var Fetcher = function(config) {
 
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
 
-  // TODO:
-  // push start data into budfox straight from the tradingAdvisor::init
-  if(config.tradingAdvisor.enabled) {
-    if(this.exchange.maxHistoryFetch)
-      this.firstSince = exchangeSettings.maxHistoryFetch;
-    else if(this.exchange.providesHistory === 'date')
-      // NOTE: don't use current time
-      this.firstSince = moment()
-        .subtract(requiredHistory, 'minutes')
-        .subtract(config.tradingAdvisor.candleSize, 'minutes');
+  // If the trading adviser is enabled we might need a very specific fetch since
+  // to line up [local db, trading method, and fetching]
+  if(config.tradingAdvisor.enabled && config.tradingAdvisor.firstFetchSince) {
+    this.firstSince = config.tradingAdvisor.firstFetchSince;
   }
 
   this.batcher = new TradeBatcher(this.exchange.tid);
