@@ -55,7 +55,7 @@ Gekko also has a plugin system that can do certain things whenever something hap
 
 ## Supported exchanges
 
-Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/master/docs/supported_exchanges.md).
+Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/0.2/docs/supported_exchanges.md).
 
 ## Installing Gekko
 
