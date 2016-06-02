@@ -81,7 +81,12 @@ TradeBatcher.prototype.write = function(batch) {
     data: batch
   });
 
-  this.last = last.tid;
+  this.last = last[this.tid];
+
+  // we overwrote those, get unix ts back
+  if(this.tid === 'date')
+    this.last = this.last.unix();
+
 }
 
 TradeBatcher.prototype.filter = function(batch) {

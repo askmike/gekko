@@ -92,7 +92,7 @@ Trader.prototype.retry = function(method, args, err) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
-    
+
     if (err || !trades || trades.length === 0)
       return this.retry(this.getTrades, args, err);
 
@@ -104,8 +104,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         amount: parseFloat(trade[1])
       });
     }, this);
-
-    // this.since = trades.result.last;
 
     if(descending)
       callback(null, parsedTrades.reverse());
@@ -122,7 +120,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   // 
   // if(!_.isNull(this.since))
   //   reqData.since = this.since;
-
   this.kraken.api('Trades', reqData, _.bind(process, this));
 };
 

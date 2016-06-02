@@ -8,9 +8,6 @@
 
 ## Partially working (no live trading)
 
-- [btc-e](https://btc-e.com/) (also see issue #302)
+- [btc-e](https://btc-e.com/) (see issue #302)
 - [poloniex](https://poloniex.com/)
-
-## Not working
-
 - [kraken](http://kraken.com/)
