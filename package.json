@@ -12,19 +12,16 @@
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
-    "mtgox-apiv2": "1.1.x",
     "lodash": "2.x",
     "moment": "2.4.x",
-    "btc-e": "0.0.x",
-    "cexio": "0.0.x",
-    "bitstamp": "0.1.x",
     "async": "0.2.x",
-    "nedb": "0.9.4",
-    "nedb-logger": "0.1.0",
-    "line-reader": "0.2.x",
+    "sqlite3": "3.1.3",
     "semver": "2.2.1",
+    "bitstamp": "0.1.x",
     "kraken-api": "0.1.x",
-    "poloniex.js": "0.0.6"
+    "poloniex.js": "0.0.6",
+    "btc-e": "0.0.x",
+    "cexio": "0.0.x"
   },
   "devDependencies": {
     "chai": "^2.0.0",

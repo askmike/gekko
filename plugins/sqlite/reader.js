@@ -26,7 +26,6 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     }
 
     if(rows.length === 0) {
-      log.debug('Cannot use any local historical data.');
       return next(false);
     }
 
