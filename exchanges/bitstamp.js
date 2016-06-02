@@ -43,6 +43,10 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var set = function(err, data) {
+
+    if(!_.isEmpty(data.error))
+      return callback('BITSTAMP API ERROR: ' + data.error);
+
     var portfolio = [];
     _.each(data, function(amount, asset) {
       if(asset.indexOf('available') !== -1) {
