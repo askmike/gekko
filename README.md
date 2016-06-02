@@ -55,14 +55,7 @@ Gekko also has a plugin system that can do certain things whenever something hap
 
 ## Supported exchanges
 
-Gekko works on the following exchanges:
-
-- Mt. Gox
-- Bitstamp
-- CEX.io
-- Kraken
-- BTC-e
-- ~~Cryptsy~~ (In the [pipeline](https://github.com/askmike/gekko/pull/200))
+Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/master/docs/supported_exchanges.md).
 
 ## Installing Gekko
 
@@ -122,7 +115,7 @@ If you want to contribute or are interested in how Gekko works:
 ## Credits
 
 * The title is inspired by [Bateman](https://github.com/fearofcode/bateman).
-* This project is inspired by the [GoxTradingBot](https://github.com/virtimus/GoxTradingBot/) Chrome plugin (though no code is taken from it).
+* This project is inspired by the [GoxTradingBot](https://github.com/virtimus/GoxTradingBot/) Chrome plugin (which in turn is inspired by [Goomboo's journal](https://bitcointalk.org/index.php?topic=60501.0)).
 
 ## Final
 
