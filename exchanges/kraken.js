@@ -126,8 +126,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var set = function(err, data) {
-    if (err || !_.isEmpty(data.error))
-      return this.retry(this.getPortfolio, args, JSON.stringify(data.error));
+    if(!_.isEmpty(data.error))
+      err = data.error;
+
+    if (err)
+      return this.retry(this.getPortfolio, args, JSON.stringify(err));
 
     var portfolio = [];
     _.each(data.result, function(amount, asset) {
@@ -145,8 +148,11 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var set = function(err, data) {
-    if (err || !_.isEmpty(data.error))
-      return log.error('unable to get ticker', JSON.stringify(data.error));
+    if(!_.isEmpty(data.error))
+      err = data.error;
+
+    if (err))
+      return log.error('unable to get ticker', JSON.stringify(err));
 
     var result = data.result[this.pair];
     var ticker = {
@@ -174,8 +180,11 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
-    if (err || !_.isEmpty(data.error))
-      return log.error('unable to', tradeType.toLowerCase(), JSON.stringify(data.error));
+    if(!_.isEmpty(data.error))
+      err = data.error;
+
+    if (err)
+      return log.error('unable to', tradeType.toLowerCase(), JSON.stringify(err));
 
     var txid = data.result.txid[0];
     log.debug('added order with txid:', txid);
@@ -202,8 +211,11 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
-    if (err || !_.isEmpty(data.error))
-      return log.error('unable to check order', order, JSON.stringify(data.error));
+    if(!_.isEmpty(data.error))
+      err = data.error;
+
+    if(err)
+      return log.error('Unable to check order', order, JSON.stringify(err));
 
     var result = data.result[order];
     var stillThere = result.status === 'open' || result.status === 'pending';
@@ -215,8 +227,11 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order) {
   var cancel = function(err, data) {
-    if (err || !_.isEmpty(data.error))
-      log.error('unable to cancel order', order, '(', err, JSON.stringify(data.error), ')');
+    if(!_.isEmpty(data.error))
+      err = data.error;
+
+    if(err)
+      log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
   };
 
   this.kraken.api('CancelOrder', {txid: order}, _.bind(cancel, this));

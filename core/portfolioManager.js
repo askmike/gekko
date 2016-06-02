@@ -67,7 +67,7 @@ Manager.prototype.init = function(callback) {
 Manager.prototype.setPortfolio = function(callback) {
   var set = function(err, portfolio) {
     if(err)
-      util.die(err)
+      util.die(err);
 
     this.portfolio = portfolio;
     
@@ -82,7 +82,7 @@ Manager.prototype.setFee = function(callback) {
     this.fee = fee;
 
     if(err)
-      util.die(err)
+      util.die(err);
     
     if(_.isFunction(callback))
       callback();
@@ -203,7 +203,7 @@ Manager.prototype.buy = function(amount, price) {
     return log.info(
       'wanted to buy',
       this.asset,
-      'but the amount is to small',
+      'but the amount is too small',
       '(' + amount + ')',
       'at',
       this.exchange.name
