@@ -101,7 +101,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order_id, callback) {
   this.bitfinex.order_status(order_id, function (err, data, body) {
       var result = JSON.parse(body);
-      callback(err, result.is_live);    
+      callback(err, result.is_live);
   });
 }
 
