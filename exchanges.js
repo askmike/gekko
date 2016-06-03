@@ -156,7 +156,6 @@ var exchanges = [
     providesHistory: 'date',
     tid: 'tid',
     // monitorError: 'https://github.com/askmike/gekko/issues/210',
-    providesHistory: false
   },
   {
     name: 'Bitfinex',
