@@ -14,6 +14,7 @@ var Trader = function(config) {
   _.bindAll(this);
 
   this.btce = new BTCE(this.key, this.secret);
+  _.bindAll(this.btce, ['trade', 'trades', 'getInfo', 'ticker', 'orderList']);
 }
 
 Trader.prototype.round = function(amount) {
@@ -34,12 +35,12 @@ Trader.prototype.buy = function(amount, price, callback) {
       return log.error('unable to buy:', err);
 
     callback(null, data.order_id);
-  };
+  }.bind(this);
 
   // workaround for nonce error
-  setTimeout(_.bind(function() {
+  setTimeout(function() {
     this.btce.trade(this.pair, 'buy', price, amount, _.bind(set, this));
-  }, this), 1000);
+  }.bind(this), 1000);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -53,9 +54,9 @@ Trader.prototype.sell = function(amount, price, callback) {
   };
 
   // workaround for nonce error
-  setTimeout(_.bind(function() {
+  setTimeout(function() {
     this.btce.trade(this.pair, 'sell', price, amount, _.bind(set, this));
-  }, this), 1000);
+  }.bind(this), 1000);
 }
 
 // if the exchange errors we try the same call again after
@@ -65,13 +66,6 @@ Trader.prototype.retry = function(method, args) {
   log.debug(this.name, 'returned an error, retrying..');
 
   var self = this;
-
-  // make sure the callback (and any other fn)
-  // is bound to Trader
-  _.each(args, function(arg, i) {
-    if(_.isFunction(arg))
-      args[i] = _.bind(arg, self);
-  });
 
   // run the failed method again with the same
   // arguments after wait
@@ -90,28 +84,33 @@ Trader.prototype.getPortfolio = function(callback) {
 
       return this.retry(this.btce.getInfo, calculate);
     }
-      
 
     var portfolio = [];
     _.each(data.funds, function(amount, asset) {
       portfolio.push({name: asset.toUpperCase(), amount: amount});
     });
     callback(err, portfolio);
-  }
-  this.btce.getInfo(_.bind(calculate, this));
+  }.bind(this);
+
+  this.btce.getInfo(calculate);
 }
 
 Trader.prototype.getTicker = function(callback) {
   // BTCE-e doesn't state asks and bids in its
   // ticker
   var set = function(err, data) {
+
+    if(err)
+      return this.retry(this.btce.ticker, [this.pair, set]);
+
     var ticker = _.extend(data.ticker, {
       ask: data.ticker.buy,
       bid: data.ticker.sell
     });
     callback(err, ticker);
-  }
-  this.btce.ticker(this.pair, _.bind(set, this));
+  }.bind(this);
+
+  this.btce.ticker(this.pair, set);
 }
 
 Trader.prototype.getFee = function(callback) {
