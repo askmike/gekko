@@ -35,6 +35,9 @@ var checkExchangeTrades = function(requiredHistory, next) {
     var since = moment()
       .subtract(requiredHistory, 'seconds')
       .subtract(config.tradingAdvisor.candleSize, 'minutes');
+  else if(exchangeSettings.providesHistory)
+    // NOTE: specific to btc-e atm
+    var since = exchangeSettings.providesHistory;
 
   util.setConfigProperty(
     'tradingAdvisor',

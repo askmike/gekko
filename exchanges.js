@@ -64,7 +64,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
-    maxHistoryFetch: 2000,
+    maxHistoryFetch: '?limit=2000',
     tid: 'tid'
   },
   {

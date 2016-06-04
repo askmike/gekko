@@ -15,6 +15,10 @@ var Trader = function(config) {
 
   this.btce = new BTCE(this.key, this.secret);
   _.bindAll(this.btce, ['trade', 'trades', 'getInfo', 'ticker', 'orderList']);
+
+  // see @link https://github.com/askmike/gekko/issues/302
+  this.btceHistorocial = new BTCE(false, false, {public_url: 'https://btc-e.com/api/3/'});
+  _.bindAll(this.btceHistorocial, 'trades');
 }
 
 Trader.prototype.round = function(amount) {
@@ -152,8 +156,23 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       callback(false, trades);
     else
       callback(false, trades.reverse());
-  }
-  this.btce.trades(this.pair, _.bind(process, this));
+  }.bind(this);
+
+  // see @link https://github.com/askmike/gekko/issues/302
+  if(since) {
+    this.btceHistorocial.makePublicApiRequest('trades', this.pair + since, function(err, data) {
+      var trades = _.map(data[this.pair], function(t) {
+        return {
+          price: t.price,
+          amount: t.amount,
+          tid: t.tid,
+          date: t.timestamp
+        }
+      })
+      process(err, trades);
+    }.bind(this))
+  } else
+    this.btce.trades(this.pair, process);
 }
 
 module.exports = Trader;
