@@ -10,12 +10,7 @@ Configuring Gekko consists of three parts:
 
 ## Watching a realtime market
 
-It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. Examples are:
-
-- USD/BTC on Mt. Gox
-- USD/BTC on BTC-e
-- BTC/LTC on BTC-e
-- BTC/GHS on CEX.io
+It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md).
 
 ### Configuring an exchange
 
@@ -24,7 +19,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
     // Monitor the live market
     config.watch = {
       enabled: true,
-      exchange: 'btce', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+      exchange: 'btce',
       currency: 'USD',
       asset: 'BTC'
     }
@@ -38,30 +33,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
 
 ### Supported markets
 
-* Mt. Gox:  
-  currencies: USD, EUR, GBP, AUD, CAD, CHF, CNY, DKK, HKD, PLN, RUB, SGD, THB  
-  assets: BTC  
-  markets: USD/BTC, EUR/BTC, GBP/BTC, AUD/BTC, CAD/BTC, CHF/BTC, CNY/BTC, DKK/BTC, HKD/BTC, PLN/BTC, RUB/BTC, SGD/BTC, THB/BTC.
-
-* BTC-e:  
-  currencies: USD, EUR, RUR, BTC  
-  assets: BTC, LTC, NMC, NVC, USD, EUR, TRC, PPC, FTC, XPM  
-  markets: USD/BTC, RUR/BTC, EUR/BTC, BTC/LTC, USD/LTC, RUR/LTC, EUR/LTC, BTC/NMC, USD/NMC, BTC/NVC, USD/NVC, RUR/USD, USD/EUR, BTC/TRC, BTC/PPC, USD/PPC, BTC/FTC, BTC/XPM.
-
-* Bitstamp:  
-  currencies: USD  
-  assets: BTC  
-  markets: USD/BTC
-  
-* CEX.io:  
-  currencies: BTC  
-  assets: GHS  
-  markets: BTC/GHS
-
-* Kraken:
-  currencies: XRP, EUR, KRW, USD, LTC, XVN  
-  assets: LTC, NMC, XBT, XVN, EUR, KRW, USD  
-  markets: XRP/LTC, EUR/LTC, KRW/LTC, USD/LTC, XRP/NMC, EUR/NMC, KRW/NMC, USD/NMC, LTC/XBT, NMC/XBT, XRP/XBT, XVN/XBT, EUR/XBT, KRW/XBT, USD/XBT, XRP/XVN, XRP/EUR, XVN/EUR, XRP/KRW, XRP/USD, XVN/USD.
+A list of all supported exchanges and their markets can be found [here](https://github.com/askmike/gekko/blob/0.2/exchanges.js). 
 
 ## Automate trading advice
 
@@ -212,7 +184,7 @@ Gekko currently has a couple plugins:
 
 ### NOTES
 
-When you turn on a plugin for the first time it might be that you need to install some additional dependencies. Copy paste what Gekko tells you!
+When you turn on a plugin for the first time it might be that you need to install some additional dependencies. Copy and paste what Gekko tells you!
 
 ### Trader
 
