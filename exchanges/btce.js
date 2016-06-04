@@ -160,19 +160,27 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   // see @link https://github.com/askmike/gekko/issues/302
   if(since) {
-    this.btceHistorocial.makePublicApiRequest('trades', this.pair + since, function(err, data) {
-      var trades = _.map(data[this.pair], function(t) {
-        return {
-          price: t.price,
-          amount: t.amount,
-          tid: t.tid,
-          date: t.timestamp
-        }
-      })
-      process(err, trades);
-    }.bind(this))
+    this.btceHistorocial.makePublicApiRequest(
+      'trades',
+      this.pair + since,
+      this.processAPIv3Trades(process)
+    )
   } else
     this.btce.trades(this.pair, process);
+}
+
+Trader.prototype.processAPIv3Trades = function(cb) {
+  return function(err, data) {
+    var trades = _.map(data[this.pair], function(t) {
+      return {
+        price: t.price,
+        amount: t.amount,
+        tid: t.tid,
+        date: t.timestamp
+      }
+    })
+    cb(err, trades);
+  }.bind(this)
 }
 
 module.exports = Trader;
