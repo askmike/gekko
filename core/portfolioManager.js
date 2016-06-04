@@ -73,8 +73,9 @@ Manager.prototype.setPortfolio = function(callback) {
     
     if(_.isFunction(callback))
       callback();
-  };
-  this.exchange.getPortfolio(_.bind(set, this));
+  }.bind(this);
+
+  this.exchange.getPortfolio(set);
 }
 
 Manager.prototype.setFee = function(callback) {
@@ -156,7 +157,7 @@ Manager.prototype.trade = function(what) {
         price = false;
       else
         price = this.ticker.bid;
-      
+
       this.sell(amount, price);
     }
   };
@@ -269,7 +270,7 @@ Manager.prototype.noteOrder = function(err, order) {
   this.order = order;
   // if after 30 seconds the order is still there
   // we cancel and calculate & make a new one
-  setTimeout(this.checkOrder, util.minToMs(0.5));
+  setTimeout(this.checkOrder, util.minToMs(5));
 }
 
 // check wether the order got fully filled

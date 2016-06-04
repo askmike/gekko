@@ -48,21 +48,22 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
-    var portfolio = _.map(data, function (asset) {
+    var portfolio = _(data).filter(function(data) {
+      return data.type === 'exchange';
+    }).map(function (asset) {
       return {
         name: asset.currency.toUpperCase(),
         // TODO: use .amount instead of .available?
         amount: +asset.available
       }
-    });
+    }).value();
     callback(err, portfolio);
   });
 }
 
 Trader.prototype.getTicker = function(callback) {
   this.bitfinex.ticker(defaultAsset, function (err, data, body) {
-    var tick = JSON.parse(body);
-    callback(err, { bid: +tick.bid, ask: +tick.ask })
+    callback(err, { bid: +data.bid, ask: +data.ask })
   });
 }
 
@@ -77,15 +78,15 @@ function submit_order(bfx, type, amount, price, callback) {
   // TODO: Bitstamp module included the following - is it necessary?
   // amount *= 0.995; // remove fees
   amount = Math.floor(amount*100000000)/100000000;
-  bfx.new_order(defaultAsset, amount, price, exchangeName, 
+
+  bfx.new_order(defaultAsset, amount + '', price + '', exchangeName,
     type, 
     'exchange limit', 
     function (err, data, body) {
       if (err)
         return log.error('unable to ' + type, err, body);
 
-      var order = JSON.parse(body);
-      callback(err, order.order_id);
+      callback(err, data.order_id);
     });
 }
 
@@ -100,16 +101,14 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order_id, callback) {
   this.bitfinex.order_status(order_id, function (err, data, body) {
-      var result = JSON.parse(body);
-      callback(err, result.is_live);
+    callback(err, !data.is_live);
   });
 }
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
   this.bitfinex.cancel_order(order_id, function (err, data, body) {
-      var result = JSON.parse(body);
-      if (err || !result || !result.is_cancelled)
-        log.error('unable to cancel order', order, '(', err, result, ')');
+      if (err || !data || !data.is_cancelled)
+        log.error('unable to cancel order', order_id, '(', err, data, ')');
   });
 }
 
@@ -125,9 +124,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
     var trades = _.map(data, function (trade) {
       return {
+        tid: trade.tid,
         date:  trade.timestamp,
         price: +trade.price,
-        amount: +trade.amount // not mentioned in gekko exchange docs [@TODO mike]
+        amount: +trade.amount
       }
     });
 

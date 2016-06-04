@@ -171,7 +171,8 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     // TODO: should be possible to enable this for Bitfinex?
-    providesHistory: false
+    providesHistory: false,
+    tid: 'tid'
     // fetchTimespan: 60
   }
   // ,
