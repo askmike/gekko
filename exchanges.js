@@ -210,7 +210,7 @@ var exchanges = [
   },
   {
     name: 'Zaif.jp',
-    slug: 'zaif',
+    slug: 'zaif.jp',
     direct: false,
     infinityOrder: false,
     currencies: ['JPY'],
