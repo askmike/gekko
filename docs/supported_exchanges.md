@@ -11,4 +11,5 @@
 
 *(monitoring & paper trading is working fine)*
 
+- [meXBT](https://mexbt.com/) (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974).)
 - [poloniex](https://poloniex.com/)

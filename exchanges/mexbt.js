@@ -110,7 +110,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, result) {
-    //console.log(result.trades);
     if(err)
       return this.retry(this.getTrades, args);
     trades = _.map(result.trades, function (t) {
@@ -120,15 +119,18 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       trades = trades.reverse()
     }
     callback(null, trades);
-  };
+  }.bind(this);
+
   var endDate = moment().unix();
+
   // FIXME: there is a bug in meXBT tradesByDate function, that it doesnt return all data
   // when trying to fetch all.
   // So if no since, we just fetch all via trades and giving a high count
   if (since) {
-    this.mexbt.tradesByDate({startDate: since.unix(), endDate: endDate}, _.bind(process, this));
+    this.mexbt.tradesByDate({startDate: since.unix(), endDate: endDate}, process);
   } else {
-    this.mexbt.trades({startIndex: 0, count: 100000}, _.bind(process, this));
+    // improvised
+    this.mexbt.trades({count: 1000}, process);
   }
 }
 

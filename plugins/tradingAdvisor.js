@@ -46,6 +46,13 @@ var checkExchangeTrades = function(requiredHistory, next) {
   );
 
   watcher.getTrades(since, function(e, d) {
+
+    if(_.isEmpty(d))
+      return util.die(
+        `Gekko tried to retrieve data since ${since.format('YYYY-MM-DD HH:mm:ss')}, however
+        ${provider} did not return any trades. Try to raise the tradingAdviser.historySize.`
+      );
+
     next(e, {
       from: _.first(d).date,
       to: _.last(d).date

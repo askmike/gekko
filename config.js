@@ -122,7 +122,7 @@ config.trader = {
   enabled: false,
   key: '',
   secret: '',
-  username: '' // your username, only fill in when using bitstamp or cexio
+  username: '' // your username, only required for specific exchanges.
 }
 
 config.adviceLogger = {

@@ -188,7 +188,7 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret', 'username'],
-    providesHistory: false,
+    providesHistory: 'date',
     tid: 'tid'
   }
   // ,
