@@ -1,5 +1,5 @@
 
-var Bitfinex = require("bitfinex");
+var Bitfinex = require("bitfinex-fork");
 var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
