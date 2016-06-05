@@ -37,7 +37,7 @@ Pre-windows 7:
 First navigate to Gekko:
 
     cd Desktop
-    cd gekko-master
+    cd gekko-0.2
     
 Install Gekko's dependencies:
 

@@ -108,8 +108,8 @@ If you want to contribute or are interested in how Gekko works:
 ## TODO
 
 * Backtester
-* More exchanges (bitfinex, btcchina)
-* More indicators
+* More exchanges
+* More indicators (TA-lib, etc.)
 * Webbased interface
 
 ## Credits
