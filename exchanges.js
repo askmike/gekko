@@ -207,6 +207,23 @@ var exchanges = [
     providesHistory: false,
     fetchTimespan: 60,
     tid: 'tid'
+  },
+  {
+    name: 'Zaif.jp',
+    slug: 'zaif',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['JPY'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['JPY', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+      }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: false,
+    fetchTimespan: 60,
+    tid: 'tid'
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
