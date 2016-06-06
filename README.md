@@ -78,7 +78,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 > - Automate trading advice
 > - Enabling plugins
 
-Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/master/docs/Configuring_gekko.md) for a detailed explanation.
+Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/master/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.
 
 ## Running Gekko
 
