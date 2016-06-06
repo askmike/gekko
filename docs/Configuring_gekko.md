@@ -8,6 +8,8 @@ Configuring Gekko consists of three parts:
 - [Automate trading advice](#automate-trading-advice)
 - [Enabling plugins](#enabling-plugins)
 
+First of all create a copy of `sample-config.js` and name it `config.js`. From now on all changes go to `config.js` file.
+
 ## Watching a realtime market
 
 It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md), and the supported assets and currencies for each exchange can be seen [here](https://github.com/askmike/gekko/blob/0.2/exchanges.js).
