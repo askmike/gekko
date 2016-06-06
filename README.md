@@ -1,7 +1,3 @@
-# Important note
-
-You are looking at Gekko 0.2, this version is in the works and not working completely. [Check here](https://github.com/askmike/gekko/issues/255) for status!
-
 # Gekko [![Build Status](https://travis-ci.org/askmike/gekko.png)](https://travis-ci.org/askmike/gekko)
 
 ![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
@@ -10,21 +6,17 @@ You are looking at Gekko 0.2, this version is in the works and not working compl
 
 -Gordon Gekko
 
-Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org). 
-
-This is the open source do-it-yourself version, we are planning on running hosted Gekkos in the cloud which does not require you to download and install anything, configure any textfiles or deal with the commandline. If you are looking for such a solution, sign up at [Wizbit](http://wizb.it) and we'll let you know once it's out!
+Gekko is a Bitcoin trading bot and backtesting platform that connects to popular Bitcoin exchanges. It is written in javascript and runs on [nodejs](http://nodejs.org).
 
 *Use Gekko at you own risk.*
 
 ## Main features
 
-* Trading platform:
- * Paper trading
- * Live trading (trade bot)
- * ~~Backtester~~
-* Market interface:
- * Emit market events
- * Basic IRC Bot
+* Paper trading (for TA strategies)
+* Live trading (trade bot)
+* backtester
+* Tool for systematic trading
+* Low level market library
 
 ## Automated Trading platform
 
@@ -61,12 +53,12 @@ Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/a
 
 Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
 
-Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/master.zip) or clone the repository via git:
+Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/0.2.zip) or clone the repository via git:
 
     git clone git://github.com/askmike/gekko.git
     cd gekko
 
-You need to download Gekko's dependencies, which can easily be done with [npm](http://npmjs.org):
+You need to download Gekko's dependencies, which can easily be done with [npm](http://npmjs.org) (this came with your nodejs installation):
 
     npm install
 
