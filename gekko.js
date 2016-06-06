@@ -34,7 +34,7 @@ if(util.getArgument('v')) {
 // make sure the current node version is recent enough
 if(!util.recentNode())
   util.die([
-    'Your local version of nodejs is to old. ',
+    'Your local version of Node.js is too old. ',
     'You have ',
     process.version,
     ' and you need atleast ',
@@ -56,10 +56,10 @@ if(!config.profitSimulator.slippage)
   util.die('Please update your config! The profit simulator is missing slippage');
 // temp at Sun Feb  9 17:13:45 CET 2014
 if(!config.DEMA.thresholds)
-  util.die('Please update your config!');
+  util.die('Please update your config! DEMA indicator is missing threshold parameter');
 // temp at Sun Feb 23 14:39:09 CET 2014
 if(!config.RSI)
-  util.die('Please update your config!');
+  util.die('Please update your config! RSI indicator is missing');
 
 if(
   config.trader.enabled &&
