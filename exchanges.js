@@ -12,7 +12,7 @@
 //    implementation in gekko.
 // assets: all the assets supported by the exchange implementation
 //    in gekko.
-// pairs: all allowed currency / asset combinatinos that form a market
+// pairs: all allowed currency / asset combinations that form a market
 // maxHistoryFetch: the parameter fed to the getTrades call to get the max
 //    history.
 // providesHistory: If the getTrades can be fed a since parameter
@@ -224,6 +224,26 @@ var exchanges = [
     providesHistory: false,
     fetchTimespan: 60,
     tid: 'tid'
+  },
+  {
+    name: 'BTCC',
+    slug: 'btcc',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['BTC', 'CNY'],
+    assets: ['BTC', 'LTC'],
+    markets: [
+      { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['CNY', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    // TODO:
+    providesHistory: false,
+    fetchTimespan: 60,
+    maxHistoryFetch: 5000,
+    tid: 'tid',
+    tradeError: 'NOT IMPLEMENTED YET'
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
@@ -239,45 +259,19 @@ var exchanges = [
   //   ],
   //   assets: ['BTC'],
   //   markets: [
-  //     {
-  //       pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['CHF', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['DKK', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['HKD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['PLN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['RUB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['SGD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     },
-  //     {
-  //       pair: ['THB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
-  //     }
+  //     { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CHF', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['DKK', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['HKD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['PLN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['RUB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['SGD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['THB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } }
   //   ],
   //   requires: ['key', 'secret'],
   //   providesHistory: false

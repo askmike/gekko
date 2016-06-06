@@ -10,7 +10,7 @@ Configuring Gekko consists of three parts:
 
 ## Watching a realtime market
 
-It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md).
+It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md), and the supported assets and currencies for each exchange can be seen [here](https://github.com/askmike/gekko/blob/0.2/exchanges.js).
 
 ### Configuring an exchange
 
