@@ -244,6 +244,25 @@ var exchanges = [
     maxHistoryFetch: 5000,
     tid: 'tid',
     tradeError: 'NOT IMPLEMENTED YET'
+  },
+  {
+    name: 'OkCoin',
+    slug: 'okcoin',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['BTC', 'CNY'],
+    assets: ['BTC', 'LTC'],
+    markets: [
+      { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    // TODO:
+    providesHistory: false,
+    fetchTimespan: 60,
+    maxHistoryFetch: false,
+    tid: 'date',
+    tradeError: 'NOT IMPLEMENTED YET',
+    monitorError: 'Very old code, not working currently.'
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
