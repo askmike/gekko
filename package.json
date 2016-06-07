@@ -8,7 +8,7 @@
     "bitcoin"
   ],
   "scripts": {
-    "test": "make test"
+    "test": "./node_modules/.bin/mocha -u tdd --reporter spec"
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
