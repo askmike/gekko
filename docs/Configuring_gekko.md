@@ -360,7 +360,7 @@ Campfire bot is a small plugin that connects Gekko to a Campfire room and lets u
 
 ### Redis beacon
 
-This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/master/docs/internals/plugins.md#redis-beacon).
+This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/0.2/docs/internals/plugins.md#redis-beacon).
 
     config.redisBeacon = {
       enabled: false,
