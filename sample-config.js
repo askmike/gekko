@@ -106,6 +106,17 @@ config.RSI = {
   }
 };
 
+// CCI Settings
+config.CCI = {
+    constant: 0.015, // constant multiplier. 0.015 gets to around 70% fit
+    history: 90, // history size, make same or smaller than history
+    thresholds: {
+        up: 100, // fixed values for overbuy upward trajectory
+        down: -100, // fixed value for downward trajectory
+        persistence: 0 // filter spikes by adding extra filters candles
+    }
+};
+
 // custom settings:
 config.custom = {
   my_custom_setting: 10,
