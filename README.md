@@ -33,7 +33,7 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 
 **Automated trading**
 
-Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/master/docs/internals/trading_methods.md).
+Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/0.2/docs/internals/trading_methods.md).
 
 ## Market interface
 
@@ -51,7 +51,7 @@ Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/a
 
 ## Installing Gekko
 
-Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/master/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
+Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/0.2/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
 
 Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/0.2.zip) or clone the repository via git:
 
@@ -70,7 +70,7 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 > - Automate trading advice
 > - Enabling plugins
 
-Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/master/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.
+Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/0.2/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.
 
 ## Running Gekko
 
@@ -78,7 +78,7 @@ To run the bot you just have to start Gekko:
 
     node gekko
 
-You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/master/docs/Advanced_features.md).
+You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/0.2/docs/Advanced_features.md).
 
 ## Updating Gekko
 
@@ -92,10 +92,10 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
 If you want to contribute or are interested in how Gekko works:
 
-- Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/master/docs/internals/architecture.md).
-- Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/master/docs/internals/exchanges.md).
-- Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/master/docs/internals/plugins.md).
-- Implement [your own trading method](https://github.com/askmike/gekko/blob/master/docs/internals/trading_methods.md) and share it back.
+- Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/0.2/docs/internals/architecture.md).
+- Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/0.2/docs/internals/exchanges.md).
+- Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/0.2/docs/internals/plugins.md).
+- Implement [your own trading method](https://github.com/askmike/gekko/blob/0.2/docs/internals/trading_methods.md) and share it back.
 
 ## TODO
 

@@ -1,5 +1,5 @@
 ﻿// Everything is explained here:
-// https://github.com/askmike/gekko/blob/master/docs/Configuring_gekko.md
+// https://github.com/askmike/gekko/blob/0.2/docs/Configuring_gekko.md
 
 var config = {};
 
