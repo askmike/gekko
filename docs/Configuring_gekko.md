@@ -12,7 +12,7 @@ First of all create a copy of `sample-config.js` and name it `config.js`. From n
 
 ## Watching a realtime market
 
-It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md), and the supported assets and currencies for each exchange can be seen [here](https://github.com/askmike/gekko/blob/0.2/exchanges.js).
+It all starts with deciding which market you want Gekko to monitor, Gekko watches a single market and all advice and price information is based on this market. A market is a currency/asset pair on a supported exchange. The supported exchanges can be found [here](./supported_exchanged.md), and the supported assets and currencies for each exchange can be seen [here](https://github.com/askmike/gekko/blob/stable/exchanges.js).
 
 ### Configuring an exchange
 
@@ -35,7 +35,7 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
 
 ### Supported markets
 
-A list of all supported exchanges and their markets can be found [here](https://github.com/askmike/gekko/blob/0.2/exchanges.js). 
+A list of all supported exchanges and their markets can be found [here](https://github.com/askmike/gekko/blob/stable/exchanges.js). 
 
 ## Automate trading advice
 
@@ -360,7 +360,7 @@ Campfire bot is a small plugin that connects Gekko to a Campfire room and lets u
 
 ### Redis beacon
 
-This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/0.2/docs/internals/plugins.md#redis-beacon).
+This is an advanced plugin only for programmers! If you are interested in this read more [here](https://github.com/askmike/gekko/blob/stable/docs/internals/plugins.md#redis-beacon).
 
     config.redisBeacon = {
       enabled: false,

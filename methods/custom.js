@@ -2,7 +2,7 @@
 // write them here. For more information on everything you
 // can use please refer to this document:
 // 
-// https://github.com/askmike/gekko/blob/0.2/docs/trading_methods.md
+// https://github.com/askmike/gekko/blob/stable/docs/trading_methods.md
 // 
 // The example below is pretty stupid: on every new candle there is
 // a 10% chance it will recommand to change your position (to either

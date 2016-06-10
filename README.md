@@ -33,7 +33,7 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 
 **Automated trading**
 
-Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/0.2/docs/internals/trading_methods.md).
+Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md).
 
 ## Market interface
 
@@ -47,11 +47,11 @@ Gekko also has a plugin system that can do certain things whenever something hap
 
 ## Supported exchanges
 
-Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/0.2/docs/supported_exchanges.md).
+Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/stable/docs/supported_exchanges.md).
 
 ## Installing Gekko
 
-Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/0.2/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
+Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/stable/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
 
 Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/0.2.zip) or clone the repository via git:
 
@@ -95,7 +95,7 @@ If you want to contribute or are interested in how Gekko works:
 - Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/0.2/docs/internals/architecture.md).
 - Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/0.2/docs/internals/exchanges.md).
 - Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/0.2/docs/internals/plugins.md).
-- Implement [your own trading method](https://github.com/askmike/gekko/blob/0.2/docs/internals/trading_methods.md) and share it back.
+- Implement [your own trading method](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) and share it back.
 
 ## TODO
 
