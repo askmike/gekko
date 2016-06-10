@@ -15,6 +15,10 @@ var util = {
       return _config;
 
     var configFile = path.resolve(util.getArgument('config') || util.dirs().gekko + 'config');
+
+    if(!fs.existsSync(configFile))
+      util.die('Cannot find a config file.');
+
     _config = require(configFile);
     return _config;
   },
