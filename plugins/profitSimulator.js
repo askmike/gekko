@@ -3,6 +3,8 @@ var _ = require('lodash');
 var log = require('../core/log.js');
 var moment = require('moment');
 
+var mode = util.gekkoMode();
+
 var config = util.getConfig();
 var calcConfig = config.profitSimulator;
 var watchConfig = config.watch;
@@ -78,10 +80,16 @@ Logger.prototype.processAdvice = function(advice) {
     this.current.asset += this.extractFee(this.current.currency / this.price);
     this.current.currency = 0;
     this.trades++;
+
+    if(mode === 'backtest')
+      log.info(`Profit simulator got advice ${what}, buying ${this.current.asset} ${this.asset}`);
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
+    if(mode === 'backtest')
+      log.info(`Profit simulator got advice ${what}, selling ${this.current.asset} ${this.asset}`);
+
     this.current.currency += this.extractFee(this.current.asset * this.price);
     this.current.asset = 0;
     this.trades++;
@@ -127,27 +135,17 @@ Logger.prototype.report = function(timespan) {
   this.profit = this.current.balance - this.start.balance;
   this.relativeProfit = this.current.balance / this.start.balance * 100 - 100;
 
-  log.info(
-    '(PROFIT REPORT)',
-    'original simulated balance:\t',
-    this.round(this.start.balance),
-    this.reportIn
-  );
+  var start = this.round(this.start.balance);
+  var current = this.round(this.current.balance);
 
-  log.info(
-    '(PROFIT REPORT)',
-    'current simulated balance:\t',
-    this.round(this.current.balance),
-    this.reportIn
-  );
-
-  log.info(
-    '(PROFIT REPORT)',
-    'simulated profit:\t\t',
-    this.round(this.profit),
-    this.reportIn,
-    '(' + this.round(this.relativeProfit) + '%)'
-  );
+  if(mode === 'realtime') {
+    log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.reportIn}`);
+    log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.reportIn}`);
+    log.info(
+      `(PROFIT REPORT) simulated profit:\t\t ${this.round(this.profit)} ${this.reportIn}`,
+      '(' + this.round(this.relativeProfit) + '%)'
+    );
+  }
 
   if(timespan) {
     log.info(
