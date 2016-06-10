@@ -81,7 +81,7 @@ var exchange = _.find(exchanges, function(e) {
 });
 
 if(!exchange)
-  util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)
+  util.die('Unsupported exchange: ' + config.watch.exchange.toLowerCase())
 
 var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
 
