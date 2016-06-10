@@ -25,12 +25,6 @@ var log = require(dirs.core + 'log');
 
 var pluginHelper = require(dirs.core + 'pluginUtil');
 
-// if the user just wants to see the current version
-if(util.getArgument('v')) {
-  util.logVersion();
-  util.die();
-}
-
 // make sure the current node version is recent enough
 if(!util.recentNode())
   util.die([
