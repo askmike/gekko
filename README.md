@@ -14,7 +14,7 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 * Paper trading (for TA strategies)
 * Live trading (trade bot)
-* backtester
+* Backtester
 * Tool for systematic trading
 * Low level market library
 
@@ -70,15 +70,21 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 > - Automate trading advice
 > - Enabling plugins
 
-Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/0.2/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.
+Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/stable/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.
 
 ## Running Gekko
 
-To run the bot you just have to start Gekko:
+Run Gekko against the realtime market:
 
     node gekko
 
-You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/0.2/docs/Advanced_features.md).
+Run Gekko against the historical data (backtesting):
+
+    node gekko --backtest
+
+Read more about that in the [backtesting documentation](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md).
+
+You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/stable/docs/Advanced_features.md).
 
 ## Updating Gekko
 
@@ -92,9 +98,9 @@ If you installed the bot via git you can easily fetch the latest updates by runn
 
 If you want to contribute or are interested in how Gekko works:
 
-- Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/0.2/docs/internals/architecture.md).
-- Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/0.2/docs/internals/exchanges.md).
-- Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/0.2/docs/internals/plugins.md).
+- Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/stable/docs/internals/architecture.md).
+- Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/stable/docs/internals/exchanges.md).
+- Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/stable/docs/internals/plugins.md).
 - Implement [your own trading method](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) and share it back.
 
 ## TODO

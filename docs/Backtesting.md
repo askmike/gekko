@@ -15,7 +15,7 @@ Gekko requires historical data to backtest strategies against. The easiest way t
 
 ## Configure
 
-In your config set the `backtest.daterange` properties.
+In your config set the `backtest.daterange` properties to the daterange you would like to backtest against.
 
 ## Run
 
