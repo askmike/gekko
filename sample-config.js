@@ -1,6 +1,7 @@
 ﻿// Everything is explained here:
-// https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 
+// https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
+var moment = require('moment');
 var config = {};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,24 +253,18 @@ config.redisBeacon = {
   ]
 }
 
-// not in a working state
-// read: https://github.com/askmike/gekko/issues/156
-// config.webserver = {
-//   enabled: false,
-//   ws: {
-//     host: 'localhost',
-//     port: 1338,
-//   },
-//   http: {
-//     host: 'localhost',
-//     port: 1339,
-//   }
-// }
-
-// not working, leave as is
-// config.backtest = {
-//   enabled: false
-// }
+config.backtest = {
+  adapter: {
+    path: 'plugins/sqlite/reader.js',
+    directory: './history',
+    version: 0.1
+  },
+  daterange: {
+    from: moment.utc("2016-06-10 09:49:00"),
+    to: moment.utc("2016-05-29 21:55:00")
+  },
+  batchSize: 50,
+}
 
 // set this to true if you understand that Gekko will 
 // invest according to how you configured the indicators.

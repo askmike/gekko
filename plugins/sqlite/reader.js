@@ -59,7 +59,7 @@ Reader.prototype.get = function(from, to, next) {
     ORDER BY start DESC
   `, function(err, rows) {
     if(err)
-      return util.die('DB error while reading mostRecentWindow');
+      return util.die('DB error at `get`');
 
     next(rows);
   });

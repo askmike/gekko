@@ -8,11 +8,15 @@ var calcConfig = config.profitSimulator;
 var watchConfig = config.watch;
 
 var Logger = function() {
-
   _.bindAll(this);
 
-  this.historySize = config.tradingAdvisor.historySize;
-  this.historyReceived = 0;
+  this.dates = {
+    start: false,
+    end: false
+  }
+
+  this.startPrice = 0;
+  this.endPrice = 0;
 
   this.verbose = calcConfig.verbose;
   this.fee = 1 - (calcConfig.fee + calcConfig.slippage) / 100;
@@ -83,11 +87,18 @@ Logger.prototype.processAdvice = function(advice) {
     this.trades++;
   }
 
-  if(!this.verbose) // && !config.backtest.enabled)
+  if(this.verbose)
     this.report();
 }
 
-Logger.prototype.processCandle = function(candle) {
+Logger.prototype.processCandle = function(candle, done) {
+  if(!this.dates.start) {
+    this.dates.start = candle.start;
+    this.startPrice = candle.open;
+  }
+
+  this.dates.end = candle.start.clone().add(1, 'm');
+  this.endPrice = candle.close;
 
   this.price = candle.close;
 
@@ -95,13 +106,13 @@ Logger.prototype.processCandle = function(candle) {
     this.calculateStartBalance()
 
   if(!calcConfig.verbose)
-    return;
+    return done();
 
   // skip on history
   if(++this.historyReceived < this.historySize)
-    return;
+    return done();
 
-  this.report();
+  done();
 }
 
 Logger.prototype.report = function(timespan) {
@@ -139,49 +150,39 @@ Logger.prototype.report = function(timespan) {
   );
 
   if(timespan) {
-    var timespanPerYear = 356 / timespan;
-
     log.info(
       '(PROFIT REPORT)',
       'simulated yearly profit:\t',
-      this.round(this.profit * timespanPerYear),
+      this.round(this.profit / timespan.asYears()),
       this.reportIn,
-      '(' + this.round(this.relativeProfit * timespanPerYear) + '%)'
+      '(' + this.round(this.relativeProfit / timespan.asYears()) + '%)'
     );
   }
 }
 
 // finish up stats for backtesting
-Logger.prototype.finish = function(data) {
-  console.log();
-  console.log();
-
-  log.info('\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING')
-  log.info('\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!')
-
-  console.log();
-  console.log();
-
-  var start = moment.unix(data.startTime);
-  var end = moment.unix(data.endTime);
-  var timespan = end.diff(start, 'days');
+Logger.prototype.finalize = function() {
 
   log.info(
     '(PROFIT REPORT)',
     'start time:\t\t\t',
-    start.format('YYYY-MM-DD HH:mm:ss')
+    this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss')
   );
 
   log.info(
     '(PROFIT REPORT)',
     'end time:\t\t\t',
-    end.format('YYYY-MM-DD HH:mm:ss')
+    this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
+  );
+
+  var timespan = moment.duration(
+    this.dates.end.diff(this.dates.start)
   );
 
   log.info(
     '(PROFIT REPORT)',
     'timespan:\t\t\t',
-    timespan,
+    timespan.humanize(),
     'days'
   );
 
@@ -190,19 +191,19 @@ Logger.prototype.finish = function(data) {
   log.info(
     '(PROFIT REPORT)',
     'start price:\t\t\t',
-    data.start
+    this.startPrice
   );
 
   log.info(
     '(PROFIT REPORT)',
     'end price:\t\t\t',
-    data.end
+    this.endPrice
   );
 
   log.info(
     '(PROFIT REPORT)',
     'Buy and Hold profit:\t\t',
-    this.round((data.end - data.start) / data.start * 100) + '%'
+    (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
   );
 
   console.log();

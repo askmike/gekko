@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -19,6 +19,7 @@
     "btc-e": "0.0.x",
     "btcchina": "0.1.x",
     "cexio": "0.0.x",
+    "commander": "^2.9.0",
     "kraken-api": "0.1.x",
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",

@@ -65,15 +65,15 @@ You can also use this feature to do a realtime study on what different EMA setti
 
 To specify a different config file, you can use the following command line argument:
 
-    node gekko config=config/user/alternative-config
+    node gekko --config config/user/alternative-config
 
 or a relative path:
 
-    node gekko config=../../alternative-config
+    node gekko --config ../../alternative-config
 
 or a static path:
 
-    node gekko config=home/gekko/config/user/alternative-config
+    node gekko --config home/gekko/config/user/alternative-config
 
 # Helper files
 

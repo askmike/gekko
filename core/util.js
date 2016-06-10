@@ -4,17 +4,20 @@ var path = require('path');
 var fs = require('fs');
 var semver = require('semver');
 
+var program = require('commander');
+
 var _config = false;
 var _package = false;
 var _nodeVersion = false;
+
+var _args = false;
 
 // helper functions
 var util = {
   getConfig: function() {
     if(_config)
       return _config;
-
-    var configFile = path.resolve(util.getArgument('config') || util.dirs().gekko + 'config');
+    var configFile = path.resolve(program.config || util.dirs().gekko + 'config');
 
     if(!fs.existsSync(configFile))
       util.die('Cannot find a config file.');
@@ -48,20 +51,6 @@ var util = {
   recentNode: function() {
     var required = util.getRequiredNodeVersion();
     return semver.satisfies(process.version, required);
-  },
-  getArgument: function(argument) {
-    var ret;
-    _.each(process.argv, function(arg) {
-      // check if it's a configurable
-      var pos = arg.indexOf(argument + '=');
-      if(pos !== -1)
-        ret = arg.substr(argument.length + 1);
-      // check if it's a toggle
-      pos = arg.indexOf('-' + argument);
-      if(pos !== -1 && !ret)
-        ret = true;
-    });
-    return ret;
   },
   // check if two moments are corresponding
   // to the same time
@@ -100,8 +89,8 @@ var util = {
     }
   },
   logVersion: function() {
-    console.log('Gekko version:', 'v' + util.getVersion());
-    console.log('Nodejs version:', process.version);
+    return  `Gekko version: v${util.getVersion()}`
+    + `\nNodejs version: ${process.version}`;
   },
   die: function(m, soft) {
     if(m) {
@@ -112,7 +101,7 @@ var util = {
         console.log('\nError:\n');
         console.log(m, '\n\n');
         console.log('\nMeta debug info:\n');
-        util.logVersion();
+        console.log(util.logVersion());
         console.log('');
       }
     }
@@ -140,9 +129,18 @@ var util = {
   },
   // TODO:
   gekkoMode: function() {
-    return 'realtime';
-  },
+    if(program.backtest)
+      return 'backtest'
+    else
+      return 'realtime';
+  }
 }
+
+program
+  .version(util.logVersion())
+  .option('-c, --config <file>', 'Config file')
+  .option('-b, --backtest', 'backtest')
+  .parse(process.argv);
 
 var config = util.getConfig();
 

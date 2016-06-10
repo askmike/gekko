@@ -25,11 +25,9 @@ var log = require(dirs.core + 'log');
 
 var pluginHelper = require(dirs.core + 'pluginUtil');
 
-// if the user just wants to see the current version
-if(util.getArgument('v')) {
-  util.logVersion();
-  util.die();
-}
+// parameters for every plugin that tell us
+// what we are dealing with.
+var pluginParameters = require(dirs.gekko + 'plugins');
 
 // make sure the current node version is recent enough
 if(!util.recentNode())
@@ -42,6 +40,7 @@ if(!util.recentNode())
   ].join(''));
 
 var config = util.getConfig();
+var mode = util.gekkoMode();
 
 // Temporary checks to make sure everything we need is
 // up to date and present on the system.
@@ -67,30 +66,23 @@ if(
 )
   util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
 
-// START
-
 log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
-// currently we only support a single 
-// market and a single advisor.
+// configure mysql adapter
+if(mode === 'realtime' && config.sqliteWriter.enabled) {
+  config.adapter = config.sqliteWriter;
+  config.adapter.version = _.find(pluginParameters, {slug: 'sqliteWriter'}).version;
+  util.setConfig(config);
+} else if(mode === 'backtest') {
+  config.adapter = config.backtest.adapter;
+  util.setConfig(config);
+}
 
-var exchanges = require(dirs.gekko + 'exchanges');
-var exchange = _.find(exchanges, function(e) {
-  return e.slug === config.watch.exchange.toLowerCase();
-});
+// load either realtime or backtest market
+var Market = require(dirs.core + mode + 'Market');
 
-if(!exchange)
-  util.die('Unsupported exchange: ' + config.watch.exchange.toLowerCase())
-
-var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
-
-var error = exchangeChecker.cantMonitor(config.watch);
-if(error)
-  util.die(error, true);
-
-var Market = require(dirs.budfox + 'budfox');
-var GekkoStream = new require(dirs.core + 'gekkoStream');
+var GekkoStream = require(dirs.core + 'gekkoStream');
 
 // all plugins
 var plugins = [];
@@ -101,9 +93,6 @@ var candleConsumers = [];
 
 // Instantiate each enabled plugin
 var loadPlugins = function(next) {
-  // parameters for every plugin that tell us
-  // what we are dealing with.
-  var pluginParameters = require(dirs.gekko + 'plugins');
 
   // load all plugins
   async.mapSeries(
@@ -196,7 +185,7 @@ var subscribePlugins = function(next) {
   next();
 }
 
-log.info('Setting up Gekko in', util.gekkoMode(), 'mode');
+log.info('Setting up Gekko in', mode, 'mode');
 log.info('');
 
 async.series(
@@ -206,17 +195,17 @@ async.series(
     subscribePlugins
   ],
   function() {
+    var market = new Market(config);
+    var gekko = new GekkoStream(candleConsumers);
 
-    // everything is setup!
-
-    var market = new Market(config)
-      .start()
-      .pipe(new GekkoStream(candleConsumers))
+    market
+      .pipe(gekko)
 
       // convert JS objects to JSON string
       // .pipe(new require('stringify-stream')())
       // output to standard out
       // .pipe(process.stdout);
 
+    market.on('end', gekko.finalize);
   }
 );

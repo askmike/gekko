@@ -56,12 +56,23 @@ var pluginHelper = {
     if(!plugin.config)
       log.warn(
         'unable to find',
-        plugin.slug,
+        plugin.name,
         'in the config. Is your config up to date?'
       );
 
     if(!plugin.config || !plugin.config.enabled)
       return next();
+
+    if(!_.contains(plugin.modes, gekkoMode)) {
+      log.warn(
+        'The plugin',
+        plugin.name,
+        'does not support the mode',
+        gekkoMode + '.',
+        'It has been disabled.'
+      )
+      return next();
+    }
 
     log.info('Setting up:');
     log.info('\t', plugin.name);
