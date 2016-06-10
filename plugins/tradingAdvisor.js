@@ -152,7 +152,7 @@ Actor.prototype.prepareHistoricalData = function(done) {
 
     reader.mostRecentWindow(exchangeFrom, optimalFrom, function(result) {
       if(!result) {
-        log.debug('Unable to use locally stored candles.');
+        log.info('Unable to use locally stored candles.');
         return done();
       }
 
@@ -168,20 +168,15 @@ Actor.prototype.prepareHistoricalData = function(done) {
     }.bind(this));
   }.bind(this));
 }
-var i = 0;
 
 // HANDLERS
 // process the 1m candles
 Actor.prototype.processCandle = function(candle, done) {
   this.batcher.write([candle]);
-
   done();
 }
 
-Actor.prototype.finalize = function() {
-  // todo
-  log.info('done');
-}
+Actor.prototype.finalize = _.noop;
 
 // propogate a custom sized candle to the trading method
 Actor.prototype.processCustomCandle = function(candle) {

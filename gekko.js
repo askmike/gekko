@@ -199,14 +199,13 @@ async.series(
     var gekko = new GekkoStream(candleConsumers);
 
     market
-      .pipe(gekko);
-
-    if(mode === 'backtest')
-      market.end(gekko.finalize);
+      .pipe(gekko)
 
       // convert JS objects to JSON string
       // .pipe(new require('stringify-stream')())
       // output to standard out
       // .pipe(process.stdout);
+
+    market.on('end', gekko.finalize);
   }
 );

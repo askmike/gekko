@@ -104,7 +104,7 @@ var plugins = [
     slug: 'adviceLogger',
     async: false,
     silent: true,
-    modes: ['realtime', 'backtest']
+    modes: ['realtime']
   },
   {
     name: 'Profit Simulator',

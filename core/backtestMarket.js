@@ -17,15 +17,10 @@ var Market = function() {
 
   Readable.call(this, {objectMode: true});
 
-  log.info('Going to backtest');
-  log.info('\tfrom:', daterange.from.format('YYYY-MM-DD HH:mm:ss'));
-  log.info('\tto:', daterange.to.format('YYYY-MM-DD HH:mm:ss'));
-  log.info(
-    '\ttimespan:',
-    moment.duration(
-      daterange.from.diff(daterange.to)
-    ).humanize()
-  );
+  console.log('');
+  log.info('\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING');
+  log.info('\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!');
+  console.log('');
 
   this.reader = new Reader();
   this.batchSize = config.backtest.batchSize;
@@ -41,21 +36,17 @@ Market.prototype = Object.create(Readable.prototype, {
 });
 
 Market.prototype._read = function noop() {
-  // console.log('READ', !this.pushing);
   if(this.pushing)
     return;
 
   this.get();
 }
 
-Market.prototype.start = function() {
-  return this;
-}
+// Market.prototype.start = function() {
+//   return this;
+// }
 
 Market.prototype.get = function() {
-  // console.log('GET CALL')
-  // console.log('ITERATOR TO', this.iterator.to.format('YYYY-MM-DD HH:mm:ss'));
-  // console.log('DATERANGE TO', daterange.to.format('YYYY-MM-DD HH:mm:ss'));
   if(this.iterator.to >= daterange.to) {
     this.iterator.to = daterange.to;
     this.ended = true;
@@ -80,8 +71,8 @@ Market.prototype.processCandles = function(candles) {
         this.pushing = false;
       else {
         _.defer(function() {
-          console.log('emit done')
-          this.emit('end');  
+          this.reader.close();
+          this.emit('end');
         }.bind(this));
       }
     }
