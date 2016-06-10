@@ -12,9 +12,9 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 ## Main features
 
+* Automated trading (trade bot)
 * Paper trading (for TA strategies)
-* Live trading (trade bot)
-* Backtester
+* Backtester (for TA strategies)
 * Tool for systematic trading
 * Low level market library
 
@@ -53,7 +53,7 @@ Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/a
 
 Windows user? Here is a [step-by-step guide](https://github.com/askmike/gekko/blob/stable/docs/installing_gekko_on_windows.md) on how to get Gekko running on Windows.
 
-Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/0.2.zip) or clone the repository via git:
+Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can either download all files in [a zip](https://github.com/askmike/gekko/archive/stable.zip) or clone the repository via git:
 
     git clone git://github.com/askmike/gekko.git
     cd gekko
@@ -74,21 +74,15 @@ Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree
 
 ## Running Gekko
 
-Run Gekko against the realtime market:
-
     node gekko
 
-Run Gekko against the historical data (backtesting):
-
-    node gekko --backtest
-
-Read more about that in the [backtesting documentation](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md).
+For backtesting, please see the [backtesting documentation](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md).
 
 You can also run Gekko silently or use more complex features, for examples check out the [advanced features](https://github.com/askmike/gekko/tree/stable/docs/Advanced_features.md).
 
 ## Updating Gekko
 
-If you installed the bot via git you can easily fetch the latest updates by running:
+If you installed Gekko via git you can easily fetch the latest updates by running:
 
     git pull && npm update
 
