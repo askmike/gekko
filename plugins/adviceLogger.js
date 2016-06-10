@@ -8,9 +8,11 @@ var Actor = function() {
   _.bindAll(this);
 }
 
-Actor.prototype.processCandle = function(candle) {
+Actor.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
   this.marketTime = candle.start;
+
+  done();
 };
 
 Actor.prototype.processAdvice = function(advice) {
@@ -20,6 +22,10 @@ Actor.prototype.processAdvice = function(advice) {
   log.info('\t Market price:', this.price);
   log.info('\t Based on market time:', this.marketTime.format('YYYY-MM-DD HH:mm:ss'));
   console.log()
+};
+
+Actor.prototype.finalize = function(advice) {
+  // todo
 };
 
 module.exports = Actor;

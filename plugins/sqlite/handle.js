@@ -11,15 +11,30 @@ else
 
 var plugins = require(util.dirs().gekko + 'plugins');
 
-var version = _.find(plugins, {slug: 'sqliteWriter'}).version;
+var version = config.adapter.version;
 
 var dbName = config.watch.exchange.toLowerCase() + '_' + version + '.db';
+var dir = config.adapter.directory;
 
-var dir = config.sqliteWriter.directory;
+var fullPath = [dir, dbName].join('/');
 
-if(!fs.existsSync(dir))
-  fs.mkdirSync(dir);
+var mode = util.gekkoMode();
+if(mode === 'realtime') {
 
-var db = new sqlite3.Database(config.sqliteWriter.directory + dbName);
+  if(!fs.existsSync(dir))
+    fs.mkdirSync(dir);
+
+
+} else if(mode === 'backtest') {
+
+  if(!fs.existsSync(dir))
+    util.die('History directory does not exist.');
+
+  if(!fs.existsSync(fullPath))
+    util.die(`History database does not exist for exchange ${config.watch.exchange} at version ${version}.`);
+}
+  
+
+var db = new sqlite3.Database(fullPath);
 
 module.exports = db;

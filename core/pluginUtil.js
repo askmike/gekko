@@ -64,7 +64,7 @@ var pluginHelper = {
       return next();
 
     if(!_.contains(plugin.modes, gekkoMode)) {
-      util.warn(
+      log.warn(
         'The plugin',
         plugin.name,
         'does not support the mode',

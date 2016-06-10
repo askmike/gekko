@@ -4,22 +4,30 @@
 var Writable = require('stream').Writable;
 var _ = require('lodash');
 
+var mode = require('./util').gekkoMode();
+
 var Gekko = function(candleConsumers) {
   this.candleConsumers = candleConsumers;
   Writable.call(this, {objectMode: true});
+
+  this.finalize = _.bind(this.finalize, this);
 }
 
 Gekko.prototype = Object.create(Writable.prototype, {
   constructor: { value: Gekko }
 });
 
-Gekko.prototype._write = function(chunk, encoding, callback) {
-  // TODO: use different ticks and pause until all are done
+Gekko.prototype._write = function(chunk, encoding, _done) {
+  var done = _.after(this.candleConsumers.length, _done);
   _.each(this.candleConsumers, function(c) {
-    c.processCandle(chunk);
+    c.processCandle(chunk, done);
   });
+}
 
-  callback();
+Gekko.prototype.finalize = function() {
+  _.each(this.candleConsumers, function(c) {
+    c.finalize();
+  });
 }
 
 module.exports = Gekko;

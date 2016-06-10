@@ -6,9 +6,6 @@ var dirs = util.dirs();
 var log = require(dirs.core + '/log');
 var CandleBatcher = require(dirs.core + 'candleBatcher');
 
-var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
-var Reader = require(dirs.plugins + config.tradingAdvisor.adapter + '/reader');
-
 var moment = require('moment');
 
 var methods = [
@@ -25,7 +22,7 @@ var checkExchangeTrades = function(requiredHistory, next) {
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
-  // todo: move to gekko.js init
+  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
   var exchangeSettings = exchangeChecker.settings(config.watch)
 
   var watcher = new DataProvider(config.watch);
@@ -48,7 +45,6 @@ var checkExchangeTrades = function(requiredHistory, next) {
   );
 
   watcher.getTrades(since, function(e, d) {
-
     if(_.isEmpty(d))
       return util.die(
         `Gekko tried to retrieve data since ${since.format('YYYY-MM-DD HH:mm:ss')}, however
@@ -65,42 +61,49 @@ var checkExchangeTrades = function(requiredHistory, next) {
 var Actor = function(done) {
   _.bindAll(this);
 
+  this.done = done;
+
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
-  this.prepareHistoricalData(function() {
+  var mode = util.gekkoMode();
 
-    var methodName = config.tradingAdvisor.method;
-
-    if(!_.contains(methods, methodName))
-      util.die('Gekko doesn\'t know the method ' + methodName);
-
-    log.info('\t', 'Using the trading method: ' + methodName);
-
-    var method = require(dirs.methods + methodName);
-
-    // bind all trading method specific functions
-    // to the Consultant.
-    var Consultant = require(dirs.core + 'baseTradingMethod');
-
-    _.each(method, function(fn, name) {
-      Consultant.prototype[name] = fn;
-    });
-
-    this.method = new Consultant;
-
-    this.batcher
-      .on('candle', this.processCustomCandle)
-
-    this.method
-      .on('advice', this.relayAdvice);
-
-
-    done();
-  }.bind(this));
-
+  if(mode === 'realtime')
+    this.prepareHistoricalData(this.init);
+  else if(mode === 'backtest')
+    this.init();
 }
 
 util.makeEventEmitter(Actor);
+
+Actor.prototype.init = function(done) {
+  var methodName = config.tradingAdvisor.method;
+
+  if(!_.contains(methods, methodName))
+    util.die('Gekko doesn\'t know the method ' + methodName);
+
+  log.info('\t', 'Using the trading method: ' + methodName);
+
+  var method = require(dirs.methods + methodName);
+
+  // bind all trading method specific functions
+  // to the Consultant.
+  var Consultant = require(dirs.core + 'baseTradingMethod');
+
+  _.each(method, function(fn, name) {
+    Consultant.prototype[name] = fn;
+  });
+
+  this.method = new Consultant;
+
+  this.batcher
+    .on('candle', this.processCustomCandle)
+
+  this.method
+    .on('advice', this.relayAdvice);
+
+
+  this.done();
+}
 
 Actor.prototype.prepareHistoricalData = function(done) {
   // - step 1: check oldest trade reachable by API
@@ -109,6 +112,7 @@ Actor.prototype.prepareHistoricalData = function(done) {
   // - step 4: feed candle stream into CandleBatcher
 
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize * 60;
+  var Reader = require(dirs.plugins + config.tradingAdvisor.adapter + '/reader');
 
   var reader = new Reader;
 
@@ -164,12 +168,19 @@ Actor.prototype.prepareHistoricalData = function(done) {
     }.bind(this));
   }.bind(this));
 }
-
+var i = 0;
 
 // HANDLERS
 // process the 1m candles
-Actor.prototype.processCandle = function(candle) {
+Actor.prototype.processCandle = function(candle, done) {
   this.batcher.write([candle]);
+
+  done();
+}
+
+Actor.prototype.finalize = function() {
+  // todo
+  log.info('done');
 }
 
 // propogate a custom sized candle to the trading method
