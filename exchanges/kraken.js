@@ -6,16 +6,20 @@ var log = require('../core/log');
 
 var crypto_currencies = [
   "LTC",
-  "NMC",
   "XBT",
-  "XVN",
+  "XRP",
+  "DAO",
+  "ETH",
+  "XDG",
+  "XLM",
   "XRP"
 ];
 
 var fiat_currencies = [
   "EUR",
-  "KRW",
-  "USD"
+  "GBP",
+  "USD",
+  "JPY"
 ];
 
 // Method to check if asset/currency is a crypto currency
@@ -53,12 +57,16 @@ Trader.prototype.setAssetPair = function() {
   var assetPrefix = "X";
   var currencyPrefix = "Z";
 
-  if (isFiat(this.asset)) {
+  if (isFiat(this.asset))
     assetPrefix = "Z";
-  }
-  if (isCrypto(this.currency)) {
+  else if(isCrypto(this.currency)) 
+    assetPrefix = "X";
+
+
+  if (isFiat(this.currency))
+    currencyPrefix = "Z";
+  else if(isCrypto(this.currency))
     currencyPrefix = "X";
-  }
 
   this.pair = assetPrefix + this.asset + currencyPrefix + this.currency;
 };
@@ -92,7 +100,7 @@ Trader.prototype.retry = function(method, args, err) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
-
+    console.log('trades', trades.result[this.pair].length);
     if (err || !trades || trades.length === 0)
       return this.retry(this.getTrades, args, err);
 
