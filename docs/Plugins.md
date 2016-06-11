@@ -2,6 +2,7 @@
 
 Gekko currently has a couple plugins:
 
+- trading advisor (run TA strategies against a market)
 - trader
 - advice logger
 - profit simulator
@@ -10,9 +11,9 @@ Gekko currently has a couple plugins:
 - Campfire bot
 - Redis beacon
 
-## Automate trading advice
+## Trading Advisor
 
-If you want Gekko to provide automated trading advice you need to configure this here. Note that this has unrelated to automatic trading which is a plugin that creates order based on this advice. (So you need to calculate advice if you want to automate trading.)
+If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is unrelated to automatic trading which is a plugin that creates order based on this advice. (So if you want automated trading you need both this advice as well as the auto trader.)
 
 Gekko supports a number of technical analysis indicators, currently it supports trading methods for the indicators:
 
@@ -20,6 +21,7 @@ Gekko supports a number of technical analysis indicators, currently it supports 
 - MACD
 - PPO
 - RSI
+- StochRSI.js
 
 Documentation per indicator can be found [here](https://github.com/askmike/gekko/blob/stable/docs/Indicators.md).
 
@@ -35,7 +37,7 @@ Open up the config.js file again and configure at this part:
 - enabeld tells gekko it should calculate advice.
 - Method tells gekko what indicator it should calculate.
 - candleSize tells Gekko the size of the candles (in minutes) you want to calculate the indicator over. If you want MACD advice over hourly candles set this to 60.
-- historySize tells gekko how much historical candles Gekko needs before it can calculate the initial advise. This is due to the fact that all current indicators need to have initial data.
+- historySize tells gekko how much historical candles Gekko needs before it can calculate the initial advise.
 
 ### IMPORTANT NOTES
 

@@ -74,6 +74,7 @@ Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
 
   var what = advice.recommandation;
+  var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
 
   // virtually trade all USD to BTC at the current price
   if(what === 'long') {
@@ -82,13 +83,13 @@ Logger.prototype.processAdvice = function(advice) {
     this.trades++;
 
     if(mode === 'backtest')
-      log.info(`Profit simulator got advice ${what}, buying ${this.current.asset} ${this.asset}`);
+      log.info(`Profit simulator got advice to long\t@ ${time}, buying ${this.current.asset} ${this.asset}`);
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
     if(mode === 'backtest')
-      log.info(`Profit simulator got advice ${what}, selling ${this.current.asset} ${this.asset}`);
+      log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset}`);
 
     this.current.currency += this.extractFee(this.current.asset * this.price);
     this.current.asset = 0;
@@ -138,14 +139,12 @@ Logger.prototype.report = function(timespan) {
   var start = this.round(this.start.balance);
   var current = this.round(this.current.balance);
 
-  if(mode === 'realtime') {
-    log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.reportIn}`);
-    log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.reportIn}`);
-    log.info(
-      `(PROFIT REPORT) simulated profit:\t\t ${this.round(this.profit)} ${this.reportIn}`,
-      '(' + this.round(this.relativeProfit) + '%)'
-    );
-  }
+  log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.reportIn}`);
+  log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.reportIn}`);
+  log.info(
+    `(PROFIT REPORT) simulated profit:\t\t ${this.round(this.profit)} ${this.reportIn}`,
+    '(' + this.round(this.relativeProfit) + '%)'
+  );
 
   if(timespan) {
     log.info(
@@ -160,6 +159,7 @@ Logger.prototype.report = function(timespan) {
 
 // finish up stats for backtesting
 Logger.prototype.finalize = function() {
+  console.log('')
 
   log.info(
     '(PROFIT REPORT)',
