@@ -289,6 +289,22 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: false
+  },
+  {
+    name: 'BX.in.th',
+    slug: 'bx.in.th',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['THB'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['THB', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' },
+      }
+    ],
+    requires: ['key', 'secret'],
+    tradeError: 'NOT IMPLEMENTED YET',
+    providesHistory: false
   }
   // ,
   // ---- Keeping this here for historical purposes. ----
