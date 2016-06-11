@@ -1,3 +1,5 @@
+
+
 ### DEMA
 
 This method uses `Exponential Moving Average crossovers` to determine the current trend the

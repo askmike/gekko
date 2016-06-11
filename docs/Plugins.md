@@ -2,8 +2,8 @@
 
 Gekko currently has a couple plugins:
 
-- trading advisor (run TA strategies against a market)
-- trader
+- trading advisor (run a TA strategy against a market)
+- trader (execute advice from the TA strategy on a real exchange)
 - advice logger
 - profit simulator
 - Mailer

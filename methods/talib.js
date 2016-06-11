@@ -19,8 +19,6 @@ var talibWrapper = function(params) {
     return function(callback) {
         return talib.execute(params,
         function(result) {
-            //console.log(params.name);
-            //console.log(result.result);
             callback(null, result.result);
         });
     };

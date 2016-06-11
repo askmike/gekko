@@ -23,12 +23,6 @@ var async = require('async');
 
 var log = require(dirs.core + 'log');
 
-var pluginHelper = require(dirs.core + 'pluginUtil');
-
-// parameters for every plugin that tell us
-// what we are dealing with.
-var pluginParameters = require(dirs.gekko + 'plugins');
-
 // make sure the current node version is recent enough
 if(!util.recentNode())
   util.die([
@@ -41,24 +35,6 @@ if(!util.recentNode())
 
 var config = util.getConfig();
 var mode = util.gekkoMode();
-
-// Temporary checks to make sure everything we need is
-// up to date and present on the system.
-
-// temp at Fri Jan 17 16:00:19 CET 2014
-if(config.normal)
-  util.die('Please update your config! config.normal is now called config.watch');
-if(config.EMA)
-  util.die('Please update your config! EMA is now called DEMA');
-// temp at Wed Jan 22 12:18:08 CET 2014
-if(!config.profitSimulator.slippage)
-  util.die('Please update your config! The profit simulator is missing slippage');
-// temp at Sun Feb  9 17:13:45 CET 2014
-if(!config.DEMA.thresholds)
-  util.die('Please update your config! DEMA indicator is missing threshold parameter');
-// temp at Sun Feb 23 14:39:09 CET 2014
-if(!config.RSI)
-  util.die('Please update your config! RSI indicator is missing');
 
 if(
   config.trader.enabled &&
@@ -91,6 +67,13 @@ var emitters = {};
 // all plugins interested in candles
 var candleConsumers = [];
 
+// utility to check and load plugins.
+var pluginHelper = require(dirs.core + 'pluginUtil');
+
+// meta information about every plugin that tells Gekko
+// something about every available plugin
+var pluginParameters = require(dirs.gekko + 'plugins');
+
 // Instantiate each enabled plugin
 var loadPlugins = function(next) {
 
@@ -99,7 +82,6 @@ var loadPlugins = function(next) {
     pluginParameters,
     pluginHelper.load,
     function(error, _plugins) {
-
       if(error)
         return util.die(error, true);
 
@@ -121,6 +103,7 @@ var referenceEmitters = function(next) {
   next();
 }
 
+// Subscribe all plugins to other emitting plugins
 var subscribePlugins = function(next) {
   var subscriptions = require(dirs.gekko + 'subscriptions');
 
