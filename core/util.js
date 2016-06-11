@@ -17,7 +17,7 @@ var util = {
   getConfig: function() {
     if(_config)
       return _config;
-    var configFile = path.resolve(program.config || util.dirs().gekko + 'config');
+    var configFile = path.resolve(program.config || util.dirs().gekko + 'config.js');
 
     if(!fs.existsSync(configFile))
       util.die('Cannot find a config file.');
