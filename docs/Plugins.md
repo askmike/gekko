@@ -11,6 +11,8 @@ Gekko currently has a couple plugins:
 - Campfire bot
 - Redis beacon
 
+To configure a plugin, open up your `config.js` file with a text editor and configure the appropiate section.
+
 ## Trading Advisor
 
 If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is unrelated to automatic trading which is a plugin that creates order based on this advice. (So if you want automated trading you need both this advice as well as the auto trader.)

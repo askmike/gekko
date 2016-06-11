@@ -10,28 +10,15 @@ var config = {};
 
 config.debug = true; // for additional logging / debugging
 
-config.sqliteWriter = {
-  // what directory should Gekko store
-  // and load historical data from?
-  directory: './history/',
-
-  enabled: true,
-  storeCandles: true,
-  storeTrades: false, // NOT IMPLEMENTED
-  storeAdvice: false // NOT IMPLEMENTED
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                         WATCHING A MARKET
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Monitor the live market
 config.watch = {
-  enabled: true,
   exchange: 'Bitstamp', // see gekko/docs/supported_exchanges.md
   currency: 'USD',
-  asset: 'BTC',
-  interval: 20, // seconds between fetches TODO: currently unused
+  asset: 'BTC'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,6 +251,17 @@ config.backtest = {
     to: moment.utc("2016-05-29 21:55:00")
   },
   batchSize: 50,
+}
+
+config.sqliteWriter = {
+  // what directory should Gekko store
+  // and load historical data from?
+  directory: './history/',
+
+  enabled: true,
+  storeCandles: true,
+  storeTrades: false, // NOT IMPLEMENTED
+  storeAdvice: false // NOT IMPLEMENTED
 }
 
 // set this to true if you understand that Gekko will 

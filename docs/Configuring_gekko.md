@@ -1,6 +1,6 @@
 # Configuring Gekko
 
-*(Note that backtesting is not discussed as it is not implemented yet)*.
+*(For backtesting, see this [doc](./Backtesting.md))*.
 
 Configuring Gekko consists of two parts:
 
@@ -19,7 +19,6 @@ Open up the config.js file inside the Gekko directory with a text editor and sea
 
     // Monitor the live market
     config.watch = {
-      enabled: true,
       exchange: 'btce',
       currency: 'USD',
       asset: 'BTC'
