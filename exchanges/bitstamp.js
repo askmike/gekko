@@ -128,7 +128,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     callback(null, result.reverse());
   };
 
-  this.bitstamp.transactions(_.bind(process, this));
+  if(since)
+    this.bitstamp.transactions({time: since}, _.bind(process, this));
+  else
+    this.bitstamp.transactions(_.bind(process, this));
 }
 
 
