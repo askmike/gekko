@@ -2,7 +2,7 @@
 var EMA = require('./EMA.js');
 
 var Indicator = function(weight) {
-  this.lastPrice = 0;
+  this.lastClose = 0;
   this.weight = weight;
   this.weightEma = 2 * weight - 1;
   this.avgU = new EMA(this.weightEma);
@@ -15,10 +15,9 @@ var Indicator = function(weight) {
 }
 
 Indicator.prototype.update = function(candle) {
-  var open = candle.open;
-  var close = candle.close;
+  var currentClose = candle.close;
 
-  if(close > open) {
+  if(currentClose > this.lastClose) {
     this.u = close - open;
     this.d = 0;
   } else {
@@ -32,6 +31,7 @@ Indicator.prototype.update = function(candle) {
   this.rsi = 100 - (100 / (1 + this.rs));
 
   this.age++;
+  this.lastClse = currentClose;
 }
 
 module.exports = Indicator;
