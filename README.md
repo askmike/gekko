@@ -37,13 +37,7 @@ Gekko comes with a couple of trading methods that implement a single indicator (
 
 ## Market interface
 
-Gekko also has a plugin system that can do certain things whenever something happens or let Gekko communicate through more platforms. Gekko currently knows these plugins:
-
-- Campfire: Enables Gekko to talk on [Campfire](https://campfirenow.com/) and report latest market data and advice.
-- IRC bot: Enables Gekko to talk on IRC and report latest market data and advice.
-- Mailer: Automatically sends email when your trading method has new advice.
-- Profit Simulator (paper trader): Hold a fake portfolio and simulate trades based on advice.
-- Redis Beacon: Broadcast events propagating through Gekko on [Redis pub/sub](http://redis.io/topics/pubsub).
+Gekko has a plugin system that can do certain things whenever something happens or let Gekko communicate through more platforms. Check [all currently existing plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md) or [add your own](https://github.com/askmike/gekko/blob/stable/docs/internal/plugins.md).
 
 ## Supported exchanges
 
