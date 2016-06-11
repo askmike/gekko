@@ -1,8 +1,3 @@
-// NOTE
-// 
-// from @link https://github.com/wupeng1211/gekko
-// currently not working
-
 var talib = require("talib");
 
 var ifish = function (value) {

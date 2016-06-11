@@ -10,6 +10,10 @@ var Indicators = {
     factory: require(indicatorsPath + 'MACD'),
     input: 'price'
   },
+  EMA: {
+    factory: require(indicatorsPath + 'EMA'),
+    input: 'price'
+  },
   DEMA: {
     factory: require(indicatorsPath + 'DEMA'),
     input: 'price'
@@ -18,13 +22,22 @@ var Indicators = {
     factory: require(indicatorsPath + 'PPO'),
     input: 'price'
   },
+  LRC: {
+    factory: require(indicatorsPath + 'LRC'),
+    input: 'price'
+  },
+  SMA: {
+    factory: require(indicatorsPath + 'SMA'),
+    input: 'price'
+  },
+
   RSI: {
     factory: require(indicatorsPath + 'RSI'),
     input: 'candle'
   },
   CCI: {
-      factory: require(indicatorsPath + 'CCI'),
-      input: 'candle'
+    factory: require(indicatorsPath + 'CCI'),
+    input: 'candle'
   }
 };
 

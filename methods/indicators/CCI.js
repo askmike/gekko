@@ -21,7 +21,7 @@ Indicator.prototype.update = function(candle) {
   
   // We need sufficient history to get the right result. 
 
-  var tp = (candle.h + candle.c + candle.l) / 3;
+  var tp = (candle.high + candle.close + candle.low) / 3;
   if (this.size < this.maxSize) {
       this.hist[this.size] = tp;
       this.size++;

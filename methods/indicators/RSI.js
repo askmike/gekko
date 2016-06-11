@@ -15,8 +15,8 @@ var Indicator = function(weight) {
 }
 
 Indicator.prototype.update = function(candle) {
-  var open = candle.o;
-  var close = candle.c;
+  var open = candle.open;
+  var close = candle.close;
 
   if(close > open) {
     this.u = close - open;

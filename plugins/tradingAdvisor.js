@@ -111,7 +111,7 @@ Actor.prototype.prepareHistoricalData = function(done) {
 
     reader.mostRecentWindow(exchangeFrom, optimalFrom, function(result) {
       if(!result) {
-        log.info('Unable to use locally stored candles.');
+        log.info('\t', 'Unable to use locally stored candles.');
         return done();
       }
 

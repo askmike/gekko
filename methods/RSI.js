@@ -19,6 +19,8 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
+  this.name = 'RSI';
+
   this.trend = {
     direction: 'none',
     duration: 0,
