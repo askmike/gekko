@@ -18,46 +18,6 @@ var methods = [
   'custom'
 ];
 
-var checkExchangeTrades = function(requiredHistory, next) {
-  var provider = config.watch.exchange.toLowerCase();
-  var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
-
-  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
-  var exchangeSettings = exchangeChecker.settings(config.watch)
-
-  var watcher = new DataProvider(config.watch);
-
-  if(exchangeSettings.maxHistoryFetch)
-    var since = exchangeSettings.maxHistoryFetch;
-  else if(exchangeSettings.providesHistory === 'date')
-    // NOTE: uses current time
-    var since = moment()
-      .subtract(requiredHistory, 'seconds')
-      .subtract(config.tradingAdvisor.candleSize, 'minutes');
-  else if(exchangeSettings.providesHistory)
-    // NOTE: specific to btc-e atm
-    var since = exchangeSettings.providesHistory;
-
-  util.setConfigProperty(
-    'tradingAdvisor',
-    'firstFetchSince',
-    since
-  );
-
-  watcher.getTrades(since, function(e, d) {
-    if(_.isEmpty(d))
-      return util.die(
-        `Gekko tried to retrieve data since ${since.format('YYYY-MM-DD HH:mm:ss')}, however
-        ${provider} did not return any trades. Try to raise the tradingAdviser.historySize.`
-      );
-
-    next(e, {
-      from: _.first(d).date,
-      to: _.last(d).date
-    })
-  });
-}
-
 var Actor = function(done) {
   _.bindAll(this);
 
@@ -101,7 +61,6 @@ Actor.prototype.init = function(done) {
   this.method
     .on('advice', this.relayAdvice);
 
-
   this.done();
 }
 
@@ -117,7 +76,7 @@ Actor.prototype.prepareHistoricalData = function(done) {
   var reader = new Reader;
 
   // TODO: refactor cb hell
-  checkExchangeTrades(requiredHistory, function(err, window) {
+  this.checkExchangeTrades(requiredHistory, function(err, window) {
     log.debug(
       'Exchange has data spanning',
       window.to - window.from,
@@ -167,6 +126,46 @@ Actor.prototype.prepareHistoricalData = function(done) {
       }.bind(this));
     }.bind(this));
   }.bind(this));
+}
+
+Actor.prototype.checkExchangeTrades = function(requiredHistory, next) {
+  var provider = config.watch.exchange.toLowerCase();
+  var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
+
+  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+  var exchangeSettings = exchangeChecker.settings(config.watch)
+
+  var watcher = new DataProvider(config.watch);
+
+  if(exchangeSettings.maxHistoryFetch)
+    var since = exchangeSettings.maxHistoryFetch;
+  else if(exchangeSettings.providesHistory === 'date')
+    // NOTE: uses current time
+    var since = moment()
+      .subtract(requiredHistory, 'seconds')
+      .subtract(config.tradingAdvisor.candleSize, 'minutes');
+  else if(exchangeSettings.providesHistory)
+    // NOTE: specific to btc-e atm
+    var since = exchangeSettings.providesHistory;
+
+  util.setConfigProperty(
+    'tradingAdvisor',
+    'firstFetchSince',
+    since
+  );
+
+  watcher.getTrades(since, function(e, d) {
+    if(_.isEmpty(d))
+      return util.die(
+        `Gekko tried to retrieve data since ${since.format('YYYY-MM-DD HH:mm:ss')}, however
+        ${provider} did not return any trades. Try to raise the tradingAdviser.historySize.`
+      );
+
+    next(e, {
+      from: _.first(d).date,
+      to: _.last(d).date
+    })
+  });
 }
 
 // HANDLERS

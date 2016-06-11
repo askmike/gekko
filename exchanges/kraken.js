@@ -100,7 +100,6 @@ Trader.prototype.retry = function(method, args, err) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
-    console.log('trades', trades.result[this.pair].length);
     if (err || !trades || trades.length === 0)
       return this.retry(this.getTrades, args, err);
 
