@@ -36,9 +36,11 @@ var Actor = function() {
 };
 
 Actor.prototype = {
-  processTrade: function(trade) {
-    this.price = trade.price;
-    this.priceTime = Moment.unix(trade.date);
+  processCandle: function(candle, done) {
+    this.price = candle.close;
+    this.priceTime = candle.date.start();
+
+    done();
   },
 
   processAdvice: function(advice) {

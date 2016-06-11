@@ -34,9 +34,11 @@ var Actor = function() {
   this.rawCommands = _.keys(this.commands);
 }
 
-Actor.prototype.processTrade = function(trade) {
-  this.price = trade.price;
-  this.priceTime = moment.unix(trade.date);
+Actor.prototype.processCandle = function(candle, done) {
+  this.price = candle.close;
+  this.priceTime = candle.start;
+
+  done();
 };
 
 Actor.prototype.processAdvice = function(advice) {

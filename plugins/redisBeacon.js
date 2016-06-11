@@ -38,11 +38,14 @@ _.each(redisBeacon.broadcast, function(e) {
 
   var channel = redisBeacon.channelPrefix + subscription.event
 
-  proto[subscription.handler] = function(message) {
+  proto[subscription.handler] = function(message, cb) {
+    if(!_.isFunction(cb))
+      cb = _.noop;
+
     this.emit(channel, {
       market: this.market,
       data: message
-    });
+    }, cb);
   };
 
 }, this)

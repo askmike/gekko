@@ -90,8 +90,10 @@ Mailer.prototype.mail = function(subject, content, done) {
   }, done || this.checkResults);
 }
 
-Mailer.prototype.processTrade = function(trade) {
-  this.price = trade.price;
+Mailer.prototype.processCandle = function(candle, done) {
+  this.price = candle.close;
+
+  done();
 }
 
 Mailer.prototype.processAdvice = function(advice) {

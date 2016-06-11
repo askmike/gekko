@@ -43,7 +43,7 @@ Store.prototype.upsertTables = function() {
   }, this);
 }
 
-var processCandle = function(candle) {
+var processCandle = function(candle, done) {
   var stmt = this.db.prepare(`
     INSERT OR IGNORE INTO ${sqliteUtil.table('candles')} VALUES (?,?,?,?,?,?,?,?,?)
   `);
@@ -61,6 +61,11 @@ var processCandle = function(candle) {
   );
 
   stmt.finalize();
+
+  // NOTE: sqlite3 has it's own buffering, at
+  // this point we are confident that the candle will
+  // get written to disk _eventually_.
+  done();
 }
 
 var processTrades = function(candles) {

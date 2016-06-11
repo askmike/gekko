@@ -1,6 +1,6 @@
 ﻿// Everything is explained here:
+// @link https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 
-// https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 var moment = require('moment');
 var config = {};
 
@@ -129,7 +129,7 @@ config.custom = {
 
 // Want Gekko to perform real trades on buy or sell advice?
 // Enabling this will activate trades for the market being
-// watched by config.watch
+// watched by `config.watch`.
 config.trader = {
   enabled: false,
   key: '',
@@ -155,8 +155,8 @@ config.profitSimulator = {
   // only want report after a sell? set to `false`.
   verbose: false,
   // how much fee in % does each trade cost?
-  fee: 0.6,
-  // how much slippage should Gekko assume per trade?
+  fee: 0.25,
+  // how much slippage/spread should Gekko assume per trade?
   slippage: 0.05
 }
 
@@ -259,9 +259,7 @@ config.sqliteWriter = {
   directory: './history/',
 
   enabled: true,
-  storeCandles: true,
-  storeTrades: false, // NOT IMPLEMENTED
-  storeAdvice: false // NOT IMPLEMENTED
+  storeCandles: true
 }
 
 // set this to true if you understand that Gekko will 

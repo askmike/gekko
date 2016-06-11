@@ -73,9 +73,9 @@ Actor.prototype.sendMessage = function(message) {
   this.sendMessageTo(this.from, message);
 };
 
-Actor.prototype.processTrade = function(trade) {
-  this.price = trade.price;
-  this.priceTime = moment.unix(trade.date);
+Actor.prototype.processCandle = function(candle) {
+  this.price = candle.close;
+  this.priceTime = candle.date;
 };
 
 Actor.prototype.processAdvice = function(advice) {
