@@ -18,11 +18,11 @@ Indicator.prototype.update = function(candle) {
   var currentClose = candle.close;
 
   if(currentClose > this.lastClose) {
-    this.u = close - open;
+    this.u = currentClose - this.lastClose;
     this.d = 0;
   } else {
     this.u = 0;
-    this.d = open - close;
+    this.d = this.lastClose - currentClose;
   }
 
   this.avgU.update(this.u);
@@ -31,7 +31,7 @@ Indicator.prototype.update = function(candle) {
   this.rsi = 100 - (100 / (1 + this.rs));
 
   this.age++;
-  this.lastClse = currentClose;
+  this.lastClose = currentClose;
 }
 
 module.exports = Indicator;
