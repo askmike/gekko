@@ -102,11 +102,6 @@ The output will be something like:
     2013-06-02 18:21:15 (INFO): (PROFIT REPORT) current balance:     217.465 USD
     2013-06-02 18:21:15 (INFO): (PROFIT REPORT) profit:          10.000 USD (4.820%)
 
-#### Special note for CEX.io users
-
-At CEX.io the asset is bound to devalue over time, however investers are compensated with mining rewards. Because
-the size of this reward depends on factors outside the market **this reward is not taken into consideration when simulating the profit.**
-
 ### Mailer
 
 Mailer will automatically email you whenever Gekko has a new advice.
