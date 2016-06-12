@@ -20,9 +20,9 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 ## Automated Trading platform
 
-Gekko can watch the realtime markets. You can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to realtime data coming in to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko also stores the market data it sees so you can run the trading methods with simulate trades on a set of historical data to see whether they would have been profitable during that time ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
+Gekko can watch the realtime markets, you can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko also stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
 
-Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
+Gekko is not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on TA indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
 **So Gekko is not:**
 
