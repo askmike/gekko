@@ -127,9 +127,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
     result = _.map(result, function(trade) {
     	return {
+        tid: trade.tradeID,
+        amount: +trade.amount,
         date: moment.utc(trade.date).format('X'),
-        price: trade.rate,
-        tid: trade.tradeID
+        price: +trade.rate
       };
     });
 
