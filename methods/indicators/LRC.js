@@ -8,7 +8,7 @@ var Indicator = function(settings) {
   this.result = false;
   this.age = 0;
   this.history = [];
-  this.x = new [];
+  this.x = [];
   /*
    * Do not use array(depth) as it might not be implemented
    */
