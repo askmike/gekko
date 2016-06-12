@@ -1,5 +1,6 @@
 var util = require('../core/util');
 var _ = require('lodash');
+var fs = require('fs');
 
 var config = util.getConfig();
 var dirs = util.dirs();
@@ -7,16 +8,6 @@ var log = require(dirs.core + '/log');
 var CandleBatcher = require(dirs.core + 'candleBatcher');
 
 var moment = require('moment');
-
-var methods = [
-  'MACD',
-  'DEMA',
-  'PPO',
-  'RSI',
-  'CCI',
-  'StochRSI',
-  'custom'
-];
 
 var Actor = function(done) {
   _.bindAll(this);
@@ -38,7 +29,7 @@ util.makeEventEmitter(Actor);
 Actor.prototype.init = function(done) {
   var methodName = config.tradingAdvisor.method;
 
-  if(!_.contains(methods, methodName))
+  if(!fs.existsSync(dirs.methods + methodName + '.js'))
     util.die('Gekko doesn\'t know the method ' + methodName);
 
   log.info('\t', 'Using the trading method: ' + methodName);
