@@ -37,7 +37,6 @@ method.init = function() {
 
   // define the indicators we need
   this.addIndicator('macd', 'MACD', settings);
-
 }
 
 // what happens on every new candle?
@@ -63,13 +62,7 @@ method.log = function() {
 }
 
 method.check = function() {
-  var price = this.lastPrice;
-  var macd = this.indicators.macd;
-
-  var long = macd.long.result;
-  var short = macd.short.result;
-  var signal = macd.signal.result;
-  var macddiff = macd.result;
+  var macddiff = this.indicators.macd.result;
 
   if(macddiff > settings.thresholds.up) {
 

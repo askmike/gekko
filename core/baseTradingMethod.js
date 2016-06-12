@@ -1,7 +1,26 @@
 var _ = require('lodash');
 var util = require('../core/util.js');
 var config = util.getConfig();
+var dirs = util.dirs();
 var log = require('../core/log.js');
+
+if(config.tradingAdvisor.talib.enabled) {
+  // verify talib is installed properly
+  var pluginHelper = require(dirs.core + 'pluginUtil');
+  var pluginMock = {
+    slug: 'tradingAdvisor',
+    dependencies: [{
+      module: 'talib',
+      version: config.tradingAdvisor.talib.version
+    }]
+  };
+
+  var cannotLoad = pluginHelper.cannotLoad(pluginMock);
+  if(cannotLoad)
+    util.die(cannotLoad);
+
+  var talib = require(dirs.core + 'talib');
+}
 
 var indicatorsPath = '../methods/indicators/';
 
@@ -42,6 +61,7 @@ var Indicators = {
 };
 
 var allowedIndicators = _.keys(Indicators);
+var allowedTalibIndicators = _.keys(talib);
 
 var Base = function() {
   _.bindAll(this);
@@ -54,6 +74,9 @@ var Base = function() {
   this.requiredHistory = 0;
   this.priceValue = 'close';
   this.indicators = {};
+  this.talibIndicators = {};
+  this.asyncTick = false;
+  this.closePrices = [];
 
   // make sure we have all methods
   _.each(['init', 'check'], function(fn) {
@@ -77,6 +100,9 @@ var Base = function() {
     this.log = function() {};
 
   this.setup = true;
+
+  if(_.size(this.talibIndicators))
+    this.asyncTick = true;
 }
 
 // teach our base trading method events
@@ -86,6 +112,12 @@ Util.inherits(Base, EventEmitter);
 
 Base.prototype.tick = function(candle) {
   this.age++;
+  this.candle = candle;
+
+  this.closePrices.push(candle.close);
+  if(this.age > 1000) {
+    this.closePrices.shift();
+  }
 
   // update all indicators
   var price = candle[this.priceValue];
@@ -96,15 +128,61 @@ Base.prototype.tick = function(candle) {
       i.update(candle);
   });
 
-  this.update(candle);
+  if(!this.asyncTick || this.requiredHistory > this.age) {
+    this.propogateTick();
+  } else {
+    var next = _.after(
+      _.size(this.talibIndicators),
+      function() {
+        this.propogateTick();
+      }.bind(this)
+    );
 
-  if(this.requiredHistory <= this.age) {
-    this.log();
-    this.check();
+    _.each(this.talibIndicators, function(i) {
+      i._fn(this.closePrices, next);
+    }, this);
   }
 
   // update previous price
   this.lastPrice = price;
+}
+
+Base.prototype.propogateTick = function() {
+  this.update(this.candle);
+  if(this.requiredHistory <= this.age) {
+    this.log();
+    this.check();
+  }
+}
+
+Base.prototype.addTalibIndicator = function(name, type, parameters) {
+  if(!talib)
+    util.die('Talib is not enabled');
+
+  if(!_.contains(allowedTalibIndicators, type))
+    util.die('I do not know the talib indicator ' + type);
+
+  if(this.setup)
+    util.die('Can only add talib indicators in the init method!');
+
+  // TODO: cleanup..
+  this.talibIndicators[name] = {
+    _params: parameters,
+    _fn: function(closePrices, done) {
+
+      var args = _.clone(parameters);
+      args.unshift(closePrices);
+
+      talib[type].apply(this, args)(function(err, result) {
+        if(err)
+          util.die('TALIB ERROR:', err);
+
+        this.result = _.mapValues(result, function(a) { return _.last(a); });
+        done();
+      }.bind(this));
+    },
+    result: NaN
+  }
 }
 
 Base.prototype.addIndicator = function(name, type, parameters) {

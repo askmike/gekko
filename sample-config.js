@@ -27,11 +27,15 @@ config.watch = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'DEMA',
+  method: 'MACD',
   candleSize: 5,
   historySize: 25,
   adapter: 'sqlite',
-  directory: '.history'
+  directory: '.history',
+  talib: {
+    enabled: false,
+    version: '1.0.2'
+  }
 }
 
 // Exponential Moving Averages settings:
@@ -123,6 +127,18 @@ config.custom = {
   my_custom_setting: 10,
 }
 
+config['talib-macd'] = {
+  // FastPeriod, SlowPeriod, SignalPeriod
+  parameters: [10, 21, 9],
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,7 +211,6 @@ config.mailer = {
   port: '',       // Set if you don't want to use the default port
   tls: false        // Use TLS if true
 }
-
 
 config.ircbot = {
   enabled: false,

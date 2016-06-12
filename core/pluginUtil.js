@@ -18,6 +18,7 @@ var pluginHelper = {
   //    error message if we can't
   //    use the module.
   cannotLoad: function(plugin) {
+
     // verify plugin dependencies are installed
     if(_.has(plugin, 'dependencies'))
       var error = false;

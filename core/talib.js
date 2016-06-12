@@ -14,6 +14,9 @@ var talibWrapper = function(params) {
     return function(callback) {
         return talib.execute(params,
         function(result) {
+            if(result.error)
+                return callback(result.error);
+
             callback(null, result.result);
         });
     };

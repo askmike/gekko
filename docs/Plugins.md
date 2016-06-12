@@ -10,7 +10,7 @@ Gekko currently has a couple plugins:
 - IRC bot
 - Campfire bot
 - Redis beacon
-- XMP Bqeot
+- XMP Bot
 
 To configure a plugin, open up your `config.js` file with a text editor and configure the appropiate section.
 
@@ -34,13 +34,17 @@ Open up the config.js file again and configure at this part:
       enabled: true,
       method: 'DEMA',
       candleSize: 5,
-      historySize: 20
+      historySize: 20,
+      talib: {
+        enabled: false,
+        version: '1.0.2'
+      }
     }
 
-- enabeld tells gekko it should calculate advice.
-- Method tells gekko what indicator it should calculate.
-- candleSize tells Gekko the size of the candles (in minutes) you want to calculate the indicator over. If you want MACD advice over hourly candles set this to 60.
-- historySize tells gekko how much historical candles Gekko needs before it can calculate the initial advise.
+- `enabled` tells gekko it should calculate advice.
+- `method` tells gekko what indicator it should calculate.
+- `candleSize` tells Gekko the size of the candles (in minutes) you want to calculate the indicator over. If you want MACD advice over hourly candles set this to 60.
+- `historySize` tells gekko how much historical candles Gekko needs before it can calculate the initial advise.
 
 ### IMPORTANT NOTES
 
