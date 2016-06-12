@@ -1,8 +1,8 @@
 # Trading Methods
 
-The trading methods are the core of Gekko's trading bot. They look at the market and decide what to do based on technical analysis. The trading methods can calculate indicators on top of the market data to come up with an advice for a position to take in the market. As of now the trading method is limited to a single market on a single exchange.
+The trading methods are the core of Gekko's trading bot. They look at the market and decide what to do based on technical analysis indicators. As of now the trading method is limited to a single market on a single exchange.
 
-Gekko currently has a couple of methods already, only implementing a single indicator: DEMA, MACD, RSI and PPO. Besides those you can also create your own trading method by using javascript. The easiest way to do this is open the file `gekko/methods/custom.js` and write your own trading method.
+Gekko currently comes with [a couple of methods](../Trading_methods.md) out of box. Besides those you can also create your own trading method by using javascript. The easiest way to do this is open the file `gekko/methods/custom.js` and write your own trading method.
 
 ## Creating a trading method
 
@@ -69,10 +69,10 @@ If you find out in the check function that you want to give a new advice to the 
 
 ## Trading method rules
 
-- You can activate your own method by setting `config.tradingAdvisor.method` to `custom` in the loaded config.
-- Gekko will execute the functions for every candle. A candle is the size configured at `config.tradingAdvisor.candleSize` in the loaded config.
+- You can activate your own method by setting `config.tradingAdvisor.method` to `custom` (or whatever you named your script inside the `gekko/methods`) in the loaded config.
+- Gekko will execute the functions for every candle. A candle is the size in minutes configured at `config.tradingAdvisor.candleSize` in the loaded config.
 - It is advised to set history `config.tradingAdvisor.historySize` the same as the requiredHistory as Gekko will use this property to create an initial batch of candles.
-- Never rely on anything based on system or candle time because each method can run on live markets as well as during backtesting.
+- Never rely on anything based on system time because each method can run on live markets as well as during backtesting.
 
 ## Trading method tools
 
@@ -83,6 +83,10 @@ In these functions you write your trading method. To help you with this Gekko ha
 If you want to use an indicator you can add it in the `init` function and Gekko will handle the updating for you on every candle (before the update and before the check call):
 
     this.addIndicator('name', 'type', parameters);
+
+or
+
+    this.addTalibIndicator('name', 'type', parameters);
 
 The first parameter is the name, the second is the indicator type you want and the third is an object with all indicator parameters. If you want an MACD indicator you can do it like so:
 
@@ -95,9 +99,7 @@ In your check or update method:
 
     var result = this.indicators.mymacd.result;
 
-#### Supported indicators
-
-Gekko currently supports EMA, SMA, PPO, RSI and MACD.
+Currently supported native indicators can be found [here](https://github.com/askmike/gekko/tree/stable/methods/indicators), all talib indicators (100+) can be found [here](http://ta-lib.org/function.html).
 
 ### Configurables
 
@@ -140,4 +142,4 @@ Gekko has a small logger you can use (preferably in your log method):
 
 -----
 
-Take a look at the existing methods, if you have questions feel free to create an issue.
+Take a look at the existing methods, if you have questions feel free to create an issue. If you created your own awesome trading method and want to share it with the world feel free to contribute it to gekko.

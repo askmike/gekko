@@ -1,4 +1,50 @@
+# Trading Methods
 
+Gekko implements [technical analysis strategies](http://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp) using trading methods. These methods use a number of *[indicators](http://www.investopedia.com/terms/t/technicalindicator.asp)* to calculate an *investment advice*.
+
+This investment advice is going to be either **long** or **short**.
+
+## NOTE
+
+On default Gekko does nothing with this advice, Gekko uses [plugins](./Plugins) that can do something with this advice:
+
+ - trader: trade live on the markets (Gekko becomes a trading bot)
+ - profit simulator: simulate trading on advice (Gekko becomes a paper trader)
+ - mailer: automatically email advice (Gekko helps in systematic trading)
+ - etc..
+
+## Enabling a trading method in Gekko
+
+Open up the config.js file again and configure at this part:
+
+    config.tradingAdvisor = {
+      enabled: true,
+      method: 'DEMA',
+      candleSize: 5,
+      historySize: 20,
+      talib: {
+        enabled: false,
+        version: '1.0.2'
+      }
+    }
+
+- `enabled` tells gekko it should calculate advice.
+- `method` tells gekko what indicator it should calculate (see below for supported methods).
+- `candleSize` tells Gekko the size of the candles (in minutes) you want to calculate the trading method over. If you want MACD advice over hourly candles set this to 60.
+- `historySize` tells gekko how much historical candles Gekko needs before it can calculate the initial advice.
+- `talib` tells gekko whether [talib](https://www.npmjs.com/package/talib) indicators are needed for your method (`false` unless you know what are doing).
+
+Gekko currently supports:
+
+ - [DEMA](#DEMA)
+ - [MACD](#MACD)
+ - [PPO](#PPO)
+ - [RSI](#RSI)
+ - [StochRSI](#StochRSI)
+ - [CCI](#CCI)
+ - [talib-macd](#talib-macd)
+
+But you can easily create your custom method, read [here](./internals/trading_methods.md) how!
 
 ### DEMA
 
@@ -103,3 +149,15 @@ The Relative Strength Index is a momentum oscillator that measures the speed and
 - The interval is the amount of periods the RSI should use.
 - The thresholds determine what level of RSI would trigger an up or downtrend.
 - persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
+
+### StochRSI
+
+TODO!
+
+### CCI
+
+TODO!
+
+### talib-macd
+
+TODO!

@@ -18,39 +18,7 @@ To configure a plugin, open up your `config.js` file with a text editor and conf
 
 If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is unrelated to automatic trading which is a plugin that creates order based on this advice. (So if you want automated trading you need both this advice as well as the auto trader.)
 
-Gekko supports a number of technical analysis indicators, currently it supports trading methods for the indicators:
-
-- DEMA
-- MACD
-- PPO
-- RSI
-- StochRSI.js
-
-Documentation per indicator can be found [here](https://github.com/askmike/gekko/blob/stable/docs/Indicators.md).
-
-Open up the config.js file again and configure at this part:
-
-    config.tradingAdvisor = {
-      enabled: true,
-      method: 'DEMA',
-      candleSize: 5,
-      historySize: 20,
-      talib: {
-        enabled: false,
-        version: '1.0.2'
-      }
-    }
-
-- `enabled` tells gekko it should calculate advice.
-- `method` tells gekko what indicator it should calculate.
-- `candleSize` tells Gekko the size of the candles (in minutes) you want to calculate the indicator over. If you want MACD advice over hourly candles set this to 60.
-- `historySize` tells gekko how much historical candles Gekko needs before it can calculate the initial advise.
-
-### IMPORTANT NOTES
-
-- If you have 60 minutes candles that does not mean you will get advice every 60 minutes. You only get advice if the configured indicator suggests to take a new position.
-- All the advice is based on the configured indicators you gave to Gekko. The advice is not me or Gekko saying you should take a certain position in the market. **It is the result of automatically running the indicators you configured on the live market.**
-- Gekko calculates the advice silently, but you can turn on plugins that do something with this advice.
+Documentation about trading methods in Gekko can be found [here](./Trading_methods.md).
 
 ### Trader
 

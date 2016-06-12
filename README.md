@@ -20,7 +20,7 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 ## Automated Trading platform
 
-Gekko can watch the realtime markets. You can apply automated trading methods to realtime data coming in to do live or simulated trading (automated trading or paper trading). Gekko also stores the market data it sees so you can run the trading methods with simulate trades on a set of historical data to see whether they would have been profitable during that time (backtesting).
+Gekko can watch the realtime markets. You can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to realtime data coming in to do live or simulated trading (automated trading or paper trading). Gekko also stores the market data it sees so you can run the trading methods with simulate trades on a set of historical data to see whether they would have been profitable during that time (backtesting).
 
 Gekko, as well as the current bitcoin exchanges, are not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
@@ -33,11 +33,11 @@ Gekko, as well as the current bitcoin exchanges, are not built for HFT or anythi
 
 **Automated trading**
 
-Gekko comes with a couple of trading methods that implement a single indicator (DEMA, MACD, RSI and PPO). The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md).
+Gekko comes with a couple of trading methods that implement a single indicator. The parameters of these indicators are all configurable and changing them changes the outcome drastically. Additionally Gekko also provides an easy way to write your own trading methods in javascript. Read more about that in the [documentation](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md).
 
 ## Market interface
 
-Gekko has a plugin system that can do certain things whenever something happens or let Gekko communicate through more platforms. Check [all currently existing plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md) or [add your own](https://github.com/askmike/gekko/blob/stable/docs/internal/plugins.md).
+Gekko has a plugin system that can do certain things whenever something happens or let Gekko communicate through external platforms. Check [all currently existing plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md) or [add your own](https://github.com/askmike/gekko/blob/stable/docs/internal/plugins.md).
 
 ## Supported exchanges
 
