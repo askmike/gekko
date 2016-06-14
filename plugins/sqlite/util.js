@@ -4,7 +4,7 @@ var watch = config.watch;
 var settings = {
   exchange: watch.exchange,
   pair: [watch.currency, watch.asset],
-  historyPath: config.sqliteWriter.directory
+  historyPath: config.adapters.sqlite.dataDirectory
 }
 
 module.exports = {

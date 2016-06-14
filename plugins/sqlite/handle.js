@@ -3,7 +3,22 @@ var fs = require('fs');
 
 var util = require('../../core/util.js');
 var config = util.getConfig();
+var dirs = util.dirs();
 
+var adapter = config.adapters.sqlite;
+
+// verify the correct dependencies are installed
+var pluginHelper = require(dirs.core + 'pluginUtil');
+var pluginMock = {
+  slug: 'sqlite adapter',
+  dependencies: config.adapters.sqlite.dependencies
+};
+
+var cannotLoad = pluginHelper.cannotLoad(pluginMock);
+if(cannotLoad)
+  util.die(cannotLoad);
+
+// should be good now
 if(config.debug)
   var sqlite3 = require('sqlite3').verbose();
 else
@@ -11,10 +26,10 @@ else
 
 var plugins = require(util.dirs().gekko + 'plugins');
 
-var version = config.adapter.version;
+var version = adapter.version;
 
 var dbName = config.watch.exchange.toLowerCase() + '_' + version + '.db';
-var dir = config.adapter.directory;
+var dir = adapter.dataDirectory;
 
 var fullPath = [dir, dbName].join('/');
 

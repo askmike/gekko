@@ -20,19 +20,18 @@
 // dependencies: a list of external npm modules this plugin requires to
 //    be installed.
 // emits: events emitted by this plugin that other plugins can subscribe to.
-// path: path of file of the plugin (overwrites `gekko/plugins/{slug}`)
+// path: fn that returns path of file of the plugin (overwrites `gekko/plugins/{slug}`)
+//    when given the configuration object (relative from `gekko/plugins/`).
 var plugins = [
   {
-    name: 'SQLite Datastore',
-    description: 'Store candles, trades and advices in a SQLite database',
-    slug: 'sqliteWriter',
+    name: 'Candle writer',
+    description: 'Store candles in a database',
+    slug: 'candleWriter',
     async: true,
     modes: ['realtime'],
-    dependencies: [{
-      module: 'sqlite3',
-      version: '3.1.3'
-    }],
-    path: 'sqlite/writer',
+    path: function(config) {
+      return config.adapter + '/writer';
+    },
     version: 0.1,
   },
   {

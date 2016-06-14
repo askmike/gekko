@@ -45,20 +45,6 @@ if(
 log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
-// meta information about every plugin that tells Gekko
-// something about every available plugin
-var pluginParameters = require(dirs.gekko + 'plugins');
-
-// configure mysql adapter
-if(mode === 'realtime' && config.sqliteWriter.enabled) {
-  config.adapter = config.sqliteWriter;
-  config.adapter.version = _.find(pluginParameters, {slug: 'sqliteWriter'}).version;
-  util.setConfig(config);
-} else if(mode === 'backtest') {
-  config.adapter = config.backtest.adapter;
-  util.setConfig(config);
-}
-
 // load either realtime or backtest market
 var Market = require(dirs.core + mode + 'Market');
 
@@ -73,6 +59,10 @@ var candleConsumers = [];
 
 // utility to check and load plugins.
 var pluginHelper = require(dirs.core + 'pluginUtil');
+
+// meta information about every plugin that tells Gekko
+// something about every available plugin
+var pluginParameters = require(dirs.gekko + 'plugins');
 
 // Instantiate each enabled plugin
 var loadPlugins = function(next) {

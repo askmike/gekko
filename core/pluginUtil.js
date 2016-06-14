@@ -84,7 +84,7 @@ var pluginHelper = {
       return next(cannotLoad);
 
     if(plugin.path)
-      var Constructor = require(pluginDir + plugin.path);
+      var Constructor = require(pluginDir + plugin.path(plugin.config));
     else
       var Constructor = require(pluginDir + plugin.slug);
 

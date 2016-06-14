@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var config = require('../../core/util.js').getConfig().sqliteWriter;
+var config = require('../../core/util.js').getConfig();
 
 var handle = require('./handle');
 var sqliteUtil = require('./util');
@@ -68,21 +68,23 @@ var processCandle = function(candle, done) {
   done();
 }
 
-var processTrades = function(candles) {
-  util.die('NOT IMPLEMENTED');
-}
-
-var processAdvice = function(candles) {
-  util.die('NOT IMPLEMENTED');
-}
-
-if(config.storeCandles)
+if(config.candleWriter.enabled)
   Store.prototype.processCandle = processCandle;
 
-if(config.storeTrades)
- Store.prototype.processTrades = processTrades;
+// TODO: add storing of trades / advice?
 
-if(config.storeAdvice)
-  Store.prototype.processAdvice = processAdvice;
+// var processTrades = function(candles) {
+//   util.die('NOT IMPLEMENTED');
+// }
+
+// var processAdvice = function(candles) {
+//   util.die('NOT IMPLEMENTED');
+// }
+
+// if(config.tradeWriter.enabled)
+//  Store.prototype.processTrades = processTrades;
+
+// if(config.adviceWriter.enabled)
+//   Store.prototype.processAdvice = processAdvice;
 
 module.exports = Store;

@@ -1,7 +1,6 @@
 ﻿// Everything is explained here:
 // @link https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 
-var moment = require('moment');
 var config = {};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,7 +15,7 @@ config.debug = true; // for additional logging / debugging
 
 // Monitor the live market
 config.watch = {
-  exchange: 'Bitstamp', // see gekko/docs/supported_exchanges.md
+  exchange: 'btce', // see gekko/docs/supported_exchanges.md
   currency: 'USD',
   asset: 'BTC'
 }
@@ -31,7 +30,6 @@ config.tradingAdvisor = {
   candleSize: 5,
   historySize: 25,
   adapter: 'sqlite',
-  directory: '.history',
   talib: {
     enabled: false,
     version: '1.0.2'
@@ -255,26 +253,45 @@ config.redisBeacon = {
   ]
 }
 
+config.candleWriter = {
+  adapter: 'sqlite',
+  enabled: true
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING ADAPTER
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.adapters = {
+  sqlite: {
+    path: 'plugins/sqlite',
+
+    dataDirectory: './history',
+    version: 0.1,
+
+    dependencies: [{
+      module: 'sqlite3',
+      version: '3.1.3'
+    }]
+  }
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING BACKTESTING
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Note that these settings are only used in backtesting mode, see here:
+// @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
+
+var moment = require('moment');
 config.backtest = {
-  adapter: {
-    path: 'plugins/sqlite/reader.js',
-    directory: './history',
-    version: 0.1
-  },
+  adapter: 'slite',
   daterange: {
     from: moment.utc("2016-06-10 09:49:00"),
     to: moment.utc("2016-05-29 21:55:00")
   },
   batchSize: 50,
-}
-
-config.sqliteWriter = {
-  // what directory should Gekko store
-  // and load historical data from?
-  directory: './history/',
-
-  enabled: true,
-  storeCandles: true
 }
 
 // set this to true if you understand that Gekko will 
