@@ -1,4 +1,4 @@
-var BTCChina = require('btcchina');
+var BTCChina = require('btc-china');
 var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
@@ -13,7 +13,7 @@ var Trader = function(config) {
   }
   this.name = 'BTCC';
 
-  this.pair = (config.asset + config.currency).toLowerCase();
+  this.pair = (config.asset + config.currency).toUpperCase();
 
   this.btcc = new BTCChina(this.key, this.secret, this.clientID);
 }
@@ -42,7 +42,19 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.btcc.ticker(this.pair, callback);
+  var args = _.toArray(arguments);
+  var process = function(err, result) {
+    if(err)
+      return this.retry(this.getTicker, args);
+
+    callback(null, {
+      bid: result.bids[0][0],
+      ask: result.asks[0][0]
+    });
+
+  }.bind(this);
+
+  this.btcc.getOrderBook(process, this.pair, 1);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -57,8 +69,88 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       callback(null, result);
   }.bind(this);
 
-  this.btcc.historydata(this.pair, false, since, process);
+  if(since)
+    this.btcc.getHistoryData(process, {limit: since});
+  else
+    this.btcc.getHistoryData(process, {limit: 500});
 }
 
+Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
+  var set = function(err, data) {
+    if(err)
+      return this.retry(this.getPortfolio, args);
+
+    var portfolio = [];
+    _.each(data.result.balance, function(obj) {
+        portfolio.push({name: obj.currency, amount: parseFloat(obj.amount)});
+    });
+    callback(err, portfolio);
+  }.bind(this);
+
+  this.btcc.getAccountInfo(set, 'ALL');
+}
+
+Trader.prototype.getFee = function(callback) {
+  var args = _.toArray(arguments);
+  var set = function(err, data) {
+    if(err)
+      this.retry(this.getFee, args);
+
+    callback(false, data.result.profile.trade_fee / 100);
+  }.bind(this);
+
+  this.btcc.getAccountInfo(set, 'ALL');
+}
+
+Trader.prototype.buy = function(amount, price, callback) {
+  // TODO: do somewhere better..
+  amount = Math.floor(amount * 10000) / 10000;
+
+  var set = function(err, result) {
+    if(err)
+      return log.error('unable to buy:', err, result);
+
+    callback(null, result.result);
+  }.bind(this);
+
+  this.btcc.createOrder2(set, 'buy', price, amount, this.pair);
+}
+
+Trader.prototype.sell = function(amount, price, callback) {
+  // TODO: do somewhere better..
+  amount = Math.round(amount * 10000) / 10000;
+
+  var set = function(err, result) {
+    if(err)
+      return log.error('unable to sell:', err, result);
+
+    callback(null, result.result);
+  }.bind(this);
+
+  this.btcc.createOrder2(set, 'sell', price, amount, this.pair);
+}
+
+Trader.prototype.checkOrder = function(order, callback) {
+  var args = _.toArray(arguments);
+  var check = function(err, result) {
+    if(err)
+      this.retry(this.checkOrder, args);
+
+    var done = result.result.order.status === 'closed';
+    callback(err, done);
+  };
+
+  this.btcc.getOrder(check, order, this.pair, true);
+}
+
+Trader.prototype.cancelOrder = function(order, callback) {
+  var cancel = function(err, result) {
+    if(err)
+      log.error('unable to cancel order', order, '(', err, result, ')');
+  }.bind(this);
+
+  this.btcc.cancelOrder(cancel, order, this.pair);
+}
 
 module.exports = Trader;

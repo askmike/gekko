@@ -246,13 +246,12 @@ var exchanges = [
       { pair: ['CNY', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
     ],
-    requires: ['key', 'secret', 'username'],
+    requires: ['key', 'secret'],
     // TODO:
     providesHistory: false,
     fetchTimespan: 60,
     maxHistoryFetch: 5000,
-    tid: 'tid',
-    tradeError: 'NOT IMPLEMENTED YET'
+    tid: 'tid'
   },
   {
     name: 'OkCoin',

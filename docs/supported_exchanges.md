@@ -7,12 +7,12 @@
 - [bitfinex](https://bitfinex.com/)
 - [btc-e](https://btc-e.com/)
 - [poloniex](https://poloniex.com/)
+- [BTCC](https://btcc.com/) (formerly called BTCChina)
 
 ## Partially working (live trading might not work correctly)
 
 *(monitoring & paper trading is working fine)*
 
-- [BTCC](https://btcc.com/) (trading not implemented at the moment)
 - [lakeBTC](https://lakebtc.com/)
 - [meXBT](https://mexbt.com/) (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974))
 - [zaif](https://zaif.jp/trade_btc_jpy)

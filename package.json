@@ -18,7 +18,7 @@
     "bitstamp": "0.1.x",
     "bitx": "^1.5.0",
     "btc-e": "0.0.x",
-    "btcchina": "0.1.x",
+    "btc-china": "0.0.5",
     "cexio": "0.0.x",
     "commander": "^2.9.0",
     "kraken-api": "0.1.x",
