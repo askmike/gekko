@@ -26,8 +26,8 @@ config.watch = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'CCI',
-  candleSize: 1,
+  method: 'MACD',
+  candleSize: 60,
   historySize: 25,
   adapter: 'sqlite',
   talib: {
@@ -291,7 +291,7 @@ config.backtest = {
     from: moment.utc("2016-05-29 21:55:00"),
     to: moment.utc("2016-06-10 09:49:00")
   },
-  batchSize: 50,
+  batchSize: 50
 }
 
 // set this to true if you understand that Gekko will 
