@@ -196,7 +196,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     var txid = data.result.txid[0];
     log.debug('added order with txid:', txid);
 
-    callback(txid);
+    callback(err, txid);
   };
 
   this.kraken.api('AddOrder', {
