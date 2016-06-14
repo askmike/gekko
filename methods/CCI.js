@@ -1,4 +1,3 @@
-var Math = require('mathjs');
 // helpers
 var _ = require('lodash');
 var log = require('../core/log.js');
@@ -50,20 +49,20 @@ method.update = function(candle) {
 method.log = function() {
     var cci = this.indicators.cci;
     if (typeof(cci.result) == 'boolean') {
-        log.methods('Insufficient data available. Age: ', cci.size, ' of ', cci.maxSize);
-        log.methods('ind: ', cci.TP.result, ' ', cci.TP.age, ' ', cci.TP.depth);
+        log.debug('Insufficient data available. Age: ', cci.size, ' of ', cci.maxSize);
+        log.debug('ind: ', cci.TP.result, ' ', cci.TP.age, ' ', cci.TP.depth);
         return;
     }
 
-    log.methods('calculated CCI properties for candle:');
-    log.methods('\t', 'Price:\t\t\t', this.lastPrice);
-    log.methods('\t', 'CCI tp:\t', cci.tp.toFixed(8));
-    log.methods('\t', 'CCI tp/n:\t', cci.TP.result.toFixed(8));
-    log.methods('\t', 'CCI md:\t', cci.mean.toFixed(8));
+    log.debug('calculated CCI properties for candle:');
+    log.debug('\t', 'Price:\t\t\t', this.lastPrice);
+    log.debug('\t', 'CCI tp:\t', cci.tp.toFixed(8));
+    log.debug('\t', 'CCI tp/n:\t', cci.TP.result.toFixed(8));
+    log.debug('\t', 'CCI md:\t', cci.mean.toFixed(8));
     if (typeof(cci.result) == 'boolean' )
-        log.methods('\t In sufficient data available.');
+        log.debug('\t In sufficient data available.');
     else
-        log.methods('\t', 'CCI:\t', cci.result.toFixed(2));
+        log.debug('\t', 'CCI:\t', cci.result.toFixed(2));
 }
 
 /*
