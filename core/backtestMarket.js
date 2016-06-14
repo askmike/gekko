@@ -5,13 +5,15 @@ var dirs = util.dirs();
 var log = require('./log');
 var moment = require('moment');
 
-var Reader = require(dirs.gekko + config.adapter.path);
-
+var adapter = config.adapters[config.backtest.adapter];
+var Reader = require(dirs.gekko + adapter.path + '/reader');
 var daterange = config.backtest.daterange;
+
+if(daterange.to <= daterange.from)
+  util.die('This daterange does not make sense.')
 
 var Market = function() {
   _.bindAll(this);
-
   this.pushing = false;
   this.ended = false;
 
@@ -25,7 +27,7 @@ var Market = function() {
   this.reader = new Reader();
   this.batchSize = config.backtest.batchSize;
   this.iterator = {
-    from: daterange.from,
+    from: daterange.from.clone(),
     to: daterange.from.clone().add(this.batchSize, 'm').subtract(1, 's')
   }
 }
@@ -42,11 +44,8 @@ Market.prototype._read = function noop() {
   this.get();
 }
 
-// Market.prototype.start = function() {
-//   return this;
-// }
-
 Market.prototype.get = function() {
+
   if(this.iterator.to >= daterange.to) {
     this.iterator.to = daterange.to;
     this.ended = true;

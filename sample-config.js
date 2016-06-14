@@ -15,7 +15,7 @@ config.debug = true; // for additional logging / debugging
 
 // Monitor the live market
 config.watch = {
-  exchange: 'btce', // see gekko/docs/supported_exchanges.md
+  exchange: 'Bitstamp', // see gekko/docs/supported_exchanges.md
   currency: 'USD',
   asset: 'BTC'
 }
@@ -286,10 +286,10 @@ config.adapters = {
 
 var moment = require('moment');
 config.backtest = {
-  adapter: 'slite',
+  adapter: 'sqlite',
   daterange: {
-    from: moment.utc("2016-06-10 09:49:00"),
-    to: moment.utc("2016-05-29 21:55:00")
+    from: moment.utc("2016-05-29 21:55:00"),
+    to: moment.utc("2016-06-10 09:49:00")
   },
   batchSize: 50,
 }
