@@ -268,9 +268,9 @@ Manager.prototype.sell = function(amount, price) {
 
 Manager.prototype.noteOrder = function(err, order) {
   this.order = order;
-  // if after 5 minutes the order is still there
+  // if after 1 minute the order is still there
   // we cancel and calculate & make a new one
-  setTimeout(this.checkOrder, util.minToMs(5));
+  setTimeout(this.checkOrder, util.minToMs(1));
 }
 
 // check wether the order got fully filled

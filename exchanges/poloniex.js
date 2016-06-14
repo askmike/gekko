@@ -14,13 +14,14 @@ var Trader = function(config) {
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
-    this.clientID = config.username;
     this.currency = config.currency;
     this.asset = config.asset;
   }
   this.name = 'Poloniex';
   this.balance;
   this.price;
+
+  this.pair = [this.currency, this.asset].join('_');
 
   this.poloniex = new Poloniex(this.key, this.secret);
 }
@@ -49,21 +50,36 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
   var set = function(err, data) {
+    if(err)
+      return this.retry(this.getPortfolio, args);
+
     var portfolio = [];
     _.each(data, function(amount, asset) {
-      if(asset.indexOf('available') !== -1) {
-        //asset = asset.substr(0, 3).toUpperCase();
-        portfolio.push({name: asset, amount: parseFloat(amount)});
-      }
+      portfolio.push({name: asset, amount: parseFloat(amount)});
     });
+
     callback(err, portfolio);
-  }
-  this.poloniex.myBalances(_.bind(set, this));
+  }.bind(this);
+
+  this.poloniex.myBalances(set);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.poloniex.getTicker(callback);
+  var args = _.toArray(arguments);
+  this.poloniex.getTicker(function(err, data) {
+    if(err)
+      return this.retry(this.getTicker, args);
+
+    var tick = data[this.pair];
+
+    callback(null, {
+      bid: parseFloat(tick.highestBid),
+      ask: parseFloat(tick.lowestAsk),
+    });
+
+  }.bind(this));
 }
 
 Trader.prototype.getFee = function(callback) {
@@ -82,9 +98,9 @@ Trader.prototype.buy = function(amount, price, callback) {
       return log.error('unable to buy:', err, result);
 
     callback(null, result.orderNumber);
-  };
+  }.bind(this);
 
-  this.poloniex.buy(this.currency, this.asset, price, amount, _.bind(set, this));
+  this.poloniex.buy(this.currency, this.asset, price, amount, set);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -93,18 +109,18 @@ Trader.prototype.sell = function(amount, price, callback) {
       return log.error('unable to sell:', err, result);
 
     callback(null, result.orderNumber);
-  };
+  }.bind(this);
 
-  this.poloniex.sell(this.currency, this.asset, price, amount, _.bind(set, this));
+  this.poloniex.sell(this.currency, this.asset, price, amount, set);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, result) {
     var stillThere = _.find(result, function(o) { return o.orderNumber === order });
     callback(err, !stillThere);
-  };
+  }.bind(this);
 
-  this.poloniex.myOpenOrders(_.bind(check, this));
+  this.poloniex.myOpenOrders(this.currency, this.asset, check);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
@@ -113,9 +129,9 @@ Trader.prototype.cancelOrder = function(order, callback) {
       log.error('unable to cancel order', order, '(', err, result, ')');
       // return this.retry(this.cancelOrder, args);
     }
-  };
+  }.bind(this);
 
-  this.poloniex.cancelOrder(this.currency, this.asset, order, _.bind(cancel, this));
+  this.poloniex.cancelOrder(this.currency, this.asset, order, cancel);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
