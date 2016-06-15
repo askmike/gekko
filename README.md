@@ -22,7 +22,7 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 Gekko can watch the realtime markets, you can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko also stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
 
-Gekko is not built for HFT or anything related to being the fastest. The trading methods Gekko can do are based on TA indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
+Gekko is not built for HFT or anything related to being the fastest (like arbitrage). The trading methods Gekko can do are based on TA indicators used by human day traders. The result is that Gekko does not look at data below the one minute timescale and (depending on configuration) and will normally not trade more than a couple of times per week (also depending on configuration).
 
 **So Gekko is not:**
 
@@ -30,6 +30,7 @@ Gekko is not built for HFT or anything related to being the fastest. The trading
 - A High frequency trading bot designed to operate on < minute resolution.
 - A fully automated trading bot that you turn on and will generate profit without you having to do anything.
 - An exchange.
+- An arbitrage bot.
 
 ## Market interface
 
@@ -57,7 +58,6 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 > Configuring Gekko consists of three parts: 
 > 
 > - Watching a realtime market
-> - Automate trading advice
 > - Enabling plugins
 
 Read the [configuring Gekko documentation](https://github.com/askmike/gekko/tree/stable/docs/Configuring_gekko.md) for a detailed explanation. Don't forget to rename a copy of `sample-config.js` to `config.js`.

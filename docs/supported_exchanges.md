@@ -2,16 +2,16 @@
 
 ## Fully working
 
-- [Bitstamp](http://bitstamp.com/)
+- [Bitstamp](http://bitstamp.com/) (only BTC/USD at the moment)
 - [kraken](http://kraken.com/)
 - [bitfinex](https://bitfinex.com/)
 - [btc-e](https://btc-e.com/)
 - [poloniex](https://poloniex.com/)
 - [BTCC](https://btcc.com/) (formerly called BTCChina)
 
-## Partially working (live trading might not work correctly)
+## Partially working
 
-*(monitoring & paper trading is working fine)*
+*(monitoring, paper trading and backtesting works fine, however real trading might not)*
 
 - [lakeBTC](https://lakebtc.com/)
 - [meXBT](https://mexbt.com/) (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974))
