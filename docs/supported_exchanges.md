@@ -13,6 +13,7 @@
 
 *(monitoring, paper trading and backtesting works fine, however real trading might not)*
 
+- [bitX](https://www.bitx.co/)
 - [lakeBTC](https://lakebtc.com/)
 - [meXBT](https://mexbt.com/) (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974))
 - [zaif](https://zaif.jp/trade_btc_jpy)

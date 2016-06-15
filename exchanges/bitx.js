@@ -44,24 +44,23 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args);
 
     trades = _.map(result.trades, function (t) {
-      return { price: t.price, date: (t.timestamp / 1000), amount: t.volume };
+      return {
+        price: t.price,
+        date: Math.round(t.timestamp / 1000),
+        amount: t.volume,
+        msdate: t.timestamp // we use this as tid
+      };
     });
-
-    // API returns 30 days by default
-    // CandleManager can't process more than 2 days
-    yesterday = moment(moment().utc().format('YYYY-MM-DD +0000')).subtract(1, 'days').unix()
-    trades = _.reject(trades, function(t){
-      return t.date < yesterday
-    })
 
     // Decending by default
     if (!descending) {
       trades = trades.reverse()
     }
-    callback(null, trades);
-  };
 
-  this.bitx.getTrades(_.bind(process, this));
+    callback(null, trades);
+  }.bind(this);
+
+  this.bitx.getTrades(process);
 }
 
 

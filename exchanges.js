@@ -280,15 +280,14 @@ var exchanges = [
     currencies: ['MYR', 'KES', 'NGN', 'ZAR'],
     assets: ['XBT'],
     markets: [
-      {
-        pair: ['XBT', 'MYR'], minimalOrder: { amount: 0.00001, unit: 'asset' },
-        pair: ['XBT', 'KES'], minimalOrder: { amount: 0.00001, unit: 'asset' },
-        pair: ['XBT', 'NGN'], minimalOrder: { amount: 0.00001, unit: 'asset' },
-        pair: ['XBT', 'ZAR'], minimalOrder: { amount: 0.00001, unit: 'asset' }
-      }
+      { pair: ['MYR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['XBT', 'KES'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['XBT', 'NGN'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['XBT', 'ZAR'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
-    providesHistory: false
+    providesHistory: false,
+    tid: 'msdate'
   },
   {
     name: 'BX.in.th',
