@@ -10,6 +10,7 @@ var Trader = function(config) {
     this.key = config.key;
     this.secret = config.secret;
     this.clientID = config.username;
+    this.market = (config.asset + config.currency).toLowerCase();
   }
   this.name = 'Bitstamp';
   this.balance;
@@ -55,12 +56,13 @@ Trader.prototype.getPortfolio = function(callback) {
       }
     });
     callback(err, portfolio);
-  }
-  this.bitstamp.balance(_.bind(set, this));
+  }.bind(this);
+
+  this.bitstamp.balance(this.market, set);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.bitstamp.ticker(callback);
+  this.bitstamp.ticker(this.market, callback);
 }
 
 Trader.prototype.getFee = function(callback) {
@@ -69,8 +71,9 @@ Trader.prototype.getFee = function(callback) {
       callback(err);
 
     callback(false, data.fee / 100);
-  }
-  this.bitstamp.balance(_.bind(set, this));
+  }.bind(this);
+
+  this.bitstamp.balance(this.market, set);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -79,7 +82,7 @@ Trader.prototype.buy = function(amount, price, callback) {
       return log.error('unable to buy:', err, result);
 
     callback(null, result.id);
-  };
+  }.bind(this);
 
   // TODO: fees are hardcoded here?
   amount *= 0.995; // remove fees
@@ -87,7 +90,14 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount *= 100000000;
   amount = Math.floor(amount);
   amount /= 100000000;
-  this.bitstamp.buy(amount, price, _.bind(set, this));
+
+  // prevent:
+  // 'Ensure that there are no more than 2 decimal places.'
+  price *= 100;
+  price = Math.floor(price);
+  price /= 100;
+
+  this.bitstamp.buy(this.market, amount, price, undefined, set);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -96,27 +106,33 @@ Trader.prototype.sell = function(amount, price, callback) {
       return log.error('unable to sell:', err, result);
 
     callback(null, result.id);
-  };
+  }.bind(this);
 
-  this.bitstamp.sell(amount, price, _.bind(set, this));
+  // prevent:
+  // 'Ensure that there are no more than 2 decimal places.'
+  price *= 100;
+  price = Math.ceil(price);
+  price /= 100;
+
+  this.bitstamp.sell(this.market, amount, price, undefined, set);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, result) {
     var stillThere = _.find(result, function(o) { return o.id === order });
     callback(err, !stillThere);
-  };
+  }.bind(this);
 
-  this.bitstamp.open_orders(_.bind(check, this));
+  this.bitstamp.open_orders(this.market, check);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, result) {
     if(err || !result)
       log.error('unable to cancel order', order, '(', err, result, ')');
-  };
+  }.bind(this);
 
-  this.bitstamp.cancel_order(order, _.bind(cancel, this));
+  this.bitstamp.cancel_order(order, cancel);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -126,13 +142,12 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args);
 
     callback(null, result.reverse());
-  };
+  }.bind(this);
 
   if(since)
-    this.bitstamp.transactions({time: since}, _.bind(process, this));
+    this.bitstamp.transactions(this.market, {time: since}, process);
   else
-    this.bitstamp.transactions(_.bind(process, this));
+    this.bitstamp.transactions(this.market, process);
 }
-
 
 module.exports = Trader;

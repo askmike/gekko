@@ -2,7 +2,7 @@
 
 ## Fully working
 
-- [Bitstamp](http://bitstamp.com/) (only BTC/USD at the moment)
+- [Bitstamp](http://bitstamp.com/)
 - [kraken](http://kraken.com/)
 - [bitfinex](https://bitfinex.com/)
 - [btc-e](https://btc-e.com/)

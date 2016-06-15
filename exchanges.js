@@ -72,13 +72,15 @@ var exchanges = [
     slug: 'bitstamp',
     direct: false,
     infinityOrder: false,
-    currencies: ['USD'],
-    assets: ['BTC'],
+    currencies: ['USD', 'EUR'],
+    assets: ['BTC', 'EUR'],
     maxTradesAge: 60,
     maxHistoryFetch: null,
     markets: [
       {
-        pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' },
+        pair: ['EUR', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' },
+        pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' }
       }
     ],
     requires: ['key', 'secret', 'username'],
