@@ -14,7 +14,7 @@ var util = require(__dirname + '/../util');
 var log = require(util.dirs().core + 'log');
 var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
 
-var TradeBatcher = require(util.dirs().core + 'tradeBatcher');
+var TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
 
 var Fetcher = function(config) {
 

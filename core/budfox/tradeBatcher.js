@@ -23,8 +23,7 @@
 //   start: (moment),
 //   end: (moment),
 //   first: (trade),
-//   last: (trade),
-//   timespan: x,
+//   last: (trade)
 //   data: [
 //      // batch of new trades with 
 //      // moments instead of timestamps
@@ -33,10 +32,13 @@
 
 var _ = require('lodash');
 var moment = require('moment');
-var util = require('./util');
-var log = require('./log');
+var util = require('../util');
+var log = require('../log');
 
 var TradeBatcher = function(tid) {
+  if(!_.isString(tid))
+    throw 'tid is not a string';
+
   _.bindAll(this);
   this.tid = tid;
   this.last = -1;
@@ -45,22 +47,22 @@ var TradeBatcher = function(tid) {
 util.makeEventEmitter(TradeBatcher);
 
 TradeBatcher.prototype.write = function(batch) {
+  if(!_.isArray(batch))
+    throw 'batch is not an array';
+
   if(_.isEmpty(batch))
     return log.debug('Trade fetch came back empty.');
 
-  if(!_.isArray(batch))
-    batch = [batch];
+  var filterBatch = this.filter(batch);
 
-  batch = this.filter(batch);
-
-  var amount = _.size(batch);
+  var amount = _.size(filterBatch);
   if(!amount)
     return log.debug('No new trades.');
 
-  batch = this.convertDates(batch);
+  var momentBatch = this.convertDates(filterBatch);
 
-  var last = _.last(batch);
-  var first = _.first(batch);
+  var last = _.last(momentBatch);
+  var first = _.first(momentBatch);
 
   log.debug('Processing', amount, 'new trades.');
   log.debug(
@@ -78,7 +80,7 @@ TradeBatcher.prototype.write = function(batch) {
     end: last.date,
     last: last,
     first: first,
-    data: batch
+    data: momentBatch
   });
 
   this.last = last[this.tid];
@@ -105,7 +107,7 @@ TradeBatcher.prototype.filter = function(batch) {
 }
 
 TradeBatcher.prototype.convertDates = function(batch) {
-  return _.map(batch, function(trade) {
+  return _.map(_.cloneDeep(batch), function(trade) {
     trade.date = moment.unix(trade.date).utc();
     return trade;
   });
