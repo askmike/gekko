@@ -45,7 +45,6 @@ Market.prototype._read = function noop() {
 }
 
 Market.prototype.get = function() {
-
   if(this.iterator.to >= daterange.to) {
     this.iterator.to = daterange.to;
     this.ended = true;
@@ -61,6 +60,16 @@ Market.prototype.get = function() {
 Market.prototype.processCandles = function(candles) {
   this.pushing = true;
   var amount = _.size(candles);
+
+  if(!this.ended && amount <= this.batchSize) {
+    var d = function(ts) {
+      return moment.unix(ts).utc().format('YYYY-MM-DD HH:mm:ss');
+    }
+    var from = d(_.first(candles).start);
+    var to = d(_.last(candles).start);
+    log.warn(`Simulation based on incomplete market data (missing between ${from} and ${to}).`);
+  }
+
   _.each(candles, function(c, i) {
     c.start = moment.unix(c.start);
 
