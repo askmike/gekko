@@ -74,7 +74,7 @@ You can also run Gekko silently or use more complex features, for examples check
 
 If you installed Gekko via git you can easily fetch the latest updates by running:
 
-    git pull && npm update
+    git pull && npm install
 
 ## How does Gekko work?
 
