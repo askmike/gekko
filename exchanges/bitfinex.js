@@ -1,5 +1,5 @@
 
-var Bitfinex = require("bitfinex-fork");
+var Bitfinex = require("bitfinex-api-node");
 var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
@@ -47,7 +47,7 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
-  this.bitfinex.wallet_balances(function (err, data, body) {
+  this.bitfinex.rest.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
       return data.type === 'exchange';
     }).map(function (asset) {
@@ -62,7 +62,7 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.bitfinex.ticker(defaultAsset, function (err, data, body) {
+  this.bitfinex.rest.ticker(defaultAsset, function (err, data, body) {
     callback(err, { bid: +data.bid, ask: +data.ask })
   });
 }
@@ -80,8 +80,8 @@ function submit_order(bfx, type, amount, price, callback) {
   amount = Math.floor(amount*100000000)/100000000;
 
   bfx.new_order(defaultAsset, amount + '', price + '', exchangeName,
-    type, 
-    'exchange limit', 
+    type,
+    'exchange limit',
     function (err, data, body) {
       if (err)
         return log.error('unable to ' + type, err, body);
@@ -91,22 +91,22 @@ function submit_order(bfx, type, amount, price, callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'buy', amount, price, callback);
+  submit_order(this.bitfinex.rest, 'buy', amount, price, callback);
 
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'sell', amount, price, callback);
+  submit_order(this.bitfinex.rest, 'sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
-  this.bitfinex.order_status(order_id, function (err, data, body) {
+  this.bitfinex.rest.order_status(order_id, function (err, data, body) {
     callback(err, !data.is_live);
   });
 }
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
-  this.bitfinex.cancel_order(order_id, function (err, data, body) {
+  this.bitfinex.rest.cancel_order(order_id, function (err, data, body) {
       if (err || !data || !data.is_cancelled)
         log.error('unable to cancel order', order_id, '(', err, data, ')');
   });
@@ -116,9 +116,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  // Bitfinex API module does not support start date, but Bitfinex API does. 
-  var start = since ? since.unix() : null;
-  this.bitfinex.trades(defaultAsset, start, function (err, data) {
+  this.bitfinex.rest.trades(defaultAsset, function (err, data) {
     if (err)
       return self.retry(self.getTrades, args);
 
