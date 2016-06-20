@@ -8,20 +8,18 @@ Gekko arranges all communication about when assets need to be bought or sold bet
 
 When you add a new exchange to Gekko you need to expose an object that has methods to query the exchange. This exchange file needs to reside in `gekko/exchanges` and the filename is the slug of the exchange name + `.js`. So for example the exchange for Mt. Gox is explained in `gekko/exchanges/mtgox.js`.
 
-It is advised to use a npm module to query an exchange. This will seperate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://github.com/askmike/bitstamp)).
+It is advised to use a npm module to query an exchange. This will seperate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://www.npmjs.com/package/bitstamp)).
 
-Besides this javascript file a new object needs to be added to `gekko/config.js` in the `config.traders` array. Here you can set the default currency and asset that will be available through the exchange. Keep enabled at false, this is up to the end user.
-
-Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in `gekko/exchanges.js`. The parameters are described in that document.
+Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in `gekko/exchanges.js`. The meaning of the properties are described in the top of that document.
 
 ## Portfolio manager's expectations
 
-*If this documentation is not clear it please look at the 3 examples in `gekko/exchanges/`.*
+*If this documentation is not clear it please look at the examples in `gekko/exchanges/`.*
 
 The portfolio manager implements an exchange like so:
 
     var Exchange = require('./exchanges/' + [exchange slug]);
-    this.exchange = new Exchange({key: '', secret: ''});
+    this.exchange = new Exchange({key: '', secret: '', username: ''});
 
 It will run the following methods on the exchange object:
 
@@ -73,4 +71,8 @@ The trading method analyzes exchange data to determine what to do. The trading m
 
     this.watcher.getTrades(since, callback, descending);
 
-The since parameter is a [moment](http://momentjs.com/), this is a wrapper around a Date object. This moment represents the point in time from when the trading method needs trade data. The callback expects a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have the `date` property (unix timestamp in either string or int) and a `price` property (float) which represents the price in [currency] per 1 [asset]. `descending` is a boolean describing if the trades need to be returned in chronological descending order (newest first).
+~~The since parameter is a [moment](http://momentjs.com/), this is a wrapper around a Date object. This moment represents the point in time from when the trading method needs trade data.~~
+
+If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, try to keep it reasonable).
+
+The callback expects a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have the `date` property (unix timestamp in either string or int) and a `price` property (float) which represents the price in [currency] per 1 [asset]. `descending` is a boolean describing if the trades need to be returned in chronological descending order (newest first).
