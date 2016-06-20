@@ -9,7 +9,9 @@ var Trader = function(config) {
   this.user = config.username;
   this.key = config.key;
   this.secret = config.secret;
-  this.pair = 'ghs_' + config.currency.toLowerCase();
+  this.currency = config.currency.toUpperCase();
+  this.asset = config.asset.toUpperCase();
+  this.pair = this.asset + '_' + this.currency;
   this.name = 'cex.io';
 
   this.cexio = new CEXio(
@@ -46,7 +48,7 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount = Math.floor(amount);
   amount /= 100000000;
 
-  log.debug('BUY', amount, 'GHS @', price, 'BTC');
+  log.debug('BUY', amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
     if(err)
@@ -71,7 +73,7 @@ Trader.prototype.sell = function(amount, price, callback) {
   // test placing orders which will not be filled
   //price *= 10; price = price.toFixed(8);
 
-  log.debug('SELL', amount, 'GHS @', price, 'BTC');
+  log.debug('SELL', amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
     if(err)
@@ -149,7 +151,7 @@ Trader.prototype.getTicker = function(callback) {
 Trader.prototype.getFee = function(callback) {
   // cexio does currently don't take a fee on trades
   // TODO: isn't there an API call for this?
-  callback(false, 0.0);
+  callback(false, 0.002);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
@@ -184,3 +186,4 @@ Trader.prototype.cancelOrder = function(order) {
 }
 
 module.exports = Trader;
+
