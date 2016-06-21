@@ -115,7 +115,7 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
-  var limit_trades = '?limit_trades=10000';
+  var limit_trades = '?limit_trades=' + since;
 
   this.bitfinex.rest.trades(defaultAsset + limit_trades,  function (err, data) {
     if (err)
