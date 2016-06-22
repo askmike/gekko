@@ -186,10 +186,9 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
-    // TODO: should be possible to enable this for Bitfinex?
-    providesHistory: false,
+    maxHistoryFetch: 10000,
     tid: 'tid'
-    // fetchTimespan: 60
+
   },
   {
     name: 'meXBT',
@@ -315,7 +314,7 @@ var exchanges = [
   // ,
   // ---- Keeping this here for historical purposes. ----
   // {
-  // 
+  //
   //   name: 'MtGox',
   //   slug: 'mtgox',
   //   direct: true,
