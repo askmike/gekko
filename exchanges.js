@@ -186,7 +186,6 @@ var exchanges = [
       }
     ],
     requires: ['key', 'secret'],
-    maxHistoryFetch: 10000,
     tid: 'tid'
 
   },
