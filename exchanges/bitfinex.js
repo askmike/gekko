@@ -64,12 +64,13 @@ Trader.prototype.getPortfolio = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   this.bitfinex.ticker(defaultAsset, function(err, data, body) {
-    setTimeout(function() {
-      callback(err, {bid: +data.bid, ask: +data.ask});
-    }, 10000)
-    });
+        if (err) {
+          console.log(err);
+        } else {
+          callback(err, {bid: data.bid, ask: data.ask});
+      }
+  });
 }
-
 // This assumes that only limit orders are being placed, so fees are the
 // "maker fee" of 0.1%.  It does not take into account volume discounts.
 Trader.prototype.getFee = function(callback) {
