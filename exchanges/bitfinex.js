@@ -63,7 +63,7 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  var ticker = this.bitfinex.ticker(defaultAsset, function(err, data, body) {
+  this.bitfinex.ticker(defaultAsset, function(err, data, body) {
     setTimeout(function() {
       callback(err, {bid: +data.bid, ask: +data.ask});
     }, 10000)
