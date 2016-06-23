@@ -64,11 +64,13 @@ Trader.prototype.getPortfolio = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   this.bitfinex.ticker(defaultAsset, function(err, data, body) {
-        if (err) {
-          console.log(err);
-        } else {
-          callback(err, {bid: data.bid, ask: data.ask});
-      }
+    if (err) {
+      return this.retry(this.bitfinex
+        .ticker(defaultAsset, function(err, data, body) {
+                callback(err, {bid: data.bid, ask: data.ask});
+          }));
+        }
+    callback(err, {bid: data.bid, ask: data.ask})
   });
 }
 // This assumes that only limit orders are being placed, so fees are the
