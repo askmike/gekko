@@ -115,7 +115,8 @@ var util = {
       core: ROOT + 'core/',
       plugins: ROOT + 'plugins/',
       methods: ROOT + 'methods/',
-      budfox: ROOT + 'core/budfox/'
+      budfox: ROOT + 'core/budfox/',
+      importers: ROOT + 'importers/exchanges/'
     }
   },
   inherit: function(dest, source) {
@@ -129,8 +130,10 @@ var util = {
   },
   // TODO:
   gekkoMode: function() {
-    if(program.backtest)
-      return 'backtest'
+    if(program.importer)
+      return 'importer';
+    else if(program.backtest)
+      return 'backtest';
     else
       return 'realtime';
   }
@@ -140,6 +143,7 @@ program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
   .option('-b, --backtest', 'backtest')
+  .option('-i, --importer', 'importer')
   .parse(process.argv);
 
 var config = util.getConfig();

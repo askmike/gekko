@@ -11,6 +11,7 @@ var moment = require('moment');
 var utc = moment.utc;
 var util = require(__dirname + '/../util');
 
+var config = util.getConfig();
 var log = require(util.dirs().core + 'log');
 var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
 

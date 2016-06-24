@@ -28,7 +28,7 @@ var plugins = [
     description: 'Store candles in a database',
     slug: 'candleWriter',
     async: true,
-    modes: ['realtime'],
+    modes: ['realtime', 'importer'],
     path: function(config) {
       return config.adapter + '/writer';
     },

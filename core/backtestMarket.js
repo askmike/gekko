@@ -37,7 +37,7 @@ Market.prototype = Object.create(Readable.prototype, {
   constructor: { value: Market }
 });
 
-Market.prototype._read = function noop() {
+Market.prototype._read = function() {
   if(this.pushing)
     return;
 

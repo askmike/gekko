@@ -294,6 +294,18 @@ config.backtest = {
   batchSize: 50
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING IMPORTING
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var moment = require('moment');
+config.backtest = {
+  adapter: 'sqlite',
+  daterange: {
+    from: moment.utc("2016-05-29 21:55:00")
+  }
+}
+
 // set this to true if you understand that Gekko will 
 // invest according to how you configured the indicators.
 // None of the advice in the output is Gekko telling you
