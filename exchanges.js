@@ -83,7 +83,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
-    maxHistoryFetch: 'day',
+    // maxHistoryFetch: 'day',
     fetchTimespan: 60,
     tid: 'tid'
   },

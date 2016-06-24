@@ -1,7 +1,7 @@
 // 
 // Current state: early prototype
 // 
-// todo: express maybe?
+// todo: koa maybe?
 // 
 
 // 
@@ -10,10 +10,11 @@
 
 var _ = require('lodash');
 var async = require('async');
-var config = require('../core/util').getConfig();
+var config = _.cloneDeep(require('../core/util').getConfig());
 // we are going to send it to web clients, remove
 // potential private information
 delete config.mailer;
+delete config.trader
 
 var serverConfig = config.webserver;
 
@@ -25,16 +26,8 @@ var Server = function() {
   _.bindAll(this);
 
   this.history = false;
+  this.advices = false;
   this.index;
-
-  // static assets Gekko
-  // can pass 
-  this.assets = [
-    '/css/style.css',
-    '/js/d3.chart.js',
-    '/js/d3.candlechart.js',
-    '/js/main.js'
-  ]
 }
 
 Server.prototype.setup = function(next) {
@@ -69,22 +62,38 @@ Server.prototype.setupHTTP = function(next) {
     .listen(serverConfig.http.port, next);
 }
 
-Server.prototype.broadcastHistory = function(data) {
-  this.history = data;
-  this.broadcast({
-    message: 'history',
-    data: data
-  });
-}
+// Server.prototype.broadcastHistory = function(data) {
+//   this.history = data;
+//   this.broadcast({
+//     message: 'history',
+//     data: data
+//   });
+// }
 
-Server.prototype.broadcastSmallCandle = function(candle) {
+Server.prototype.broadcastCandle = function(_candle) {
+  var candle = _.clone(_candle);
+  candle.start = candle.start.unix();
+
+  if(!this.history)
+    this.history = [];
+
+  this.history.push(candle);
+
+  if(_.size(this.history) > 1000)
+    this.history.shift();
+
   this.broadcast({
     message: 'candle',
     data: candle
   });
 }
 
-Server.prototype.broadcastAdvice = function() {}
+Server.prototype.broadcastAdvice = function(advice) {
+  if(!this.advices)
+    this.advices = [];
+
+  this.advices.push(advice);
+}
 
 Server.prototype.broadcastTrade = function(trade) {
   this.broadcast({
@@ -94,6 +103,8 @@ Server.prototype.broadcastTrade = function(trade) {
 }
 
 Server.prototype.handleHTTPConnection = function(req, res) {
+
+  console.log(req.url);
 
   if(req.url === '/') {
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -124,11 +135,23 @@ Server.prototype.broadcast = function(obj) {
 }
 
 Server.prototype.handleWSConnection = function(conn) {
-  if(this.history)
+  console.log('new con');
+  if(this.history) {
+    console.log('sending history', _.size(this.history))
     this.send(conn, {
       message: 'history',
       data: this.history
     });
+  }
+
+  if(this.advices) {
+    _.each(this.advices, function(a) {
+      this.send(conn, {
+        message: 'advice',
+        data: a
+      });
+    }, this)
+  }
 
   this.send(conn, {
     message: 'config',

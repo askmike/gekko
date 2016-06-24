@@ -258,6 +258,18 @@ config.candleWriter = {
   enabled: true
 }
 
+config.webserver = {
+  enabled: true,
+  http: {
+    port: 8080,
+    host: 'localhost'
+  },
+  ws: {
+    port: 8081,
+    host: 'localhost'
+  }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
