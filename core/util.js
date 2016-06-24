@@ -113,6 +113,7 @@ var util = {
     return {
       gekko: ROOT,
       core: ROOT + 'core/',
+      exchanges: ROOT + 'exchanges/',
       plugins: ROOT + 'plugins/',
       methods: ROOT + 'methods/',
       budfox: ROOT + 'core/budfox/',

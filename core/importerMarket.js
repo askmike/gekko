@@ -16,7 +16,7 @@ var error = exchangeChecker.cantFetchFullHistory(config.watch);
 if(error)
   util.die(error, true);
 
-var Fetcher = require(dirs.importers + config.watch.exchange);
+var fetcher = require(dirs.importers + config.watch.exchange);
 
 if(!daterange.to) {
   var now = moment();
@@ -36,9 +36,9 @@ var Market = function() {
 
   this.tradeBatcher = new TradeBatcher(this.exchangeSettings.tid);
   this.candleManager = new CandleManager;
-  this.fetcher = new Fetcher(daterange);
+  this.fetch = fetcher(daterange);
 
-  this.traderBatcher.on(
+  this.tradeBatcher.on(
     'new trades',
     this.candleManager.processTrades
   );
@@ -65,7 +65,9 @@ Market.prototype.pushCandles = function(candles) {
 }
 
 Market.prototype.get = function() {
-  this.fetcher.fetch(this.traderBatcher.write)
+  this.fetch(this.tradeBatcher.write);
+
+  setTimeout(this.get, 1000);
 }
 
 module.exports = Market;

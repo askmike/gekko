@@ -47,6 +47,7 @@ var TradeBatcher = function(tid) {
 util.makeEventEmitter(TradeBatcher);
 
 TradeBatcher.prototype.write = function(batch) {
+
   if(!_.isArray(batch))
     throw 'batch is not an array';
 
