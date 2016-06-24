@@ -93,6 +93,11 @@ Server.prototype.broadcastAdvice = function(advice) {
     this.advices = [];
 
   this.advices.push(advice);
+
+  this.broadcast({
+    message: 'advice',
+    data: advice
+  });
 }
 
 Server.prototype.broadcastTrade = function(trade) {
