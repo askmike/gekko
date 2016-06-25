@@ -8,7 +8,6 @@ var log = require('../core/log');
 // Module-wide constants
 var exchangeName = 'bitfinex';
 // Bitfinex supports Litecoin, but this module currently only supports Bitcoin
-var defaultAsset = 'btcusd';
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -19,9 +18,8 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-
-  this.bitfinex = new Bitfinex(this.key, this.secret);
-  this.bitfinex = this.bitfinex.rest;
+  this.pair = config.asset + config.currency;
+  this.bitfinex = new Bitfinex(this.key, this.secret).rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -50,7 +48,7 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
-      return data.type === 'exchange';
+      return data.type = 'exchange'
     }).map(function (asset) {
       return {
         name: asset.currency.toUpperCase(),
@@ -62,7 +60,6 @@ Trader.prototype.getPortfolio = function(callback) {
   });
 }
 
-Trader.prototype.getTicker = function(callback) {
   Trader.prototype.getTicker = function(callback) {
     // the function that will handle the API callback
     var process = function(err, data, body) {
@@ -74,19 +71,23 @@ Trader.prototype.getTicker = function(callback) {
         // before we retry.
 
         // the arguments we need to pass the the ticker method
-        var args = [ defaultAsset, process ]
-        return this.retry(this.bitfinex.ticker, args);
+        console.log('trade failed retrying');
+        var tryAgain = function () {
+          return this.bitfinex.ticker(this.pair, process);
+        }.bind(this);
+        return tryAgain();
       }
 
       // whenever we reach this point we have valid
       // data, the callback is still the same since
       // we are inside the same javascript scope.
       callback(err, {bid: +data.bid, ask: +data.ask})
-    }
+    }.bind(this);
+    console.log('attempting trade');
 
-    this.bitfinex.ticker(defaultAsset, process);
+    this.bitfinex.ticker(this.pair, process);
   }
-}
+
 // This assumes that only limit orders are being placed, so fees are the
 // "maker fee" of 0.1%.  It does not take into account volume discounts.
 Trader.prototype.getFee = function(callback) {
@@ -99,7 +100,7 @@ function submit_order(bfx, type, amount, price, callback) {
   // amount *= 0.995; // remove fees
   amount = Math.floor(amount*100000000)/100000000;
 
-  bfx.new_order(defaultAsset, amount + '', price + '', exchangeName,
+  bfx.new_order(this.pair, amount + '', price + '', exchangeName,
     type,
     'exchange limit',
     function (err, data, body) {
@@ -136,7 +137,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  var path = defaultAsset;
+  var path = this.pair;
   if(since)
     path += '?limit_trades=' + since;
 

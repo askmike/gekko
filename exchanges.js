@@ -178,15 +178,17 @@ var exchanges = [
     slug: 'bitfinex',
     direct: false,
     infinityOrder: false,
-    currencies: ['USD'],
-    assets: ['BTC'],
+    currencies: ['USD', 'BTC'],
+    assets: ['BTC', 'LTC', 'ETH'],
     markets: [
-      {
-        pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'currency' }
-      }
+        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }},
+        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }},
+        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }},
+        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }},
+        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }},
     ],
     requires: ['key', 'secret'],
-    maxHistoryFetch: 49000,
+    maxHistoryFetch: 10000,
     tid: 'tid'
 
   },

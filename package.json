@@ -14,6 +14,7 @@
   "dependencies": {
     "async": "0.2.x",
     "bitexthai": "^0.1.0",
+    "bitfinex-api-node": "^0.2.9",
     "bitfinex-fork": "0.3.4",
     "bitstamp": "0.3.x",
     "bitx": "^1.5.0",
