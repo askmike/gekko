@@ -15,10 +15,7 @@ function joinCurrencies(currencyA, currencyB){
     return currencyA + '_' + currencyB;
 }
 
-var iterator = false;
-var end = false;
-
-// todo, improve getTrades api
+// patch getTrades..
 Fetcher.prototype.getTrades = function(range, callback) {
   var args = _.toArray(arguments);
   var process = function(err, result) {
@@ -39,34 +36,62 @@ Fetcher.prototype.getTrades = function(range, callback) {
       };
     });
 
-    callback(null, result.reverse());
-  };
+    callback(result.reverse());
+  }.bind(this);
 
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
   
+  console.log('FETCH FROM', range.from.utc().format('YYYY-MM-DD HH:mm:ss'));
+  console.log('FETCH TO', range.to.utc().format('YYYY-MM-DD HH:mm:ss'));
+
   params.start = range.from.unix();
   params.end = range.to.unix();
 
-  this.poloniex._public('returnTradeHistory', params, _.bind(process, this));
+  this.poloniex._public('returnTradeHistory', params, process);
 }
 
-module.exports = function init(daterange) {
+util.makeEventEmitter(Fetcher);
+
+var iterator = false;
+var end = false;
+var done = false;
+
+var fetcher = new Fetcher(config.watch);
+
+var fetch = () => {
+  fetcher.getTrades(iterator, handleFetch);
+}
+
+var handleFetch = trades => {
+  // console.log('end', end.format('YYYY-MM-DD HH:mm:ss'));
+  console.log('amount', _.size(trades))
+  var first = moment.unix(_.first(trades).date); 
+  console.log('first', first.utc().format('YYYY-MM-DD HH:mm:ss'))
+  var last = moment.unix(_.last(trades).date);
+  console.log('last', last.utc().format('YYYY-MM-DD HH:mm:ss'))
+
+  iterator.from.add(8, 'hour').subtract(5, 'minutes');
+  iterator.to.add(8, 'hour').subtract(5, 'minutes');
+
+  if(last > end)
+    this.emit('done');
+
+  fetcher.emit('trades', trades);
+}
+
+module.exports = function (daterange) {
   iterator = {
     from: daterange.from.clone(),
-    to: daterange.from.clone().add(1, 'hour')
+    to: daterange.from.clone().add(8, 'hour')
   }
   end = daterange.to.clone();
 
-  var fetcher = new Fetcher(config.watch);
-
-  return next => fetcher.getTrades(iterator, (err, trades) => {
-    iterator.from.add(10, 'hour');
-    iterator.to.add(10, 'hour');
-
-    next(trades);
-  });
+  return {
+    bus: fetcher,
+    fetch: fetch
+  }
 }
 
 

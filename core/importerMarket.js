@@ -36,7 +36,21 @@ var Market = function() {
 
   this.tradeBatcher = new TradeBatcher(this.exchangeSettings.tid);
   this.candleManager = new CandleManager;
-  this.fetch = fetcher(daterange);
+  this.fetcher = fetcher(daterange);
+
+  this.done = false;
+
+  this.fetcher.bus.on(
+    'trades',
+    this.processTrades
+  );
+
+  this.fetcher.bus.on(
+    'done',
+    function() {
+      this.done = true;
+    }.bind(this)
+  )
 
   this.tradeBatcher.on(
     'new trades',
@@ -65,8 +79,14 @@ Market.prototype.pushCandles = function(candles) {
 }
 
 Market.prototype.get = function() {
-  this.fetch(this.tradeBatcher.write);
+  if(this.done)
+    return;
 
+  this.fetcher.fetch();
+}
+
+Market.prototype.processTrades = function(trades) {
+  this.tradeBatcher.write(trades);
   setTimeout(this.get, 1000);
 }
 
