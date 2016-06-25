@@ -24,7 +24,8 @@ Fetcher.prototype.getTrades = function(range, callback) {
 
     if(_.size(result) > 50000) {
       // to many trades..
-      return this.getTrades()
+      // return this.getTrades()
+      util.die('too many trades..');
     }
 
     result = _.map(result, function(trade) {

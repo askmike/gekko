@@ -44,7 +44,6 @@ Store.prototype.upsertTables = function() {
 }
 
 var processCandle = function(candle, done) {
-  console.log('WRITING');
   var stmt = this.db.prepare(`
     INSERT OR IGNORE INTO ${sqliteUtil.table('candles')} VALUES (?,?,?,?,?,?,?,?,?)
   `);

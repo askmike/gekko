@@ -53,7 +53,7 @@ var Market = function() {
   )
 
   this.tradeBatcher.on(
-    'new trades',
+    'new batch',
     this.candleManager.processTrades
   );
 
@@ -79,14 +79,15 @@ Market.prototype.pushCandles = function(candles) {
 }
 
 Market.prototype.get = function() {
-  if(this.done)
-    return;
-
   this.fetcher.fetch();
 }
 
 Market.prototype.processTrades = function(trades) {
   this.tradeBatcher.write(trades);
+
+  if(this.done)
+    return;
+
   setTimeout(this.get, 1000);
 }
 

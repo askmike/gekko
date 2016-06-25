@@ -45,7 +45,7 @@ if(
 log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
-// load either realtime, backtest or importer market
+// load a market
 var Market = require(dirs.core + mode + 'Market');
 
 var GekkoStream = require(dirs.core + 'gekkoStream');
