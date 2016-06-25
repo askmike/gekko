@@ -46,7 +46,7 @@ log.info('Gekko v' + util.getVersion(), 'started');
 log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 // load a market
-var Market = require(dirs.core + mode + 'Market');
+var Market = require(dirs.markets + mode);
 
 var GekkoStream = require(dirs.core + 'gekkoStream');
 

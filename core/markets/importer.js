@@ -1,8 +1,8 @@
 var _ = require('lodash');
-var util = require('./util');
+var util = require('../util');
 var config = util.getConfig();
 var dirs = util.dirs();
-var log = require('./log');
+var log = require(dirs.core + 'log');
 var moment = require('moment');
 
 var adapter = config.adapters[config.importer.adapter];
