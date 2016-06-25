@@ -86,7 +86,7 @@ Market.prototype.processTrades = function(trades) {
   this.tradeBatcher.write(trades);
 
   if(this.done)
-    return;
+    return log.info('Done importing!');
 
   setTimeout(this.get, 1000);
 }

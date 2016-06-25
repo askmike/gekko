@@ -10,6 +10,9 @@ var dirs = util.dirs();
 
 var Fetcher = require(dirs.exchanges + 'poloniex');
 
+var batchSize = 60 * 2; // 2 hour
+var overlapSize = 10; // 10 minutes
+
 // Helper methods
 function joinCurrencies(currencyA, currencyB){
     return currencyA + '_' + currencyB;
@@ -22,9 +25,8 @@ Fetcher.prototype.getTrades = function(range, callback) {
     if(err || result.error)
       return this.retry(this.getTrades, args);
 
-    if(_.size(result) > 50000) {
+    if(_.size(result) === 50000) {
       // to many trades..
-      // return this.getTrades()
       util.die('too many trades..');
     }
 
@@ -43,9 +45,6 @@ Fetcher.prototype.getTrades = function(range, callback) {
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
-  
-  console.log('FETCH FROM', range.from.utc().format('YYYY-MM-DD HH:mm:ss'));
-  console.log('FETCH TO', range.to.utc().format('YYYY-MM-DD HH:mm:ss'));
 
   params.start = range.from.unix();
   params.end = range.to.unix();
@@ -66,18 +65,20 @@ var fetch = () => {
 }
 
 var handleFetch = trades => {
-  // console.log('end', end.format('YYYY-MM-DD HH:mm:ss'));
-  console.log('amount', _.size(trades))
-  var first = moment.unix(_.first(trades).date); 
-  console.log('first', first.utc().format('YYYY-MM-DD HH:mm:ss'))
   var last = moment.unix(_.last(trades).date);
-  console.log('last', last.utc().format('YYYY-MM-DD HH:mm:ss'))
 
-  iterator.from.add(8, 'hour').subtract(5, 'minutes');
-  iterator.to.add(8, 'hour').subtract(5, 'minutes');
+  iterator.from.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
+  iterator.to.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
 
-  if(last > end)
-    this.emit('done');
+  if(last > end) {
+    fetcher.emit('done');
+
+    endUnix = end.unix();
+    trades = _.filter(
+      trades,
+      t => t.date <= endUnix
+    );
+  }
 
   fetcher.emit('trades', trades);
 }
@@ -85,7 +86,7 @@ var handleFetch = trades => {
 module.exports = function (daterange) {
   iterator = {
     from: daterange.from.clone(),
-    to: daterange.from.clone().add(8, 'hour')
+    to: daterange.from.clone().add(batchSize, 'minutes')
   }
   end = daterange.to.clone();
 
