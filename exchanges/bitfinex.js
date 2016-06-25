@@ -48,7 +48,7 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
-      return data.type = 'exchange'
+      return data.type === 'exchange'
     }).map(function (asset) {
       return {
         name: asset.currency.toUpperCase(),
@@ -71,7 +71,6 @@ Trader.prototype.getPortfolio = function(callback) {
         // before we retry.
 
         // the arguments we need to pass the the ticker method
-        console.log('trade failed retrying');
         var tryAgain = function () {
           return this.bitfinex.ticker(this.pair, process);
         }.bind(this);
@@ -83,8 +82,6 @@ Trader.prototype.getPortfolio = function(callback) {
       // we are inside the same javascript scope.
       callback(err, {bid: +data.bid, ask: +data.ask})
     }.bind(this);
-    console.log('attempting trade');
-
     this.bitfinex.ticker(this.pair, process);
   }
 
