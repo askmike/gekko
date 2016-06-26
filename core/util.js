@@ -132,7 +132,7 @@ var util = {
   },
   // TODO:
   gekkoMode: function() {
-    if(program.importer)
+    if(program['import'])
       return 'importer';
     else if(program.backtest)
       return 'backtest';
@@ -144,8 +144,8 @@ var util = {
 program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
-  .option('-b, --backtest', 'backtest')
-  .option('-i, --import', 'importer')
+  .option('-b, --backtest', 'backtesting mode')
+  .option('-i, --import', 'importer mode')
   .parse(process.argv);
 
 var config = util.getConfig();
