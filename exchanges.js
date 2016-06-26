@@ -188,7 +188,7 @@ var exchanges = [
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }},
     ],
     requires: ['key', 'secret'],
-    maxHistoryFetch: 10000,
+    maxHistoryFetch: 2000,
     tid: 'tid'
 
   },
