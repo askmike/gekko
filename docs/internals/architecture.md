@@ -39,6 +39,6 @@ Those two core components describe the majority of Gekko's flow. A lot "core fun
 
 ## Seperated architecture
 
-The seperated nature of Gekko makes it very dynamic and allows for rapidly creating new plugins. However there is an ugly side to this story:
+The modular nature of Gekko makes it very dynamic and allows for rapidly creating new plugins. However there is an ugly side to this story:
 
 The `tradingAdvisor` runs TA strategies against a market. The problem however is that most TA indicators need some history before thay can give accurate results. If you want to use an EMA (exponential moving average), you need some history to base the initial average on. But because the tradingAdvisor doesn't know what market data is going to be made available later by the market, it needs to do some fetching itself and compare that to locally available market data (stored in the local database) to see if it can stitch the two sources.
