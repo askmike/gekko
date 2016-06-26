@@ -1,4 +1,4 @@
-var BTCChina = require('btc-china');
+var BTCChina = require('btc-china-fork');
 var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
@@ -69,10 +69,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       callback(null, result);
   }.bind(this);
 
-  if(since)
-    this.btcc.getHistoryData(process, {limit: since});
-  else
-    this.btcc.getHistoryData(process, {limit: 500});
+  if(!since)
+    since = 500;
+
+  this.btcc.getHistoryData(process, {limit: since});
 }
 
 Trader.prototype.getPortfolio = function(callback) {
