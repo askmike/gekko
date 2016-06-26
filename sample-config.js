@@ -289,6 +289,7 @@ config.adapters = {
 }
 
 
+var moment = require('moment');
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING BACKTESTING
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -296,7 +297,6 @@ config.adapters = {
 // Note that these settings are only used in backtesting mode, see here:
 // @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
 
-var moment = require('moment');
 config.backtest = {
   adapter: 'sqlite',
   daterange: {
@@ -304,6 +304,16 @@ config.backtest = {
     to: moment.utc("2016-06-10 09:49:00")
   },
   batchSize: 50
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING IMPORTING
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.importer = {
+  daterange: {
+    from: moment.utc("2015-09-09 12:00:00")
+  }
 }
 
 // set this to true if you understand that Gekko will 

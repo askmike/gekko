@@ -169,9 +169,9 @@ var exchanges = [
       { pair: ['BTC', 'GRC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
     ],
     requires: ['key', 'secret'],
-    providesHistory: 'date',
     tid: 'tid',
     // monitorError: 'https://github.com/askmike/gekko/issues/210',
+    providesFullHistory: true,
   },
   {
     name: 'Bitfinex',

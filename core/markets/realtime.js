@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var util = require('./util');
+var util = require('../util');
 var dirs = util.dirs();
 
 var config = util.getConfig();

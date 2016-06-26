@@ -113,9 +113,12 @@ var util = {
     return {
       gekko: ROOT,
       core: ROOT + 'core/',
+      markets: ROOT + 'core/markets/',
+      exchanges: ROOT + 'exchanges/',
       plugins: ROOT + 'plugins/',
       methods: ROOT + 'methods/',
-      budfox: ROOT + 'core/budfox/'
+      budfox: ROOT + 'core/budfox/',
+      importers: ROOT + 'importers/exchanges/'
     }
   },
   inherit: function(dest, source) {
@@ -129,8 +132,10 @@ var util = {
   },
   // TODO:
   gekkoMode: function() {
-    if(program.backtest)
-      return 'backtest'
+    if(program['import'])
+      return 'importer';
+    else if(program.backtest)
+      return 'backtest';
     else
       return 'realtime';
   }
@@ -139,7 +144,8 @@ var util = {
 program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
-  .option('-b, --backtest', 'backtest')
+  .option('-b, --backtest', 'backtesting mode')
+  .option('-i, --import', 'importer mode')
   .parse(process.argv);
 
 var config = util.getConfig();

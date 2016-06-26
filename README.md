@@ -17,6 +17,9 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 * Backtester (for TA strategies)
 * Tool for systematic trading
 * Low level market library
+ * Monitor the live market
+ * Import historical market data
+ * Broadcast market data over pubsub messaging systems
 
 ## Automated Trading platform
 
@@ -38,7 +41,27 @@ Gekko has a plugin system that can do certain things whenever something happens 
 
 ## Supported exchanges
 
-Gekko supports multiple cryptocurreny exchanges, see [here](https://github.com/askmike/gekko/blob/stable/docs/supported_exchanges.md).
+| Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
+| --------------- |:----------:|:-------:|:---------:|-------|
+| [Poloniex](https://poloniex.com/)      | ✔ | ✔ | ✔ | |
+| [Bitstamp](https://bitstamp.com/)      | ✔ | ✔ | ✘ | |
+| [Kraken](https://kraken.com/)      | ✔ | ✔ | ✘ | |
+| [Bitfinex](https://bitfinex.com/)      | ✔ | ✔ | ✘ | |
+| [BTC-e](https://btc-e.com/)      | ✔ | ✔ | ✘ | |
+| [BTCC](https://btcc.com/)      | ✔ | ✔ | ✘ | (=BTCChina) |
+| [Cex.io](https://bitstamp.com/)      | ✔ | ✘ | ✘ | |
+| [bitX](https://www.bitx.co/)      | ✔ | ✘ | ✘ | |
+| [lakeBTC](https://lakebtc.com/)      | ✔ | ✘ | ✘ | |
+| [meXBT](https://mexbt.com/)      | ✔ | ✘ | ✘ | (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974)) |
+| [zaif](https://zaif.jp/trade_btc_jpy)      | ✔ | ✘ | ✘ | |
+| [lakeBTC](https://lakebtc.com/)      | ✔ | ✘ | ✘ | |
+| [bx.in.th](https://bx.in.th/)      | ✔ | ✘ | ✘ | |
+
+Monitoring means that Gekko is able to watch the realtime market, this automatically means that Gekko is also able to:
+
+- run trading strategies against the data (in semi-realtime)
+- simulate trading profits (paper trader)
+- store all data (to backtest in the future)
 
 ## Installing Gekko
 
@@ -78,10 +101,6 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 
 ## How does Gekko work?
 
-![Gekko 0.1.0 architecture](http://data.wizb.it/misc/gekko-0.1.0-architecture.jpg)
-
-If you want to contribute or are interested in how Gekko works:
-
 - Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/stable/docs/internals/architecture.md).
 - Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/stable/docs/internals/exchanges.md).
 - Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/stable/docs/internals/plugins.md).
@@ -92,7 +111,7 @@ If you want to contribute or are interested in how Gekko works:
 * More tests
 * More exchanges
 * More indicators
-* Webbased interface (?)
+* Webbased interface ([first step](https://github.com/askmike/gekko/issues/338#issuecomment-228368499))?
 
 ## Credits
 

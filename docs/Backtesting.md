@@ -13,7 +13,7 @@ Besides that, make sure to configure `config.watch`.
 
 ## Historical data
 
-Gekko requires historical data to backtest strategies against. The easiest way to get this is to run Gekko on real markets with the plugin sqliteWriter enabled (this will cause Gekko to store realtime data on disk).
+Gekko requires historical data to backtest strategies against. The easiest way to get this is to let Gekko import historical data, however this is not supported by a lot of exchanges (see [here](https://github.com/askmike/gekko#supported-exchanges)). The second easiest and most universal way is to run Gekko on real markets with the plugin sqliteWriter enabled (this will cause Gekko to store realtime data on disk).
 
 ## Configure
 

@@ -1,8 +1,8 @@
 var _ = require('lodash');
-var util = require('./util');
+var util = require('../util');
 var config = util.getConfig();
 var dirs = util.dirs();
-var log = require('./log');
+var log = require(dirs.core + 'log');
 var moment = require('moment');
 
 var adapter = config.adapters[config.backtest.adapter];
@@ -37,7 +37,7 @@ Market.prototype = Object.create(Readable.prototype, {
   constructor: { value: Market }
 });
 
-Market.prototype._read = function noop() {
+Market.prototype._read = function() {
   if(this.pushing)
     return;
 
@@ -61,13 +61,16 @@ Market.prototype.processCandles = function(candles) {
   this.pushing = true;
   var amount = _.size(candles);
 
-  if(!this.ended && amount <= this.batchSize) {
+  if(amount === 0)
+    util.die('Query returned no candles (do you have local data for the specified range?)');
+
+  if(!this.ended && amount < this.batchSize) {
     var d = function(ts) {
       return moment.unix(ts).utc().format('YYYY-MM-DD HH:mm:ss');
     }
     var from = d(_.first(candles).start);
     var to = d(_.last(candles).start);
-    log.warn(`Simulation based on incomplete market data (missing between ${from} and ${to}).`);
+    log.warn(`Simulation based on incomplete market data (${this.batchSize - amount} missing between ${from} and ${to}).`);
   }
 
   _.each(candles, function(c, i) {
