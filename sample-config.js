@@ -259,7 +259,7 @@ config.candleWriter = {
 }
 
 config.webserver = {
-  enabled: true,
+  enabled: false,
   http: {
     port: 8080,
     host: 'localhost'
