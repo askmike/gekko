@@ -65,8 +65,8 @@ TradeBatcher.prototype.write = function(batch) {
   var last = _.last(momentBatch);
   var first = _.first(momentBatch);
 
-  log.debug('Processing', amount, 'new trades.');
   log.debug(
+    'Processing', amount, 'new trades.',
     'From',
     first.date.format('YYYY-MM-DD HH:mm:ss'),
     'UTC to',

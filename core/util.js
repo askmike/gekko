@@ -145,7 +145,7 @@ program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
   .option('-b, --backtest', 'backtest')
-  .option('-i, --importer', 'importer')
+  .option('-i, --import', 'importer')
   .parse(process.argv);
 
 var config = util.getConfig();
