@@ -23,7 +23,7 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 ## TA strategies
 
-Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md). You can use over 130 indicators to create your perfect prediction model. *Why don't you combine Bollinger Bands, CCI, MACD with a STOCHRSI indicator?*
+Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md). You can use over 130 indicators to create your perfect prediction model. *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
 
 ## Automated Trading platform
 
@@ -114,10 +114,18 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 
 ## TODO
 
+* Stabilize importing API.
 * More tests
-* More exchanges
-* More indicators
+* Better documentation for TA-lib indicators.
 * Webbased interface ([first step](https://github.com/askmike/gekko/issues/338#issuecomment-228368499))?
+
+*Better exchange support:*
+
+- add GDAX exchange (supports [importing](https://docs.gdax.com/#get-historic-rates))
+- support imorting at bitfinex ([here](http://docs.bitfinex.com/#trades)).
+- add okcoin
+- add huobi
+- fix cryptsy integration..
 
 ## Credits
 
