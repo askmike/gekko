@@ -7,7 +7,7 @@ var log = require('../core/log');
 
 // Module-wide constants
 var exchangeName = 'bitfinex';
-// Bitfinex supports Litecoin, but this module currently only supports Bitcoin
+var symbol;
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -18,8 +18,9 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-  this.pair = config.asset + config.currency;
-  this.bitfinex = new Bitfinex(this.key, this.secret).rest;
+  symbol = config.asset + config.currency;
+  this.bitfinex = new Bitfinex(this.key, this.secret);
+  this.bitfinex = this.bitfinex.rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -70,12 +71,9 @@ Trader.prototype.getTicker = function(callback) {
       // so we use this.retry since this will wait first
       // before we retry.
       // the arguments we need to pass the the ticker method
-      //>> this.retry throws an error
-      var tryAgain = function () {
-          return this.bitfinex.ticker(this.pair, process);
-      }.bind(this);
 
-      return tryAgain();
+      var args = [ symbol, process ];
+      return this.retry(bitfinex.ticker(args));
     }
 
     // whenever we reach this point we have valid
@@ -84,7 +82,7 @@ Trader.prototype.getTicker = function(callback) {
     callback(err, {bid: +data.bid, ask: +data.ask})
   }.bind(this);
 
-  this.bitfinex.ticker(this.pair, process);
+  this.bitfinex.ticker(symbol, process);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
@@ -98,8 +96,7 @@ function submit_order(bfx, type, amount, price, callback) {
   // TODO: Bitstamp module included the following - is it necessary?
   // amount *= 0.995; // remove fees
   amount = Math.floor(amount*100000000)/100000000;
-
-  bfx.new_order(this.pair, amount + '', price + '', exchangeName,
+  bfx.new_order(symbol, amount + '', price + '', exchangeName,
     type,
     'exchange limit',
     function (err, data, body) {
@@ -112,7 +109,6 @@ function submit_order(bfx, type, amount, price, callback) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   submit_order(this.bitfinex, 'buy', amount, price, callback);
-
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -136,7 +132,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  var path = this.pair;
+  var path = symbol;
   if(since)
     path += '?limit_trades=' + since;
 
