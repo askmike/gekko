@@ -39,10 +39,6 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 - An exchange.
 - An arbitrage bot.
 
-## Market interface
-
-Gekko has a plugin system that can do certain things whenever something happens or let Gekko communicate through external platforms. Check [all currently existing plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md) or [add your own](https://github.com/askmike/gekko/blob/stable/docs/internal/plugins.md).
-
 ## Supported exchanges
 
 | Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
