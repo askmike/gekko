@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "chai": "^2.0.0",
-    "mocha": "^2.1.0",
+    "mocha": "^2.1.1",
     "sinon": "^1.12.2"
   },
   "engines": {
