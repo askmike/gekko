@@ -49,12 +49,12 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
-      return data.type === 'exchange'
+      return data.type === 'exchange';
     }).map(function (asset) {
       return {
         name: asset.currency.toUpperCase(),
         // TODO: use .amount instead of .available?
-        amount: asset.available
+        amount: +asset.available
       }
     }).value();
     callback(err, portfolio);
