@@ -101,6 +101,8 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 
 ## How does Gekko work?
 
+![Gekko architecture](https://wizb.it/gekko/static/architecture.jpg)
+
 - Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/stable/docs/internals/architecture.md).
 - Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/stable/docs/internals/exchanges.md).
 - Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/stable/docs/internals/plugins.md).
