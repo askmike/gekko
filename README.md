@@ -44,18 +44,18 @@ Gekko has a plugin system that can do certain things whenever something happens 
 | Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
 | --------------- |:----------:|:-------:|:---------:|-------|
 | [Poloniex](https://poloniex.com/)      | ✔ | ✔ | ✔ | |
-| [Bitstamp](https://bitstamp.com/)      | ✔ | ✔ | ✗ | |
-| [Kraken](https://kraken.com/)      | ✔ | ✔ | ✗ | |
-| [Bitfinex](https://bitfinex.com/)      | ✔ | ✔ | ✗ | |
-| [BTC-e](https://btc-e.com/)      | ✔ | ✔ | ✗ | |
-| [BTCC](https://btcc.com/)      | ✔ | ✔ | ✗ | (=BTCChina) |
-| [Cex.io](https://bitstamp.com/)      | ✔ | ✗ | ✗ | |
-| [bitX](https://www.bitx.co/)      | ✔ | ✗ | ✗ | |
-| [lakeBTC](https://lakebtc.com/)      | ✔ | ✗ | ✗ | |
-| [meXBT](https://mexbt.com/)      | ✔ | ✗ | ✗ | (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974)) |
-| [zaif](https://zaif.jp/trade_btc_jpy)      | ✔ | ✗ | ✗ | |
-| [lakeBTC](https://lakebtc.com/)      | ✔ | ✗ | ✗ | |
-| [bx.in.th](https://bx.in.th/)      | ✔ | ✗ | ✗ | |
+| [Bitstamp](https://bitstamp.com/)      | ✔ | ✔ | ✘ | |
+| [Kraken](https://kraken.com/)      | ✔ | ✔ | ✘ | |
+| [Bitfinex](https://bitfinex.com/)      | ✔ | ✔ | ✘ | |
+| [BTC-e](https://btc-e.com/)      | ✔ | ✔ | ✘ | |
+| [BTCC](https://btcc.com/)      | ✔ | ✔ | ✘ | (=BTCChina) |
+| [Cex.io](https://bitstamp.com/)      | ✔ | ✘ | ✘ | |
+| [bitX](https://www.bitx.co/)      | ✔ | ✘ | ✘ | |
+| [lakeBTC](https://lakebtc.com/)      | ✔ | ✘ | ✘ | |
+| [meXBT](https://mexbt.com/)      | ✔ | ✘ | ✘ | (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974)) |
+| [zaif](https://zaif.jp/trade_btc_jpy)      | ✔ | ✘ | ✘ | |
+| [lakeBTC](https://lakebtc.com/)      | ✔ | ✘ | ✘ | |
+| [bx.in.th](https://bx.in.th/)      | ✔ | ✘ | ✘ | |
 
 Monitoring means that Gekko is able to watch the realtime market, this automatically means that Gekko is also able to:
 
