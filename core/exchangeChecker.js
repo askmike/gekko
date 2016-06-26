@@ -56,7 +56,7 @@ Checker.prototype.cantFetchFullHistory = function(conf) {
   var name = exchange.name;
 
   if(!exchange.providesFullHistory)
-    return 'The exchange ' + name + ' does not provide full history';
+    return 'The exchange ' + name + ' does not provide full history (or Gekko doesn\'t support importing it)';
 }
 
 // check if the exchange if configured correctly for real trading

@@ -130,7 +130,6 @@ var util = {
   makeEventEmitter: function(dest) {
     util.inherit(dest, require('events').EventEmitter);
   },
-  // TODO:
   gekkoMode: function() {
     if(program['import'])
       return 'importer';
