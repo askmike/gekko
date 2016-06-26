@@ -23,7 +23,7 @@ Example Markets that come included with Gekko are:
 
 A GekkoStream is nothing more than a collection of [plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md). Plugins are simple modules that can subscribe to events, and do something based on event data. The most basic event every GekkoStream has is the "candle" event, this event comes from the market.
 
-However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [trading method](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) that will be fed candle data. As soon as the trading method suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `profitSimulator` is a plugin which simulates trading using these advices, the `trader` is a plugin which create real market orders based on these advices. You can decide to only turn the `profitSimulator` on (you now have a paper trading bot) or to just turn the `trader` on (you now have a trading bot).
+However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [trading method](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) that will be fed candle data. As soon as the trading method suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `profitSimulator` is a plugin that simulates trading using these advices, the `trader` is a plugin that creates real market orders based on these advices. You can decide to only turn the `profitSimulator` on (you now have a paper trading bot) or to just turn the `trader` on (you now have a trading bot).
 
 When you run a backtest using Gekko the following things happen:
 
@@ -31,7 +31,7 @@ When you run a backtest using Gekko the following things happen:
 - Gekko loads all configured plugins that are supported in the `backtest` mode* into a GekkoStream.
 - Gekko pipes the market into the GekkoStream and voila!
 
-*Gekko refuses to load plugins that are unsupported in specific modes. During backtests you **never** want to enable the real trader to enter market orders. Because if you would the advice would be based on specific moments in the backtest, not on the current state of the market.
+* Gekko refuses to load plugins that are unsupported in specific modes. During backtests you **never** want to enable the real trader to enter market orders. Because if you would the advice would be based on specific moments in the backtest, not on the current state of the market.
 
 ## Plugins & Adapters
 
