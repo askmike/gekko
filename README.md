@@ -21,6 +21,10 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
  * Import historical market data
  * Broadcast market data over pubsub messaging systems
 
+## TA strategies
+
+Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md). You can use over 130 indicators to create your perfect prediction model. *Why don't you combine Bollinger Bands, CCI, MACD with a STOCHRSI indicator?*
+
 ## Automated Trading platform
 
 Gekko can watch the realtime markets, you can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
