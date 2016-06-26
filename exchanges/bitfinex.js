@@ -8,7 +8,6 @@ var log = require('../core/log');
 // Module-wide constants
 var exchangeName = 'bitfinex';
 // Bitfinex supports Litecoin, but this module currently only supports Bitcoin
-var defaultAsset = 'btcusd';
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -19,8 +18,8 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-
-  this.bitfinex = new Bitfinex(this.key, this.secret);
+  this.pair = config.asset + config.currency;
+  this.bitfinex = new Bitfinex(this.key, this.secret).rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -47,7 +46,7 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
-  this.bitfinex.rest.wallet_balances(function (err, data, body) {
+  this.bitfinex.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
       return data.type === 'exchange';
     }).map(function (asset) {
@@ -62,9 +61,30 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.bitfinex.rest.ticker(defaultAsset, function (err, data, body) {
-    callback(err, { bid: +data.bid, ask: +data.ask })
-  });
+  // the function that will handle the API callback
+  var process = function(err, data, body) {
+    if (err) {
+      // on error we need to recurse this function
+
+      // however we don't want to hit any API ratelimits
+      // so we use this.retry since this will wait first
+      // before we retry.
+      // the arguments we need to pass the the ticker method
+      //>> this.retry throws an error
+      var tryAgain = function () {
+          return this.bitfinex.ticker(this.pair, process);
+      }.bind(this);
+
+      return tryAgain();
+    }
+
+    // whenever we reach this point we have valid
+    // data, the callback is still the same since
+    // we are inside the same javascript scope.
+    callback(err, {bid: +data.bid, ask: +data.ask})
+  }.bind(this);
+
+  this.bitfinex.ticker(this.pair, process);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
@@ -79,7 +99,7 @@ function submit_order(bfx, type, amount, price, callback) {
   // amount *= 0.995; // remove fees
   amount = Math.floor(amount*100000000)/100000000;
 
-  bfx.new_order(defaultAsset, amount + '', price + '', exchangeName,
+  bfx.new_order(this.pair, amount + '', price + '', exchangeName,
     type,
     'exchange limit',
     function (err, data, body) {
@@ -91,22 +111,22 @@ function submit_order(bfx, type, amount, price, callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  submit_order(this.bitfinex.rest, 'buy', amount, price, callback);
+  submit_order(this.bitfinex, 'buy', amount, price, callback);
 
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  submit_order(this.bitfinex.rest, 'sell', amount, price, callback);
+  submit_order(this.bitfinex, 'sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
-  this.bitfinex.rest.order_status(order_id, function (err, data, body) {
+  this.bitfinex.order_status(order_id, function (err, data, body) {
     callback(err, !data.is_live);
   });
 }
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
-  this.bitfinex.rest.cancel_order(order_id, function (err, data, body) {
+  this.bitfinex.cancel_order(order_id, function (err, data, body) {
       if (err || !data || !data.is_cancelled)
         log.error('unable to cancel order', order_id, '(', err, data, ')');
   });
@@ -116,11 +136,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  var path = defaultAsset;
+  var path = this.pair;
   if(since)
     path += '?limit_trades=' + since;
 
-  this.bitfinex.rest.trades(path,  function (err, data) {
+  this.bitfinex.trades(path,  function (err, data) {
     if (err)
       return self.retry(self.getTrades, args);
 
