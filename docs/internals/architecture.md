@@ -31,7 +31,7 @@ When you run a backtest using Gekko the following things happen:
 - Gekko loads all configured plugins that are supported in the `backtest` mode* into a GekkoStream.
 - Gekko pipes the market into the GekkoStream and voila!
 
-* Gekko refuses to load plugins that are unsupported in specific modes. During backtests you **never** want to enable the real trader to enter market orders. Because if you would the advice would be based on specific moments in the backtest, not on the current state of the market.
+\*Gekko refuses to load plugins that are unsupported in specific modes. During backtests you **never** want to enable the real trader to enter market orders. Because if you would the advice would be based on specific moments in the backtest, not on the current state of the market.
 
 ## Plugins & Adapters
 
