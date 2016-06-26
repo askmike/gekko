@@ -60,30 +60,32 @@ Trader.prototype.getPortfolio = function(callback) {
   });
 }
 
-  Trader.prototype.getTicker = function(callback) {
-    // the function that will handle the API callback
-    var process = function(err, data, body) {
-      if (err) {
-        // on error we need to recurse this function
+Trader.prototype.getTicker = function(callback) {
+  // the function that will handle the API callback
+  var process = function(err, data, body) {
+    if (err) {
+      // on error we need to recurse this function
 
-        // however we don't want to hit any API ratelimits
-        // so we use this.retry since this will wait first
-        // before we retry.
-
-        // the arguments we need to pass the the ticker method
-        var tryAgain = function () {
+      // however we don't want to hit any API ratelimits
+      // so we use this.retry since this will wait first
+      // before we retry.
+      // the arguments we need to pass the the ticker method
+      //>> this.retry throws an error
+      var tryAgain = function () {
           return this.bitfinex.ticker(this.pair, process);
-        }.bind(this);
-        return tryAgain();
-      }
+      }.bind(this);
 
-      // whenever we reach this point we have valid
-      // data, the callback is still the same since
-      // we are inside the same javascript scope.
-      callback(err, {bid: +data.bid, ask: +data.ask})
-    }.bind(this);
-    this.bitfinex.ticker(this.pair, process);
-  }
+      return tryAgain();
+    }
+
+    // whenever we reach this point we have valid
+    // data, the callback is still the same since
+    // we are inside the same javascript scope.
+    callback(err, {bid: +data.bid, ask: +data.ask})
+  }.bind(this);
+
+  this.bitfinex.ticker(this.pair, process);
+}
 
 // This assumes that only limit orders are being placed, so fees are the
 // "maker fee" of 0.1%.  It does not take into account volume discounts.
