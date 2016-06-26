@@ -57,11 +57,11 @@ Gekko has a plugin system that can do certain things whenever something happens 
 | [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
 | [bx.in.th](https://bx.in.th/)      | ✓ | ✗ | ✗ | |
 
-Monitoring means that Gekko is able to watch the realtime market, this automatically means that Gekko is also able to:
+Monitoring means that Gekko is able to watch the realtime market and thus also:
 
-- run trading strategies against the data (in semi-realtime)
-- simulate trading profits (paper trader)
-- store all data (to backtest in the future)
+- Run trading strategies against the data (in semi-realtime)
+- Simulate trading profits (paper trader)
+- Store all data (to backtest in the future)
 
 ## Installing Gekko
 
