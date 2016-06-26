@@ -122,7 +122,8 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 *Better exchange support:*
 
 - add GDAX exchange (supports [importing](https://docs.gdax.com/#get-historic-rates))
-- support imorting at bitfinex ([here](http://docs.bitfinex.com/#trades)).
+- support importing at bitfinex ([here](http://docs.bitfinex.com/#trades)).
+- support importing at btcc ([example call](https://data.btcchina.com/data/historydata?since=1406794449&limit=10&sincetype=time))
 - add okcoin
 - add huobi
 - fix cryptsy integration..
