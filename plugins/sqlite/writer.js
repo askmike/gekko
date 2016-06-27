@@ -10,6 +10,8 @@ var Store = function(done, pluginMeta) {
 
   this.db = handle;
   this.db.serialize(this.upsertTables);
+
+  this.cache = [];
 }
 
 Store.prototype.upsertTables = function() {
@@ -43,28 +45,45 @@ Store.prototype.upsertTables = function() {
   }, this);
 }
 
-var processCandle = function(candle, done) {
+Store.prototype.writeCandles = function() {
+  if(_.isEmpty(this.cache))
+    return;
+
   var stmt = this.db.prepare(`
-    INSERT OR IGNORE INTO ${sqliteUtil.table('candles')} VALUES (?,?,?,?,?,?,?,?,?)
+    INSERT OR IGNORE INTO ${sqliteUtil.table('candles')}
+    VALUES (?,?,?,?,?,?,?,?,?)
   `);
 
-  stmt.run(
-    null,
-    candle.start.unix(),
-    candle.open,
-    candle.high,
-    candle.low,
-    candle.close,
-    candle.vwp,
-    candle.volume,
-    candle.trades
-  );
+  _.each(this.cache, candle => {
+    stmt.run(
+      null,
+      candle.start.unix(),
+      candle.open,
+      candle.high,
+      candle.low,
+      candle.close,
+      candle.vwp,
+      candle.volume,
+      candle.trades
+    );
+  });
 
   stmt.finalize();
 
+  this.cache = [];
+}
+
+var processCandle = function(candle, done) {
+
+  // because we might get a lot of candles
+  // in the same tick, we rather batch them
+  // up and insert them at once at next tick.
+  this.cache.push(candle);
+  _.defer(this.writeCandles);
+
   // NOTE: sqlite3 has it's own buffering, at
   // this point we are confident that the candle will
-  // get written to disk _eventually_.
+  // get written to disk on next tick.
   done();
 }
 

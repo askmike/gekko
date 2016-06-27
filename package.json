@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -14,7 +14,7 @@
   "dependencies": {
     "async": "0.2.x",
     "bitexthai": "^0.1.0",
-    "bitfinex-fork": "0.3.4",
+    "bitfinex-api-node": "0.2.9",
     "bitstamp": "0.3.x",
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "chai": "^2.0.0",
-    "mocha": "^2.1.0",
+    "mocha": "^2.1.1",
     "sinon": "^1.12.2"
   },
   "engines": {

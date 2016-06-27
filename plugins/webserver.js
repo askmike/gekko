@@ -10,16 +10,14 @@ var Actor = function(next) {
   this.server.setup(next);
 }
 
-Actor.prototype.processTrade = function(trade) {
-  this.server.broadcastTrade(trade);
-};
-
 Actor.prototype.init = function(data) {
   this.server.broadcastHistory(data);
 };
 
-Actor.prototype.processSmallCandle = function(candle) {
-  this.server.broadcastSmallCandle(candle);
+Actor.prototype.processCandle = function(candle, next) {
+  this.server.broadcastCandle(candle);
+
+  next();
 };
 
 Actor.prototype.processAdvice = function(advice) {

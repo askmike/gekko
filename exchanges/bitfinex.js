@@ -1,5 +1,5 @@
 
-var Bitfinex = require("bitfinex-fork");
+var Bitfinex = require("bitfinex-api-node");
 var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
@@ -7,8 +7,7 @@ var log = require('../core/log');
 
 // Module-wide constants
 var exchangeName = 'bitfinex';
-// Bitfinex supports Litecoin, but this module currently only supports Bitcoin
-var defaultAsset = 'btcusd';
+var symbol;
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -19,8 +18,9 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-
+  symbol = config.asset + config.currency;
   this.bitfinex = new Bitfinex(this.key, this.secret);
+  this.bitfinex = this.bitfinex.rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -62,9 +62,27 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.bitfinex.ticker(defaultAsset, function (err, data, body) {
-    callback(err, { bid: +data.bid, ask: +data.ask })
-  });
+  // the function that will handle the API callback
+  var process = function(err, data, body) {
+    if (err) {
+      // on error we need to recurse this function
+
+      // however we don't want to hit any API ratelimits
+      // so we use this.retry since this will wait first
+      // before we retry.
+      // the arguments we need to pass the the ticker method
+
+      var args = [ symbol, process ];
+      return this.retry(bitfinex.ticker(args));
+    }
+
+    // whenever we reach this point we have valid
+    // data, the callback is still the same since
+    // we are inside the same javascript scope.
+    callback(err, {bid: +data.bid, ask: +data.ask})
+  }.bind(this);
+
+  this.bitfinex.ticker(symbol, process);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
@@ -78,10 +96,9 @@ function submit_order(bfx, type, amount, price, callback) {
   // TODO: Bitstamp module included the following - is it necessary?
   // amount *= 0.995; // remove fees
   amount = Math.floor(amount*100000000)/100000000;
-
-  bfx.new_order(defaultAsset, amount + '', price + '', exchangeName,
-    type, 
-    'exchange limit', 
+  bfx.new_order(symbol, amount + '', price + '', exchangeName,
+    type,
+    'exchange limit',
     function (err, data, body) {
       if (err)
         return log.error('unable to ' + type, err, body);
@@ -90,9 +107,9 @@ function submit_order(bfx, type, amount, price, callback) {
     });
 }
 
+
 Trader.prototype.buy = function(amount, price, callback) {
   submit_order(this.bitfinex, 'buy', amount, price, callback);
-
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -116,9 +133,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  // Bitfinex API module does not support start date, but Bitfinex API does. 
-  var start = since ? since.unix() : null;
-  this.bitfinex.trades(defaultAsset, start, function (err, data) {
+  var path = symbol;
+  if(since)
+    path += '?limit_trades=' + since;
+
+  this.bitfinex.trades(path,  function (err, data) {
     if (err)
       return self.retry(self.getTrades, args);
 

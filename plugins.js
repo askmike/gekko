@@ -28,7 +28,7 @@ var plugins = [
     description: 'Store candles in a database',
     slug: 'candleWriter',
     async: true,
-    modes: ['realtime'],
+    modes: ['realtime', 'importer'],
     path: function(config) {
       return config.adapter + '/writer';
     },
@@ -122,6 +122,13 @@ var plugins = [
       module: 'redis',
       version: '0.10.0'
     }]
+  },
+  {
+    name: 'Web Server',
+    slug: 'webserver',
+    description: 'Web server',
+    async: true,
+    modes: ['realtime'],
   }
 ];
 

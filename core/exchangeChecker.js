@@ -44,6 +44,21 @@ Checker.prototype.cantMonitor = function(conf) {
   return false;
 }
 
+// check if the exchange is configured correctly for fetching
+// full history
+Checker.prototype.cantFetchFullHistory = function(conf) {
+  var slug = conf.exchange.toLowerCase();
+  var exchange = _.find(exchanges, function(e) { return e.slug === slug });
+
+  if(this.cantMonitor(conf))
+    return this.cantMonitor(conf);
+
+  var name = exchange.name;
+
+  if(!exchange.providesFullHistory)
+    return 'The exchange ' + name + ' does not provide full history (or Gekko doesn\'t support importing it)';
+}
+
 // check if the exchange if configured correctly for real trading
 Checker.prototype.cantTrade = function(conf) {
   var cantMonitor = this.cantMonitor(conf);
