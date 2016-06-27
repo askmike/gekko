@@ -25,6 +25,7 @@
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",
     "moment": "2.4.x",
+    "nodejs-websocket": "1.6.0",
     "poloniex.js": "0.0.6",
     "semver": "2.2.1",
     "sqlite3": "3.1.3",
