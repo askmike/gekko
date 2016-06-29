@@ -1,7 +1,7 @@
 // All plugins supported by Gekko.
-// 
+//
 //  Required parameters per plugin.
-// 
+//
 // name: Name of the plugin
 // slug: name of the plugin mapped to the config key. Expected
 //    filename to exist in `gekko/plugins/` (only if path is not
@@ -13,9 +13,9 @@
 // modes: a list indicating in what Gekko modes this plugin is
 //    allowed to run. Realtime is during a live market watch and
 //    backtest is during a backtest.
-//    
+//
 //  Optional parameters per plugin.
-//    
+//
 // description: text describing the plugin.
 // dependencies: a list of external npm modules this plugin requires to
 //    be installed.
@@ -131,7 +131,7 @@ var plugins = [
     modes: ['realtime'],
     dependencies: [{
       module: 'nodejs-websocket',
-      version: '*'
+      version: '1.6.0',
     }]
   }
 ];
