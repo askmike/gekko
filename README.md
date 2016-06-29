@@ -39,24 +39,20 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 - An exchange.
 - An arbitrage bot.
 
-## Market interface
-
-Gekko has a plugin system that can do certain things whenever something happens or let Gekko communicate through external platforms. Check [all currently existing plugins](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md) or [add your own](https://github.com/askmike/gekko/blob/stable/docs/internal/plugins.md).
-
 ## Supported exchanges
 
 | Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
 | --------------- |:----------:|:-------:|:---------:|-------|
 | [Poloniex](https://poloniex.com/)      | ✓ | ✓ | ✓ | |
+| [BTCC](https://btcc.com/)      | ✓ | ✓ | ✓ | is BTCChina |
 | [Bitstamp](https://bitstamp.com/)      | ✓ | ✓ | ✗ | |
 | [Kraken](https://kraken.com/)      | ✓ | ✓ | ✗ | |
 | [Bitfinex](https://bitfinex.com/)      | ✓ | ✓ | ✗ | |
 | [BTC-e](https://btc-e.com/)      | ✓ | ✓ | ✗ | |
-| [BTCC](https://btcc.com/)      | ✓ | ✓ | ✗ | (=BTCChina) |
 | [Cex.io](https://bitstamp.com/)      | ✓ | ✗ | ✗ | |
 | [bitX](https://www.bitx.co/)      | ✓ | ✗ | ✗ | |
 | [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
-| [meXBT](https://mexbt.com/)      | ✓ | ✗ | ✗ | (see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974)) |
+| [meXBT](https://mexbt.com/)      | ✓ | ✗ | ✗ | see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974). |
 | [zaif](https://zaif.jp/trade_btc_jpy)      | ✓ | ✗ | ✗ | |
 | [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
 | [bx.in.th](https://bx.in.th/)      | ✓ | ✗ | ✗ | |
@@ -123,7 +119,6 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 
 - add GDAX exchange (supports [importing](https://docs.gdax.com/#get-historic-rates))
 - support importing at bitfinex ([here](http://docs.bitfinex.com/#trades)).
-- support importing at btcc ([example call](https://data.btcchina.com/data/historydata?since=1406794449&limit=10&sincetype=time))
 - add okcoin
 - add huobi
 - fix cryptsy integration..

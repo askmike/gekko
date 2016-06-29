@@ -73,7 +73,7 @@ var handleFetch = trades => {
   if(last > end) {
     fetcher.emit('done');
 
-    endUnix = end.unix();
+    var endUnix = end.unix();
     trades = _.filter(
       trades,
       t => t.date <= endUnix

@@ -129,6 +129,10 @@ var plugins = [
     description: 'Web server',
     async: true,
     modes: ['realtime'],
+    dependencies: [{
+      module: 'nodejs-websocket',
+      version: '*'
+    }]
   }
 ];
 

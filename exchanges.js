@@ -170,7 +170,6 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
-    // monitorError: 'https://github.com/askmike/gekko/issues/210',
     providesFullHistory: true,
   },
   {
@@ -255,11 +254,9 @@ var exchanges = [
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
-    // TODO:
-    providesHistory: false,
-    fetchTimespan: 60,
     maxHistoryFetch: 5000,
-    tid: 'tid'
+    tid: 'tid',
+    providesFullHistory: true,
   },
   {
     name: 'OkCoin',
