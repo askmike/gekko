@@ -3,7 +3,6 @@ var util = require('../core/util.js');
 var config = util.getConfig();
 var dirs = util.dirs();
 var log = require('../core/log.js');
-var moment = require('moment');
 
 if(config.tradingAdvisor.talib.enabled) {
   // verify talib is installed properly
@@ -210,7 +209,7 @@ Base.prototype.advice = function(newPosition) {
   this.emit('advice', {
     recommandation: advice,
     portfolio: 1,
-    moment: moment()
+    moment: this.candle.start
   });
 }
 
