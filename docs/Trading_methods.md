@@ -4,9 +4,11 @@ Gekko implements [technical analysis strategies](http://www.investopedia.com/art
 
 This investment advice is going to be either **long** or **short**.
 
+Below you can find simple and limited trading methods that come with Gekko, if you are feeling adventurous you can [write your own](internals/trading_methods.md).
+
 ## NOTE
 
-On default Gekko does nothing with this advice, Gekko uses [plugins](./Plugins) that can do something with this advice:
+On default Gekko does nothing with this advice, Gekko uses [plugins](./Plugins.md) that can do something with this advice:
 
  - trader: trade live on the markets (Gekko becomes a trading bot)
  - profit simulator: simulate trading on advice (Gekko becomes a paper trader)
