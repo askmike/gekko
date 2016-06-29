@@ -3,6 +3,7 @@ var util = require('../core/util.js');
 var config = util.getConfig();
 var dirs = util.dirs();
 var log = require('../core/log.js');
+var moment = require('moment');
 
 if(config.tradingAdvisor.talib.enabled) {
   // verify talib is installed properly
@@ -196,15 +197,20 @@ Base.prototype.addIndicator = function(name, type, parameters) {
 
   // some indicators need a price stream, others need full candles
   this.indicators[name].input = Indicators[type].input;
-} 
+}
 
 Base.prototype.advice = function(newPosition) {
-  if(!newPosition)
-    return this.emit('soft advice');
+  // Possible values are long and short. Long will trigger a buy method
+  // while short will trigger a sell method
+  var advice = 'soft';
+  if(newPosition) {
+    advice = newPosition;
+  }
 
   this.emit('advice', {
-    recommandation: newPosition,
-    portfolio: 1
+    recommandation: advice,
+    portfolio: 1,
+    moment: moment()
   });
 }
 
