@@ -210,7 +210,7 @@ Base.prototype.advice = function(newPosition) {
   this.emit('advice', {
     recommandation: advice,
     portfolio: 1,
-    datetime: moment().format('YYYY-MM-DD HH:mm:ss')
+    moment: moment()
   });
 }
 
