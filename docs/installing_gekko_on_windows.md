@@ -13,7 +13,7 @@ Gekko runs on nodejs so we have to install that first. Head over the [nodejs hom
 
 ## Install Gekko
 
-The easiest way to download Gekko is to go to the [Github repo](https://github.com/askmike/gekko) and click on the 'zip' button at the top. Once you have downloaded the zip file it's easiest to extract it to your Desktop. When you have done that we can begin with the cool stuff:
+The easiest way to download Gekko is to go to the [Github repo](https://github.com/askmike/gekko) and click on the 'zip' button at the top. Once you have downloaded the zip file it's the easiest to extract it to your Desktop. When you have done that we can begin with the cool stuff:
 
 ### Open up command line
 
@@ -55,6 +55,6 @@ In the command line hold `ctrl` + `c`.
     
 ## Configure Gekko
 
-Use Windows Explorer to navigate to the `gekko-master` folder on your desktpop. Open `gekko.js` with a texteditor (like notepad) and check at [the repo](https://github.com/askmike/gekko#install) what settings you can change.
+Use Windows Explorer to navigate to the `gekko-stable` folder on your desktpop. Cope the file `sample-config.js` to `config.js`. Open `config.js` with a texteditor (like notepad) and check in [the documentation](https://github.com/askmike/gekko/tree/stable/docs/Configuring_gekko.md) hwo you should configure Gekko.
 
-After changing the settings you have to stop and start Gekko.
+Remember, after changing the settings you have to stop and start Gekko!
