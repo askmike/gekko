@@ -83,17 +83,17 @@ Logger.prototype.processAdvice = function(advice) {
     this.trades++;
 
     if(mode === 'backtest')
-      log.info(`Profit simulator got advice to long\t@ ${time}, buying ${this.current.asset} ${this.asset}`);
+      log.info(`Profit simulator got advice to long\t@ ${time}, buying ${this.current.asset} ${this.asset} \t(${this.current.asset})`);
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
-    if(mode === 'backtest')
-      log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset}`);
-
     this.current.currency += this.extractFee(this.current.asset * this.price);
     this.current.asset = 0;
     this.trades++;
+
+    if(mode === 'backtest')
+      log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset} \t(${this.current.currency})`);
   }
 
   if(this.verbose)
@@ -112,7 +112,7 @@ Logger.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
 
   if(!this.start.balance)
-    this.calculateStartBalance()
+    this.calculateStartBalance();
 
   if(!calcConfig.verbose)
     return done();

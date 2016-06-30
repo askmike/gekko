@@ -56,7 +56,7 @@ Reader.prototype.get = function(from, to, next) {
   this.db.all(`
     SELECT * from ${sqliteUtil.table('candles')}
     WHERE start <= ${to} AND start >= ${from}
-    ORDER BY start DESC
+    ORDER BY start ASC
   `, function(err, rows) {
     if(err)
       return util.die('DB error at `get`');
