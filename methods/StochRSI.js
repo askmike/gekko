@@ -2,6 +2,8 @@
   
   StochRSI - SamThomp 11/06/2014
 
+  (updated by askmike) @ 30/07/2016
+
  */
 // helpers
 var _ = require('lodash');
@@ -15,12 +17,10 @@ var RSI = require('./indicators/RSI.js');
 // let's create our own method
 var method = {};
 
-var highestRSI = 0;
-var lowestRSI = 0;
-var RSIhistory;
-
 // prepare everything our method needs
 method.init = function() {
+	this.interval = settings.interval;
+
   this.trend = {
     direction: 'none',
     duration: 0,
@@ -31,60 +31,40 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.addIndicator('rsi', 'RSI', settings.interval);
+  this.addIndicator('rsi', 'RSI', this.interval);
 
 	this.RSIhistory = [];
+}
+
+// what happens on every new candle?
+method.update = function(candle) {
+	this.rsi = this.indicators.rsi.rsi;
+
+	this.RSIhistory.push(this.rsi);
+
+	if(_.size(this.RSIhistory) > this.interval)
+		// remove oldest RSI value
+		this.RSIhistory.shift();
+
+	this.lowestRSI = _.min(this.RSIhistory);
+	this.highestRSI = _.max(this.RSIhistory);
+	this.stochRSI = ((this.rsi - this.lowestRSI) / (this.highestRSI - this.lowestRSI)) * 100;
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
 method.log = function() {
   var digits = 8;
-  var rsi = this.indicators.rsi;
-
-	this.RSIhistory.shift();
-	this.RSIhistory.push(rsiVal);
-	this.lowestRSI = _.min(RSIhistory);
-	this.highestRSI = _.max(RSIhistory);
-
-	this.rsiVal = ((1 + this.rsiVal - this.lowestRSI) / (this.highestRSI - this.lowestRSI)) * 100;
 
   log.debug('calculated StochRSI properties for candle:');
-  log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
-	log.debug("StochRSI min:\t\t" + this.lowestRSI);
-	log.debug("StochRSI max:\t\t" + this.highestRSI);
-	log.debug("StochRSI history length: " + this.RSIhistory.length);
-	log.info("StochRSI Value:\t\t" + this.rsiVal.toFixed(2));
-}
-
-// what happens on every new candle?
-method.update = function(candle) {
-	var rsi = this.indicators.rsi;
-  var rsiVal = rsi.rsi;
-
-	// push RSI value for each candle onto the array
-	this.RSIhistory.push(rsiVal);
+  log.debug('\t', 'rsi:', this.rsi.toFixed(digits));
+	log.debug("StochRSI min:\t\t" + this.lowestRSI.toFixed(digits));
+	log.debug("StochRSI max:\t\t" + this.highestRSI.toFixed(digits));
+	log.debug("StochRSI Value:\t\t" + this.stochRSI.toFixed(2));
 }
 
 method.check = function() {
-  
-	// remove oldest RSI value
-	this.RSIhistory.shift();
-
-	var rsi = this.indicators.rsi;
-	var rsiVal = rsi.rsi;
-
-	this.RSIhistory.push(rsiVal);
-	this.lowestRSI = _.min(this.RSIhistory);
-	this.highestRSI = _.max(this.RSIhistory);
-	this.rsiVal = rsiVal;
-
-	this.rsiVal = ((1 + this.rsiVal - this.lowestRSI) / (this.highestRSI - this.lowestRSI)) * 100;
-
-	this.RSIhistory.shift();	
-
-	if(this.rsiVal > settings.thresholds.high) {
-
+	if(this.stochRSI > settings.thresholds.high) {
 		// new trend detected
 		if(this.trend.direction !== 'high')
 			this.trend = {
@@ -107,7 +87,7 @@ method.check = function() {
 		} else
 			this.advice();
 		
-	} else if(this.rsiVal < settings.thresholds.low) {
+	} else if(this.stochRSI < settings.thresholds.low) {
 
 		// new trend detected
 		if(this.trend.direction !== 'low')
