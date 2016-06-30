@@ -113,14 +113,16 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 * Stabilize importing API.
 * More tests
 * Better documentation for TA-lib indicators.
+* More indicators (maybe use [this native js lib](https://github.com/anandanand84/technicalindicators)?)
 * Webbased interface ([first step](https://github.com/askmike/gekko/issues/338#issuecomment-228368499))?
 
 *Better exchange support:*
 
 - add GDAX exchange (supports [importing](https://docs.gdax.com/#get-historic-rates))
 - support importing at bitfinex ([here](http://docs.bitfinex.com/#trades)).
+- add okcoin China
 - add okcoin
-- add huobi
+- add bitmex
 - fix cryptsy integration..
 
 ## Credits
