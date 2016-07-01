@@ -6,9 +6,6 @@ var moment = require('moment');
 var log = require('../core/log');
 
 // Module-wide constants
-var exchangeName = 'bitfinex';
-// Bitfinex supports Litecoin, but this module currently only supports Bitcoin
-
 var Trader = function(config) {
   _.bindAll(this);
   if(_.isObject(config)) {
@@ -70,12 +67,9 @@ Trader.prototype.getTicker = function(callback) {
       // so we use this.retry since this will wait first
       // before we retry.
       // the arguments we need to pass the the ticker method
-      //>> this.retry throws an error
-      var tryAgain = function () {
-          return this.bitfinex.ticker(this.pair, process);
-      }.bind(this);
-
-      return tryAgain();
+      //>> Thanks Mike :)
+      var args = [this.pair, process]
+      return this.retry(this.bitfinex.ticker(args));
     }
 
     // whenever we reach this point we have valid
@@ -94,12 +88,10 @@ Trader.prototype.getFee = function(callback) {
     callback(false, makerFee / 100);
 }
 
-function submit_order(bfx, type, amount, price, callback) {
-  // TODO: Bitstamp module included the following - is it necessary?
-  // amount *= 0.995; // remove fees
+Trader.prototype.function = function (submit_order(type, amount, price, callback) {
   amount = Math.floor(amount*100000000)/100000000;
 
-  bfx.new_order(this.pair, amount + '', price + '', exchangeName,
+  this.bitfinex.new_order(this.pair, amount + '', price + '', this.name,
     type,
     'exchange limit',
     function (err, data, body) {
@@ -111,12 +103,12 @@ function submit_order(bfx, type, amount, price, callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'buy', amount, price, callback);
+  this.submit_order(this.bitfinex, 'buy', amount, price, callback);
 
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'sell', amount, price, callback);
+  this.submit_order(this.bitfinex, 'sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
