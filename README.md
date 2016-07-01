@@ -76,6 +76,11 @@ You need to download Gekko's dependencies, which can easily be done with [npm](h
 
     npm install
 
+Docker user? Installing and running gekko is simple on Docker with the following command:
+    `docker run -d -v /path/to/your/config.js:/usr/src/gekko/config.js --name gekko barnumd/gekko` 
+    To see process logs: `docker logs --follow gekko`
+    More info - https://hub.docker.com/r/barnumd/gekko/
+
 ## Configuring Gekko
 
 > Configuring Gekko consists of two parts: 
