@@ -57,27 +57,24 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
+  var args = [this.pair, process]
   // the function that will handle the API callback
   var process = function(err, data, body) {
-    if (err) {
+    if (err)
       // on error we need to recurse this function
-
       // however we don't want to hit any API ratelimits
       // so we use this.retry since this will wait first
       // before we retry.
       // the arguments we need to pass the the ticker method
       //>> Thanks Mike :)
-      var args = [this.pair, process]
-      return this.retry(this.bitfinex.ticker(args));
+        return this.retry(this.bitfinex.ticker(args));
     }
-
     // whenever we reach this point we have valid
     // data, the callback is still the same since
     // we are inside the same javascript scope.
     callback(err, {bid: +data.bid, ask: +data.ask})
   }.bind(this);
-
-  this.bitfinex.ticker(this.pair, process);
+  this.bitfinex.ticker(args);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
