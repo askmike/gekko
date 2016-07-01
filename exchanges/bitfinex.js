@@ -5,7 +5,6 @@ var _ = require('lodash');
 var moment = require('moment');
 var log = require('../core/log');
 
-// Module-wide constants
 var Trader = function(config) {
   _.bindAll(this);
   if(_.isObject(config)) {
