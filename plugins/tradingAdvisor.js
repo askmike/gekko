@@ -123,7 +123,19 @@ Actor.prototype.prepareHistoricalData = function(done) {
         return done();
       }
 
-      log.debug('Seeding the trading method with historical candles.');
+      if(result === optimalFrom) {
+        log.debug(
+          'Full history locally available.',
+          'Seeding the trading method with all required historical candles.'
+        );
+      } else {
+        log.debug(
+          'Partial history locally available. But',
+          result - optimalFrom,
+          'seconds are missing. Seeding the trading method with',
+          'partial historical data.'
+        );
+      }
 
       reader.get(result, exchangeFrom, function(rows) {
         // todo: do this in proper place
