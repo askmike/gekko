@@ -133,7 +133,8 @@ Actor.prototype.prepareHistoricalData = function(done) {
           'Partial history locally available. But',
           result - optimalFrom,
           'seconds are missing. Seeding the trading method with',
-          'partial historical data.'
+          'partial historical data (Gekko needs more time before',
+          'it can give advice).'
         );
       }
 
