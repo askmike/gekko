@@ -17,6 +17,14 @@ var util = {
   getConfig: function() {
     if(_config)
       return _config;
+
+    if(program.configString) {
+      console.log(program.configString);
+
+      asd();
+    }
+      // return _config = program['config-string'];
+
     var configFile = path.resolve(program.config || util.dirs().gekko + 'config.js');
 
     if(!fs.existsSync(configFile))
@@ -137,16 +145,37 @@ var util = {
       return 'backtest';
     else
       return 'realtime';
+  },
+  gekkoModes: function() {
+    return [
+      'importer',
+      'backtest',
+      'realtime'
+    ]
+  },
+  isInteractive: function() {
+    return !!program.interactive;
   }
 }
 
 program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
+  .option('-c, --interactive', 'interactive gekko')
   .option('-b, --backtest', 'backtesting mode')
   .option('-i, --import', 'importer mode')
   .parse(process.argv);
 
 var config = util.getConfig();
+
+// make sure the current node version is recent enough
+if(!util.recentNode())
+  util.die([
+    'Your local version of Node.js is too old. ',
+    'You have ',
+    process.version,
+    ' and you need atleast ',
+    util.getRequiredNodeVersion()
+  ].join(''));
 
 module.exports = util;
