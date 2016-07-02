@@ -61,10 +61,19 @@ Actor.prototype.prepareHistoricalData = function(done) {
   // - step 3: see if overlap
   // - step 4: feed candle stream into CandleBatcher
 
+  if(config.tradingAdvisor.historySize === 0)
+    return done();
+
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize * 60;
   var Reader = require(dirs.plugins + config.tradingAdvisor.adapter + '/reader');
 
   var reader = new Reader;
+
+  log.debug(
+    'The trading method requests',
+    requiredHistory,
+    'seconds of historic data. Checking availablity..'
+  );
 
   // TODO: refactor cb hell
   this.checkExchangeTrades(requiredHistory, function(err, window) {
@@ -82,7 +91,8 @@ Actor.prototype.prepareHistoricalData = function(done) {
       requiredHistory = Math.floor(dif / 60 / config.tradingAdvisor.candleSize);
 
       log.debug(
-        'Exchange returns more data than we need, shift required history to',
+        'Exchange returns more data than we need,',
+        'shift required history to',
         requiredHistory,
         '.'
       );
@@ -96,20 +106,46 @@ Actor.prototype.prepareHistoricalData = function(done) {
       return done();
     }
 
+    // We need more data
+
     var exchangeTo = moment.unix(window.to).startOf('minute').unix();
-    var exchangeFrom = moment.unix(window.from).add(1, 'm').startOf('minute').unix();
+    var exchangeFrom = moment.unix(window.from).subtract(1, 'm').startOf('minute').unix();
     var optimalFrom = exchangeTo - requiredHistory;
 
     reader.mostRecentWindow(exchangeFrom, optimalFrom, function(result) {
       if(!result) {
-        log.info('\t', 'Unable to use locally stored candles.');
+        log.info(
+          '\t',
+          'Unable to seed the trading method',
+          'with locally stored historical candles',
+          '(Gekko needs more time before it can give advice).'
+        );
         return done();
       }
 
-      // seed the batcher with locally stored historical candles
-      log.debug('Using locally stored historical candles.');
+      if(result === optimalFrom) {
+        log.debug(
+          'Full history locally available.',
+          'Seeding the trading method with all required historical candles.'
+        );
+      } else {
+        log.debug(
+          'Partial history locally available. But',
+          result - optimalFrom,
+          'seconds are missing. Seeding the trading method with',
+          'partial historical data (Gekko needs more time before',
+          'it can give advice).'
+        );
+      }
 
       reader.get(result, exchangeFrom, function(rows) {
+        // todo: do this in proper place
+
+        rows = rows.map(row => {
+          row.start = moment.unix(row.start);
+          return row;
+        });
+
         this.batcher.write(rows);
         reader.close();
         done();

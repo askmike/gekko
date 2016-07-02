@@ -39,8 +39,7 @@ var exchanges = [
     infinityOrder: false,
     currencies: ['USD', 'RUR', 'EUR', 'BTC'],
     assets: [
-      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR',
-      'TRC', 'PPC', 'FTC', 'XPM'
+      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH'
     ],
     markets: [
       { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -56,11 +55,14 @@ var exchanges = [
       { pair: ['USD', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['RUR', 'USD'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['USD', 'EUR'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['BTC', 'TRC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['BTC', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['USD', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['BTC', 'FTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['BTC', 'XPM'], minimalOrder: { amount: 0.1, unit: 'asset' } }
+      { pair: ['BTC', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['LTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } }
+      
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
