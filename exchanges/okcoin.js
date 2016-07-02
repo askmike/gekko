@@ -64,7 +64,7 @@ Trader.prototype.getTicker = function(callback) {
     var args = [this.pair, process];
     var process = function(err, data) {
         if (err)
-            return this.retry(this.okcoin.ticker(args));
+            return this.retry(this.okcoin.getTicker(args));
 
         var ticker = _.extend(data.ticker, {
             bid: +data.ticker.sell,
