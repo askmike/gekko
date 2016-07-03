@@ -44,12 +44,13 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 | Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
 | --------------- |:----------:|:-------:|:---------:|-------|
 | [Poloniex](https://poloniex.com/)      | ✓ | ✓ | ✓ | |
-| [BTCC](https://btcc.com/)      | ✓ | ✓ | ✓ | is BTCChina |
+| [BTCC](https://btcc.com/)      | ✓ | ✓ | ✓ | (=BTCChina) |
 | [Bitstamp](https://bitstamp.com/)      | ✓ | ✓ | ✗ | |
 | [Kraken](https://kraken.com/)      | ✓ | ✓ | ✗ | |
 | [Bitfinex](https://bitfinex.com/)      | ✓ | ✓ | ✗ | |
 | [BTC-e](https://btc-e.com/)      | ✓ | ✓ | ✗ | |
-| [Cex.io](https://bitstamp.com/)      | ✓ | ✗ | ✗ | |
+| [Okcoin.cn](https://www.okcoin.cn/)      | ✓ | ✓ | ✗ | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
+| [Cex.io](https://cex.io/)      | ✓ | ✗ | ✗ | |
 | [bitX](https://www.bitx.co/)      | ✓ | ✗ | ✗ | |
 | [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
 | [meXBT](https://mexbt.com/)      | ✓ | ✗ | ✗ | see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974). |

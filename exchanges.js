@@ -272,12 +272,9 @@ var exchanges = [
     ],
     requires: ['key', 'secret', 'username'],
     // TODO:
-    providesHistory: false,
-    fetchTimespan: 60,
-    maxHistoryFetch: false,
+    providesHistory: true,
+    maxHistoryFetch: 600,
     tid: 'date',
-    tradeError: 'NOT IMPLEMENTED YET',
-    monitorError: 'Very old code, not working currently.'
   },
   {
     name: 'BitX',
