@@ -5,6 +5,9 @@
   to load (realtime, backtesting or importing) while making sure
   all enabled plugins are actually supported by that market.
 
+  Read more here:
+  @link https://github.com/askmike/gekko/blob/stable/docs/internals/architecture.md
+
 */
 
 var util = require('./util');
@@ -15,16 +18,10 @@ var async = require('async');
 
 var log = require(dirs.core + 'log');
 
-var pipeline = (config, mode) => {
+var pipeline = (settings) => {
 
-  if(
-    config.trader.enabled &&
-    !config['I understand that Gekko only automates MY OWN trading strategies']
-  )
-    util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
-
-  log.info('Gekko v' + util.getVersion(), 'started');
-  log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
+  var mode = settings.mode;
+  var config = settings.config;
 
   // load a market based on the mode
   var Market = require(dirs.markets + mode);

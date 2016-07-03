@@ -26,6 +26,7 @@
     "lodash": "2.x",
     "moment": "2.4.x",
     "poloniex.js": "0.0.6",
+    "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "zaif.jp": "^0.1.4"
@@ -36,7 +37,7 @@
     "sinon": "^1.12.2"
   },
   "engines": {
-    "node": ">=4.0"
+    "node": ">=6.0"
   },
   "repository": {
     "type": "git",
