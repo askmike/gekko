@@ -273,7 +273,6 @@ var exchanges = [
     requires: ['key', 'secret', 'username'],
     // TODO:
     providesHistory: true,
-    fetchTimespan: 60,
     maxHistoryFetch: 600,
     tid: 'date',
   },

@@ -11,12 +11,12 @@ var Trader = function(config) {
     this.secret = config.secret;
     this.clientID = config.username;
   }
-    this.pair = [config.asset, config.currency].join('_').toLowerCase();
-    this.name = 'okcoin';
-    this.okcoin = new OKCoin(this.key, this.secret);
-    this.balance;
-    this.price;
 
+  this.pair = [config.asset, config.currency].join('_').toLowerCase();
+  this.name = 'okcoin';
+  this.okcoin = new OKCoin(this.key, this.secret);
+
+  this.lastTid = false;
 }
 
 // if the exchange errors we try the same call again after
@@ -124,7 +124,12 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
   this.okcoin.cancelOrder(cancel, this.pair, order_id);
 }
 
-Trader.prototype.getTrades = function(since, callback, descending) {
+Trader.prototype.getTrades = function(_since, callback, descending) {
+    // NOTES:
+    // there are a lot of trades on okcoin however, we can
+    // only fetch the last 600 trades..
+    var since = 600;
+
     var args = _.toArray(arguments);
     this.okcoin.getTrades(function(err, data) {
         if (err)
@@ -138,6 +143,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
                 date: trade.date
             }
         });
+
         callback(null, trades);
     }.bind(this), this.pair, since);
 }
