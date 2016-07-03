@@ -21,7 +21,7 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     ORDER BY start DESC
   `, function(err, rows) {
     if(err) {
-      log.debug('ERROR!', err);
+      console.error(err);
       return util.die('DB error while reading mostRecentWindow');
     }
 
@@ -58,8 +58,10 @@ Reader.prototype.get = function(from, to, next) {
     WHERE start <= ${to} AND start >= ${from}
     ORDER BY start ASC
   `, function(err, rows) {
-    if(err)
+    if(err) {
+      console.error(err);
       return util.die('DB error at `get`');
+    }
 
     next(rows);
   });
