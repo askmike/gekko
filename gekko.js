@@ -24,20 +24,22 @@ var util = require(__dirname + '/core/util');
 
 var dirs = util.dirs();
 var pipeline = require(dirs.core + 'pipeline');
+var log = require(dirs.core + 'log');
 
-if(!util.isInteractive()) {
+var config = util.getConfig();
+var mode = util.gekkoMode();
 
-  var config = util.getConfig();
-  var mode = util.gekkoMode();
+if(
+  config.trader.enabled &&
+  !config['I understand that Gekko only automates MY OWN trading strategies']
+)
+  util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
 
-  pipeline(config, mode);
-} else {
+log.info('Gekko v' + util.getVersion(), 'started');
+log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
-  var handle = require(dirs.core + 'interactiveSessionHandler');
+pipeline({
+  config: config,
+  mode: mode
+});
 
-  handle(pipeline);
-}
-
-
-
-// 
