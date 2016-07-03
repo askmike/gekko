@@ -166,8 +166,6 @@ Actor.prototype.processCandle = function(candle, done) {
   done();
 }
 
-Actor.prototype.finalize = _.noop;
-
 // propogate a custom sized candle to the trading method
 Actor.prototype.processCustomCandle = function(candle) {
   this.method.tick(candle);

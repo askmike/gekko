@@ -45,8 +45,6 @@ ipc.on('start', (mode, config) => {
     config: config,
     mode: mode
   });
-  // 
-  // process.exit(0);
 });
 
 

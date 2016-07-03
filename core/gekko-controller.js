@@ -4,7 +4,6 @@
 // in gekko dir:
 //    node core/gekko-controller
 
-
 var ForkTask = require('relieve').tasks.ForkTask
 var fork = require('child_process').fork
 
@@ -18,5 +17,3 @@ task.send('start', mode, config);
 task.on('log', function(data) {
   console.log('CHILD LOG:', data);
 });
-
-// TODO: exit handling
