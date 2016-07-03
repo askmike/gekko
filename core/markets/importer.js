@@ -8,6 +8,18 @@ var moment = require('moment');
 var adapter = config.adapters[config.importer.adapter];
 var daterange = config.importer.daterange;
 
+var from = moment.utc(daterange.from);
+
+if(daterange.to) {
+  var to = moment.utc(daterange.to);
+} else{
+  var to = moment().utc();
+  log.debug(
+    'No end date specified for importing, setting to',
+    to.format('YYYY-MM-DD HH:mm:ss')
+  );
+}
+
 var TradeBatcher = require(dirs.budfox + 'tradeBatcher');
 var CandleManager = require(dirs.budfox + 'candleManager');
 var exchangeChecker = require(dirs.core + 'exchangeChecker');
@@ -18,16 +30,7 @@ if(error)
 
 var fetcher = require(dirs.importers + config.watch.exchange);
 
-if(!daterange.to) {
-  var now = moment();
-  daterange.to = now;
-  log.debug(
-    'No end date specified for importing, setting to',
-    now.format('YYYY-MM-DD HH:mm:ss')
-  );
-}
-
-if(daterange.to <= daterange.from)
+if(to <= from)
   util.die('This daterange does not make sense.')
 
 var Market = function() {
@@ -36,7 +39,10 @@ var Market = function() {
 
   this.tradeBatcher = new TradeBatcher(this.exchangeSettings.tid);
   this.candleManager = new CandleManager;
-  this.fetcher = fetcher(daterange);
+  this.fetcher = fetcher({
+    to: to,
+    from: from
+  });
 
   this.done = false;
 
