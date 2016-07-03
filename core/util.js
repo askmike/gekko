@@ -3,12 +3,13 @@ var _ = require('lodash');
 var path = require('path');
 var fs = require('fs');
 var semver = require('semver');
-
 var program = require('commander');
 
 var _config = false;
 var _package = false;
 var _nodeVersion = false;
+var _gekkoMode = false;
+var _gekkoEnv = false;
 
 var _args = false;
 
@@ -17,6 +18,7 @@ var util = {
   getConfig: function() {
     if(_config)
       return _config;
+
     var configFile = path.resolve(program.config || util.dirs().gekko + 'config.js');
 
     if(!fs.existsSync(configFile))
@@ -41,6 +43,7 @@ var util = {
   getPackage: function() {
     if(_package)
       return _package;
+
 
     _package = JSON.parse( fs.readFileSync(__dirname + '/../package.json', 'utf8') );
     return _package;
@@ -130,16 +133,37 @@ var util = {
   makeEventEmitter: function(dest) {
     util.inherit(dest, require('events').EventEmitter);
   },
+  setGekkoMode: function(mode) {
+    _gekkoMode = mode;
+  },
   gekkoMode: function() {
+    if(_gekkoMode)
+      return _gekkoMode;
+
     if(program['import'])
       return 'importer';
     else if(program.backtest)
       return 'backtest';
     else
       return 'realtime';
+  },
+  gekkoModes: function() {
+    return [
+      'importer',
+      'backtest',
+      'realtime'
+    ]
+  },
+  setGekkoEnv: function(env) {
+    _gekkoEnv = env;
+  },
+  gekkoEnv: function() {
+    return _gekkoEnv || 'standalone';
   }
 }
 
+// NOTE: those options are only used
+// in stand alone mode
 program
   .version(util.logVersion())
   .option('-c, --config <file>', 'Config file')
@@ -148,5 +172,15 @@ program
   .parse(process.argv);
 
 var config = util.getConfig();
+
+// make sure the current node version is recent enough
+if(!util.recentNode())
+  util.die([
+    'Your local version of Node.js is too old. ',
+    'You have ',
+    process.version,
+    ' and you need atleast ',
+    util.getRequiredNodeVersion()
+  ].join(''), true);
 
 module.exports = util;

@@ -20,28 +20,31 @@
 
 */
 
-var util = require(__dirname + '/core/util');
+var util = require(__dirname + '/util');
 
 var dirs = util.dirs();
-var pipeline = require(dirs.core + 'pipeline');
-var log = require(dirs.core + 'log');
+var ipc = require('relieve').IPCEE(process);
 
-var config = util.getConfig();
-var mode = util.gekkoMode();
+var config;
+var mode;
 
-if(
-  config.trader.enabled &&
-  !config['I understand that Gekko only automates MY OWN trading strategies']
-)
-  util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
+ipc.on('start', (mode, config) => {
 
-log.info('Gekko v' + util.getVersion(), 'started');
-log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
+  // force correct gekko env
+  util.setGekkoEnv('child-process');
 
-// > Ever wonder why fund managers can't beat the S&P 500?
-// > 'Cause they're sheep, and sheep get slaughtered.
-pipeline({
-  config: config,
-  mode: mode
+  // force correct gekko mode
+  util.setGekkoMode(mode);
+
+  // force disable debug
+  config.debug = false;
+  util.setConfig(config);
+
+  var pipeline = require(dirs.core + 'pipeline');
+  pipeline({
+    config: config,
+    mode: mode
+  });
 });
+
 

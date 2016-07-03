@@ -1,4 +1,11 @@
-// @doc: [TODO]
+// Budfox is the realtime market for Gekko!
+//
+// Read more here:
+// @link https://github.com/askmike/gekko/blob/stable/docs/internals/budfox.md
+//
+// > [getting up] I don't know. I guess I realized that I'm just Bud Fox.
+// > As much as I wanted to be Gordon Gekko, I'll *always* be Bud Fox.
+// > [tosses back the handkerchief and walks away]
 
 var _ = require('lodash');
 var async = require('async');

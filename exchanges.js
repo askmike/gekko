@@ -84,8 +84,7 @@ var exchanges = [
       { pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' } }
     ],
     requires: ['key', 'secret', 'username'],
-    providesHistory: false,
-    // maxHistoryFetch: 'day',
+    maxHistoryFetch: 'day',
     fetchTimespan: 60,
     tid: 'tid'
   },

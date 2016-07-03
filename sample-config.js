@@ -288,8 +288,6 @@ config.adapters = {
   }
 }
 
-
-var moment = require('moment');
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING BACKTESTING
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -300,8 +298,9 @@ var moment = require('moment');
 config.backtest = {
   adapter: 'sqlite',
   daterange: {
-    from: moment.utc("2016-05-29 21:55:00"),
-    to: moment.utc("2016-06-10 09:49:00")
+    // NOTE: these times are in UTC
+    from: "2016-05-29 21:55:00",
+    to: "2016-06-10 09:49:00"
   },
   batchSize: 50
 }
@@ -312,7 +311,8 @@ config.backtest = {
 
 config.importer = {
   daterange: {
-    from: moment.utc("2015-09-09 12:00:00")
+    // NOTE: these dates are in UTC
+    from: "2015-09-09 12:00:00"
   }
 }
 
