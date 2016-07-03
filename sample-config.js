@@ -15,8 +15,8 @@ config.debug = true; // for additional logging / debugging
 
 // Monitor the live market
 config.watch = {
-  exchange: 'Bitstamp', // see gekko/docs/supported_exchanges.md
-  currency: 'USD',
+  exchange: 'btcc', // see gekko/docs/supported_exchanges.md
+  currency: 'CNY',
   asset: 'BTC'
 }
 
@@ -283,7 +283,7 @@ config.adapters = {
 
     dependencies: [{
       module: 'sqlite3',
-      version: '3.1.3'
+      version: '3.1.4'
     }]
   }
 }
