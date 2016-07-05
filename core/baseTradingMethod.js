@@ -76,7 +76,14 @@ var Base = function() {
   this.indicators = {};
   this.talibIndicators = {};
   this.asyncTick = false;
-  this.closePrices = [];
+
+  this.candleProps = {
+    open: [],
+    high: [],
+    low: [],
+    close: [],
+    volume: []
+  };
 
   // make sure we have all methods
   _.each(['init', 'check'], function(fn) {
@@ -114,9 +121,20 @@ Base.prototype.tick = function(candle) {
   this.age++;
   this.candle = candle;
 
-  this.closePrices.push(candle.close);
-  if(this.age > 1000) {
-    this.closePrices.shift();
+  if(this.asyncTick) {
+    this.candleProps.open.push(candle.open);
+    this.candleProps.high.push(candle.high);
+    this.candleProps.low.push(candle.low);
+    this.candleProps.close.push(candle.close);
+    this.candleProps.volume.push(candle.volume);
+
+    if(this.age > 1000) {
+      this.candleProps.open.shift();
+      this.candleProps.high.shift();
+      this.candleProps.low.shift();
+      this.candleProps.close.shift();
+      this.candleProps.volume.shift();
+    }
   }
 
   // update all indicators
@@ -139,7 +157,7 @@ Base.prototype.tick = function(candle) {
     );
 
     _.each(this.talibIndicators, function(i) {
-      i._fn(this.closePrices, next);
+      i._fn(next);
     }, this);
   }
 
@@ -165,13 +183,14 @@ Base.prototype.addTalibIndicator = function(name, type, parameters) {
   if(this.setup)
     util.die('Can only add talib indicators in the init method!');
 
+  var basectx = this;
+
   // TODO: cleanup..
   this.talibIndicators[name] = {
     _params: parameters,
-    _fn: function(closePrices, done) {
-
+    _fn: function(done) {
       var args = _.clone(parameters);
-      args.unshift(closePrices);
+      args.unshift(basectx.candleProps);
 
       talib[type].apply(this, args)(function(err, result) {
         if(err)
