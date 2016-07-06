@@ -107,12 +107,13 @@ module.exports = function(done) {
 
           // we have been counting reversed chronologically
           // (backwards, from now into the past), flip definitions
+          ranges = ranges.reverse();
           _.map(ranges, r => {
             return {
               from: r.to,
               to: r.from
             }
-          })
+          });
 
           if(_.size(ranges) === 1) {
             var r = _.first(ranges);
@@ -128,11 +129,11 @@ module.exports = function(done) {
             'Gekko detected multiple dateranges in the locally stored history.',
             'Please pick the daterange you are interested in testing:'
           );
+
           _.each(ranges, (range, i) => {
-            var r = _.first(ranges);
             log.info('\t\t', `OPTION ${i + 1}:`);
-            log.info('\t', 'from:', moment.unix(r.from).utc().format('YYYY-MM-DD HH:mm:ss'));
-            log.info('\t', 'to:', moment.unix(r.to).utc().format('YYYY-MM-DD HH:mm:ss'));
+            log.info('\t', 'from:', moment.unix(range.from).utc().format('YYYY-MM-DD HH:mm:ss'));
+            log.info('\t', 'to:', moment.unix(range.to).utc().format('YYYY-MM-DD HH:mm:ss'));
           });
 
           prompt.get({name: 'option'}, (err, result) => {
