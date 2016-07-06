@@ -23,9 +23,6 @@ var pipeline = (settings) => {
   var mode = settings.mode;
   var config = settings.config;
 
-  // load a market based on the mode
-  var Market = require(dirs.markets + mode);
-
   // prepare a GekkoStream
   var GekkoStream = require(dirs.core + 'gekkoStream');
 
@@ -137,6 +134,15 @@ var pipeline = (settings) => {
     next();
   }
 
+  // TODO: move this somewhere where it makes more sense
+  var prepareMarket = function(next) {
+
+    if(mode === 'backtest' && config.backtest.daterange === 'scan')
+      require(dirs.core + 'prepareDateRange')(next);
+    else
+      next();
+  }
+
   log.info('Setting up Gekko in', mode, 'mode');
   log.info('');
 
@@ -144,10 +150,14 @@ var pipeline = (settings) => {
     [
       loadPlugins,
       referenceEmitters,
-      subscribePlugins
+      subscribePlugins,
+      prepareMarket
     ],
     function() {
-      var market = new Market(config);
+      // load a market based on the mode
+      var Market = require(dirs.markets + mode);
+
+      var market = new Market();
       var gekko = new GekkoStream(candleConsumers);
 
       market

@@ -297,11 +297,7 @@ config.adapters = {
 
 config.backtest = {
   adapter: 'sqlite',
-  daterange: {
-    // NOTE: these times are in UTC
-    from: "2016-05-29 21:55:00",
-    to: "2016-06-10 09:49:00"
-  },
+  daterange: 'scan',
   batchSize: 50
 }
 

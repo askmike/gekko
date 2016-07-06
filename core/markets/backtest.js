@@ -56,11 +56,12 @@ Market.prototype.get = function() {
   this.reader.get(
     this.iterator.from.unix(),
     this.iterator.to.unix(),
+    'full',
     this.processCandles
   )
 }
 
-Market.prototype.processCandles = function(candles) {
+Market.prototype.processCandles = function(err, candles) {
   this.pushing = true;
   var amount = _.size(candles);
 
