@@ -104,8 +104,10 @@ CandleCreator.prototype.fillBuckets = function(trades) {
 CandleCreator.prototype.calculateCandles = function() {
   var minutes = _.size(this.buckets);
 
-  // create a string referencing to minute this trade happened in
-  var lastMinute = this.lastTrade.date.format('YYYY-MM-DD HH:mm');
+  // catch error from high volume getTrades
+  if (this.lastTrade !== undefined)
+    // create a string referencing to minute this trade happened in
+    var lastMinute = this.lastTrade.date.format('YYYY-MM-DD HH:mm');
 
   var candles = _.map(this.buckets, function(bucket, name) {
     var candle = this.calculateCandle(bucket);

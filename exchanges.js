@@ -274,6 +274,7 @@ var exchanges = [
     ],
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
+    fetchTimespan: 60,
     maxHistoryFetch: 600,
     tid: 'date',
   },
