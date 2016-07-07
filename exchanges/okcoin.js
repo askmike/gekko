@@ -14,9 +14,7 @@ var Trader = function(config) {
     this.pair = [config.asset, config.currency].join('_').toLowerCase();
     this.name = 'okcoin';
     this.okcoin = new OKCoin(this.key, this.secret);
-    this.balance;
-    this.price;
-
+    this.lastTid = false;
 }
 
 // if the exchange errors we try the same call again after
@@ -51,12 +49,15 @@ Trader.prototype.getPortfolio = function(callback) {
         util.die('Your ' + this.name + ' API keys are invalid');
       return this.retry(this.okcoin.getUserInfo, calculate);
     }
+
     var portfolio = [];
     _.each(data.info.funds.free, function(amount, asset) {
       portfolio.push({name: asset.toUpperCase(), amount: +amount});
     });
+
     callback(err, portfolio);
   }.bind(this);
+
   this.okcoin.getUserInfo(calculate);
 }
 
@@ -64,14 +65,16 @@ Trader.prototype.getTicker = function(callback) {
     var args = [this.pair, process];
     var process = function(err, data) {
         if (err)
-            return this.retry(this.okcoin.ticker(args));
+            return this.retry(this.okcoin.getTicker(args));
 
         var ticker = _.extend(data.ticker, {
             bid: +data.ticker.sell,
             ask: +data.ticker.buy
         });
+
         callback(err, ticker);
     }.bind(this);
+
     this.okcoin.getTicker(process, args);
 }
 
@@ -82,44 +85,51 @@ Trader.prototype.getFee = function(callback) {
     callback(false, makerFee / 100);
 }
 
-Trader.prototype.submit_order = function(type, amount, price, callback) {
-    var size = amount = Math.floor(amount * 100000000) / 100000000;
-    var order = function(err, data, body) {
-            if (err)
-                return log.error('unable to ' + type, err, body);
+Trader.prototype.buy = function(raw_amount, price, callback) {
+  var amount = Math.floor(raw_amount * 10000) / 10000
+  var set = function(err, result) {
+    if(err)
+      return log.error('unable to process order:', err, result);
 
-            var order = JSON.parse(body);
-            callback(err, order.order_id);
-        };
-  this.okcoin.addTrade(order, this.pair, type, size, price);
+    callback(null, result.order_id);
+  }.bind(this);
 
+  this.okcoin.addTrade(set, this.pair, 'buy', amount, price);
 }
 
-Trader.prototype.buy = function(amount, price, callback) {
-    this.submit_order('buy', amount, price, callback);
+Trader.prototype.sell = function(raw_amount, price, callback) {
+  var amount = Math.floor(raw_amount * 10000) / 10000
+  var set = function(err, result) {
+    if(err)
+      return log.error('unable to process order:', err, result);
+
+    callback(null, result.order_id);
+  }.bind(this);
+
+  this.okcoin.addTrade(set, this.pair, 'sell', amount, price);
 }
 
-Trader.prototype.sell = function(amount, price, callback) {
-    this.submit_order('sell', amount, price, callback);
-}
 
 Trader.prototype.checkOrder = function(order_id, callback) {
-    this.okcoin.order_status(order_id, function(err, data, body) {
-        var result = JSON.parse(body);
-        callback(err, result.is_live);
-    });
+  this.okcoin.getOrderInfo(function (err, result, body) {
+    callback(err, !result.result);
+  }, this.pair, order_id);
 }
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
-    this.okcoin.cancel_order(order_id, function(err, data, body) {
-        var result = JSON.parse(body);
-        if (err || !result || !result.is_cancelled)
-            log.error('unable to cancel order', order, '(', err, result, ')');
-    });
+  var cancel = function(err, result) {
+    if(err || !result.result) {
+      log.error('unable to cancel order ', order_id, '(', result, ')');
+    }
+  }.bind(this);
+
+  this.okcoin.cancelOrder(cancel, this.pair, order_id);
 }
 
-Trader.prototype.getTrades = function(since, callback, descending) {
+Trader.prototype.getTrades = function(_since, callback, descending) {
     var args = _.toArray(arguments);
+    var since = 600;
+
     this.okcoin.getTrades(function(err, data) {
         if (err)
             return this.retry(this.getTrades, args);
@@ -132,7 +142,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
                 date: trade.date
             }
         });
-        callback(null, trades);
+
+        callback(null, trades.reverse());
     }.bind(this), this.pair, since);
 }
 

@@ -1,8 +1,8 @@
-// The CandleCreator creates one minute candles based on trade batches. Note 
+// The CandleCreator creates one minute candles based on trade batches. Note
 // that it also adds empty candles to fill gaps with no volume.
-// 
+//
 // Expects trade batches to be written like:
-// 
+//
 // {
 //   amount: x,
 //   start: (moment),
@@ -11,13 +11,13 @@
 //   last: (trade),
 //   timespan: x,
 //   all: [
-//      // batch of new trades with 
+//      // batch of new trades with
 //      // moments instead of timestamps
 //   ]
 // }
-// 
+//
 // Emits 'new candles' event with:
-// 
+//
 // [
 //     {
 //       start: (moment),
@@ -41,7 +41,7 @@
 //    }
 //    // etc.
 // ]
-// 
+//
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -109,7 +109,7 @@ CandleCreator.prototype.calculateCandles = function() {
 
   var candles = _.map(this.buckets, function(bucket, name) {
     var candle = this.calculateCandle(bucket);
-    
+
     // clean all buckets, except the last one:
     // this candle is not complete
     if(name !== lastMinute)
@@ -151,7 +151,7 @@ CandleCreator.prototype.calculateCandle = function(trades) {
 
 // Gekko expects a candle every minute, if nothing happened
 // during a particilar minute Gekko will add empty candles with:
-// 
+//
 // - open, high, close, low, vwp are the same as the close of the previous candle.
 // - trades, volume are 0
 CandleCreator.prototype.addEmptyCandles = function(candles) {
