@@ -14,6 +14,8 @@ var reader = new Reader();
 
 var BATCH_SIZE = 60; // minutes
 
+// helper to store the evenutally detected
+// daterange.
 var setDateRange = function(from, to) {
   config.backtest.daterange = {
     from: moment.unix(from).utc().format(),
@@ -60,6 +62,9 @@ module.exports = function(done) {
 
     var batches = [];
 
+    // loop through all candles we have
+    // in batches and track whether they
+    // are complete
     async.whilst(
         () => {
           return iterator.from > first
@@ -89,7 +94,7 @@ module.exports = function(done) {
         () => {
           
           if(!_.size(batches))
-            util.die('No data to work with..');
+            util.die('Not enough data to work with (please manually set a valid `backtest.daterange`)..', true);
 
           // batches is now a list like
           // [ {from: unix, to: unix } ]
@@ -98,14 +103,13 @@ module.exports = function(done) {
 
           _.each(batches, batch => {
             var curRange = _.last(ranges);
-            if(batch.to === curRange.from) {
+            if(batch.to === curRange.from)
               curRange.from = batch.from;
-            } else {
+            else
               ranges.push( batch );
-            }
           })
 
-          // we have been counting reversed chronologically
+          // we have been counting chronologically reversed
           // (backwards, from now into the past), flip definitions
           ranges = ranges.reverse();
           _.map(ranges, r => {
@@ -114,6 +118,13 @@ module.exports = function(done) {
               to: r.from
             }
           });
+
+
+          // ranges is now a list like
+          // [ {from: unix, to: unix } ]
+          //
+          // it contains all valid dataranges available for the
+          // end user.
 
           if(_.size(ranges) === 1) {
             var r = _.first(ranges);

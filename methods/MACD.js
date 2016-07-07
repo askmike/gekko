@@ -61,7 +61,6 @@ method.log = function() {
   log.debug('\t', 'macdiff:', macd.result.toFixed(digits));  
 }
 
-var a = false;
 method.check = function() {
 
   var macddiff = this.indicators.macd.result;
