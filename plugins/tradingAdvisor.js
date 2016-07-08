@@ -207,6 +207,11 @@ Actor.prototype.processCustomCandle = function(candle) {
   this.method.tick(candle);
 }
 
+// pass through shutdown handler
+Actor.prototype.finish = function(done) {
+  this.method.finish(done);
+}
+
 // EMITTERS
 Actor.prototype.relayAdvice = function(advice) {
   this.emit('advice', advice);

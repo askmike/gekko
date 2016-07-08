@@ -27,6 +27,18 @@ Gekko.prototype._write = function(chunk, encoding, _done) {
 }
 
 Gekko.prototype.finalize = function() {
+  var tradingMethod = _.find(
+    this.candleConsumers,
+    c => c.meta.name === 'Trading Advisor'
+  );
+
+  if(!tradingMethod)
+    return this.shutdown();
+
+  tradingMethod.finish(this.shutdown.bind(this));
+}
+
+Gekko.prototype.shutdown = function() {
   _.each(this.candleConsumers, function(c) {
     if(c.finalize)
       c.finalize();
