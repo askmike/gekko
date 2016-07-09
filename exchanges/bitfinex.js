@@ -5,10 +5,6 @@ var _ = require('lodash');
 var moment = require('moment');
 var log = require('../core/log');
 
-// Module-wide constants
-var exchangeName = 'bitfinex';
-var symbol;
-
 var Trader = function(config) {
   _.bindAll(this);
   if(_.isObject(config)) {
@@ -18,9 +14,8 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-  symbol = config.asset + config.currency;
-  this.bitfinex = new Bitfinex(this.key, this.secret);
-  this.bitfinex = this.bitfinex.rest;
+  this.pair = config.asset + config.currency;
+  this.bitfinex = new Bitfinex(this.key, this.secret).rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -49,12 +44,12 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
     var portfolio = _(data).filter(function(data) {
-      return data.type === 'exchange';
+      return data.type === 'exchange'
     }).map(function (asset) {
       return {
         name: asset.currency.toUpperCase(),
         // TODO: use .amount instead of .available?
-        amount: +asset.available
+        amount: asset.available
       }
     }).value();
     callback(err, portfolio);
@@ -62,27 +57,24 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
+  var args = [this.pair, process]
   // the function that will handle the API callback
   var process = function(err, data, body) {
-    if (err) {
+    if (err)
       // on error we need to recurse this function
-
       // however we don't want to hit any API ratelimits
       // so we use this.retry since this will wait first
       // before we retry.
       // the arguments we need to pass the the ticker method
-
-      var args = [ symbol, process ];
-      return this.retry(bitfinex.ticker(args));
+      //>> Thanks Mike :)
+        return this.retry(this.bitfinex.ticker(args));
     }
-
     // whenever we reach this point we have valid
     // data, the callback is still the same since
     // we are inside the same javascript scope.
     callback(err, {bid: +data.bid, ask: +data.ask})
   }.bind(this);
-
-  this.bitfinex.ticker(symbol, process);
+  this.bitfinex.ticker(args);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
@@ -92,11 +84,10 @@ Trader.prototype.getFee = function(callback) {
     callback(false, makerFee / 100);
 }
 
-function submit_order(bfx, type, amount, price, callback) {
-  // TODO: Bitstamp module included the following - is it necessary?
-  // amount *= 0.995; // remove fees
+Trader.prototype.function = function (submit_order(type, amount, price, callback) {
   amount = Math.floor(amount*100000000)/100000000;
-  bfx.new_order(symbol, amount + '', price + '', exchangeName,
+
+  this.bitfinex.new_order(this.pair, amount + '', price + '', this.name,
     type,
     'exchange limit',
     function (err, data, body) {
@@ -107,13 +98,13 @@ function submit_order(bfx, type, amount, price, callback) {
     });
 }
 
-
 Trader.prototype.buy = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'buy', amount, price, callback);
+  this.submit_order(this.bitfinex, 'buy', amount, price, callback);
+
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  submit_order(this.bitfinex, 'sell', amount, price, callback);
+  this.submit_order(this.bitfinex, 'sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
@@ -133,7 +124,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var self = this;
 
-  var path = symbol;
+  var path = this.pair;
   if(since)
     path += '?limit_trades=' + since;
 
