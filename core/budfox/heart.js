@@ -27,6 +27,7 @@ Heart.prototype.determineLiveTickRate = function() {
     var seconds = 2;
   else
     var seconds = 20;
+
   this.tickRate = +moment.duration(seconds, 's');
 }
 

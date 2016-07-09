@@ -270,11 +270,12 @@ var exchanges = [
     currencies: ['BTC', 'CNY'],
     assets: ['BTC', 'LTC'],
     markets: [
-      { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
+      { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['CNY', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } }
     ],
     requires: ['key', 'secret', 'username'],
-    // TODO:
-    providesHistory: true,
+    providesHistory: false,
+    fetchTimespan: 60,
     maxHistoryFetch: 600,
     tid: 'date',
   },

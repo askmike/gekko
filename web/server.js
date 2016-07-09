@@ -1,12 +1,12 @@
-// 
+//
 // Current state: early prototype
 // 
 // todo: koa maybe?
 // 
 
-// 
+//
 // Spawn a nodejs webserver
-// 
+//
 
 var _ = require('lodash');
 var async = require('async');
@@ -18,7 +18,7 @@ delete config.trader
 
 var serverConfig = config.webserver;
 
-var ws = require("nodejs-websocket");
+var ws = require("zwebsocket");
 var http = require("http");
 var fs = require('fs');
 

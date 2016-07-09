@@ -11,12 +11,10 @@ var Trader = function(config) {
     this.secret = config.secret;
     this.clientID = config.username;
   }
-
-  this.pair = [config.asset, config.currency].join('_').toLowerCase();
-  this.name = 'okcoin';
-  this.okcoin = new OKCoin(this.key, this.secret);
-
-  this.lastTid = false;
+    this.pair = [config.asset, config.currency].join('_').toLowerCase();
+    this.name = 'okcoin';
+    this.okcoin = new OKCoin(this.key, this.secret);
+    this.lastTid = false;
 }
 
 // if the exchange errors we try the same call again after
@@ -51,12 +49,15 @@ Trader.prototype.getPortfolio = function(callback) {
         util.die('Your ' + this.name + ' API keys are invalid');
       return this.retry(this.okcoin.getUserInfo, calculate);
     }
+
     var portfolio = [];
     _.each(data.info.funds.free, function(amount, asset) {
       portfolio.push({name: asset.toUpperCase(), amount: +amount});
     });
+
     callback(err, portfolio);
   }.bind(this);
+
   this.okcoin.getUserInfo(calculate);
 }
 
@@ -70,8 +71,10 @@ Trader.prototype.getTicker = function(callback) {
             bid: +data.ticker.sell,
             ask: +data.ticker.buy
         });
+
         callback(err, ticker);
     }.bind(this);
+
     this.okcoin.getTicker(process, args);
 }
 
@@ -82,55 +85,64 @@ Trader.prototype.getFee = function(callback) {
     callback(false, makerFee / 100);
 }
 
-Trader.prototype.submitOrder = function(type, raw_amount, price, callback) {
-  var amount = Math.floor(raw_amount * 10000) / 10000;
+Trader.prototype.buy = function(raw_amount, price, callback) {
+  var amount = Math.floor(raw_amount * 10000) / 10000
   var set = function(err, result) {
     if(err)
-      return log.error('unable to buy:', err, result);
+      return log.error('unable to process order:', err, result);
 
-    callback(null, result.result);
+    callback(null, result.order_id);
   }.bind(this);
 
-  this.okcoin.addTrade(set, this.pair, type, amount, price);
+  this.okcoin.addTrade(set, this.pair, 'buy', amount, price);
 }
 
-Trader.prototype.buy = function(amount, price, callback) {
-    this.submitOrder('buy', amount, price, callback);
+Trader.prototype.sell = function(raw_amount, price, callback) {
+  var amount = Math.floor(raw_amount * 10000) / 10000
+  var set = function(err, result) {
+    if(err)
+      return log.error('unable to process order:', err, result);
+
+    callback(null, result.order_id);
+  }.bind(this);
+
+  this.okcoin.addTrade(set, this.pair, 'sell', amount, price);
 }
 
-Trader.prototype.sell = function(amount, price, callback) {
-    this.submitOrder('sell', amount, price, callback);
-}
 
 Trader.prototype.checkOrder = function(order_id, callback) {
-
-  var args = _.toArray(arguments);
   var check = function(err, result) {
-    if(err)
-      this.retry(this.checkOrder, args);
+    if(err || !result.result) {
+      log.error('Perhaps the order already got filled?', '(', result, ')');
+      callback(err, !result.result);
+    } else {
+      // output successful trade
+      var color = {
+        sell: '\x1b[31mSOLD\x1b[0m ',
+        buy: '\x1b[32mBOUGHT\x1b[0m ',
+      }
 
-    callback(err, check);
-  };
+      log.info(color[result.orders[0].type],
+        result.orders[0].amount, ' @ ', result.orders[0].price);
+    }
+  }
 
   this.okcoin.getOrderInfo(check, this.pair, order_id);
 }
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
   var cancel = function(err, result) {
-    if(err)
-      log.error('unable to cancel order', order_id, '(', err, result, ')');
+    if(err || !result.result) {
+      log.error('unable to cancel order ', order_id, '(', result, ')');
+    }
   }.bind(this);
 
   this.okcoin.cancelOrder(cancel, this.pair, order_id);
 }
 
-Trader.prototype.getTrades = function(_since, callback, descending) {
-    // NOTES:
-    // there are a lot of trades on okcoin however, we can
-    // only fetch the last 600 trades..
-    var since = 600;
-
+Trader.prototype.getTrades = function(since, callback, descending) {
     var args = _.toArray(arguments);
+
     this.okcoin.getTrades(function(err, data) {
         if (err)
             return this.retry(this.getTrades, args);
@@ -144,7 +156,7 @@ Trader.prototype.getTrades = function(_since, callback, descending) {
             }
         });
 
-        callback(null, trades);
+        callback(null, trades.reverse());
     }.bind(this), this.pair, since);
 }
 
