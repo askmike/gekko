@@ -68,6 +68,7 @@ var Base = function() {
 
   // properties
   this.age = 0;
+  this.processedTicks = 0;
   this.setup = false;
 
   // defaults
@@ -76,7 +77,14 @@ var Base = function() {
   this.indicators = {};
   this.talibIndicators = {};
   this.asyncTick = false;
-  this.closePrices = [];
+
+  this.candleProps = {
+    open: [],
+    high: [],
+    low: [],
+    close: [],
+    volume: []
+  };
 
   // make sure we have all methods
   _.each(['init', 'check'], function(fn) {
@@ -114,9 +122,20 @@ Base.prototype.tick = function(candle) {
   this.age++;
   this.candle = candle;
 
-  this.closePrices.push(candle.close);
-  if(this.age > 1000) {
-    this.closePrices.shift();
+  if(this.asyncTick) {
+    this.candleProps.open.push(candle.open);
+    this.candleProps.high.push(candle.high);
+    this.candleProps.low.push(candle.low);
+    this.candleProps.close.push(candle.close);
+    this.candleProps.volume.push(candle.volume);
+
+    if(this.age > 1000) {
+      this.candleProps.open.shift();
+      this.candleProps.high.shift();
+      this.candleProps.low.shift();
+      this.candleProps.close.shift();
+      this.candleProps.volume.shift();
+    }
   }
 
   // update all indicators
@@ -128,19 +147,20 @@ Base.prototype.tick = function(candle) {
       i.update(candle);
   });
 
+  // update the trading method
   if(!this.asyncTick || this.requiredHistory > this.age) {
     this.propogateTick();
   } else {
     var next = _.after(
       _.size(this.talibIndicators),
-      function() {
-        this.propogateTick();
-      }.bind(this)
+      this.propogateTick
     );
 
-    _.each(this.talibIndicators, function(i) {
-      i._fn(this.closePrices, next);
-    }, this);
+    _.each(
+      this.talibIndicators,
+      i => i._fn(next),
+      this
+    );
   }
 
   // update previous price
@@ -153,6 +173,11 @@ Base.prototype.propogateTick = function() {
     this.log();
     this.check();
   }
+  this.processedTicks++;
+
+  // are we totally finished
+  if(this.finishCb && this.age === this.processedTicks)
+    this.finishCb();
 }
 
 Base.prototype.addTalibIndicator = function(name, type, parameters) {
@@ -165,13 +190,14 @@ Base.prototype.addTalibIndicator = function(name, type, parameters) {
   if(this.setup)
     util.die('Can only add talib indicators in the init method!');
 
+  var basectx = this;
+
   // TODO: cleanup..
   this.talibIndicators[name] = {
     _params: parameters,
-    _fn: function(closePrices, done) {
-
+    _fn: function(done) {
       var args = _.clone(parameters);
-      args.unshift(closePrices);
+      args.unshift(basectx.candleProps);
 
       talib[type].apply(this, args)(function(err, result) {
         if(err)
@@ -211,6 +237,21 @@ Base.prototype.advice = function(newPosition) {
     portfolio: 1,
     moment: this.candle.start
   });
+}
+
+// Because the trading method might be async we need
+// to be sure we only stop after all candles are
+// processed.
+Base.prototype.finish = function(done) {
+  if(!this.asyncTick)
+    return done();
+
+  if(this.age === this.processedTicks)
+    return done();
+
+  // we are not done, register cb
+  // and call after we are..
+  this.finishCb = done;
 }
 
 module.exports = Base;

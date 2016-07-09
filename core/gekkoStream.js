@@ -4,7 +4,9 @@
 var Writable = require('stream').Writable;
 var _ = require('lodash');
 
-var mode = require('./util').gekkoMode();
+var util = require('./util');
+var env = util.gekkoEnv();
+var mode = util.gekkoMode();
 
 var Gekko = function(candleConsumers) {
   this.candleConsumers = candleConsumers;
@@ -25,9 +27,25 @@ Gekko.prototype._write = function(chunk, encoding, _done) {
 }
 
 Gekko.prototype.finalize = function() {
+  var tradingMethod = _.find(
+    this.candleConsumers,
+    c => c.meta.name === 'Trading Advisor'
+  );
+
+  if(!tradingMethod)
+    return this.shutdown();
+
+  tradingMethod.finish(this.shutdown.bind(this));
+}
+
+Gekko.prototype.shutdown = function() {
   _.each(this.candleConsumers, function(c) {
-    c.finalize();
+    if(c.finalize)
+      c.finalize();
   });
+
+  if(env === 'child-process')
+    process.exit(0);
 }
 
 module.exports = Gekko;

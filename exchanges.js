@@ -84,8 +84,7 @@ var exchanges = [
       { pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' } }
     ],
     requires: ['key', 'secret', 'username'],
-    providesHistory: false,
-    // maxHistoryFetch: 'day',
+    maxHistoryFetch: 'day',
     fetchTimespan: 60,
     tid: 'tid'
   },
@@ -169,6 +168,9 @@ var exchanges = [
       { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['BTC', 'XVC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['BTC', 'GRC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+
+      { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
     tid: 'tid',

@@ -45,7 +45,7 @@ method.update = function(candle) {
 
 
 method.log = function() {
-  
+  // nothing!
 }
 
 // Based on the newly calculated

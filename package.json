@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.2.5",
+  "version": "0.3.1",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -27,8 +27,10 @@
     "moment": "2.4.x",
     "okcoin-china": "0.0.7",
     "poloniex.js": "0.0.6",
+    "prompt-lite": "0.1.1",
+    "relieve": "^2.0.1",
     "semver": "2.2.1",
-    "sqlite3": "3.1.3",
+    "sqlite3": "3.1.4",
     "zaif.jp": "^0.1.4"
   },
   "devDependencies": {
@@ -37,7 +39,7 @@
     "sinon": "^1.12.2"
   },
   "engines": {
-    "node": ">=5.0"
+    "node": ">=6.0"
   },
   "repository": {
     "type": "git",

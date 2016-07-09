@@ -21,7 +21,7 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
     ORDER BY start DESC
   `, function(err, rows) {
     if(err) {
-      log.debug('ERROR!', err);
+      console.error(err);
       return util.die('DB error while reading mostRecentWindow');
     }
 
@@ -52,16 +52,73 @@ Reader.prototype.mostRecentWindow = function(to, from, next) {
   })
 }
 
-Reader.prototype.get = function(from, to, next) {
+Reader.prototype.get = function(from, to, what, next) {
+  if(what === 'full')
+    what = '*';
+
   this.db.all(`
-    SELECT * from ${sqliteUtil.table('candles')}
+    SELECT ${what} from ${sqliteUtil.table('candles')}
     WHERE start <= ${to} AND start >= ${from}
     ORDER BY start ASC
   `, function(err, rows) {
-    if(err)
+    if(err) {
+      console.error(err);
       return util.die('DB error at `get`');
+    }
 
-    next(rows);
+    next(null, rows);
+  });
+}
+
+Reader.prototype.count = function(from, to, next) {
+  this.db.all(`
+    SELECT COUNT(*) as count from ${sqliteUtil.table('candles')}
+    WHERE start <= ${to} AND start >= ${from}
+  `, function(err, res) {
+    if(err) {
+      console.error(err);
+      return util.die('DB error at `get`');
+    }
+
+    next(null, _.first(res).count);
+  });
+}
+
+Reader.prototype.countTotal = function(next) {
+  this.db.all(`
+    SELECT COUNT(*) as count from ${sqliteUtil.table('candles')}
+  `, function(err, res) {
+    if(err) {
+      console.error(err);
+      return util.die('DB error at `get`');
+    }
+
+    next(null, _.first(res).count);
+  });
+}
+
+Reader.prototype.getBoundry = function(next) {
+
+  this.db.all(`
+    SELECT
+    (
+      SELECT start
+      FROM ${sqliteUtil.table('candles')}
+      ORDER BY start LIMIT 1
+    ) as 'first',
+    (
+      SELECT start
+      FROM ${sqliteUtil.table('candles')}
+      ORDER BY start DESC
+      LIMIT 1
+    ) as 'last'
+  `, function(err, rows) {
+    if(err) {
+      console.error(err);
+      return util.die('DB error at `get`');
+    }
+
+    next(null, _.first(rows));
   });
 }
 

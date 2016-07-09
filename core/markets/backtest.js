@@ -9,7 +9,10 @@ var adapter = config.adapters[config.backtest.adapter];
 var Reader = require(dirs.gekko + adapter.path + '/reader');
 var daterange = config.backtest.daterange;
 
-if(daterange.to <= daterange.from)
+var to = moment.utc(daterange.to);
+var from = moment.utc(daterange.from);
+
+if(to <= from)
   util.die('This daterange does not make sense.')
 
 var Market = function() {
@@ -27,8 +30,8 @@ var Market = function() {
   this.reader = new Reader();
   this.batchSize = config.backtest.batchSize;
   this.iterator = {
-    from: daterange.from.clone(),
-    to: daterange.from.clone().add(this.batchSize, 'm').subtract(1, 's')
+    from: from.clone(),
+    to: from.clone().add(this.batchSize, 'm').subtract(1, 's')
   }
 }
 
@@ -45,19 +48,20 @@ Market.prototype._read = function() {
 }
 
 Market.prototype.get = function() {
-  if(this.iterator.to >= daterange.to) {
-    this.iterator.to = daterange.to;
+  if(this.iterator.to >= to) {
+    this.iterator.to = to;
     this.ended = true;
   }
 
   this.reader.get(
     this.iterator.from.unix(),
     this.iterator.to.unix(),
+    'full',
     this.processCandles
   )
 }
 
-Market.prototype.processCandles = function(candles) {
+Market.prototype.processCandles = function(err, candles) {
   this.pushing = true;
   var amount = _.size(candles);
 
