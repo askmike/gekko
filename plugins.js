@@ -122,17 +122,6 @@ var plugins = [
       module: 'redis',
       version: '0.10.0'
     }]
-  },
-  {
-    name: 'Web Server',
-    slug: 'webserver',
-    description: 'Web server',
-    async: true,
-    modes: ['realtime'],
-    dependencies: [{
-      module: 'nodejs-websocket',
-      version: '1.6.0',
-    }]
   }
 ];
 
