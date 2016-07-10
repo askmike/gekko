@@ -61,6 +61,12 @@ var done = false;
 var fetcher = new Fetcher(config.watch);
 
 var fetch = () => {
+  log.debug(
+    'Requesting data from',
+    iterator.from.format('YYYY-MM-DD HH:mm:ss') + ',',
+    'to',
+    iterator.to.format('YYYY-MM-DD HH:mm:ss')
+  );
   fetcher.getTrades(iterator, handleFetch);
 }
 
