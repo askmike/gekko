@@ -87,8 +87,8 @@ Manager.prototype.setFee = function(callback) {
 
     if(_.isFunction(callback))
       callback();
-  };
-  this.exchange.getFee(_.bind(set, this));
+  }.bind(this);
+  this.exchange.getFee(set);
 }
 
 Manager.prototype.setTicker = function(callback) {
@@ -97,8 +97,8 @@ Manager.prototype.setTicker = function(callback) {
 
     if(_.isFunction(callback))
       callback();
-  }
-  this.exchange.getTicker(_.bind(set, this));
+  }.bind(this);
+  this.exchange.getTicker(set);
 }
 
 // return the [fund] based on the data we have in memory

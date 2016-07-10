@@ -68,13 +68,12 @@ Trader.prototype.getTicker = function(callback) {
       // the arguments we need to pass the the ticker method
       //>> Thanks Mike :)
         return this.retry(this.bitfinex.ticker(args));
-    }
     // whenever we reach this point we have valid
     // data, the callback is still the same since
     // we are inside the same javascript scope.
     callback(err, {bid: +data.bid, ask: +data.ask})
   }.bind(this);
-  this.bitfinex.ticker(args);
+  this.bitfinex.ticker(this.pair, process);
 }
 
 // This assumes that only limit orders are being placed, so fees are the
@@ -84,10 +83,14 @@ Trader.prototype.getFee = function(callback) {
     callback(false, makerFee / 100);
 }
 
-Trader.prototype.function = function (submit_order(type, amount, price, callback) {
+Trader.prototype.submit_order = function(type, amount, price, callback) {
   amount = Math.floor(amount*100000000)/100000000;
 
-  this.bitfinex.new_order(this.pair, amount + '', price + '', this.name,
+  this.bitfinex.new_order(
+    this.pair,
+    amount + '',
+    price + '',
+    this.name.toLowerCase(),
     type,
     'exchange limit',
     function (err, data, body) {
@@ -99,12 +102,12 @@ Trader.prototype.function = function (submit_order(type, amount, price, callback
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  this.submit_order(this.bitfinex, 'buy', amount, price, callback);
+  this.submit_order('buy', amount, price, callback);
 
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  this.submit_order(this.bitfinex, 'sell', amount, price, callback);
+  this.submit_order('sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
@@ -128,11 +131,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   if(since)
     path += '?limit_trades=' + since;
 
-  this.bitfinex.trades(path,  function (err, data) {
+  this.bitfinex.trades(path, function(err, data) {
     if (err)
       return self.retry(self.getTrades, args);
 
-    var trades = _.map(data, function (trade) {
+    var trades = _.map(data, function(trade) {
       return {
         tid: trade.tid,
         date:  trade.timestamp,
