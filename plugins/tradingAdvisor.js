@@ -138,10 +138,10 @@ Actor.prototype.prepareHistoricalData = function(done) {
         );
       }
 
-      reader.get(result, exchangeFrom, 'full', function(rows) {
+      reader.get(result, exchangeFrom, 'full', function(err, rows) {
         // todo: do this in proper place
 
-        rows = rows.map(row => {
+        rows = _.map(rows, row => {
           row.start = moment.unix(row.start);
           return row;
         });
