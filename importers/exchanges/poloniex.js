@@ -65,10 +65,14 @@ var fetch = () => {
 }
 
 var handleFetch = trades => {
-  var last = moment.unix(_.last(trades).date);
 
   iterator.from.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
   iterator.to.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
+
+  if(!_.size(trades))
+    return fetcher.emit('trades', []);
+
+  var last = moment.unix(_.last(trades).date);
 
   if(last > end) {
     fetcher.emit('done');

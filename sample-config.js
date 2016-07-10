@@ -15,6 +15,7 @@ config.debug = true; // for additional logging / debugging
 
 // Monitor the live market
 config.watch = {
+
   // see https://github.com/askmike/gekko#supported-exchanges
   exchange: 'Bitstamp',
   currency: 'USD',
