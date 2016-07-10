@@ -31,6 +31,7 @@
     "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
+    "websocket": "latest",
     "zaif.jp": "^0.1.4"
   },
   "devDependencies": {

@@ -60,8 +60,14 @@ method.log = function() {
   log.debug('\t', 'signal:', signal.toFixed(digits));
   log.debug('\t', 'macdiff:', macd.result.toFixed(digits));  
 }
-
+var a = false;
 method.check = function() {
+
+  if(!a) {
+    a = true;
+    this.advice('long');
+  }
+  return;
 
   var macddiff = this.indicators.macd.result;
 

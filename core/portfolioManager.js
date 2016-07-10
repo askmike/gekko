@@ -70,7 +70,7 @@ Manager.prototype.setPortfolio = function(callback) {
       util.die(err);
 
     this.portfolio = portfolio;
-    
+
     if(_.isFunction(callback))
       callback();
   }.bind(this);
@@ -84,21 +84,21 @@ Manager.prototype.setFee = function(callback) {
 
     if(err)
       util.die(err);
-    
+
     if(_.isFunction(callback))
       callback();
-  };
-  this.exchange.getFee(_.bind(set, this));
+  }.bind(this);
+  this.exchange.getFee(set);
 }
 
 Manager.prototype.setTicker = function(callback) {
   var set = function(err, ticker) {
     this.ticker = ticker;
-    
+
     if(_.isFunction(callback))
       callback();
-  }
-  this.exchange.getTicker(_.bind(set, this));
+  }.bind(this);
+  this.exchange.getTicker(set);
 }
 
 // return the [fund] based on the data we have in memory
@@ -111,11 +111,11 @@ Manager.prototype.getBalance = function(fund) {
 
 // This function makes sure order get to the exchange
 // and initiates follow up to make sure the orders will
-// get executed. This is the backbone of the portfolio 
+// get executed. This is the backbone of the portfolio
 // manager.
-// 
+//
 // How this is done depends on a couple of things:
-// 
+//
 // is this a directExchange? (does it support MKT orders)
 // is this a infinityOrderExchange (does it support order
 // requests bigger then the current balance?)
@@ -285,7 +285,7 @@ Manager.prototype.checkOrder = function() {
       // an error on cex.io if they happen on the same
       // unix timestamp second (nonce will not increment).
       var self = this;
-      setTimeout(function() { self.trade(self.action); }, 1000);
+      setTimeout(function() { self.trade(self.action); }, 500);
       return;
     }
 
