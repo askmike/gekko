@@ -1,58 +1,16 @@
-<!doctype>
+<!DOCTYPE html>
+<html>
 <head>
-  <!-- <link href="http://nvd3.org/src/nv.d3.css" rel="stylesheet"> -->
-  <!-- <link href="/css/style.css" rel="stylesheet"> -->
-  <title>Gekko prototype</title>
-  <style>
-
-  </style>
+  <title>Gekko</title>
+  <link rel="stylesheet" media="all" type="text/css" href="/css/style.css">
 </head>
 <body>
-  <h1>Gekko (early prototype)</h1>
-  <h2>advices</h2>
-  <pre id="adviceLog"></pre>
-  <h2>trade data</h2>
-  <pre id="log"></pre>
-  <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
-  <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js'></script>
+  <h1>Gekko</h1>
+  <button id='backtest'>backtest</button>
+  <h2>log</h2>
+  <pre id="log">..</pre>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js'></script>
   <script src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js'></script>
-  <script src='//cdnjs.cloudflare.com/ajax/libs/d3/4.1.0/d3.min.js'></script>
-  <script src='//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.js'></script>
-  <script>
-    var settings = {
-      host: '{{host}}',
-      port: '{{port}}'
-    }
-
-    var ws = new WebSocket(`ws://${settings.host}:${settings.port}`);
-
-    ws.onopen = function() {
-      console.log('aaa');
-    }
-
-    var $log = $('#log');
-    var $adviceLog = $('#adviceLog');
-
-    ws.onmessage = function(e) {
-      var msg = JSON.parse(e.data);
-      console.log(msg.message);
-
-      if(msg.message === 'candle')
-        $log.prepend(JSON.stringify(msg.data, null, 4));
-      if(msg.message === 'history') {
-        $log.prepend(
-          _.map(msg.data, function(e) {
-            return JSON.stringify(e, null, 4);
-          }).join('\n')
-        );
-      }
-
-      if(msg.message === 'advice') {
-        $adviceLog.prepend(JSON.stringify(msg, null, 4));
-      }
-        
-    }
-
-  </script>
-
+  <script src='/js/main.js'></script>
 </body>
+</html>

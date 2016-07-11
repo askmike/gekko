@@ -62,7 +62,6 @@ method.log = function() {
 }
 
 method.check = function() {
-
   var macddiff = this.indicators.macd.result;
 
   if(macddiff > settings.thresholds.up) {

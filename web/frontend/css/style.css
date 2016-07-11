@@ -1,0 +1,20 @@
+body {
+  width: 1024px;
+  margin: 50px auto;
+  font-family: sans-serif;
+}
+
+pre {
+  display: block;
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  white-space: pre-wrap;
+  word-break: normal;
+  background-color: #fcf997;
+  padding: 10px;
+  font-size: 12px;
+}
+
+#log {
+  height: 400px;
+  overflow: scroll;
+}

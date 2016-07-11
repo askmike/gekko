@@ -280,7 +280,7 @@ config.adapters = {
   sqlite: {
     path: 'plugins/sqlite',
 
-    dataDirectory: './history',
+    dataDirectory: 'history',
     version: 0.1,
 
     dependencies: [{

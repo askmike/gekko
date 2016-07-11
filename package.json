@@ -21,6 +21,9 @@
     "btc-e": "0.0.x",
     "cexio": "0.0.x",
     "commander": "^2.9.0",
+    "koa": "^1.2.0",
+    "koa-router": "^5.4.0",
+    "koa-static": "^2.0.0",
     "kraken-api": "0.1.x",
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",
@@ -31,6 +34,7 @@
     "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
+    "ws": "^1.1.1",
     "zaif.jp": "^0.1.4"
   },
   "devDependencies": {

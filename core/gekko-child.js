@@ -40,6 +40,10 @@ ipc.on('start', (mode, config) => {
   config.debug = false;
   util.setConfig(config);
 
+  var log = require(dirs.core + 'log');
+
+  log.info('Gekko v' + util.getVersion(), 'started');
+
   var pipeline = require(dirs.core + 'pipeline');
   pipeline({
     config: config,
