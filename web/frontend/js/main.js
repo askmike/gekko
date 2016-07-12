@@ -1,31 +1,33 @@
 var ws = new WebSocket(`ws://${location.hostname}:${location.port}/`);
 
-var $log = document.getElementById('log');
+var page = location.pathname;
 
-ws.onopen = () => {
-  console.log('aaa');
-}
+var messageHandlers = {};
 
 ws.onmessage = e => {
   var data = JSON.parse(e.data);
 
-  console.log(data);
-
-  if(data.type === 'log') {
-    $log.innerHTML += data.message + '\n';
-    $log.scrollTop = $log.scrollHeight;
-  }
+  if(messageHandlers[data.type])
+    messageHandlers[data.type](data.message);
+  else
+    console.log(data);
 }
 
-var $backtest = document.getElementById('backtest');
 
-$backtest.onclick = () => {
+if(true) {
+  var $log = document.getElementById('log');
 
-  $log.innerHTML = '';
+  var $backtest = document.getElementById('backtest');
 
-  fetch('/api/backtest', {
-    method: 'POST',
-    body: {
+  messageHandlers.log = m => $log.innerHTML += m + '\n';
+
+  $backtest.onclick = () => {
+
+    console.log('go');
+
+    $log.innerHTML = '';
+
+    var request = {
       watch: {
         exchange: 'bitstamp',
         currency: 'USD',
@@ -34,8 +36,10 @@ $backtest.onclick = () => {
       backtest: {
         daterange: 'scan'
       }
-    }
-  });
+    };
 
+    ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+
+  }
 }
 
