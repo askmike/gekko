@@ -168,8 +168,6 @@ config.profitSimulator = {
     asset: 1,
     currency: 100,
   },
-  // only want report after a sell? set to `false`.
-  verbose: false,
   // how much fee in % does each trade cost?
   fee: 0.25,
   // how much slippage/spread should Gekko assume per trade?
@@ -258,18 +256,6 @@ config.redisBeacon = {
 config.candleWriter = {
   adapter: 'sqlite',
   enabled: true
-}
-
-config.webserver = {
-  enabled: false,
-  http: {
-    port: 8080,
-    host: 'localhost'
-  },
-  ws: {
-    port: 8081,
-    host: 'localhost'
-  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

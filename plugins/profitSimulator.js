@@ -96,7 +96,7 @@ Logger.prototype.processAdvice = function(advice) {
       log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset} \t(${this.current.currency})`);
   }
 
-  if(this.verbose)
+  if(mode === 'realtime')
     this.report();
 }
 
@@ -159,7 +159,7 @@ Logger.prototype.report = function(timespan) {
 
 // finish up stats for backtesting
 Logger.prototype.finalize = function() {
-  console.log('')
+  log.info('')
 
   log.info(
     '(PROFIT REPORT)',
@@ -184,7 +184,7 @@ Logger.prototype.finalize = function() {
     'days'
   );
 
-  console.log();
+  log.info();
 
   log.info(
     '(PROFIT REPORT)',
@@ -204,7 +204,7 @@ Logger.prototype.finalize = function() {
     (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
   );
 
-  console.log();
+  log.info();
 
   log.info(
     '(PROFIT REPORT)',
