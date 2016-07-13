@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const gekkoRunner = require('../gekko-runner');
+const gekkoRunner = require('../../core/workers/gekko/parent');
 
-var wss;
 var broadcast;
 
 // starts a backtest
@@ -23,7 +22,7 @@ const route = function *() {
 
   config.debug = false;
 
-  var relay = m => broadcast({type: 'log', message: m});
+  var relay = type => m => broadcast({type: type, message: m});
 
   gekkoRunner(mode, config, relay);
 

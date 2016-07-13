@@ -122,7 +122,8 @@ var util = {
       methods: ROOT + 'methods/',
       budfox: ROOT + 'core/budfox/',
       importers: ROOT + 'importers/exchanges/',
-      tools: ROOT + 'core/tools/'
+      tools: ROOT + 'core/tools/',
+      workers: ROOT + 'core/workers/'
     }
   },
   inherit: function(dest, source) {

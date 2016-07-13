@@ -1,3 +1,7 @@
+// config somewhere?
+var port = 3000;
+var relayInterval = 250;
+
 var server = require('http').createServer();
 var url = require('url');
 var WebSocketServer = require('ws').Server;
@@ -10,10 +14,8 @@ var ws = require('ws');
 var app = koa();
 var _ = require('lodash');
 
-var port = 3000;
-
-
 var messages = {};
+// buffer internally
 var broadcast = data => {
   if(!messages[data.type])
     messages[data.type] = [];
@@ -21,24 +23,24 @@ var broadcast = data => {
   messages[data.type].push(data.message);
 }
 
+// publish in batches
 var _broadcast = data => {
   if(_.isEmpty(messages))
     return;
 
-  _.each(wss.clients, client => client.send(JSON.stringify(messages)))
+  _.each(
+    wss.clients,
+    client => client.send(JSON.stringify(messages))
+  );
   messages = {};
 }
-
-setInterval(_broadcast, 125);
+setInterval(_broadcast, relayInterval);
 
 var backtest = require('./routes/backtest')(broadcast);
 router.post('/api/backtest', backtest);
 
-wss.on('connection', function connection(ws) {
-  var location = url.parse(ws.upgradeReq.url, true);
- 
+wss.on('connection', ws => {
   ws.on('message', _.noop);
- 
   ws.send(JSON.stringify({state: 'ready'}));
 });
 

@@ -31,6 +31,8 @@
     "moment": "2.4.x",
     "okcoin-china": "0.0.7",
     "poloniex.js": "0.0.6",
+    "promisify": "0.0.3",
+    "promisify-node": "^0.4.0",
     "prompt-lite": "0.1.1",
     "relieve": "^2.0.1",
     "semver": "2.2.1",
