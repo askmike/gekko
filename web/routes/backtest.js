@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const gekkoRunner = require('../../core/workers/gekko/parent');
+const pipelineRunner = require('../../core/workers/pipeline/parent');
 
 var broadcast;
 
@@ -24,7 +24,7 @@ const route = function *() {
 
   var relay = type => m => broadcast({type: type, message: m});
 
-  gekkoRunner(mode, config, relay);
+  pipelineRunner(mode, config, relay);
 
   this.body = 'ok';
 }
