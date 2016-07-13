@@ -7,10 +7,10 @@ var messageHandlers = {};
 ws.onmessage = e => {
   var data = JSON.parse(e.data);
 
-  if(messageHandlers[data.type])
-    messageHandlers[data.type](data.message);
-  else
-    console.log(data);
+  _.each(messageHandlers, (fn, type) => {
+    if(data[type])
+      messageHandlers[type](data[type]);
+  });
 }
 
 
@@ -19,7 +19,10 @@ if(true) {
 
   var $backtest = document.getElementById('backtest');
 
-  messageHandlers.log = m => $log.innerHTML += m + '\n';
+  messageHandlers.log = m => {
+    $log.innerHTML += m.join('\n') + '\n'
+    $log.scrollTop = $log.scrollHeight;
+  };
 
   $backtest.onclick = () => {
 
@@ -28,13 +31,32 @@ if(true) {
     $log.innerHTML = '';
 
     var request = {
+      MACD: {
+        short: 10,
+        long: 21,
+        signal: 9,
+        thresholds: {
+          down: -0.025,
+          up: 0.025,
+          persistence: 1
+        }
+      },
+      tradingAdvisor: {
+        enabled: true,
+        method: 'MACD',
+        candleSize: 1,
+        historySize: 20
+      },
       watch: {
-        exchange: 'bitstamp',
-        currency: 'USD',
+        exchange: 'poloniex',
+        currency: 'USDT',
         asset: 'BTC'
       },
       backtest: {
-        daterange: 'scan'
+        daterange: {
+          from: '2016-03-01 00:00:00',
+          to: '2016-03-16 09:00:00'
+        }
       }
     };
 

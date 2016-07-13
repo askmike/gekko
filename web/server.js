@@ -12,40 +12,34 @@ var _ = require('lodash');
 
 var port = 3000;
 
-router.get('/api/ping', function *() {
-  this.body = 'pong'
-});
- 
-router.post('/api/backtest', function *() {
-  var mode = 'backtest';
 
-  var body = JSON.parse(this.request.body.data);
+var messages = {};
+var broadcast = data => {
+  if(!messages[data.type])
+    messages[data.type] = [];
 
-  var config = require('../config.js');
+  messages[data.type].push(data.message);
+}
 
-  _.merge(config, body);
+var _broadcast = data => {
+  if(_.isEmpty(messages))
+    return;
 
-  config.debug = false;
+  _.each(wss.clients, client => client.send(JSON.stringify(messages)))
+  messages = {};
+}
 
-  var broadcast = m => {
-    wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify({type: 'log', message: m}));
-    });
-  }
+setInterval(_broadcast, 125);
 
-  require('./gekko-runner')(mode, config, broadcast);
-
-  this.body = 'ok';
-});
+var backtest = require('./routes/backtest')(broadcast);
+router.post('/api/backtest', backtest);
 
 wss.on('connection', function connection(ws) {
   var location = url.parse(ws.upgradeReq.url, true);
  
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
+  ws.on('message', _.noop);
  
-  ws.send(JSON.stringify({date: 'something'}));
+  ws.send(JSON.stringify({state: 'ready'}));
 });
 
 app
