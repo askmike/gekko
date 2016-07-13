@@ -21,7 +21,7 @@ var setDateRange = function(from, to) {
 
 
 module.exports = function(done) {
-  scan(ranges => {
+  scan((err, ranges) => {
 
     if(_.size(ranges) === 1) {
       var r = _.first(ranges);

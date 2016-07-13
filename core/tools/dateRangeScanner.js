@@ -1,4 +1,5 @@
 var BATCH_SIZE = 60; // minutes
+var MISSING_CANDLES_ALLOWED = 3; // minutes, per batch
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -33,7 +34,7 @@ var scan = function(done) {
     // There is a candle for every minute
     if(res.available === optimal + 1) {
       log.info('Gekko is able to fully use the local history.');
-      return done([{
+      return done(false, [{
         from: first,
         to: last
       }]);
@@ -66,7 +67,7 @@ var scan = function(done) {
             from,
             iterator.to,
             (err, count) => {
-              var complete = count > BATCH_SIZE;
+              var complete = count + MISSING_CANDLES_ALLOWED > BATCH_SIZE;
 
               if(complete)
                 batches.push({
@@ -116,7 +117,7 @@ var scan = function(done) {
           // it contains all valid dataranges available for the
           // end user.
 
-          return done(ranges);
+          return done(false, ranges);
 
         }
       )
