@@ -28,6 +28,10 @@ var pluginHelper = {
           var a = require(dep.module);
         }
         catch(e) {
+
+          if(!e.message || !e.message.startsWith('Cannot find module'))
+            return util.die(e);
+
           error = [
             'The plugin',
             plugin.slug,
