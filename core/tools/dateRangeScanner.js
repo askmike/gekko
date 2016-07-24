@@ -118,7 +118,6 @@ var scan = function(done) {
           // end user.
 
           return done(false, ranges);
-
         }
       )
   });

@@ -33,6 +33,7 @@ var sendIPC = function() {
 var Log = function() {
   _.bindAll(this);
   this.env = util.gekkoEnv();
+
   if(this.env === 'standalone')
     this.output = console;
   else if(this.env === 'child-process')

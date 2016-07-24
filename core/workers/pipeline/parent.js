@@ -1,5 +1,5 @@
-var ForkTask = require('relieve').tasks.ForkTask
-var fork = require('child_process').fork
+var ForkTask = require('relieve').tasks.ForkTask;
+var fork = require('child_process').fork;
 
 module.exports = (mode, config, handler) => {
   task = new ForkTask(fork(__dirname + '/child'));

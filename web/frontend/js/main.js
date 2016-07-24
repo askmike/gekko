@@ -14,54 +14,86 @@ ws.onmessage = e => {
 }
 
 
+
+var daterange = false;
+
 if(true) {
   var $log = document.getElementById('log');
 
-  var $backtest = document.getElementById('backtest');
+  
 
   messageHandlers.log = m => {
     $log.innerHTML += m.join('\n') + '\n'
     $log.scrollTop = $log.scrollHeight;
   };
 
+  var $backtest = document.getElementById('backtest');
   $backtest.onclick = () => {
-
-    console.log('go');
-
-    $log.innerHTML = '';
-
     var request = {
-      MACD: {
-        short: 10,
-        long: 21,
-        signal: 9,
-        thresholds: {
-          down: -0.025,
-          up: 0.025,
-          persistence: 1
-        }
-      },
-      tradingAdvisor: {
-        enabled: true,
-        method: 'MACD',
-        candleSize: 1,
-        historySize: 20
-      },
       watch: {
-        exchange: 'poloniex',
-        currency: 'USDT',
-        asset: 'BTC'
-      },
-      backtest: {
-        daterange: {
-          from: '2016-03-01 00:00:00',
-          to: '2016-03-16 09:00:00'
-        }
+        exchange: 'poloniex',//prompt('What exchange?'),
+        currency: 'USDT', //prompt('What currency?'),
+        asset: 'BTC'//prompt('What Asset?')
       }
-    };
+    }
 
-    ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+    var handle = data => {
+      var ranges = JSON.parse(data);
+      // if(_.size(ranges) === 1) {
+      //   daterange = _.first(ranges);
+      // }
 
+      var fmt = u => moment.unix(u).format('YYYY-MM-DD HH:mm:ss');
+
+      var q = 'what range would you like?\n';
+      _.each(ranges, (r, i) => {
+        q += 'OPTION ' + (i + 1) + '\n';
+        q += '\tfrom ' + fmt(r.from) + '\n';
+        q += '\tto ' + fmt(r.to) + '\n';
+      });
+
+      var index = parseInt(prompt(q)) - 1;
+      
+      daterange = ranges[index];
+
+      $log.innerHTML = '';
+
+      var request = {
+        MACD: {
+          short: 10,
+          long: 21,
+          signal: 9,
+          thresholds: {
+            down: -0.025,
+            up: 0.025,
+            persistence: 1
+          }
+        },
+        tradingAdvisor: {
+          enabled: true,
+          method: 'MACD',
+          candleSize: 1,
+          historySize: 20
+        },
+        watch: {
+          exchange: 'poloniex',
+          currency: 'USDT',
+          asset: 'BTC'
+        },
+        backtest: {
+          daterange: {
+            from: '2016-03-01 00:00:00',
+            to: '2016-03-16 09:00:00'
+          }
+        }
+      };
+
+      ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+
+    }
+
+
+    ajax('/api/scan', handle, 'data=' + JSON.stringify(request));
   }
 }
 

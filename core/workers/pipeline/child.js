@@ -20,9 +20,6 @@
 
 */
 
-var util = require(__dirname + '/../../util');
-
-var dirs = util.dirs();
 var ipc = require('relieve').IPCEE(process);
 
 var config;
@@ -30,8 +27,12 @@ var mode;
 
 ipc.on('start', (mode, config) => {
 
+  var util = require(__dirname + '/../../util');
+
   // force correct gekko env
   util.setGekkoEnv('child-process');
+
+  var dirs = util.dirs();
 
   // force correct gekko mode
   util.setGekkoMode(mode);
@@ -41,13 +42,15 @@ ipc.on('start', (mode, config) => {
   util.setConfig(config);
 
   var log = require(dirs.core + 'log');
-
   log.info('Gekko v' + util.getVersion(), 'started');
+
+  var Spy = require('./spy');
 
   var pipeline = require(dirs.core + 'pipeline');
   pipeline({
     config: config,
-    mode: mode
+    mode: mode,
+    spies: [ new Spy ]
   });
 });
 

@@ -22,7 +22,7 @@ const route = function *() {
 
   config.debug = false;
 
-  var relay = type => m => broadcast({type: type, message: m});
+  var relay = type => m => broadcast({type: type, message: m})
 
   pipelineRunner(mode, config, relay);
 

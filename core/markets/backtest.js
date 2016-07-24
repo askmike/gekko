@@ -16,6 +16,7 @@ if(to <= from)
   util.die('This daterange does not make sense.')
 
 var Market = function() {
+
   _.bindAll(this);
   this.pushing = false;
   this.ended = false;
