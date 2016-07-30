@@ -207,7 +207,6 @@ config.mailer = {
   to: '',       // 'me@somedomain.com, me@someotherdomain.com'
   ssl: true,        // Use SSL (true for Gmail)
   port: '',       // Set if you don't want to use the default port
-  tls: false        // Use TLS if true
 }
 
 config.ircbot = {

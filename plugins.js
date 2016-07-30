@@ -84,7 +84,7 @@ var plugins = [
     modes: ['realtime'],
     dependencies: [{
       module: 'emailjs',
-      version: '0.3.6'
+      version: '1.0.5'
     }, {
       module: 'prompt-lite',
       version: '0.1.1'
