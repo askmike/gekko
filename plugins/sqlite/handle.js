@@ -51,5 +51,8 @@ if(mode === 'realtime') {
   
 
 var db = new sqlite3.Database(fullPath);
+// enable WAL mode to enable concurrent reads and writes
+// http://sqlite.org/wal.html
+db.run("PRAGMA journal_mode = WAL")
 
 module.exports = db;
