@@ -1,3 +1,7 @@
+# exclude config.js variations
+*config.js
+*).js
+
 # Numerous always-ignore extensions
 *.diff
 *.err
