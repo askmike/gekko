@@ -97,18 +97,21 @@ Mailer.prototype.processCandle = function(candle, done) {
 }
 
 Mailer.prototype.processAdvice = function(advice) {
+
+  if (advice.recommendation == "soft" && mailConfig.muteSoft) return;
+
   var text = [
     'Gekko is watching ',
     config.watch.exchange,
     ' and has detected a new trend, advice is to go ',
-    advice.recommandation,
+    advice.recommendation,
     '.\n\nThe current ',
     config.watch.asset,
     ' price is ',
     this.price
   ].join('');
 
-  var subject = 'New advice: go ' + advice.recommandation;
+  var subject = 'New advice: go ' + advice.recommendation;
 
   this.mail(subject, text);
 }

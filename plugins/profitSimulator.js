@@ -73,7 +73,7 @@ Logger.prototype.calculateStartBalance = function() {
 Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
 
-  var what = advice.recommandation;
+  var what = advice.recommendation;
   var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
 
   // virtually trade all USD to BTC at the current price

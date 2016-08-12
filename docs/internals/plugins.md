@@ -50,7 +50,7 @@ to listen to:
   This method will be fed an advice like:
 
       {
-        recommandation: [position to take, either long or short],
+        recommendation: [position to take, either long or short],
         portfolio: [amount of portfolio you should move to position]
       }
 

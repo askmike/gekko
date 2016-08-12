@@ -42,7 +42,7 @@ Actor.prototype.processCandle = function(candle, done) {
 };
 
 Actor.prototype.processAdvice = function(advice) {
-  this.advice = advice.recommandation;
+  this.advice = advice.recommendation;
   this.adviceTime = utc();
 
   if(ircbot.emitUpdats)

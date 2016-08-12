@@ -11,14 +11,14 @@ var Trader = function(next) {
 }
 
 Trader.prototype.processAdvice = function(advice) {
-  if(advice.recommandation == 'long') {
+  if(advice.recommendation == 'long') {
     this.manager.trade('BUY');
     log.info(
       'Trader',
       'Received advice to go long',
       'Buying ', config.trader.asset
     );
-  } else if(advice.recommandation == 'short') {
+  } else if(advice.recommendation == 'short') {
     this.manager.trade('SELL');
     log.info(
       'Trader',
