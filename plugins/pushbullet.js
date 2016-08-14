@@ -46,19 +46,32 @@ Pushbullet.prototype.setup = function(done){
     setupPushBullet.call(this)
 };
 
+Pushbullet.prototype.processCandle = function(candle, done) {
+    this.price = candle.close;
+
+    done();
+};
+
+Pushbullet.prototype.processAdvice = function(advice) {
+        var text = [
+            'Gekko is watching ',
+            config.watch.exchange,
+            ' and has detected a new trend, advice is to go ',
+            advice.recommandation,
+            '.\n\nThe current ',
+            config.watch.asset,
+            ' price is ',
+            this.price
+        ].join('');
+
+        var subject = 'New advice: go ' + advice.recommandation;
+
+        this.mail(subject, text);
+};
+
 Pushbullet.prototype.mail = function(subject, content, done) {
-    var title = pushbulletConfig.tag;
-    var exchange = config.watch.exchange;
-    var currency = config.watch.currency;
-    var asset = config.watch.asset;
-    var body = "Gekko has started, Ive started watching "
-        +exchange
-        +" "
-        +currency
-        +" "
-        +asset
-        +" I'll let you know when I got some advice";
-    pusher.note(pushbulletConfig.email, title, body, function(error, response) {
+    var pusher = new pushbullet(pushbulletConfig.key);
+    pusher.note(pushbulletConfig.email, subject, content, function(error, response) {
         if (response.active){
             log.info('Pushbullet Message Sent')
         }
