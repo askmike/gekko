@@ -233,7 +233,7 @@ Base.prototype.advice = function(newPosition) {
   }
 
   this.emit('advice', {
-    recommandation: advice,
+    recommendation: advice,
     portfolio: 1,
     moment: this.candle.start
   });

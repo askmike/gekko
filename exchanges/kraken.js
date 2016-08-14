@@ -133,6 +133,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var set = function(err, data) {
+    if(_.isEmpty(data))
+      err = 'no data';
+
     if(!_.isEmpty(data.error))
       err = data.error;
 
@@ -155,6 +158,9 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var set = function(err, data) {
+    if(_.isEmpty(data))
+      err = 'no data';
+
     if(!_.isEmpty(data.error))
       err = data.error;
 
@@ -187,6 +193,9 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
+    if(_.isEmpty(data))
+      err = 'no data';
+
     if(!_.isEmpty(data.error))
       err = data.error;
 
@@ -218,6 +227,9 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
+    if(_.isEmpty(data))
+      err = 'no data';
+
     if(!_.isEmpty(data.error))
       err = data.error;
 
@@ -234,6 +246,9 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order) {
   var cancel = function(err, data) {
+    if(_.isEmpty(data))
+      err = 'no data';
+    
     if(!_.isEmpty(data.error))
       err = data.error;
 

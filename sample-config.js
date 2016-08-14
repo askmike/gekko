@@ -154,7 +154,8 @@ config.trader = {
 }
 
 config.adviceLogger = {
-  enabled: true
+  enabled: true,
+  muteSoft: true // disable advice printout if it's soft
 }
 
 // do you want Gekko to calculate the profit of its own advice?
@@ -173,6 +174,14 @@ config.profitSimulator = {
   // how much slippage/spread should Gekko assume per trade?
   slippage: 0.05
 }
+config.pushover = {
+  enabled: false,
+  sendPushoverOnStart: false,
+  muteSoft: true, // disable advice printout if it's soft
+  tag: '[GEKKO]',
+  key: '',
+  user: ''
+}
 
 // want Gekko to send a mail on buy or sell advice?
 config.mailer = {
@@ -180,6 +189,7 @@ config.mailer = {
   sendMailOnStart: true,    // Send 'Gekko starting' message if true, not if false
 
   email: '',    // Your Gmail address
+  muteSoft: true, // disable advice printout if it's soft
 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.

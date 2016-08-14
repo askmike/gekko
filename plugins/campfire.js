@@ -44,7 +44,7 @@ Actor.prototype = {
   },
 
   processAdvice: function(advice) {
-    this.advice = advice.recommandation;
+    this.advice = advice.recommendation;
     this.adviceTime = Moment.utc();
 
     if (config.emitUpdates) {
