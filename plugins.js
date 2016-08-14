@@ -122,7 +122,14 @@ var plugins = [
       module: 'redis',
       version: '0.10.0'
     }]
-  }
+  },
+  {
+    name: 'Pushbullet',
+    description: 'Sends advice to pushbullet.',
+    slug: 'pushbullet',
+    async: false,
+    modes: ['realtime']
+  },
 ];
 
 module.exports = plugins;

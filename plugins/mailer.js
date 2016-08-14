@@ -13,7 +13,7 @@ var Mailer = function(done) {
 
   this.done = done;
   this.setup();
-}
+};
 
 Mailer.prototype.setup = function(done) {
   var setupMail = function(err, result) {
@@ -59,7 +59,7 @@ Mailer.prototype.setup = function(done) {
       this.done();
 
     log.debug('Setup email adviser.');
-  }
+  };
 
   if(!mailConfig.password) {
     // ask for the mail password
@@ -78,7 +78,7 @@ Mailer.prototype.setup = function(done) {
   } else {
     setupMail.call(this);
   }
-}
+};
 
 Mailer.prototype.mail = function(subject, content, done) {
 
@@ -88,13 +88,13 @@ Mailer.prototype.mail = function(subject, content, done) {
     to: mailConfig.to,
     subject: mailConfig.tag + subject
   }, done || this.checkResults);
-}
+};
 
 Mailer.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
 
   done();
-}
+};
 
 Mailer.prototype.processAdvice = function(advice) {
   var text = [
@@ -111,13 +111,13 @@ Mailer.prototype.processAdvice = function(advice) {
   var subject = 'New advice: go ' + advice.recommandation;
 
   this.mail(subject, text);
-}
+};
 
 Mailer.prototype.checkResults = function(err) {
   if(err)
     log.warn('error sending email', err);
   else
     log.info('Send advice via email.');
-}
+};
 
 module.exports = Mailer;

@@ -17,7 +17,7 @@ var checker = require('./exchangeChecker.js');
 var Manager = function(conf) {
   _.bindAll(this);
 
-  var error = checker.cantTrade(conf)
+  var error = checker.cantTrade(conf);
   if(error)
     util.die(error);
 
@@ -44,7 +44,7 @@ var Manager = function(conf) {
 
   this.currency = conf.currency;
   this.asset = conf.asset;
-}
+};
 
 Manager.prototype.init = function(callback) {
   log.debug('getting balance & fee from', this.exchange.name);
@@ -76,7 +76,7 @@ Manager.prototype.setPortfolio = function(callback) {
   }.bind(this);
 
   this.exchange.getPortfolio(set);
-}
+};
 
 Manager.prototype.setFee = function(callback) {
   var set = function(err, fee) {
@@ -89,7 +89,7 @@ Manager.prototype.setFee = function(callback) {
       callback();
   }.bind(this);
   this.exchange.getFee(set);
-}
+};
 
 Manager.prototype.setTicker = function(callback) {
   var set = function(err, ticker) {
@@ -99,15 +99,15 @@ Manager.prototype.setTicker = function(callback) {
       callback();
   }.bind(this);
   this.exchange.getTicker(set);
-}
+};
 
 // return the [fund] based on the data we have in memory
 Manager.prototype.getFund = function(fund) {
   return _.find(this.portfolio, function(f) { return f.name === fund});
-}
+};
 Manager.prototype.getBalance = function(fund) {
   return this.getFund(fund).amount;
-}
+};
 
 // This function makes sure order get to the exchange
 // and initiates follow up to make sure the orders will
@@ -166,14 +166,14 @@ Manager.prototype.trade = function(what) {
     this.setPortfolio
   ], _.bind(act, this));
 
-}
+};
 
 Manager.prototype.getMinimum = function(price) {
   if(this.minimalOrder.unit === 'currency')
     return minimum = this.minimalOrder.amount / price;
   else
     return minimum = this.minimalOrder.amount;
-}
+};
 
 // first do a quick check to see whether we can buy
 // the asset, if so BUY and keep track of the order
@@ -186,14 +186,14 @@ Manager.prototype.buy = function(amount, price) {
 
   var currency = this.getFund(this.currency);
   var minimum = this.getMinimum(price);
-  var availabe = this.getBalance(this.currency) / price;
+  var available = this.getBalance(this.currency) / price;
 
-  // if not suficient funds
-  if(amount > availabe) {
+  // if not sufficient funds
+  if(amount > available) {
     return log.info(
       'wanted to buy but insufficient',
       this.currency,
-      '(' + availabe + ')',
+      '(' + available + ')',
       'at',
       this.exchange.name
     );
@@ -219,7 +219,7 @@ Manager.prototype.buy = function(amount, price) {
     this.exchange.name
   );
   this.exchange.buy(amount, price, this.noteOrder);
-}
+};
 
 // first do a quick check to see whether we can sell
 // the asset, if so SELL and keep track of the order
@@ -264,16 +264,16 @@ Manager.prototype.sell = function(amount, price) {
     this.exchange.name
   );
   this.exchange.sell(amount, price, this.noteOrder);
-}
+};
 
 Manager.prototype.noteOrder = function(err, order) {
   this.order = order;
   // if after 1 minute the order is still there
   // we cancel and calculate & make a new one
   setTimeout(this.checkOrder, util.minToMs(1));
-}
+};
 
-// check wether the order got fully filled
+// check whether the order got fully filled
 // if it is not: cancel & instantiate a new order
 Manager.prototype.checkOrder = function() {
   var finish = function(err, filled) {
@@ -300,6 +300,6 @@ Manager.prototype.logPortfolio = function() {
   _.each(this.portfolio, function(fund) {
     log.info('\t', fund.name + ':', fund.amount);
   });
-}
+};
 
 module.exports = Manager;
