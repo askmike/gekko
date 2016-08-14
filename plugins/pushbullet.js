@@ -22,7 +22,6 @@ var Pushbullet = function(done) {
 Pushbullet.prototype.setup = function(done){
 
     var setupPushBullet = function (err, result) {
-        var pusher = new pushbullet(pushbulletConfig.key);
         if(pushbulletConfig.sendMessageOnStart){
             var title = pushbulletConfig.tag;
             var exchange = config.watch.exchange;
@@ -35,12 +34,9 @@ Pushbullet.prototype.setup = function(done){
                 +" "
                 +asset
                 +" I'll let you know when I got some advice";
-            pusher.note(pushbulletConfig.email, title, body, function(error, response) {
-                if (response.active){
-                    log.info('Pushbullet Message Sent')
-                }
-            });
-            log.debug('Setup Pushbullet adviser')
+            this.mail(title, body);
+        }else{
+            log.debug('Skipping Send message on startup')
         }
     };
     setupPushBullet.call(this)
@@ -64,7 +60,7 @@ Pushbullet.prototype.processAdvice = function(advice) {
             this.price
         ].join('');
 
-        var subject = 'New advice: go ' + advice.recommandation;
+        var subject = pushbulletConfig.tag+' New advice: go ' + advice.recommandation;
 
         this.mail(subject, text);
 };
@@ -76,7 +72,6 @@ Pushbullet.prototype.mail = function(subject, content, done) {
             log.info('Pushbullet Message Sent')
         }
     });
-    log.debug('Setup Pushbullet adviser')
 };
 
 Pushbullet.prototype.checkResults = function(err) {
@@ -85,7 +80,5 @@ Pushbullet.prototype.checkResults = function(err) {
     else
         log.info('Send advice via email.');
 };
-
-
 
 module.exports = Pushbullet;
