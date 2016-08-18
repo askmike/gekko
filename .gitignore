@@ -41,8 +41,4 @@ candles.csv
 cexio.db
 history
 TMP_*
-.idea/gekko.iml
-.idea/misc.xml
-.idea/modules.xml
-.idea/workspace.xml
-.idea/libraries/
+.idea
