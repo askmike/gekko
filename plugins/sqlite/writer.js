@@ -27,7 +27,7 @@ Store.prototype.upsertTables = function() {
         close REAL NOT NULL,
         vwp REAL NOT NULL,
         volume REAL NOT NULL,
-        trades INTERGER NOT NULL
+        trades INTEGER NOT NULL
       );
     `,
 
