@@ -11,6 +11,7 @@ All plugins live in `gekko/plugins`.
 - Candle Store: save trades to disk.
 - Advice logger: log trading advice in your terminal (stdout).
 - Mailer: mail trading advice to your gmail account.
+- Pushbullet: send messages to Pushbullet devices.
 - IRC bot: logs Gekko on in an irc channel and lets users communicate with it.
 - Profit simulator: simulates trades and calculates profit over these (and logs profit).
 - Trading advisor (internal): calculates advice based on market data.

@@ -1,7 +1,3 @@
-# exclude config.js variations
-*config.js
-*).js
-
 # Numerous always-ignore extensions
 *.diff
 *.err
@@ -45,3 +41,4 @@ candles.csv
 cexio.db
 history
 TMP_*
+.idea

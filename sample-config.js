@@ -219,6 +219,19 @@ config.mailer = {
   port: '',       // Set if you don't want to use the default port
 }
 
+config.pushbullet = {
+    // sends pushbullets if true
+  enabled: true,
+    // Send 'Gekko starting' message if true
+  sendMessageOnStart: true,
+    // your pushbullet API key
+  key: 'xxx',
+    // your email, change it unless you are Azor Ahai
+  email: 'jon_snow@westeros.org',
+    // will make Gekko messages start mit [GEKKO]
+  tag: '[GEKKO]'
+};
+
 config.ircbot = {
   enabled: false,
   emitUpdats: false,
