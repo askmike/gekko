@@ -73,7 +73,7 @@ var util = {
     return moment().utc().subtract('minutes', config.EMA.interval * amount);
   },
   minAgo: function(moment) {
-    return moment.duraction( moment().utc().subtract(moment) ).asMinutes();
+    return moment.duration( moment().utc().subtract(moment) ).asMinutes();
   },
   average: function(list) {
     var total = _.reduce(list, function(m, n) { return m + n }, 0);
