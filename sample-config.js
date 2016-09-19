@@ -284,8 +284,8 @@ config.candleWriter = {
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/*
-Postgres adapter example config (please note: requires postgres >= 9.5):
+
+// Postgres adapter example config (please note: requires postgres >= 9.5):
 postgresql: {
   path: 'plugins/postgresql',
   version: 0.1,
@@ -295,7 +295,7 @@ postgresql: {
     version: '6.1.0'
   }]
 }
-*/
+
 
 config.adapters = {
   sqlite: {
