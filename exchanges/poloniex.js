@@ -57,8 +57,12 @@ Trader.prototype.getPortfolio = function(callback) {
 
     var portfolio = [];
     _.each(data, function(amount, asset) {
-      portfolio.push({name: asset, amount: parseFloat(amount)});
-    });
+
+      // because of the huge amounts of currencies, only
+      // include the ones relevant.
+      if(asset === this.currency || asset === this.asset)
+        portfolio.push({name: asset, amount: parseFloat(amount)});
+    }, this);
 
     callback(err, portfolio);
   }.bind(this);
@@ -84,8 +88,8 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
   var set = function(err, data) {
-    if(err)
-      callback(err);
+    if(err || data.error)
+      return callback(err || data.error);
 
     callback(false, parseFloat(data.takerFee));
   }

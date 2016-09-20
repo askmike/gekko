@@ -191,9 +191,9 @@ Manager.prototype.buy = function(amount, price) {
   // if not sufficient funds
   if(amount > available) {
     return log.info(
-      'wanted to buy but insufficient',
+      'Wanted to buy but insufficient',
       this.currency,
-      '(' + available + ')',
+      '(' + available.toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -202,17 +202,17 @@ Manager.prototype.buy = function(amount, price) {
   // if order to small
   if(amount < minimum) {
     return log.info(
-      'wanted to buy',
+      'Wanted to buy',
       this.asset,
       'but the amount is too small',
-      '(' + amount + ')',
+      '(' + amount.toFixed(12) + ')',
       'at',
       this.exchange.name
     );
   }
 
   log.info(
-    'attempting to BUY',
+    'Attempting to BUY',
     amount,
     this.asset,
     'at',
@@ -236,9 +236,9 @@ Manager.prototype.sell = function(amount, price) {
   // if not suficient funds
   if(amount < availabe) {
     return log.info(
-      'wanted to buy but insufficient',
+      'Wanted to buy but insufficient',
       this.asset,
-      '(' + availabe + ')',
+      '(' + availabe.toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -247,17 +247,17 @@ Manager.prototype.sell = function(amount, price) {
   // if order to small
   if(amount < minimum) {
     return log.info(
-      'wanted to buy',
+      'Wanted to buy',
       this.currency,
       'but the amount is to small',
-      '(' + amount + ')',
+      '(' + amount.toFixed(12) + ')',
       'at',
       this.exchange.name
     );
   }
 
   log.info(
-    'attempting to SELL',
+    'Attempting to SELL',
     amount,
     this.asset,
     'at',
@@ -298,7 +298,7 @@ Manager.prototype.checkOrder = function() {
 Manager.prototype.logPortfolio = function() {
   log.info(this.exchange.name, 'portfolio:');
   _.each(this.portfolio, function(fund) {
-    log.info('\t', fund.name + ':', fund.amount);
+    log.info('\t', fund.name + ':', fund.amount.toFixed(12));
   });
 };
 
