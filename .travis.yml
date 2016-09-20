@@ -1,5 +1,5 @@
 language: node_js
 node_js:
-  - "4.2.1"
+  - "6.0.0"
 before_install:
   - cp sample-config.js config.js
