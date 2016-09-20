@@ -221,7 +221,7 @@ config.mailer = {
 
 config.pushbullet = {
     // sends pushbullets if true
-  enabled: true,
+  enabled: false,
     // Send 'Gekko starting' message if true
   sendMessageOnStart: true,
     // your pushbullet API key
@@ -285,16 +285,8 @@ config.candleWriter = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-// Postgres adapter example config (please note: requires postgres >= 9.5):
-postgresql: {
-  path: 'plugins/postgresql',
-  version: 0.1,
-  connectionString: 'postgres://user:pass@localhost:5432', // if default port
-  dependencies: [{
-    module: 'pg',
-    version: '6.1.0'
-  }]
-}
+
+
 
 
 config.adapters = {
@@ -307,6 +299,16 @@ config.adapters = {
     dependencies: [{
       module: 'sqlite3',
       version: '3.1.4'
+    }]
+  },
+  // Postgres adapter example config (please note: requires postgres >= 9.5):
+  postgresql: {
+    path: 'plugins/postgresql',
+    version: 0.1,
+    connectionString: 'postgres://user:pass@localhost:5432', // if default port
+    dependencies: [{
+      module: 'pg',
+      version: '6.1.0'
     }]
   }
 }
