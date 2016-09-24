@@ -121,6 +121,31 @@ config.StochRSI = {
   }
 };
 
+// PPO_RSI settings:
+config.PPO_RSI = {
+  ppo: {
+    // EMA weight (α)
+    // the higher the weight, the more smooth (and delayed) the line
+    short: 12,
+    long: 26,
+    signal: 9
+  },
+  rsi: {
+    interval: 14,
+    low: 30,
+    high: 70
+  },
+  thresholds: {
+    // adjusts the RSI thresholds towards 50, depending on the PPOhist
+    // new threshold is default threshold (30|70) ± PPOhist * PPOweight
+    PPOWeightLow: 120,
+    PPOWeightHigh: -120,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 0
+  }
+};
+
 
 // custom settings:
 config.custom = {
