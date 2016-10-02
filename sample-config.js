@@ -115,7 +115,7 @@ config.TSI = {
 config.UO = {
   first: {weight: 4, period: 7},
   second: {weight: 2, period: 14},
-  third: {weight: 1, period 28},
+  third: {weight: 1, period: 28},
   thresholds: {
     low: 30,
     high: 70,
