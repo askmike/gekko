@@ -103,8 +103,8 @@ config.TSI = {
   short: 13,
   long: 25,
   thresholds: {
-    low: 30,
-    high: 70,
+    low: -25,
+    high: 25,
     // How many candle intervals should a trend persist
     // before we consider it real?
     persistence: 1
