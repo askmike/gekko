@@ -31,7 +31,7 @@ method.init = function() {
 // calculated parameters.
 method.log = function() {
   var digits = 8;
-  var uos = this.indicators.uos;
+  var uo = this.indicators.uo;
 
   log.debug('calculated Ultimate Oscillator properties for candle:');
   log.debug('\t', 'UO:', uo.uo.toFixed(digits));
