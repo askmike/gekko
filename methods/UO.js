@@ -34,7 +34,7 @@ method.log = function() {
   var uos = this.indicators.uos;
 
   log.debug('calculated Ultimate Oscillator properties for candle:');
-  log.debug('\t', 'rsi:', uo.uo.toFixed(digits));
+  log.debug('\t', 'UO:', uo.uo.toFixed(digits));
   log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
 }
 
