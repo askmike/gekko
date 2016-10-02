@@ -98,6 +98,33 @@ config.RSI = {
   }
 };
 
+// TSI settings:
+config.TSI = {
+  short: 13,
+  long: 25,
+  thresholds: {
+    low: 30,
+    high: 70,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// Ultimate Oscillator Settings
+config.UO = {
+  first: {weight: 4, period: 7},
+  second: {weight: 2, period: 14},
+  third: {weight: 1, period 28},
+  thresholds: {
+    low: 30,
+    high: 70,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
 // CCI Settings
 config.CCI = {
     constant: 0.015, // constant multiplier. 0.015 gets to around 70% fit
