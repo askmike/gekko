@@ -1,21 +1,13 @@
-/*
-  
-  PPO - cykedev 15/01/2014
-  RSI - cykedev 14/02/2014
-
-  PPO_RSI niklasbuschmann 23/09/2016
-
-  (updated a couple of times since, check git history)
-
- */
-
 // helpers
 var _ = require('lodash');
 var log = require('../core/log');
 
 // configuration
 var config = require('../core/util').getConfig();
-var settings = config.PPO_RSI;
+var settings = config.varPPO;
+var momentum = settings.momentum;
+var momentumName = momentum.toLowerCase();
+var momentumSettings = config[momentum];
 
 // let's create our own method
 var method = {};
@@ -32,8 +24,8 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.addIndicator('ppo', 'PPO', settings.ppo);
-  this.addIndicator('rsi', 'RSI', settings.rsi.interval);
+  this.addIndicator('ppo', 'PPO', config.PPO);
+  this.addIndicator(momentumName, momentum, momentumSettings);
 }
 
 // what happens on every new candle?
@@ -46,48 +38,32 @@ method.update = function(candle) {
 method.log = function() {
   var digits = 8;
   var ppo = this.indicators.ppo;
-  var short = ppo.short.result;
-  var long = ppo.long.result;
-  var macd = ppo.macd;
   var result = ppo.ppo;
-  var macdSignal = ppo.MACDsignal.result;
-  var ppoSignal = ppo.PPOsignal.result;
-  var rsi = this.indicators.rsi;
+  var signal = ppo.PPOsignal.result;
+  var hist = result - signal;
+  var momentumResult = this.indicators[momentumName][momentumName];
 
-  log.debug('calculated MACD properties for candle:');
-  log.debug('\t', 'short:', short.toFixed(digits));
-  log.debug('\t', 'long:', long.toFixed(digits));
-  log.debug('\t', 'macd:', macd.toFixed(digits));
-  log.debug('\t', 'macdsignal:', macdSignal.toFixed(digits));
-  log.debug('\t', 'machist:', (macd - macdSignal).toFixed(digits));
-  log.debug('\t', 'ppo:', result.toFixed(digits));
-  log.debug('\t', 'pposignal:', ppoSignal.toFixed(digits));
-  log.debug('\t', 'ppohist:', (result - ppoSignal).toFixed(digits));
-  log.debug('calculated RSI properties for candle:');
-  log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
+  log.debug('\t', 'PPO:', result.toFixed(digits));
+  log.debug('\t', 'PPOsignal:', signal.toFixed(digits));
+  log.debug('\t', 'PPOhist:', hist.toFixed(digits));
+  log.debug('\t', momentum + ':', momentumResult.toFixed(digits));
+  log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
 }
 
 method.check = function() {
-  var price = this.lastPrice;
-
   var ppo = this.indicators.ppo;
-  var long = ppo.long.result;
-  var short = ppo.short.result;
-  var macd = ppo.macd;
   var result = ppo.ppo;
-  var macdSignal = ppo.MACDsignal.result;
-  var ppoSignal = ppo.PPOsignal.result;
+  var signal = ppo.PPOsignal.result;
+  var hist = result - signal;
 
-  // TODO: is this part of the indicator or not?
-  // if it is it should move there
-  var ppoHist = result - ppoSignal;
+  var value = this.indicators[momentumName][momentumName];
 
   var thresholds = {
-    low: settings.rsi.low + ppoHist * settings.thresholds.PPOWeightLow,
-    high: settings.rsi.high + ppoHist * settings.thresholds.PPOWeightHigh
+    low: momentumSettings.thresholds.low + hist * settings.thresholds.weightLow,
+    high: momentumSettings.thresholds.high + hist * settings.thresholds.weightHigh
   };
 
-  if(this.indicators.rsi.rsi < thresholds.low) {
+  if(value < thresholds.low) {
 
     // new trend detected
     if(this.trend.direction !== 'up')
@@ -111,7 +87,7 @@ method.check = function() {
     } else
       this.advice();
     
-  } else if(this.indicators.rsi.rsi > thresholds.high) {
+  } else if(value > thresholds.high) {
 
     // new trend detected
     if(this.trend.direction !== 'down')

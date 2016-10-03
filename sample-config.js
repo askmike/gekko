@@ -1,4 +1,4 @@
-﻿// Everything is explained here:
+// Everything is explained here:
 // @link https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 
 var config = {};
@@ -86,9 +86,50 @@ config.PPO = {
   }
 };
 
+// Uses one of the momentum indicators but adjusts the thresholds when PPO is bullish or bearish
+// Uses settings from the ppo and momentum indicator config block
+config.varPPO = {
+  momentum: 'TSI', // RSI, TSI or UO
+  thresholds: {
+    // new threshold is default threshold + PPOhist * PPOweight
+    weightLow: 120,
+    weightHigh: -120,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 0
+  }
+};
+
 // RSI settings:
 config.RSI = {
   interval: 14,
+  thresholds: {
+    low: 30,
+    high: 70,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// TSI settings:
+config.TSI = {
+  short: 13,
+  long: 25,
+  thresholds: {
+    low: -25,
+    high: 25,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// Ultimate Oscillator Settings
+config.UO = {
+  first: {weight: 4, period: 7},
+  second: {weight: 2, period: 14},
+  third: {weight: 1, period: 28},
   thresholds: {
     low: 30,
     high: 70,
@@ -118,31 +159,6 @@ config.StochRSI = {
     // How many candle intervals should a trend persist
     // before we consider it real?
     persistence: 3
-  }
-};
-
-// PPO_RSI settings:
-config.PPO_RSI = {
-  ppo: {
-    // EMA weight (α)
-    // the higher the weight, the more smooth (and delayed) the line
-    short: 12,
-    long: 26,
-    signal: 9
-  },
-  rsi: {
-    interval: 14,
-    low: 30,
-    high: 70
-  },
-  thresholds: {
-    // adjusts the RSI thresholds towards 50, depending on the PPOhist
-    // new threshold is default threshold (30|70) ± PPOhist * PPOweight
-    PPOWeightLow: 120,
-    PPOWeightHigh: -120,
-    // How many candle intervals should a trend persist
-    // before we consider it real?
-    persistence: 0
   }
 };
 
