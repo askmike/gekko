@@ -191,7 +191,7 @@ Manager.prototype.buy = function(amount, price) {
   // if not sufficient funds
   if(amount > available) {
     return log.info(
-      'Wanted to buy but insufficient',
+      'Wanted to buy ' + amount ' + but insufficient',
       this.currency,
       '(' + available.toFixed(12) + ')',
       'at',
@@ -236,7 +236,7 @@ Manager.prototype.sell = function(amount, price) {
   // if not suficient funds
   if(amount < availabe) {
     return log.info(
-      'Wanted to buy but insufficient',
+      'Wanted to sell ' + amount + ' but insufficient',
       this.asset,
       '(' + availabe.toFixed(12) + ')',
       'at',
