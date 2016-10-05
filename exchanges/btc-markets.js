@@ -1,4 +1,4 @@
-var Bitstamp = require("bitstamp");
+var BTCMarkets = require('btc-markets');
 var _ = require('lodash');
 var moment = require('moment');
 var log = require('../core/log');
@@ -9,11 +9,13 @@ var Trader = function(config) {
     this.key = config.key;
     this.secret = config.secret;
     this.clientID = config.username;
-    this.market = (config.asset + config.currency).toLowerCase();
+    this.currency = config.currency;
+    this.asset = config.asset;
   }
-  this.name = 'Bitstamp';
+  this.name = 'BTC Markets';
+  this.priceDivider = 100000000; // one hundred million
 
-  this.bitstamp = new Bitstamp(this.key, this.secret, this.clientID);
+  this.btcmakets = new BTCMarkets(this.key, this.secret);
 }
 
 // if the exchange errors we try the same call again after
@@ -43,92 +45,107 @@ Trader.prototype.getPortfolio = function(callback) {
   var set = function(err, data) {
 
     if(!_.isEmpty(data.error))
-      return callback('BITSTAMP API ERROR: ' + data.error);
+      return callback('BTC-MARKET API ERROR: ' + data.error);
 
-    var portfolio = [];
-    _.each(data, function(amount, asset) {
-      if(asset.indexOf('available') !== -1) {
-        asset = asset.substr(0, 3).toUpperCase();
-        portfolio.push({name: asset, amount: parseFloat(amount)});
+    var portfolio = _.map(data, function(balance) {
+      return {
+        name: balance.currency,
+        amount: balance.balance / this.priceDivider
       }
-    });
+    }, this);
+
     callback(err, portfolio);
   }.bind(this);
 
-  this.bitstamp.balance(this.market, set);
+  this.btcmakets.getAccountBalances(set);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.bitstamp.ticker(this.market, callback);
+  var args = _.toArray(arguments);
+  var set = function(err, result) {
+    if(err)
+      return this.retry(this.getTicker, args);
+
+    callback(null, {
+      bid: result.bestBid,
+      ask: result.bestAsk
+    });
+  }.bind(this);
+  this.btcmakets.getTick(this.asset, this.currency, set);
 }
 
 Trader.prototype.getFee = function(callback) {
-  var set = function(err, data) {
-    if(err)
-      callback(err);
-
-    callback(false, data.fee / 100);
-  }.bind(this);
-
-  this.bitstamp.balance(this.market, set);
+  // TODO, not 100% correct.
+  // However there is no API call to retrieve real fee
+  callback(false, 0.00085)
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
+  var invFee = 0.9915;
+  price *= this.priceDivider;
+  amount = Math.floor(amount * this.priceDivider * invFee);
+  var id = Math.random() + '';
+
   var set = function(err, result) {
     if(err || result.error)
       return log.error('unable to buy:', err, result);
 
-    callback(null, result.id);
+    callback(null, id);
   }.bind(this);
 
-  // TODO: fees are hardcoded here?
-  // prevent: Ensure that there are no more than 8 digits in total.
-  amount *= 100000000;
-  amount = Math.floor(amount);
-  amount /= 100000000;
-
-  // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
-  price = Math.floor(price);
-  price /= 100;
-
-  this.bitstamp.buy(this.market, amount, price, undefined, set);
+  this.btcmakets.createOrder(
+    this.asset,
+    this.currency,
+    price,
+    amount,
+    'Bid',
+    'Limit',
+    id,
+    set
+  );
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+  price *= this.priceDivider;
+  amount = Math.floor(amount * this.priceDivider);
+  var id = Math.random() + '';
+
   var set = function(err, result) {
     if(err || result.error)
-      return log.error('unable to sell:', err, result);
+      return log.error('unable to buy:', err, result);
 
-    callback(null, result.id);
+    callback(null, id);
   }.bind(this);
 
-  // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
-  price = Math.ceil(price);
-  price /= 100;
-
-  this.bitstamp.sell(this.market, amount, price, undefined, set);
+  this.btcmakets.createOrder(
+    this.asset,
+    this.currency,
+    price,
+    amount,
+    'Ask',
+    'Limit',
+    id,
+    set
+  );
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, result) {
-    var stillThere = _.find(result, function(o) { return o.id === order });
-    callback(err, !stillThere);
+    callback(err, result && result.success);
   }.bind(this);
 
-  this.bitstamp.open_orders(this.market, check);
+  this.btcmakets.getOpenOrders(this.asset, this.currency, 10, null, check);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, result) {
     if(err || !result)
       log.error('unable to cancel order', order, '(', err, result, ')');
+
+    console.log(result);
   }.bind(this);
 
-  this.bitstamp.cancel_order(order, cancel);
+  this.btcmakets.cancelOrder([order], cancel);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -141,9 +158,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   }.bind(this);
 
   if(since)
-    this.bitstamp.transactions(this.market, {time: since}, process);
+    this.btcmakets.getTrades(this.asset, this.currency, process, since);
   else
-    this.bitstamp.transactions(this.market, process);
+    this.btcmakets.getTrades(this.asset, this.currency, process);
 }
 
 module.exports = Trader;

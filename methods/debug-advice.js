@@ -8,6 +8,7 @@ var method = {
   update: _.noop,
   log: _.noop,
   check: function() {
+    console.log('age:', this.age);
     if(this.age === settings.wait)
       this.advice(settings.advice);  
   }

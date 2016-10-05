@@ -179,6 +179,7 @@ Manager.prototype.getMinimum = function(price) {
 // the asset, if so BUY and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
+
   // sometimes cex.io specifies a price w/ > 8 decimals
   price *= 100000000;
   price = Math.floor(price);

@@ -51,6 +51,7 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 | [BTC-e](https://btc-e.com/)      | ✓ | ✓ | ✗ | |
 | [Okcoin.cn](https://www.okcoin.cn/)      | ✓ | ✓ | ✗ | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
 | [Cex.io](https://cex.io/)      | ✓ | ✓ | ✗ | |
+| [BTC Markets](https://btcmarkets.net)      | ✓ | ✓ | ✗ | |
 | [bitX](https://www.bitx.co/)      | ✓ | ✗ | ✗ | |
 | [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
 | [meXBT](https://mexbt.com/)      | ✓ | ✗ | ✗ | see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974). |
