@@ -29,7 +29,6 @@
     "poloniex.js": "0.0.6",
     "prompt-lite": "0.1.1",
     "pushbullet": "1.4.3",
-    "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "zaif.jp": "^0.1.4"

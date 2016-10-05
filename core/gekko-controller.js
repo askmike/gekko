@@ -1,3 +1,6 @@
+// relieve is not included in Gekko atm, see
+// @link https://github.com/askmike/gekko/issues/456
+//
 // WIP:
 // usage
 // 
