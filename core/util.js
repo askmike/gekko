@@ -173,8 +173,6 @@ program
   .option('-i, --import', 'importer mode')
   .parse(process.argv);
 
-var config = util.getConfig();
-
 // make sure the current node version is recent enough
 if(!util.recentNode())
   util.die([
