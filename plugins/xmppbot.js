@@ -36,6 +36,8 @@ var Actor = function() {
   this.bot.addListener('online', this.setState);
   this.bot.addListener('stanza', this.rawStanza);
   this.bot.addListener("error", this.logError);
+  this.bot.connection.socket.setTimeout(0)
+  this.bot.connection.socket.setKeepAlive(true, 10000)
 
 }
 
