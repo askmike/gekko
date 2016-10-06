@@ -1,7 +1,7 @@
 var log = require('../core/log');
 var moment = require('moment');
 var _ = require('lodash');
-var xmpp = require('node-xmpp');
+var xmpp = require('node-xmpp-client');
 var config = require('../core/util').getConfig();
 var xmppbot = config.xmppbot;
 var utc = moment.utc;
@@ -75,7 +75,7 @@ Actor.prototype.sendMessage = function(message) {
 
 Actor.prototype.processCandle = function(candle) {
   this.price = candle.close;
-  this.priceTime = candle.date;
+  this.priceTime = candle.start;
 };
 
 Actor.prototype.processAdvice = function(advice) {
