@@ -179,6 +179,7 @@ Manager.prototype.getMinimum = function(price) {
 // the asset, if so BUY and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
+
   // sometimes cex.io specifies a price w/ > 8 decimals
   price *= 100000000;
   price = Math.floor(price);
@@ -191,7 +192,7 @@ Manager.prototype.buy = function(amount, price) {
   // if not sufficient funds
   if(amount > available) {
     return log.info(
-      'Wanted to buy but insufficient',
+      'Wanted to buy ' + amount + ' but insufficient',
       this.currency,
       '(' + available.toFixed(12) + ')',
       'at',
@@ -236,7 +237,7 @@ Manager.prototype.sell = function(amount, price) {
   // if not suficient funds
   if(amount < availabe) {
     return log.info(
-      'Wanted to buy but insufficient',
+      'Wanted to sell ' + amount + ' but insufficient',
       this.asset,
       '(' + availabe.toFixed(12) + ')',
       'at',

@@ -19,6 +19,7 @@
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",
     "btc-e": "0.0.x",
+    "btc-markets": "0.0.6",
     "cexio": "0.0.x",
     "commander": "^2.9.0",
     "kraken-api": "0.1.x",
@@ -29,7 +30,6 @@
     "poloniex.js": "0.0.6",
     "prompt-lite": "0.1.1",
     "pushbullet": "1.4.3",
-    "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "zaif.jp": "^0.1.4"

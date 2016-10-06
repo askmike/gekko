@@ -155,6 +155,8 @@ var util = {
     ]
   },
   setGekkoEnv: function(env) {
+    util.die('only standalone supported, see\n\nhttps://github.com/askmike/gekko/issues/456ref-issue-177670116')
+
     _gekkoEnv = env;
   },
   gekkoEnv: function() {

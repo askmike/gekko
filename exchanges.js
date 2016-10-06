@@ -614,7 +614,31 @@ var exchanges = [
     requires: ['key', 'secret'],
     tradeError: 'NOT IMPLEMENTED YET',
     providesHistory: false
-  }
+  },
+  {
+    name: 'BTC Markets',
+    slug: 'btc-markets',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['AUD', 'BTC'],
+    assets: [
+      'BTC', 'LTC', 'ETH', 'ETC'
+    ],
+    markets: [
+      { pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    maxHistoryFetch: '?limit=2000',
+    tid: 'tid'
+  },
   // ,
   // ---- Keeping this here for historical purposes. ----
   // {

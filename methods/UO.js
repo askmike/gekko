@@ -1,25 +1,18 @@
-/*
-  
-  RSI - cykedev 14/02/2014
-
-  (updated a couple of times since, check git history)
-
- */
 // helpers
 var _ = require('lodash');
 var log = require('../core/log.js');
 
 var config = require('../core/util.js').getConfig();
-var settings = config.RSI;
+var settings = config.UO;
 
-var RSI = require('./indicators/RSI.js');
+var UO = require('./indicators/UO.js');
 
 // let's create our own method
 var method = {};
 
 // prepare everything our method needs
 method.init = function() {
-  this.name = 'RSI';
+  this.name = 'UO';
 
   this.trend = {
     direction: 'none',
@@ -31,25 +24,25 @@ method.init = function() {
   this.requiredHistory = config.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.addIndicator('rsi', 'RSI', settings);
+  this.addIndicator('uo', 'UO', settings);
 }
 
 // for debugging purposes log the last 
 // calculated parameters.
 method.log = function() {
   var digits = 8;
-  var rsi = this.indicators.rsi;
+  var uo = this.indicators.uo;
 
-  log.debug('calculated RSI properties for candle:');
-  log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
+  log.debug('calculated Ultimate Oscillator properties for candle:');
+  log.debug('\t', 'UO:', uo.uo.toFixed(digits));
   log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
 }
 
 method.check = function() {
-  var rsi = this.indicators.rsi;
-  var rsiVal = rsi.rsi;
+  var uo = this.indicators.uo;
+  var uoVal = uo.uo;
 
-  if(rsiVal > settings.thresholds.high) {
+  if(uoVal > settings.thresholds.high) {
 
     // new trend detected
     if(this.trend.direction !== 'high')
@@ -73,7 +66,7 @@ method.check = function() {
     } else
       this.advice();
     
-  } else if(rsiVal < settings.thresholds.low) {
+  } else if(uoVal < settings.thresholds.low) {
 
     // new trend detected
     if(this.trend.direction !== 'low')

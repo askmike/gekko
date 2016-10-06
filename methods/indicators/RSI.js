@@ -1,10 +1,10 @@
 // required indicators
 var EMA = require('./EMA.js');
 
-var Indicator = function(weight) {
+var Indicator = function(settings) {
   this.lastClose = 0;
-  this.weight = weight;
-  this.weightEma = 2 * weight - 1;
+  this.weight = settings.interval;
+  this.weightEma = 2 * this.weight - 1;
   this.avgU = new EMA(this.weightEma);
   this.avgD = new EMA(this.weightEma);
   this.u = 0;
