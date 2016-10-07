@@ -18,6 +18,8 @@ var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
 var TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
 
 var Fetcher = function(config) {
+  if(!_.isObject(config))
+    throw 'TradeFetcher expects a config';
 
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
@@ -92,7 +94,6 @@ Fetcher.prototype.processTrades = function(err, trades) {
     setTimeout(this._fetch, +moment.duration('s', 1));
     return;
   }
-
   this.batcher.write(trades);
 }
 
