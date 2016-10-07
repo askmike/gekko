@@ -61,8 +61,8 @@ var plugins = [
     silent: false,
     modes: ['realtime'],
     dependencies: [{
-      module: 'node-xmpp',
-      version: '0.12.0'
+      module: 'node-xmpp-client',
+      version: '3.0.2'
     }]
   },
   {
