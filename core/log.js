@@ -10,7 +10,9 @@ var moment = require('moment');
 var fmt = require('util').format;
 var _ = require('lodash');
 var util = require('./util');
-var debug = util.getConfig().debug;
+var config = util.getConfig();
+var debug = config.debug;
+var silent = config.silent;
 
 var sendIPC = function() {
   var IPCEE = require('relieve').IPCEE
@@ -67,5 +69,12 @@ if(debug)
   }
 else
   Log.prototype.debug = _.noop;
+
+if(silent) {
+  Log.prototype.debug = _.noop;
+  Log.prototype.info = _.noop;
+  Log.prototype.warn = _.noop;
+  Log.prototype.error = _.noop;
+}
 
 module.exports = new Log;

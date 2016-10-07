@@ -1,6 +1,5 @@
-// overwrite config with sample-config
+// overwrite config with test-config
 
 var utils = require(__dirname + '/../core/util');
-var testConfig = require(__dirname + '/../sample-config.js');
-testConfig.debug = false;
+var testConfig = require(__dirname + '/test-config.json');
 utils.setConfig(testConfig);
