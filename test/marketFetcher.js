@@ -44,7 +44,7 @@ var TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
 var tradeBatcherSpy = sinon.spy(TradeBatcher.prototype, 'write');
 spoofer[util.dirs().budfox + 'tradeBatcher'] = TradeBatcher;
 
-var MarketFetcher = proxyquire(dirs.budfox + 'MarketFetcher', spoofer);
+var MarketFetcher = proxyquire(dirs.budfox + 'marketFetcher', spoofer);
 
 describe('marketFetcher', function() {
   it('should throw when not passed a config', function() {
