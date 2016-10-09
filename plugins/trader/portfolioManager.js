@@ -8,11 +8,12 @@
 */
 
 var _ = require('lodash');
-var util = require('./util');
+var util = require('../../core/util');
+var dirs = util.dirs();
 var events = require("events");
-var log = require('./log');
+var log = require(dirs.core + 'log');
 var async = require('async');
-var checker = require('./exchangeChecker.js');
+var checker = require(dirs.core + 'exchangeChecker.js');
 
 var Manager = function(conf) {
   _.bindAll(this);
@@ -25,7 +26,7 @@ var Manager = function(conf) {
   this.exchangeSlug = exchangeMeta.slug;
 
   // create an exchange
-  var Exchange = require('../exchanges/' + this.exchangeSlug);
+  var Exchange = require(dirs.exchanges + this.exchangeSlug);
   this.exchange = new Exchange(conf);
 
   this.conf = conf;

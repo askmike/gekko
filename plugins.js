@@ -29,9 +29,7 @@ var plugins = [
     slug: 'candleWriter',
     async: true,
     modes: ['realtime', 'importer'],
-    path: function(config) {
-      return config.adapter + '/writer';
-    },
+    path: config => config.adapter + '/writer',
     version: 0.1,
   },
   {
@@ -101,13 +99,13 @@ var plugins = [
       version: '0.1.1'
     }]
   },
-
   {
     name: 'Trader',
     description: 'Follows the advice and create real orders.',
     slug: 'trader',
     async: true,
-    modes: ['realtime']
+    modes: ['realtime'],
+    path: config => 'trader/trader.js',
   },
   {
     name: 'Advice logger',
