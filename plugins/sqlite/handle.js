@@ -34,7 +34,7 @@ var dir = adapter.dataDirectory;
 var fullPath = [dir, dbName].join('/');
 
 var mode = util.gekkoMode();
-if(mode === 'realtime') {
+if(mode === 'realtime' || mode === 'importer') {
 
   if(!fs.existsSync(dir))
     fs.mkdirSync(dir);
@@ -48,7 +48,6 @@ if(mode === 'realtime') {
   if(!fs.existsSync(fullPath))
     util.die(`History database does not exist for exchange ${config.watch.exchange} at version ${version}.`);
 }
-  
 
 var db = new sqlite3.Database(fullPath);
 // enable WAL mode to enable concurrent reads and writes
