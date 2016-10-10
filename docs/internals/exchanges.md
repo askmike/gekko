@@ -71,8 +71,12 @@ The trading method analyzes exchange data to determine what to do. The trading m
 
     this.watcher.getTrades(since, callback, descending);
 
-~~The since parameter is a [moment](http://momentjs.com/), this is a wrapper around a Date object. This moment represents the point in time from when the trading method needs trade data.~~
 
-If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, try to keep it reasonable).
+If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, if the exchange supports more you can [create an importer](https://github.com/askmike/gekko/blob/stable/docs/Importing.md)).
 
-The callback expects a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have the `date` property (unix timestamp in either string or int) and a `price` property (float) which represents the price in [currency] per 1 [asset]. `descending` is a boolean describing if the trades need to be returned in chronological descending order (newest first).
+The callback expects an error and a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have:
+
+- a `date` property (unix timestamp in either string or int)
+- a `price` property (float) which represents the price in [currency] per 1 [asset]. `
+- an `amount` proprty (float) which represent the amount of [asset].
+- a `tid` property (float) which represents the tradeID.
