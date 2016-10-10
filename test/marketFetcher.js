@@ -46,7 +46,7 @@ spoofer[util.dirs().budfox + 'tradeBatcher'] = TradeBatcher;
 
 var MarketFetcher = proxyquire(dirs.budfox + 'marketFetcher', spoofer);
 
-describe('marketFetcher', function() {
+describe('budfox/marketFetcher', function() {
   it('should throw when not passed a config', function() {
     expect(function() {
       new MarketFetcher();

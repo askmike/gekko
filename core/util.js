@@ -95,6 +95,7 @@ var util = {
       exchanges: ROOT + 'exchanges/',
       plugins: ROOT + 'plugins/',
       methods: ROOT + 'methods/',
+      indicators: ROOT + 'methods/indicators/',
       budfox: ROOT + 'core/budfox/',
       importers: ROOT + 'importers/exchanges/'
     }

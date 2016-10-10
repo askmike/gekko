@@ -43,7 +43,7 @@ spoofer = {
   bitstamp: FakeExchange
 }
 
-describe('bitstamp', function() {
+describe('exchanges/bitstamp', function() {
   var Bitstamp = proxyquire(dirs.exchanges + 'bitstamp', spoofer);
   var bs;
 

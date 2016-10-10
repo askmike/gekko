@@ -23,7 +23,7 @@ var trades_tid_2 = [
   {tid: 5, price: 10, amount: 1, date: 1466115797}
 ];
 
-describe('tradeBatcher', function() {
+describe('budfox/tradeBatcher', function() {
   var tb;
 
   it('should throw when not passed a number', function() {

@@ -24,7 +24,7 @@ var candles = [
   {"start":moment("2015-02-15T00:06:00.000Z"),"open":257.46,"high":257.48,"low":257.46,"close":257.48,"vwp":257.47333333333336,"volume":7.5,"trades":4}
 ];
 
-describe('candleBatcher', function() {
+describe('core/candleBatcher', function() {
   var cb;
 
   it('should throw when not passed a number', function() {
