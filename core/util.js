@@ -60,6 +60,9 @@ var util = {
   equals: function(a, b) {
     return !(a < b || a > b)
   },
+  minToMs: function(min) {
+    return min * 60 * 1000;
+  },
   defer: function(fn) {
     return function(args) {
       var args = _.toArray(arguments);
