@@ -4,7 +4,7 @@ Gekko implements [technical analysis strategies](http://www.investopedia.com/art
 
 This investment advice is going to be either **long** or **short**.
 
-Below you can find simple and limited trading methods that come with Gekko, if you are feeling adventurous you can [write your own](internals/trading_methods.md).
+Below you can find simple and limited trading methods that come with Gekko, if you are feeling adventurous you can [write your own](trading_bot/creating_a_trading_method.md).
 
 ## NOTE
 

@@ -23,7 +23,7 @@ Gekko is a Bitcoin trading bot and backtesting platform that connects to popular
 
 ## TA strategies
 
-Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md). You can use over 130 indicators to create your perfect prediction model. *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
+Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/creating_a_trading_method.md). You can use over 130 indicators to create your perfect prediction model ([full list](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) of supported indicators). *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
 
 ## Automated Trading platform
 
