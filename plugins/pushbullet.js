@@ -68,9 +68,9 @@ Pushbullet.prototype.processAdvice = function(advice) {
 Pushbullet.prototype.mail = function(subject, content, done) {
     var pusher = new pushbullet(pushbulletConfig.key);
     pusher.note(pushbulletConfig.email, subject, content, function(error, response) {
-        if(error || !resposne) {
+        if(error || !response) {
             log.error('Pushbullet ERROR:', error)
-        } else if(respone && response.active){
+        } else if(response && response.active){
             log.info('Pushbullet Message Sent')
         }
     });
