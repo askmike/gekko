@@ -169,14 +169,14 @@ config.custom = {
 }
 
 config['talib-macd'] = {
-  // FastPeriod, SlowPeriod, SignalPeriod
-  parameters: [10, 21, 9],
+  parameters: {
+    optInFastPeriod: 10,
+    optInSlowPeriod: 21,
+    optInSignalPeriod: 9
+  },
   thresholds: {
     down: -0.025,
     up: 0.025,
-    // How many candle intervals should a trend persist
-    // before we consider it real?
-    persistence: 1
   }
 }
 
