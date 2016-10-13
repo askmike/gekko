@@ -193,7 +193,7 @@ Base.prototype.propogateTick = function() {
   this.update(this.candle);
   if(this.requiredHistory <= this.age) {
     this.log();
-    this.check();
+    this.check(this.candle);
   }
   this.processedTicks++;
 

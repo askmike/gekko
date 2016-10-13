@@ -80,26 +80,37 @@ In these functions you write your trading method. To help you with this Gekko ha
 
 ### Indicators
 
+Gekko supports a few indicators natively, but supports integration with the great library [TA-lib](http://ta-lib.org/).
+
+#### Example usage
+
 If you want to use an indicator you can add it in the `init` function and Gekko will handle the updating for you on every candle (before the update and before the check call):
 
+    // add a native indicator
     this.addIndicator('name', 'type', parameters);
 
 or
 
+    // add a TA-lib indicator
     this.addTalibIndicator('name', 'type', parameters);
 
 The first parameter is the name, the second is the indicator type you want and the third is an object with all indicator parameters. If you want an MACD indicator you can do it like so:
 
 In your init method:
   
+    // add a native indicator
     var parameters = {short: 10, long: 20, signal: 9};
-    this.addIndicator('mymacd', 'MACD', parameters);
+    this.addIndicator('mynativemacd', 'MACD', parameters);
+
+    // add a TA-lib indicator
+    var parameters = {optInFastPeriod: 10, optInSlowPeriod: 21, optInSignalPeriod: 9};
+    this.addIndicator('mytalibmacd', 'MACD', parameters);
 
 In your check or update method:
 
-    var result = this.indicators.mymacd.result;
+    var result = this.indicators.mytalibmacd.result;
 
-Currently supported native indicators can be found [here](https://github.com/askmike/gekko/tree/stable/methods/indicators), all talib indicators (100+) can be found [here](http://ta-lib.org/function.html).
+See the [TA-lib indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) document for a list of all suppported TA-lib indicators and there required parameters.
 
 ### Configurables
 
