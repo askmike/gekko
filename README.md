@@ -27,7 +27,7 @@ Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/s
 
 ## Automated Trading platform
 
-Gekko can watch the realtime markets, you can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
+Gekko can watch the realtime markets, you can [apply automated trading methods](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/creating_a_trading_method.md) to do live or simulated trading ([automated trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) or [paper trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#profit-simulator-paper-trader)). Gekko stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable ([backtesting](https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md)).
 
 Gekko is not built for HFT or anything related to being the fastest (like arbitrage). The trading methods Gekko can do are based on TA indicators used by human day traders. This means that Gekko does not look at data below the one minute timescale and will not trade more than a couple of times per week (depending on configuration).
 
