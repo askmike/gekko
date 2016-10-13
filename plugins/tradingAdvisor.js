@@ -167,13 +167,17 @@ Actor.prototype.checkExchangeTrades = function(requiredHistory, next) {
   if(exchangeSettings.maxHistoryFetch)
     var since = exchangeSettings.maxHistoryFetch;
   else if(exchangeSettings.providesHistory === 'date')
+
     // NOTE: uses current time
-    var since = moment()
+    var since = +moment()
       .subtract(requiredHistory, 'seconds')
-      .subtract(config.tradingAdvisor.candleSize, 'minutes');
-  else if(exchangeSettings.providesHistory)
+      .subtract(config.tradingAdvisor.candleSize, 'minutes')
+      .format('X');
+
+  else if(exchangeSettings.providesHistory) {
     // NOTE: specific to btc-e atm
     var since = exchangeSettings.providesHistory;
+  }
 
   util.setConfigProperty(
     'tradingAdvisor',

@@ -131,7 +131,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, result) {
     if(err || !result.success) {
       log.error('unable to cancel order', order, '(', err, result, ')');
-      // return this.retry(this.cancelOrder, args);
     }
   }.bind(this);
 
@@ -139,11 +138,24 @@ Trader.prototype.cancelOrder = function(order, callback) {
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
+
+  var firstFetch = !!since;
+
   var args = _.toArray(arguments);
   var process = function(err, result) {
     if(err) {
       return this.retry(this.getTrades, args);
     }
+
+    // Edge case, see here:
+    // @link https://github.com/askmike/gekko/issues/479
+    if(firstFetch && _.size(result) === 50000)
+      util.die(
+        [
+          'Poloniex did not provide enough data. Read this:',
+          'https://github.com/askmike/gekko/issues/479'
+        ].join('\n\n')
+      );
 
     result = _.map(result, function(trade) {
     	return {
@@ -160,8 +172,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
-  if (since)
-    params.start = _.isNumber(since) ? since : since.format('X');
+  if(since && _.isNumber(since))
+    params.start = since;
 
   this.poloniex._public('returnTradeHistory', params, _.bind(process, this));
 }
