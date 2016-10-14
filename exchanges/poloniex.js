@@ -55,14 +55,20 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.getPortfolio, args);
 
-    var portfolio = [];
-    _.each(data, function(amount, asset) {
+    var assetAmount = parseFloat( data[this.asset] );
+    var currencyAmount = parseFloat( data[this.currency] );
 
-      // because of the huge amounts of currencies, only
-      // include the ones relevant.
-      if(asset === this.currency || asset === this.asset)
-        portfolio.push({name: asset, amount: parseFloat(amount)});
-    }, this);
+    if(!_.isNumber(assetAmount) || !_.isNumber(currencyAmount)) {
+      log.info('asset:', this.asset);
+      log.info('currency:', this.currency);
+      log.info('exchange data:', data);
+      util.die('Gekko was unable to set the portfolio');
+    }
+
+    var portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount }
+    ];
 
     callback(err, portfolio);
   }.bind(this);
