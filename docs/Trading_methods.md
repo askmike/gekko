@@ -46,7 +46,7 @@ Gekko currently supports:
  - [CCI](#CCI)
  - [talib-macd](#talib-macd)
 
-But you can easily create your custom method, read [here](./internals/trading_methods.md) how!
+But you can easily create your custom method, read [here](../trading_bot/creating_a_trading_method.md) how!
 
 ### DEMA
 
