@@ -55,7 +55,11 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
       log.info('\tUsable local data available, trying to match with exchange data..')
       // local data is available, we need the next minute
-      var idealExchangeStartTimeTS = localData.to - 120;
+
+
+      // make sure we grab back in history far enough
+      var secondsOverlap = 60 * 15; // 15 minutes
+      var idealExchangeStartTimeTS = localData.to - secondsOverlap;
       var idealExchangeStartTime = moment.unix(idealExchangeStartTimeTS).utc();
 
       // already set the 
