@@ -161,7 +161,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     	return {
         tid: trade.tradeID,
         amount: +trade.amount,
-        date: moment.utc(trade.date).format('X'),
+        date: moment.utc(trade.date).unix(),
         price: +trade.rate
       };
     });
@@ -172,8 +172,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
-  if(since && _.isNumber(since))
-    params.start = since;
+
+  if(since)
+    params.start = since.unix();
 
   this.poloniex._public('returnTradeHistory', params, _.bind(process, this));
 }

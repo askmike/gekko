@@ -37,6 +37,10 @@ var Fetcher = function(config) {
   // to line up [local db, trading method, and fetching]
   if(config.tradingAdvisor.enabled && config.tradingAdvisor.firstFetchSince) {
     this.firstSince = config.tradingAdvisor.firstFetchSince;
+
+    if(this.exchange.providesHistory === 'date') {
+      this.firstSince = moment.unix(this.firstSince).utc();
+    }
   }
 
   this.batcher = new TradeBatcher(this.exchange.tid);

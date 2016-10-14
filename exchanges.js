@@ -478,7 +478,8 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
-    providesHistory: 'date'
+    providesHistory: 'date',
+    providesFullHistory: true
   },
   {
     name: 'Bitfinex',
