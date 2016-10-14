@@ -120,7 +120,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
         // seed all historic data up to the point the exchange can provide.
         var from = localData.from;
-        var to = moment.unix(exchangeData.from).utc().startOf('minute').unix() - 60;
+        var to = moment.unix(exchangeData.from).utc().startOf('minute').unix();
 
         log.debug('\tSeeding with:');
         log.debug('\t\tfrom:', this.ago(from));
@@ -139,8 +139,8 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
         } else {
           log.info(
             '\tThe exchange does not return enough data.',
-            exchangeData.from - idealExchangeStartTimeTS,
-            'seconds are still missing.'
+            Math.round((localData.from - idealStartTime.unix()) / 60),
+            'minutes are still missing.'
           );
         }
       }
