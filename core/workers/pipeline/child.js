@@ -1,6 +1,3 @@
-// relieve is not included in Gekko atm, see
-// @link https://github.com/askmike/gekko/issues/456
-
 /*
 
   Gekko is a Bitcoin trading bot for popular Bitcoin exchanges written 
