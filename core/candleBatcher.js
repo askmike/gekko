@@ -18,6 +18,8 @@ var CandleBatcher = function(candleSize) {
 
   this.candleSize = candleSize;
   this.smallCandles = [];
+
+  _.bindAll(this);
 }
 
 util.makeEventEmitter(CandleBatcher);
@@ -68,7 +70,6 @@ CandleBatcher.prototype.calculate = function() {
     candle.vwp = candle.open;
 
   candle.start = first.start;
-
   return candle;
 }
 

@@ -16,20 +16,21 @@ var Actor = function(done) {
 
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
+  this.setupTradingMethod();
+
   var mode = util.gekkoMode();
 
   if(mode === 'realtime') {
     var Stitcher = require(dirs.core + 'dataStitcher');
     var stitcher = new Stitcher(this.batcher);
-    stitcher.prepareHistoricalData(this.init);
-  }
-  else if(mode === 'backtest')
-    this.init();
+    stitcher.prepareHistoricalData(done);
+  } else if(mode === 'backtest')
+    done();
 }
 
 util.makeEventEmitter(Actor);
 
-Actor.prototype.init = function(done) {
+Actor.prototype.setupTradingMethod = function() {
   var methodName = config.tradingAdvisor.method;
 
   if(!fs.existsSync(dirs.methods + methodName + '.js'))
@@ -48,14 +49,11 @@ Actor.prototype.init = function(done) {
   });
 
   this.method = new Consultant;
-
-  this.batcher
-    .on('candle', this.processCustomCandle)
-
   this.method
     .on('advice', this.relayAdvice);
 
-  this.done();
+  this.batcher
+    .on('candle', this.processCustomCandle)
 }
 
 // HANDLERS

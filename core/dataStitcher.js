@@ -124,7 +124,10 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
         // seed all historic data up to the point the exchange can provide.
         var from = localData.from;
-        var to = moment.unix(exchangeData.from).utc().startOf('minute').unix();
+        var to = moment.unix(exchangeData.from).utc()
+          .startOf('minute')
+          .subtract('minute', 1)
+          .unix();
 
         log.debug('\tSeeding with:');
         log.debug('\t\tfrom:', this.ago(from));
