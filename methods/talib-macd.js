@@ -3,10 +3,6 @@
 // can use please refer to this document:
 // 
 // https://github.com/askmike/gekko/blob/stable/docs/trading_methods.md
-// 
-// The example below is pretty stupid: on every new candle there is
-// a 10% chance it will recommand to change your position (to either
-// long or short).
 
 var config = require('../core/util.js').getConfig();
 var settings = config['talib-macd'];
@@ -21,12 +17,7 @@ method.init = function() {
   // here, on every new candle we use this
   // state object to check if we need to
   // report it.
-  this.trend = {
-    direction: 'none',
-    duration: 0,
-    persisted: false,
-    adviced: false
-  };
+  this.trend = 'none';
 
   // how many candles do we need as a base
   // before we can start giving advice?
@@ -35,7 +26,7 @@ method.init = function() {
   var customMACDSettings = settings.parameters;
 
   // define the indicators we need
-  this.addTalibIndicator('macd', 'macd', customMACDSettings);
+  this.addTalibIndicator('mymacd', 'macd', customMACDSettings);
 }
 
 // What happens on every new candle?
@@ -53,15 +44,15 @@ method.log = function() {
 // update or not.
 method.check = function() {
   var price = this.lastPrice;
-  var result = this.talibIndicators.macd.result;
+  var result = this.talibIndicators.mymacd.result;
   var macddiff = result['outMACD'] - result['outMACDSignal'];
 
-  if(settings.thresholds.down > macddiff && this.currentTrend !== 'short') {
-    this.currentTrend = 'short';
+  if(settings.thresholds.down > macddiff && this.trend !== 'short') {
+    this.trend = 'short';
     this.advice('short');
 
-  } else if(settings.thresholds.up < macddiff && this.currentTrend !== 'long'){
-    this.currentTrend = 'long';
+  } else if(settings.thresholds.up < macddiff && this.trend !== 'long'){
+    this.trend = 'long';
     this.advice('long');
 
   }

@@ -23,7 +23,7 @@ var trades_tid_2 = [
   {tid: 5, price: 10, amount: 1, date: 1466115797}
 ];
 
-describe('tradeBatcher', function() {
+describe('budfox/tradeBatcher', function() {
   var tb;
 
   it('should throw when not passed a number', function() {
@@ -97,23 +97,23 @@ describe('tradeBatcher', function() {
     });
   });
 
-it('should correctly filter trades', function() {
-  tb = new TradeBatcher('tid');
+  it('should correctly filter trades', function() {
+    tb = new TradeBatcher('tid');
 
-  var spy = sinon.spy();
-  tb.on('new batch', spy);
+    var spy = sinon.spy();
+    tb.on('new batch', spy);
 
-  tb.write( trades_tid_1 );
-  tb.write( trades_tid_2 );
+    tb.write( trades_tid_1 );
+    tb.write( trades_tid_2 );
 
-  expect(spy.callCount).to.equal(2);
+    expect(spy.callCount).to.equal(2);
 
-  var tbResult = _.first(_.last(spy.args));
+    var tbResult = _.first(_.last(spy.args));
 
-  expect(tbResult.amount).to.equal(2);
-  expect(tbResult.start.unix()).to.equal(1466115796);
-  expect(tbResult.end.unix()).to.equal(1466115797);
-  expect(tbResult.data.length).to.equal(2);
-});
+    expect(tbResult.amount).to.equal(2);
+    expect(tbResult.start.unix()).to.equal(1466115796);
+    expect(tbResult.end.unix()).to.equal(1466115797);
+    expect(tbResult.data.length).to.equal(2);
+  });
 
 });

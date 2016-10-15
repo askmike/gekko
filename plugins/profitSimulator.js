@@ -73,30 +73,30 @@ Logger.prototype.calculateStartBalance = function() {
 Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
 
-  var what = advice.recommandation;
+  var what = advice.recommendation;
   var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
 
   // virtually trade all USD to BTC at the current price
   if(what === 'long') {
     this.current.asset += this.extractFee(this.current.currency / this.price);
+    if(mode === 'backtest') {
+      log.info(`${time}: Profit simulator got advice to long \t${this.current.currency.toFixed(3)} ${this.currency} => ${this.current.asset.toFixed(3)} ${this.asset}`);
+    }
     this.current.currency = 0;
     this.trades++;
-
-    if(mode === 'backtest')
-      log.info(`Profit simulator got advice to long\t@ ${time}, buying ${this.current.asset} ${this.asset} \t(${this.current.asset})`);
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
     this.current.currency += this.extractFee(this.current.asset * this.price);
+    if(mode === 'backtest') {
+      log.info(`${time}: Profit simulator got advice to short \t${this.current.currency.toFixed(3)} ${this.currency} <= ${this.current.asset.toFixed(3)} ${this.asset}`);
+    }
     this.current.asset = 0;
     this.trades++;
-
-    if(mode === 'backtest')
-      log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset} \t(${this.current.currency})`);
   }
 
-  if(this.verbose)
+  if(mode === 'realtime')
     this.report();
 }
 
@@ -159,7 +159,7 @@ Logger.prototype.report = function(timespan) {
 
 // finish up stats for backtesting
 Logger.prototype.finalize = function() {
-  console.log('')
+  log.info('')
 
   log.info(
     '(PROFIT REPORT)',
@@ -180,11 +180,10 @@ Logger.prototype.finalize = function() {
   log.info(
     '(PROFIT REPORT)',
     'timespan:\t\t\t',
-    timespan.humanize(),
-    'days'
+    timespan.humanize()
   );
 
-  console.log();
+  log.info();
 
   log.info(
     '(PROFIT REPORT)',
@@ -204,7 +203,7 @@ Logger.prototype.finalize = function() {
     (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
   );
 
-  console.log();
+  log.info();
 
   log.info(
     '(PROFIT REPORT)',

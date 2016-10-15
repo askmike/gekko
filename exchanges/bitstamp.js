@@ -1,5 +1,4 @@
 var Bitstamp = require("bitstamp");
-var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
 var log = require('../core/log');
@@ -13,8 +12,6 @@ var Trader = function(config) {
     this.market = (config.asset + config.currency).toLowerCase();
   }
   this.name = 'Bitstamp';
-  this.balance;
-  this.price;
 
   this.bitstamp = new Bitstamp(this.key, this.secret, this.clientID);
 }
@@ -85,7 +82,6 @@ Trader.prototype.buy = function(amount, price, callback) {
   }.bind(this);
 
   // TODO: fees are hardcoded here?
-  amount *= 0.995; // remove fees
   // prevent: Ensure that there are no more than 8 digits in total.
   amount *= 100000000;
   amount = Math.floor(amount);
@@ -137,9 +133,18 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var process = function(err, result) {
+  var process = function(err, trades) {
     if(err)
       return this.retry(this.getTrades, args);
+
+    var result = _.map(trades, t => {
+      return {
+        date: t.date,
+        tid: +t.tid,
+        price: +t.price,
+        amount: +t.amount
+      }
+    })
 
     callback(null, result.reverse());
   }.bind(this);

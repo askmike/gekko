@@ -1,4 +1,5 @@
+// overwrite config with test-config
+
 var utils = require(__dirname + '/../core/util');
-var config = utils.getConfig();
-config.debug = false;
-utils.setConfig(config);
+var testConfig = require(__dirname + '/test-config.json');
+utils.setConfig(testConfig);

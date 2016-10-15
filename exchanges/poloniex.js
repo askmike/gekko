@@ -55,10 +55,20 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.getPortfolio, args);
 
-    var portfolio = [];
-    _.each(data, function(amount, asset) {
-      portfolio.push({name: asset, amount: parseFloat(amount)});
-    });
+    var assetAmount = parseFloat( data[this.asset] );
+    var currencyAmount = parseFloat( data[this.currency] );
+
+    if(!_.isNumber(assetAmount) || !_.isNumber(currencyAmount)) {
+      log.info('asset:', this.asset);
+      log.info('currency:', this.currency);
+      log.info('exchange data:', data);
+      util.die('Gekko was unable to set the portfolio');
+    }
+
+    var portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount }
+    ];
 
     callback(err, portfolio);
   }.bind(this);
@@ -84,8 +94,8 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
   var set = function(err, data) {
-    if(err)
-      callback(err);
+    if(err || data.error)
+      return callback(err || data.error);
 
     callback(false, parseFloat(data.takerFee));
   }
@@ -127,7 +137,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, result) {
     if(err || !result.success) {
       log.error('unable to cancel order', order, '(', err, result, ')');
-      // return this.retry(this.cancelOrder, args);
     }
   }.bind(this);
 
@@ -135,17 +144,30 @@ Trader.prototype.cancelOrder = function(order, callback) {
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
+
+  var firstFetch = !!since;
+
   var args = _.toArray(arguments);
   var process = function(err, result) {
     if(err) {
       return this.retry(this.getTrades, args);
     }
 
+    // Edge case, see here:
+    // @link https://github.com/askmike/gekko/issues/479
+    if(firstFetch && _.size(result) === 50000)
+      util.die(
+        [
+          'Poloniex did not provide enough data. Read this:',
+          'https://github.com/askmike/gekko/issues/479'
+        ].join('\n\n')
+      );
+
     result = _.map(result, function(trade) {
     	return {
         tid: trade.tradeID,
         amount: +trade.amount,
-        date: moment.utc(trade.date).format('X'),
+        date: moment.utc(trade.date).unix(),
         price: +trade.rate
       };
     });
@@ -156,8 +178,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
-  if (since)
-    params.start = _.isNumber(since) ? since : since.format('X');
+
+  if(since)
+    params.start = since.unix();
 
   this.poloniex._public('returnTradeHistory', params, _.bind(process, this));
 }

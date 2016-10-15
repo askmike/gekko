@@ -29,9 +29,7 @@ var plugins = [
     slug: 'candleWriter',
     async: true,
     modes: ['realtime', 'importer'],
-    path: function(config) {
-      return config.adapter + '/writer';
-    },
+    path: config => config.adapter + '/writer',
     version: 0.1,
   },
   {
@@ -61,8 +59,19 @@ var plugins = [
     silent: false,
     modes: ['realtime'],
     dependencies: [{
-      module: 'node-xmpp',
-      version: '0.12.0'
+      module: 'node-xmpp-client',
+      version: '3.0.2'
+    }]
+  },
+  {
+    name: 'Pushover',
+    description: 'Sends pushover.',
+    slug: 'pushover',
+    async: false,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'pushover-notifications',
+      version: '0.2.3'
     }]
   },
   {
@@ -84,7 +93,7 @@ var plugins = [
     modes: ['realtime'],
     dependencies: [{
       module: 'emailjs',
-      version: '0.3.6'
+      version: '1.0.5'
     }, {
       module: 'prompt-lite',
       version: '0.1.1'
@@ -95,7 +104,8 @@ var plugins = [
     description: 'Follows the advice and create real orders.',
     slug: 'trader',
     async: true,
-    modes: ['realtime']
+    modes: ['realtime'],
+    path: config => 'trader/trader.js',
   },
   {
     name: 'Advice logger',
@@ -122,7 +132,14 @@ var plugins = [
       module: 'redis',
       version: '0.10.0'
     }]
-  }
+  },
+  {
+    name: 'Pushbullet',
+    description: 'Sends advice to pushbullet.',
+    slug: 'pushbullet',
+    async: false,
+    modes: ['realtime']
+  },
 ];
 
 module.exports = plugins;

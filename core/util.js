@@ -60,30 +60,8 @@ var util = {
   equals: function(a, b) {
     return !(a < b || a > b)
   },
-  msToMin: function(ms) {
-    return Math.round(ms / 60 / 1000);
-  },
   minToMs: function(min) {
     return min * 60 * 1000;
-  },
-  toMicro: function(moment) {
-    return moment.format('X') * 1000 * 1000;
-  },
-  intervalsAgo: function(amount) {
-    return moment().utc().subtract('minutes', config.EMA.interval * amount);
-  },
-  minAgo: function(moment) {
-    return moment.duraction( moment().utc().subtract(moment) ).asMinutes();
-  },
-  average: function(list) {
-    var total = _.reduce(list, function(m, n) { return m + n }, 0);
-    return total / list.length;
-  },
-  calculateTimespan: function(a, b) {
-    if(a < b)
-      return b.diff(a);
-    else
-      return a.diff(b);
   },
   defer: function(fn) {
     return function(args) {
@@ -120,6 +98,7 @@ var util = {
       exchanges: ROOT + 'exchanges/',
       plugins: ROOT + 'plugins/',
       methods: ROOT + 'methods/',
+      indicators: ROOT + 'methods/indicators/',
       budfox: ROOT + 'core/budfox/',
       importers: ROOT + 'importers/exchanges/',
       tools: ROOT + 'core/tools/',
@@ -157,6 +136,8 @@ var util = {
     ]
   },
   setGekkoEnv: function(env) {
+    util.die('only standalone supported, see\n\nhttps://github.com/askmike/gekko/issues/456ref-issue-177670116')
+
     _gekkoEnv = env;
   },
   gekkoEnv: function() {
@@ -172,8 +153,6 @@ program
   .option('-b, --backtest', 'backtesting mode')
   .option('-i, --import', 'importer mode')
   .parse(process.argv);
-
-var config = util.getConfig();
 
 // make sure the current node version is recent enough
 if(!util.recentNode())

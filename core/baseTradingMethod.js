@@ -54,6 +54,14 @@ var Indicators = {
     factory: require(indicatorsPath + 'RSI'),
     input: 'candle'
   },
+  TSI: {
+    factory: require(indicatorsPath + 'TSI'),
+    input: 'candle'
+  },
+  UO: {
+    factory: require(indicatorsPath + 'UO'),
+    input: 'candle'
+  },
   CCI: {
     factory: require(indicatorsPath + 'CCI'),
     input: 'candle'
@@ -77,6 +85,7 @@ var Base = function() {
   this.indicators = {};
   this.talibIndicators = {};
   this.asyncTick = false;
+  this.candlePropsCacheSize = 1000;
 
   this.candleProps = {
     open: [],
@@ -114,9 +123,7 @@ var Base = function() {
 }
 
 // teach our base trading method events
-var Util = require('util');
-var EventEmitter = require('events').EventEmitter;
-Util.inherits(Base, EventEmitter);
+util.makeEventEmitter(Base);
 
 Base.prototype.tick = function(candle) {
   this.age++;
@@ -129,7 +136,7 @@ Base.prototype.tick = function(candle) {
     this.candleProps.close.push(candle.close);
     this.candleProps.volume.push(candle.volume);
 
-    if(this.age > 1000) {
+    if(this.age > this.candlePropsCacheSize) {
       this.candleProps.open.shift();
       this.candleProps.high.shift();
       this.candleProps.low.shift();
@@ -156,10 +163,25 @@ Base.prototype.tick = function(candle) {
       this.propogateTick
     );
 
+    var basectx = this;
+
+    // handle result from talib
+    var talibResultHander = function(err, result) {
+      if(err)
+        util.die('TALIB ERROR:', err);
+
+      // fn is bound to indicator
+      this.result = _.mapValues(result, v => _.last(v));
+      next();
+    }
+
+    // handle result from talib
     _.each(
       this.talibIndicators,
-      i => i._fn(next),
-      this
+      indicator => indicator.run(
+        basectx.candleProps,
+        talibResultHander.bind(indicator)
+      )
     );
   }
 
@@ -171,12 +193,13 @@ Base.prototype.propogateTick = function() {
   this.update(this.candle);
   if(this.requiredHistory <= this.age) {
     this.log();
-    this.check();
+    this.check(this.candle);
   }
   this.processedTicks++;
 
   // are we totally finished
-  if(this.finishCb && this.age === this.processedTicks)
+  var done = this.age === this.processedTicks;
+  if(done && this.finishCb)
     this.finishCb();
 }
 
@@ -192,21 +215,8 @@ Base.prototype.addTalibIndicator = function(name, type, parameters) {
 
   var basectx = this;
 
-  // TODO: cleanup..
   this.talibIndicators[name] = {
-    _params: parameters,
-    _fn: function(done) {
-      var args = _.clone(parameters);
-      args.unshift(basectx.candleProps);
-
-      talib[type].apply(this, args)(function(err, result) {
-        if(err)
-          util.die('TALIB ERROR:', err);
-
-        this.result = _.mapValues(result, function(a) { return _.last(a); });
-        done();
-      }.bind(this));
-    },
+    run: talib[type].create(parameters),
     result: NaN
   }
 }
@@ -233,7 +243,7 @@ Base.prototype.advice = function(newPosition) {
   }
 
   this.emit('advice', {
-    recommandation: advice,
+    recommendation: advice,
     portfolio: 1,
     moment: this.candle.start
   });

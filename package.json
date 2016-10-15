@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -8,7 +8,7 @@
     "bitcoin"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.js -u tdd --reporter spec"
+    "test": "./node_modules/.bin/mocha test/*.js --recursive test -u tdd --reporter spec"
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
@@ -19,6 +19,7 @@
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",
     "btc-e": "0.0.x",
+    "btc-markets": "0.0.6",
     "cexio": "0.0.x",
     "commander": "^2.9.0",
     "koa": "^1.2.0",
@@ -33,20 +34,23 @@
     "poloniex.js": "0.0.6",
     "promisify-node": "^0.4.0",
     "prompt-lite": "0.1.1",
-    "relieve": "^2.0.1",
+    "pushbullet": "1.4.3",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "ws": "^1.1.1",
-    "zaif.jp": "^0.1.4"
+    "zaif.jp": "^0.1.4",
+    "gekko": "0.0.6"
   },
   "devDependencies": {
     "chai": "^2.0.0",
     "mocha": "^2.1.1",
+    "proxyquire": "^1.7.10",
     "sinon": "^1.12.2"
   },
   "engines": {
     "node": ">=6.0"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/askmike/gekko.git"

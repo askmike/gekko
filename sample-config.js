@@ -1,4 +1,4 @@
-﻿// Everything is explained here:
+// Everything is explained here:
 // @link https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
 
 var config = {};
@@ -86,9 +86,50 @@ config.PPO = {
   }
 };
 
+// Uses one of the momentum indicators but adjusts the thresholds when PPO is bullish or bearish
+// Uses settings from the ppo and momentum indicator config block
+config.varPPO = {
+  momentum: 'TSI', // RSI, TSI or UO
+  thresholds: {
+    // new threshold is default threshold + PPOhist * PPOweight
+    weightLow: 120,
+    weightHigh: -120,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 0
+  }
+};
+
 // RSI settings:
 config.RSI = {
   interval: 14,
+  thresholds: {
+    low: 30,
+    high: 70,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// TSI settings:
+config.TSI = {
+  short: 13,
+  long: 25,
+  thresholds: {
+    low: -25,
+    high: 25,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
+// Ultimate Oscillator Settings
+config.UO = {
+  first: {weight: 4, period: 7},
+  second: {weight: 2, period: 14},
+  third: {weight: 1, period: 28},
   thresholds: {
     low: 30,
     high: 70,
@@ -109,7 +150,7 @@ config.CCI = {
     }
 };
 
-// StochRSI settings 
+// StochRSI settings
 config.StochRSI = {
   interval: 3,
   thresholds: {
@@ -128,15 +169,20 @@ config.custom = {
 }
 
 config['talib-macd'] = {
-  // FastPeriod, SlowPeriod, SignalPeriod
-  parameters: [10, 21, 9],
+  parameters: {
+    optInFastPeriod: 10,
+    optInSlowPeriod: 21,
+    optInSignalPeriod: 9
+  },
   thresholds: {
     down: -0.025,
     up: 0.025,
-    // How many candle intervals should a trend persist
-    // before we consider it real?
-    persistence: 1
   }
+}
+
+config['debug-advice'] = {
+  wait: 1,
+  advice: 'long'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,7 +200,8 @@ config.trader = {
 }
 
 config.adviceLogger = {
-  enabled: true
+  enabled: true,
+  muteSoft: true // disable advice printout if it's soft
 }
 
 // do you want Gekko to calculate the profit of its own advice?
@@ -168,12 +215,18 @@ config.profitSimulator = {
     asset: 1,
     currency: 100,
   },
-  // only want report after a sell? set to `false`.
-  verbose: false,
   // how much fee in % does each trade cost?
   fee: 0.25,
   // how much slippage/spread should Gekko assume per trade?
   slippage: 0.05
+}
+config.pushover = {
+  enabled: false,
+  sendPushoverOnStart: false,
+  muteSoft: true, // disable advice printout if it's soft
+  tag: '[GEKKO]',
+  key: '',
+  user: ''
 }
 
 // want Gekko to send a mail on buy or sell advice?
@@ -182,6 +235,7 @@ config.mailer = {
   sendMailOnStart: true,    // Send 'Gekko starting' message if true, not if false
 
   email: '',    // Your Gmail address
+  muteSoft: true, // disable advice printout if it's soft
 
   // You don't have to set your password here, if you leave it blank we will ask it
   // when Gekko's starts.
@@ -198,7 +252,7 @@ config.mailer = {
   tag: '[GEKKO] ',      // Prefix all email subject lines with this
 
             //       ADVANCED MAIL SETTINGS
-            // you can leave those as is if you 
+            // you can leave those as is if you
             // just want to use Gmail
 
   server: 'smtp.gmail.com',   // The name of YOUR outbound (SMTP) mail server.
@@ -209,8 +263,20 @@ config.mailer = {
   to: '',       // 'me@somedomain.com, me@someotherdomain.com'
   ssl: true,        // Use SSL (true for Gmail)
   port: '',       // Set if you don't want to use the default port
-  tls: false        // Use TLS if true
 }
+
+config.pushbullet = {
+    // sends pushbullets if true
+  enabled: false,
+    // Send 'Gekko starting' message if true
+  sendMessageOnStart: true,
+    // your pushbullet API key
+  key: 'xxx',
+    // your email, change it unless you are Azor Ahai
+  email: 'jon_snow@westeros.org',
+    // will make Gekko messages start mit [GEKKO]
+  tag: '[GEKKO]'
+};
 
 config.ircbot = {
   enabled: false,
@@ -260,21 +326,14 @@ config.candleWriter = {
   enabled: true
 }
 
-config.webserver = {
-  enabled: false,
-  http: {
-    port: 8080,
-    host: 'localhost'
-  },
-  ws: {
-    port: 8081,
-    host: 'localhost'
-  }
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
 
 config.adapters = {
   sqlite: {
@@ -286,6 +345,16 @@ config.adapters = {
     dependencies: [{
       module: 'sqlite3',
       version: '3.1.4'
+    }]
+  },
+  // Postgres adapter example config (please note: requires postgres >= 9.5):
+  postgresql: {
+    path: 'plugins/postgresql',
+    version: 0.1,
+    connectionString: 'postgres://user:pass@localhost:5432', // if default port
+    dependencies: [{
+      module: 'pg',
+      version: '6.1.0'
     }]
   }
 }
@@ -314,16 +383,16 @@ config.importer = {
   }
 }
 
-// set this to true if you understand that Gekko will 
+// set this to true if you understand that Gekko will
 // invest according to how you configured the indicators.
 // None of the advice in the output is Gekko telling you
-// to take a certain position. Instead it is the result 
+// to take a certain position. Instead it is the result
 // of running the indicators you configured automatically.
-// 
+//
 // In other words: Gekko automates your trading strategies,
 // it doesn't advice on itself, only set to true if you truly
 // understand this.
-// 
+//
 // Not sure? Read this first: https://github.com/askmike/gekko/issues/201
 config['I understand that Gekko only automates MY OWN trading strategies'] = false;
 
