@@ -9,6 +9,8 @@ var config = util.getConfig();
 var calcConfig = config.profitSimulator;
 var watchConfig = config.watch;
 
+var ENV = util.gekkoEnv();
+
 var Logger = function() {
   _.bindAll(this);
 
@@ -74,14 +76,10 @@ Logger.prototype.processAdvice = function(advice) {
   this.tracks++;
 
   var what = advice.recommendation;
-  var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
 
   // virtually trade all USD to BTC at the current price
   if(what === 'long') {
     this.current.asset += this.extractFee(this.current.currency / this.price);
-    if(mode === 'backtest') {
-      log.info(`${time}: Profit simulator got advice to long \t${this.current.currency.toFixed(3)} ${this.currency} => ${this.current.asset.toFixed(3)} ${this.asset}`);
-    }
     this.current.currency = 0;
     this.trades++;
   }
@@ -89,15 +87,20 @@ Logger.prototype.processAdvice = function(advice) {
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
     this.current.currency += this.extractFee(this.current.asset * this.price);
-    if(mode === 'backtest') {
-      log.info(`${time}: Profit simulator got advice to short \t${this.current.currency.toFixed(3)} ${this.currency} <= ${this.current.asset.toFixed(3)} ${this.asset}`);
-    }
     this.current.asset = 0;
     this.trades++;
   }
 
   if(mode === 'realtime')
-    this.report();
+    this.verboseReport();
+
+  else if(mode === 'backtest') {
+
+    if(ENV === 'standalone')
+      this.summarizedReport(what);
+    else if(ENV === 'child-process')
+      this.jsonReport(what);
+  }
 }
 
 Logger.prototype.processCandle = function(candle, done) {
@@ -124,7 +127,55 @@ Logger.prototype.processCandle = function(candle, done) {
   done();
 }
 
-Logger.prototype.report = function(timespan) {
+Logger.prototype.jsonReport = function(what) {
+
+  var ts = this.dates.end.utc().unix();
+
+  if(what === 'short')
+    process.send({
+      from: 'profitSimulator',
+      type: 'position change',
+      action: 'sell',
+      date: ts,
+      balance: this.current.currency
+    });
+
+  else if(what === 'long')
+    process.send({
+      from: 'profitSimulator',
+      type: 'position change',
+      action: 'buy',
+      date: ts,
+      balance: this.current.asset * this.price
+    });
+
+}
+
+Logger.prototype.summarizedReport = function(what) {
+
+  var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss');
+
+  if(what === 'short')
+
+      log.info(
+        `${time}: Profit simulator got advice to short`,
+        `\t${this.current.currency.toFixed(3)}`,
+        `${this.currency} <= ${this.current.asset.toFixed(3)}`,
+        `${this.asset}`
+      );
+
+  else if(what === 'long')
+
+    log.info(
+      `${time}: Profit simulator got advice to long`,
+      `\t${this.current.currency.toFixed(3)}`,
+      `${this.currency} => ${this.current.asset.toFixed(3)}`,
+      `${this.asset}`
+    );
+
+}
+
+Logger.prototype.verboseReport = function(timespan) {
   if(!this.start.balance)
     return log.warn('Unable to simulate profits without starting balance');
 
@@ -158,60 +209,67 @@ Logger.prototype.report = function(timespan) {
 }
 
 // finish up stats for backtesting
-Logger.prototype.finalize = function() {
-  log.info('')
+if(ENV === 'standalone') {
+  Logger.prototype.finalize = function() {
+    log.info('')
 
-  log.info(
-    '(PROFIT REPORT)',
-    'start time:\t\t\t',
-    this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss')
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'start time:\t\t\t',
+      this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss')
+    );
 
-  log.info(
-    '(PROFIT REPORT)',
-    'end time:\t\t\t',
-    this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'end time:\t\t\t',
+      this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
+    );
 
-  var timespan = moment.duration(
-    this.dates.end.diff(this.dates.start)
-  );
+    var timespan = moment.duration(
+      this.dates.end.diff(this.dates.start)
+    );
 
-  log.info(
-    '(PROFIT REPORT)',
-    'timespan:\t\t\t',
-    timespan.humanize()
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'timespan:\t\t\t',
+      timespan.humanize()
+    );
 
-  log.info();
+    log.info();
 
-  log.info(
-    '(PROFIT REPORT)',
-    'start price:\t\t\t',
-    this.startPrice
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'start price:\t\t\t',
+      this.startPrice
+    );
 
-  log.info(
-    '(PROFIT REPORT)',
-    'end price:\t\t\t',
-    this.endPrice
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'end price:\t\t\t',
+      this.endPrice
+    );
 
-  log.info(
-    '(PROFIT REPORT)',
-    'Buy and Hold profit:\t\t',
-    (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'Buy and Hold profit:\t\t',
+      (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
+    );
 
-  log.info();
+    log.info();
 
-  log.info(
-    '(PROFIT REPORT)',
-    'amount of trades:\t\t',
-    this.trades
-  );
+    log.info(
+      '(PROFIT REPORT)',
+      'amount of trades:\t\t',
+      this.trades
+    );
 
-  this.report(timespan);
+    this.verboseReport(timespan);
+  }
+} else if(ENV === 'child-process') {
+  Logger.prototype.finalize = function() {
+    // todo!
+    process.send('done!')
+  }
 }
 
 
