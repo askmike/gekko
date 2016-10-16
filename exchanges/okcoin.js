@@ -143,6 +143,9 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
     var args = _.toArray(arguments);
 
+    if(since)
+      since = 600;
+
     this.okcoin.getTrades(function(err, data) {
         if (err)
             return this.retry(this.getTrades, args);

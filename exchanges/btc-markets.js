@@ -157,10 +157,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     callback(null, result.reverse());
   }.bind(this);
 
-  if(since)
-    this.btcmakets.getTrades(this.asset, this.currency, process, since);
-  else
-    this.btcmakets.getTrades(this.asset, this.currency, process);
+  // supports `since` based on trade ID, Gekko can't work this atm..
+  this.btcmakets.getTrades(this.asset, this.currency, process);
 }
 
 module.exports = Trader;

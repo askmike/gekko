@@ -129,7 +129,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   var path = this.pair;
   if(since)
-    path += '?limit_trades=' + since;
+    path += '?limit_trades=2000';
 
   this.bitfinex.trades(path, function(err, data) {
     if (err)

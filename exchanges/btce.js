@@ -162,7 +162,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   if(since) {
     this.btceHistorocial.makePublicApiRequest(
       'trades',
-      this.pair + since,
+      this.pair + '?limit=2000',
       this.processAPIv3Trades(process)
     )
   } else

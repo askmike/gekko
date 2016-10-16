@@ -66,7 +66,6 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
-    maxHistoryFetch: '?limit=2000',
     tid: 'tid'
   },
   {
@@ -84,7 +83,6 @@ var exchanges = [
       { pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' } }
     ],
     requires: ['key', 'secret', 'username'],
-    maxHistoryFetch: 'day',
     fetchTimespan: 60,
     tid: 'tid'
   },
@@ -116,7 +114,6 @@ var exchanges = [
     slug: 'kraken',
     direct: false,
     infinityOrder: false,
-    // technically not true..
     currencies: ['ETH', 'XBT', 'CAD', 'EUR', 'GBP', 'JPY', 'XRP', 'XDG', 'XLM', 'USD'],
     assets: ['DAO', 'ETH', 'LTC', 'XBT'],
     markets: [
@@ -496,7 +493,6 @@ var exchanges = [
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
     ],
     requires: ['key', 'secret'],
-    maxHistoryFetch: 2000,
     tid: 'tid'
 
   },
@@ -563,7 +559,6 @@ var exchanges = [
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
-    maxHistoryFetch: 5000,
     tid: 'tid',
     providesFullHistory: true,
   },
@@ -581,7 +576,6 @@ var exchanges = [
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
     fetchTimespan: 60,
-    maxHistoryFetch: 600,
     tid: 'date',
   },
   {
@@ -638,7 +632,6 @@ var exchanges = [
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
-    maxHistoryFetch: '?limit=2000',
     tid: 'tid'
   },
   // ,
