@@ -13,14 +13,10 @@ ws.onmessage = e => {
   });
 }
 
-
-
-var daterange = false;
+// var daterange = false;
 
 if(true) {
   var $log = document.getElementById('log');
-
-  
 
   messageHandlers.log = m => {
     $log.innerHTML += m.join('\n') + '\n'
@@ -37,13 +33,13 @@ if(true) {
       }
     }
 
-    var handle = data => {
-      var ranges = JSON.parse(data);
+    var handle = ranges => {
+      // var ranges = JSON.parse(data);
       // if(_.size(ranges) === 1) {
       //   daterange = _.first(ranges);
       // }
 
-      var fmt = u => moment.unix(u).format('YYYY-MM-DD HH:mm:ss');
+      var fmt = u => moment.unix(u).utc().format('YYYY-MM-DD HH:mm:ss');
 
       var q = 'what range would you like?\n';
       _.each(ranges, (r, i) => {
@@ -53,8 +49,13 @@ if(true) {
       });
 
       var index = parseInt(prompt(q)) - 1;
+
+      // daterange = ranges[index];
       
-      daterange = ranges[index];
+      var daterange = {
+        from: fmt(ranges[index].from),
+        to: fmt(ranges[index].to)
+      }
 
       $log.innerHTML = '';
 
@@ -72,7 +73,7 @@ if(true) {
         tradingAdvisor: {
           enabled: true,
           method: 'MACD',
-          candleSize: 1,
+          candleSize: 100,
           historySize: 20
         },
         watch: {
@@ -81,19 +82,19 @@ if(true) {
           asset: 'BTC'
         },
         backtest: {
-          daterange: {
-            from: '2016-03-01 00:00:00',
-            to: '2016-03-16 09:00:00'
-          }
+          daterange: daterange
         }
       };
 
-      ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+      // ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+      post('/api/backtest2', function(data) {
+        console.log(data);    
+      }, request)
 
     }
 
 
-    ajax('/api/scan', handle, 'data=' + JSON.stringify(request));
+    post('/api/scan', handle, request);
   }
 }
 

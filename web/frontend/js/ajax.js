@@ -1,17 +1,9 @@
 // https://gist.github.com/Xeoncross/7663273
 
-/**
- * IE 5.5+, Firefox, Opera, Chrome, Safari XHR object
- * 
- * @param string url
- * @param object callback
- * @param mixed data
- * @param null x
- */
-function ajax(url, callback, data, x) {
+function get(url, callback, x) {
   try {
     x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-    x.open(data ? 'POST' : 'GET', url, 1);
+    x.open('GET', url, 1);
     x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     x.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     x.onreadystatechange = function () {
@@ -21,6 +13,20 @@ function ajax(url, callback, data, x) {
   } catch (e) {
     window.console && console.log(e);
   }
+}
+
+function post(url, callback, data, x) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.onreadystatechange = function () { 
+      if (xhr.readyState == 4 && xhr.status == 200) {
+          var json = JSON.parse(xhr.responseText);
+          callback(json);
+      }
+  }
+  var data = JSON.stringify(data);
+  xhr.send(data);
 };
 
 
