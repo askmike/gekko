@@ -134,7 +134,7 @@ Logger.prototype.jsonReport = function(what) {
   if(what === 'short')
     process.send({
       from: 'profitSimulator',
-      type: 'position change',
+      type: 'trade',
       action: 'sell',
       date: ts,
       balance: this.current.currency
@@ -143,7 +143,7 @@ Logger.prototype.jsonReport = function(what) {
   else if(what === 'long')
     process.send({
       from: 'profitSimulator',
-      type: 'position change',
+      type: 'trade',
       action: 'buy',
       date: ts,
       balance: this.current.asset * this.price

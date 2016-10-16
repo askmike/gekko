@@ -22,6 +22,7 @@
     "btc-markets": "0.0.6",
     "cexio": "0.0.x",
     "commander": "^2.9.0",
+    "gekko": "0.0.6",
     "koa": "^1.2.0",
     "koa-bodyparser": "^2.2.0",
     "koa-router": "^5.4.0",
@@ -37,9 +38,9 @@
     "pushbullet": "1.4.3",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
+    "tiny-promisify": "^0.1.1",
     "ws": "^1.1.1",
-    "zaif.jp": "^0.1.4",
-    "gekko": "0.0.6"
+    "zaif.jp": "^0.1.4"
   },
   "devDependencies": {
     "chai": "^2.0.0",

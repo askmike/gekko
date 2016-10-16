@@ -3,6 +3,8 @@ var fork = require('child_process').fork;
 module.exports = (mode, config, callback) => {
   var child = fork(__dirname + '/child');
 
+  var handle = require('./' + mode + 'Handler');
+
   var message = {
     what: 'start',
     mode: mode,
@@ -11,14 +13,13 @@ module.exports = (mode, config, callback) => {
 
   child.on('message', function(m) {
 
-    if(m === 'ready') {
+    if(m === 'ready')
       return child.send(message);
-    }
 
+    handle.message(m);
   });
 
   child.on('exit', function(status) {
-
-    console.log('child has exited', status)
+    handle.exit(status, callback);
   });
 }

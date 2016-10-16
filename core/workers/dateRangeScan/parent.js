@@ -9,8 +9,6 @@ module.exports = function(config, done) {
   task.once('ranges', ranges => done(false, ranges));
   task.on('exit', code => {
 
-    console.log('DATERANGE SCAN DONE!');
-
     if(code !== 0)
       handler('log')('ERROR, unable to scan dateranges, please check the console.');
   });

@@ -86,9 +86,9 @@ if(true) {
         }
       };
 
-      // ajax('/api/backtest', _.noop, 'data=' + JSON.stringify(request));
+      console.log('backtesting...');
       post('/api/backtest2', function(data) {
-        console.log(data);    
+        console.log('received:', data);
       }, request)
 
     }
