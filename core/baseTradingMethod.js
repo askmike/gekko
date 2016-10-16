@@ -242,11 +242,13 @@ Base.prototype.advice = function(newPosition) {
     advice = newPosition;
   }
 
-  this.emit('advice', {
-    recommendation: advice,
-    portfolio: 1,
-    moment: this.candle.start
-  });
+  _.defer(function() {
+    this.emit('advice', {
+      recommendation: advice,
+      portfolio: 1,
+      moment: this.candle.start
+    });
+  }.bind(this));
 }
 
 // Because the trading method might be async we need
