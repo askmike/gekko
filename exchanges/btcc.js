@@ -69,8 +69,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       callback(null, result);
   }.bind(this);
 
+
   if(!since)
     since = 500;
+  else
+    since = 5000;
 
   this.btcc.getHistoryData(process, {limit: since});
 }
