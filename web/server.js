@@ -39,7 +39,7 @@ setInterval(_broadcast, relayInterval);
 // attach routes
 // router.post('/api/backtest', require('./routes/backtest')(broadcast));
 router.post('/api/scan', require('./routes/scanDateRange'));
-router.post('/api/backtest2', require('./routes/backtest2'));
+router.post('/api/backtest2', require('./routes/backtest'));
 
 wss.on('connection', ws => {
   ws.on('message', _.noop);

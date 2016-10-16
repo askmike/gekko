@@ -76,7 +76,7 @@ Gekko runs on [nodejs](http://nodejs.org/), once you have that installed you can
 
 You need to download Gekko's dependencies, which can easily be done with [npm](http://npmjs.org) (this came with your nodejs installation):
 
-    npm install
+    npm install --only=production
 
 Docker user? Installing and running gekko is simple on Docker with the following command:
 
@@ -105,7 +105,7 @@ You can also run Gekko silently or use more complex features, for examples check
 
 If you installed Gekko via git you can easily fetch the latest updates by running:
 
-    git pull && npm install
+    git pull && npm install --only=production
 
 ## How does Gekko work?
 

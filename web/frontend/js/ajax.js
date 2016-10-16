@@ -1,6 +1,6 @@
 // https://gist.github.com/Xeoncross/7663273
 
-function get(url, callback, x) {
+module.exports.get = (url, callback, x) => {
   try {
     x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
     x.open('GET', url, 1);
@@ -15,7 +15,7 @@ function get(url, callback, x) {
   }
 }
 
-function post(url, callback, data, x) {
+module.exports.post = (url, callback, data, x) => {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");

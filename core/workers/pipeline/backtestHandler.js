@@ -1,15 +1,21 @@
 var trades = [];
+var candles = [];
 var report = false;
 
 module.exports.message = function(message) {
-  if(message.type === 'trade')
+  if(message.type === 'candle')
+    trades.push(message.candle);
+
+  else if(message.type === 'trade')
     trades.push({
       date: message.date,
       action: message.action,
       balance: message.balance
-    })
+    });
+
   else if(message.type === 'report')
     report = message.report;
+
 }
 
 module.exports.exit = function(status, done) {
@@ -19,6 +25,7 @@ module.exports.exit = function(status, done) {
 
   done(null, {
     trades: trades,
+    candles: candles,
     report: report
   });
 }
