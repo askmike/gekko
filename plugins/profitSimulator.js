@@ -99,7 +99,7 @@ Logger.prototype.processAdvice = function(advice) {
     if(ENV === 'standalone')
       this.summarizedReport(what);
     else if(ENV === 'child-process')
-      this.jsonReport(what);
+      this.jsonReport(what, this.price);
   }
 }
 
@@ -109,7 +109,7 @@ Logger.prototype.processCandle = function(candle, done) {
     this.startPrice = candle.open;
   }
 
-  this.dates.end = candle.start.clone().add(1, 'm');
+  this.dates.end = candle.start.clone().add('m', 1);
   this.endPrice = candle.close;
 
   this.price = candle.close;
@@ -127,26 +127,30 @@ Logger.prototype.processCandle = function(candle, done) {
   done();
 }
 
-Logger.prototype.jsonReport = function(what) {
+Logger.prototype.jsonReport = function(what, price) {
 
-  var ts = this.dates.end.utc().unix();
+  var at = this.dates.end.utc().clone().subtract('m', 1);
 
   if(what === 'short')
     process.send({
-      from: 'profitSimulator',
       type: 'trade',
-      action: 'sell',
-      date: ts,
-      balance: this.current.currency
+      trade: {
+        action: 'sell',
+        price: price,
+        date: at,
+        balance: this.current.currency
+      }
     });
 
   else if(what === 'long')
     process.send({
-      from: 'profitSimulator',
       type: 'trade',
-      action: 'buy',
-      date: ts,
-      balance: this.current.asset * this.price
+      trade: {
+        action: 'buy',
+        price: price,
+        date: at,
+        balance: this.current.asset * this.price
+      }
     });
 
 }

@@ -1,31 +1,30 @@
-var trades = [];
-var candles = [];
-var report = false;
+module.exports = done => {
+  var trades = [];
+  var candles = [];
+  var report = false;
 
-module.exports.message = function(message) {
-  if(message.type === 'candle')
-    trades.push(message.candle);
+  return {
+    message: message => {
 
-  else if(message.type === 'trade')
-    trades.push({
-      date: message.date,
-      action: message.action,
-      balance: message.balance
-    });
+      if(message.type === 'candle')
+        candles.push(message.candle);
 
-  else if(message.type === 'report')
-    report = message.report;
+      else if(message.type === 'trade')
+        trades.push(message.trade);
 
-}
+      else if(message.type === 'report')
+        report = message.report;
+    },
+    exit: status => {
+      if(status !== 0)
+        // todo: upstream error
+        return done(new Error('ERROR!'));
 
-module.exports.exit = function(status, done) {
-  if(status !== 0)
-    // todo: upstream error
-    return done(new Error('ERROR!'));
-
-  done(null, {
-    trades: trades,
-    candles: candles,
-    report: report
-  });
+      done(null, {
+        trades: trades,
+        candles: candles,
+        report: report
+      });
+    }
+  }
 }

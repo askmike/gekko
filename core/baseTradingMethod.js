@@ -4,6 +4,8 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require('../core/log.js');
 
+var ENV = util.gekkoEnv();
+
 if(config.tradingAdvisor.talib.enabled) {
   // verify talib is installed properly
   var pluginHelper = require(dirs.core + 'pluginUtil');
@@ -187,6 +189,21 @@ Base.prototype.tick = function(candle) {
 
   // update previous price
   this.lastPrice = price;
+
+  this.propogateCustomCandle(candle);
+}
+
+// if this is a child process the parent might
+// be interested in the custom candle.
+if(ENV !== 'child-process') {
+  Base.prototype.propogateCustomCandle = _.noop;
+} else {
+  Base.prototype.propogateCustomCandle = function(candle) {
+    process.send({
+      type: 'candle',
+      candle: candle
+    });
+  }
 }
 
 Base.prototype.propogateTick = function() {

@@ -1,18 +1,19 @@
 var post = require('./ajax').post;
+var chart = require('./chart');
+// todo!
+// var exchages = require('../../../exchanges');
 
-var exchages = require('../../../exchanges');
-
-console.log(exchages);
-
-var page = location.pathname;
+var fmt = u => moment.unix(u).utc().format('YYYY-MM-DD HH:mm:ss');
 
 var $backtest = document.getElementById('backtest');
 $backtest.onclick = () => {
+  $('svg').remove();
+
   var request = {
     watch: {
-      exchange: 'poloniex',//prompt('What exchange?'),
-      currency: 'USDT', //prompt('What currency?'),
-      asset: 'BTC'//prompt('What Asset?')
+      exchange: $('#exchange').val(),
+      currency: $('#currency').val(),
+      asset: $('#asset').val()
     }
   }
 
@@ -22,8 +23,6 @@ $backtest.onclick = () => {
     //   daterange = _.first(ranges);
     // }
 
-    var fmt = u => moment.unix(u).utc().format('YYYY-MM-DD HH:mm:ss');
-
     var q = 'what range would you like?\n';
     _.each(ranges, (r, i) => {
       q += 'OPTION ' + (i + 1) + '\n';
@@ -32,8 +31,6 @@ $backtest.onclick = () => {
     });
 
     var index = parseInt(prompt(q)) - 1;
-
-    // daterange = ranges[index];
     
     var daterange = {
       from: fmt(ranges[index].from),
@@ -41,40 +38,37 @@ $backtest.onclick = () => {
     }
 
     var request = {
-      MACD: {
-        short: 10,
-        long: 21,
-        signal: 9,
-        thresholds: {
-          down: -0.025,
-          up: 0.025,
-          persistence: 1
-        }
-      },
       tradingAdvisor: {
         enabled: true,
-        method: 'MACD',
-        candleSize: 100,
-        historySize: 20
+        method: $('#strat').val(),
+        candleSize: +$('#candleSize').val(),
+        historySize: +$('#historySize').val(),
+        talib: {
+          enabled: $('#talib').val() === 'true',
+          version: '1.0.2'
+        }
       },
       watch: {
-        exchange: 'poloniex',
-        currency: 'USDT',
-        asset: 'BTC'
+        exchange: $('#exchange').val(),
+        currency: $('#currency').val(),
+        asset: $('#asset').val()
       },
       backtest: {
         daterange: daterange
       }
     };
 
-    console.log('backtesting...');
-    post('/api/backtest2', function(data) {
-      console.log('received:', data);
-    }, request)
+    $('#log').text('running backtest');
+    console.log('backtesting...', request);
+    post('/api/backtest', function(data) {
+      console.log(data);
+      $('#log').text('done!');
+      chart(data.candles, data.trades);
+    }, request);
 
   }
 
-
+  $('#log').text('checking available data.');
   post('/api/scan', handle, request);
 }
 

@@ -4,8 +4,8 @@ module.exports = (mode, config, callback) => {
   var child = fork(__dirname + '/child');
 
   // How we should handle client messages depends
-  // on what Pipeline is being ran.
-  var handle = require('./' + mode + 'Handler');
+  // on what type of Pipeline is being ran.
+  var handle = require('./' + mode + 'Handler')(callback);
 
   var message = {
     what: 'start',
@@ -21,7 +21,5 @@ module.exports = (mode, config, callback) => {
     handle.message(m);
   });
 
-  child.on('exit', function(status) {
-    handle.exit(status, callback);
-  });
+  child.on('exit', handle.exit);
 }
