@@ -11,11 +11,7 @@ const route = function *() {
 
   var config = require('./baseBacktestConfig');
 
-  var body = JSON.parse(this.request.body.data);
-
-  _.merge(config, body);
-
-  config.debug = false;
+  _.merge(config, this.request.body);
 
   this.body = yield scan(config);
 };
