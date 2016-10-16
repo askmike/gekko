@@ -1,18 +1,24 @@
-var ForkTask = require('relieve').tasks.ForkTask;
 var fork = require('child_process').fork;
 
-module.exports = (mode, config, handler) => {
-  task = new ForkTask(fork(__dirname + '/child'));
+module.exports = (mode, config, callback) => {
+  var child = fork(__dirname + '/child');
 
-  task.send('start', mode, config);
+  var message = {
+    what: 'start',
+    mode: mode,
+    config: config
+  }
 
-  task.on('log', handler('log'));
-  task.on('candle', handler('candle'));
-  task.on('advice', handler('advice'));
-  task.on('exit', code => {
-    if(code !== 0)
-      handler('log')('ERROR, Gekko crashed with an error, please check the console.');
+  child.on('message', function(m) {
 
-    handler('finished', code);
+    if(m === 'ready') {
+      return child.send(message);
+    }
+
+  });
+
+  child.on('exit', function(status) {
+
+    console.log('child has exited', status)
   });
 }

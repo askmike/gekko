@@ -20,13 +20,7 @@
 
 */
 
-var ipc = require('relieve').IPCEE(process);
-
-var config;
-var mode;
-
-ipc.on('start', (mode, config) => {
-
+var start = (mode, config) => {
   var util = require(__dirname + '/../../util');
 
   // force correct gekko env
@@ -41,16 +35,16 @@ ipc.on('start', (mode, config) => {
   config.debug = false;
   util.setConfig(config);
 
-  var log = require(dirs.core + 'log');
-  log.info('Gekko v' + util.getVersion(), 'started');
-
-  var Spy = require('./spy');
-
   var pipeline = require(dirs.core + 'pipeline');
   pipeline({
     config: config,
-    mode: mode,
-    spies: [ new Spy ]
+    mode: mode
   });
-});
+}
 
+process.send('ready');
+
+process.on('message', function(m) {
+  if(m.what === 'start')
+    start(m.mode, m.config);
+});

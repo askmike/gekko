@@ -35,7 +35,6 @@
     "promisify-node": "^0.4.0",
     "prompt-lite": "0.1.1",
     "pushbullet": "1.4.3",
-    "relieve": "^2.0.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "ws": "^1.1.1",

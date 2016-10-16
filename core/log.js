@@ -14,15 +14,9 @@ var config = util.getConfig();
 var debug = config.debug;
 var silent = config.silent;
 
-var sendIPC = function() {
-  var IPCEE = require('relieve').IPCEE
-  var ipc = IPCEE(process);
-
-  var send = function(method) {
-    return function() {
-      var args = _.toArray(arguments);
-      ipc.send('log', args.join(' '));
-    }
+var sendToParent = function() {
+  var send = method => (...args) => {
+    process.send({'log': args.join(' ')});
   }
 
   return {
@@ -39,7 +33,7 @@ var Log = function() {
   if(this.env === 'standalone')
     this.output = console;
   else if(this.env === 'child-process')
-    this.output = sendIPC();
+    this.output = sendToParent();
 };
 
 Log.prototype = {
