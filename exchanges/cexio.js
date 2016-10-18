@@ -30,8 +30,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     if(err || !trades || trades.length === 0)
       return this.retry(this.getTrades, args, err);
 
-    var f = parseFloat;
-
     if(descending)
       callback(null, trades);
     else
@@ -120,21 +118,21 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.getPortfolio, args, err);
 
-    currency = parseFloat(data.BTC.available)
-    if(parseFloat(data.BTC.orders)){
-      currency -= parseFloat(data.BTC.orders)
+    currency = parseFloat(data[this.currency].available)
+    if(parseFloat(data[this.currency].orders)){
+      currency -= parseFloat(data[this.currency].orders)
     }
-    assets = parseFloat(data.GHS.available);
-    if( parseFloat(data.GHS.orders)){
-	  assets -= parseFloat(data.GHS.orders);
+    assets = parseFloat(data[this.asset].available);
+    if( parseFloat(data[this.asset].orders)){
+      assets -= parseFloat(data[this.asset].orders);
     }
 
     var portfolio = [];
-    portfolio.push({name: 'BTC', amount: currency});
-    portfolio.push({name: 'GHS', amount: assets});
+    portfolio.push({name: this.currency, amount: currency});
+    portfolio.push({name: this.asset, amount: assets});
     callback(err, portfolio);
   }
-  this.cexio.balance(_.bind(calculate, this));
+  this.cexio.balance(calculate.bind(this));
 }
 
 Trader.prototype.getTicker = function(callback) {
