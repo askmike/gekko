@@ -49,7 +49,9 @@ Pushbullet.prototype.processCandle = function(candle, done) {
 };
 
 Pushbullet.prototype.processAdvice = function(advice) {
-        var text = [
+		if (advice.recommendation == "soft" && pushbulletConfig.muteSoft) return;
+        
+		var text = [
             'Gekko is watching ',
             config.watch.exchange,
             ' and has detected a new trend, advice is to go ',

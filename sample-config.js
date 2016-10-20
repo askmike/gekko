@@ -270,6 +270,8 @@ config.pushbullet = {
   enabled: false,
     // Send 'Gekko starting' message if true
   sendMessageOnStart: true,
+    // disable advice printout if it's soft
+  muteSoft: true, 
     // your pushbullet API key
   key: 'xxx',
     // your email, change it unless you are Azor Ahai
