@@ -49,22 +49,22 @@ Pushbullet.prototype.processCandle = function(candle, done) {
 };
 
 Pushbullet.prototype.processAdvice = function(advice) {
-		if (advice.recommendation == "soft" && pushbulletConfig.muteSoft) return;
-        
-		var text = [
-            'Gekko is watching ',
-            config.watch.exchange,
-            ' and has detected a new trend, advice is to go ',
-            advice.recommendation,
-            '.\n\nThe current ',
-            config.watch.asset,
-            ' price is ',
-            this.price
-        ].join('');
+	if (advice.recommendation == "soft" && pushbulletConfig.muteSoft) return;
 
-        var subject = pushbulletConfig.tag+' New advice: go ' + advice.recommendation;
+	var text = [
+        'Gekko is watching ',
+        config.watch.exchange,
+        ' and has detected a new trend, advice is to go ',
+        advice.recommendation,
+        '.\n\nThe current ',
+        config.watch.asset,
+        ' price is ',
+        this.price
+    ].join('');
 
-        this.mail(subject, text);
+    var subject = pushbulletConfig.tag+' New advice: go ' + advice.recommendation;
+
+    this.mail(subject, text);
 };
 
 Pushbullet.prototype.mail = function(subject, content, done) {
