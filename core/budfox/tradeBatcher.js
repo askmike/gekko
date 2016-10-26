@@ -99,6 +99,13 @@ TradeBatcher.prototype.filter = function(batch) {
   if(lastTid === lastTid + 1)
     util.die('trade tid is max int, Gekko can\'t process..');
 
+  // remove trades that have zero amount
+  // see @link
+  // https://github.com/askmike/gekko/issues/486
+  batch = _.filter(batch, function(trade) {
+    return trade.amount > 0;
+  });
+
   // weed out known trades
   // TODO: optimize by stopping as soon as the
   // first trade is too old (reverse first)
