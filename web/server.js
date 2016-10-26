@@ -8,6 +8,7 @@ var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ server: server });
 var koa = require('koa');
 var serve = require('koa-static');
+var cors = require('koa-cors');
 var router = require('koa-router')();
 var bodyParser = require('koa-bodyparser');
 var ws = require('ws');
@@ -36,9 +37,12 @@ var _broadcast = data => {
 }
 setInterval(_broadcast, relayInterval);
 
+app.use(cors());
+
 // attach routes
 router.post('/api/scan', require('./routes/scanDateRange'));
 router.post('/api/backtest', require('./routes/backtest'));
+router.get('/api/strategies', require('./routes/strategies'));
 
 wss.on('connection', ws => {
   ws.on('message', _.noop);
@@ -46,7 +50,7 @@ wss.on('connection', ws => {
 });
 
 app
-  .use(serve('frontend'))
+  .use(serve('react'))
   .use(bodyParser())
   .use(router.routes())
   .use(router.allowedMethods());

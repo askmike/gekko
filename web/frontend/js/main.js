@@ -2,6 +2,7 @@ var post = require('./ajax').post;
 var chart = require('./chart');
 // todo!
 // var exchages = require('../../../exchanges');
+var indicatorSettings = require('./indicatorSettings');
 
 var fmt = u => moment.unix(u).utc().format('YYYY-MM-DD HH:mm:ss');
 
@@ -37,7 +38,7 @@ $backtest.onclick = () => {
       to: fmt(ranges[index].to)
     }
 
-    var request = {
+    var request = _.merge({
       tradingAdvisor: {
         enabled: true,
         method: $('#strat').val(),
@@ -56,7 +57,7 @@ $backtest.onclick = () => {
       backtest: {
         daterange: daterange
       }
-    };
+    }, indicatorSettings);
 
     $('#log').text('running backtest');
     console.log('backtesting...', request);

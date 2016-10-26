@@ -94,12 +94,12 @@ Logger.prototype.processAdvice = function(advice) {
   if(mode === 'realtime')
     this.verboseReport();
 
-  else if(mode === 'backtest') {
+  else if(mode === 'backtest' && what !== 'soft') {
 
     if(ENV === 'standalone')
-      this.summarizedReport(what);
+      this.summarizedReport(advice);
     else if(ENV === 'child-process')
-      this.jsonReport(what, this.price);
+      this.jsonReport(advice);
   }
 }
 
@@ -109,7 +109,7 @@ Logger.prototype.processCandle = function(candle, done) {
     this.startPrice = candle.open;
   }
 
-  this.dates.end = candle.start.clone().add('m', 1);
+  this.dates.end = candle.start.clone();
   this.endPrice = candle.close;
 
   this.price = candle.close;
@@ -127,9 +127,10 @@ Logger.prototype.processCandle = function(candle, done) {
   done();
 }
 
-Logger.prototype.jsonReport = function(what, price) {
-
-  var at = this.dates.end.utc().clone().subtract('m', 1);
+Logger.prototype.jsonReport = function(advice) {
+  var what = advice.recommendation;
+  var price = advice.candle.close;
+  var at = advice.candle.start;
 
   if(what === 'short')
     process.send({
@@ -155,9 +156,10 @@ Logger.prototype.jsonReport = function(what, price) {
 
 }
 
-Logger.prototype.summarizedReport = function(what) {
+Logger.prototype.summarizedReport = function(advice) {
 
-  var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss');
+  var time = advice.candle.start.format('YYYY-MM-DD HH:mm:ss');
+  var what = advice.recommendation;
 
   if(what === 'short')
 

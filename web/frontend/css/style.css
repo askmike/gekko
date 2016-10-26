@@ -1,7 +1,11 @@
 body {
-  width: 1024px;
   margin: 50px auto;
   font-family: sans-serif;
+}
+
+.wrap {
+  width: 800px;
+  margin: auto;
 }
 
 pre {
@@ -18,34 +22,11 @@ pre {
   overflow: scroll;
 }
 
-
-text {
-    fill: #000;
-}
-path.candle {
-    stroke: #000000;
-}
-path.candle.body {
-    stroke-width: 0;
-}
-path.candle.up {
-    fill: #00AA00;
-    stroke: #00AA00;
-}
-path.candle.down {
-    fill: #FF0000;
-    stroke: #FF0000;
-}
 path.tradearrow {
     stroke: none;
 }
 path.tradearrow.buy {
     fill: #0000FF;
-}
-path.tradearrow.buy-pending {
-    fill-opacity: 0.2;
-    stroke: #0000FF;
-    stroke-width: 1.5;
 }
 path.tradearrow.sell {
     fill: #9900FF;
@@ -63,4 +44,32 @@ path.tradearrow.sell {
 }
 .tradearrow path.highlight.sell {
     stroke: #9900FF;
+}
+
+text {
+    fill: #000;
+}
+
+path.candle {
+    stroke: #000000;
+}
+
+path.candle.body {
+    stroke-width: 0;
+}
+
+path.candle.up {
+    fill: #00AA00;
+    stroke: #00AA00;
+}
+
+path.candle.down {
+    fill: #FF0000;
+    stroke: #FF0000;
+}
+
+rect.pane {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
 }

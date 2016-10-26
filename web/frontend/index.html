@@ -5,27 +5,29 @@
   <link rel="stylesheet" media="all" type="text/css" href="/css/style.css">
 </head>
 <body>
-  <h1>Gekko Backtester</h1>
-  <form>
-    <p><label for='exchange'>Exchange:</label><input name='exchange' id='exchange' value='Poloniex'></p>
-    <p><label for='currency'>Currency:</label><input name='currency' id='currency' value='BTC'></p>
-    <p><label for='asset'>Asset:</label><input name='asset' id='asset' value='POT'></p>
-    <br>
-    <p><label for='strat'>Strategy:</label><input name='strat' id='strat' value='rajeshda'></p>
-    <p><label for='talib'>Requires Talib:</label><input name='talib' id='talib' value='true'></p>
-    <p><label for='candleSize'>Candle Size:</label><input name='candleSize' id='candleSize' value='60'></p>
-    <p><label for='historySize'>History Size:</label><input name='historySize' id='historySize' value='30'></p>
+  <section class='wrap'>
+    <h1>Gekko Backtester</h1>
+    <form>
+      <p><label for='exchange'>Exchange:</label><input name='exchange' id='exchange' value='Poloniex'></p>
+      <p><label for='currency'>Currency:</label><input name='currency' id='currency' value='USDT'></p>
+      <p><label for='asset'>Asset:</label><input name='asset' id='asset' value='BTC'></p>
+      <br>
+      <p><label for='strat'>Strategy:</label><input name='strat' id='strat' value='RSI'></p>
+      <p><label for='talib'>Requires Talib:</label><input name='talib' id='talib' value='true'></p>
+      <p><label for='candleSize'>Candle Size:</label><input name='candleSize' id='candleSize' value='60'></p>
+      <p><label for='historySize'>History Size:</label><input name='historySize' id='historySize' value='30'></p>
 
-    <pre id='log'></pre>
+      <pre id='log'></pre>
 
-    <!-- <p>
-      <label for='stratParams'>Strat Params (json):</label>
-      <textarea name='stratParams' id='stratParams'></textarea>
-    </p> -->
+      <!-- <p>
+        <label for='stratParams'>Strat Params (json):</label>
+        <textarea name='stratParams' id='stratParams'></textarea>
+      </p> -->
 
-  </form>
+    </form>
 
-  <button id='backtest'>backtest</button>
+    <button id='backtest'>backtest</button>
+  </section>
   <script src="http://d3js.org/d3.v4.min.js"></script>
   <script src="http://techanjs.org/techan.min.js"></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>

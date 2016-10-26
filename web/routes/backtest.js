@@ -2,8 +2,6 @@ const _ = require('lodash');
 const promisify = require('tiny-promisify');
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
 
-var broadcast;
-
 // starts a backtest
 // requires a post body with a config object
 module.exports = function *() {
