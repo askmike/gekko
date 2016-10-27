@@ -4,10 +4,24 @@ const fs = require('co-fs');
 const gekkoRoot = __dirname + '/../../';
 
 module.exports = function *() {
-  const contents = yield fs.readdir(gekkoRoot + 'methods');
-  const strats = contents
+  const strategyDir = yield fs.readdir(gekkoRoot + 'methods');
+  const strats = strategyDir
     .filter(f => _.last(f, 3).join('') === '.js')
-    .map(f => f.slice(0, -3));
+    .map(f => {
+      return { name: f.slice(0, -3) }
+    });
+
+
+  // for every strat, check if there is a config file and it
+  const strategyParamsDir = yield fs.readdir(gekkoRoot + 'config/strategies');
+
+  for(let i = 0; i < strats.length; i++) {
+    let strat = strats[i];
+    if(strategyParamsDir.indexOf(strat.name + '.toml') !== -1)
+      strat.params = yield fs.readFile(gekkoRoot + 'config/strategies/' + strat.name + '.toml', 'utf8')
+    else
+      strat.params = '';
+  }
 
   this.body = strats;
 }
