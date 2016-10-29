@@ -15,111 +15,122 @@ var Reader = require(dirs.gekko + adapter.path + '/reader');
 
 var reader = new Reader();
 
+// todo: rewrite with generators or async/await..
 var scan = function(done) {
   log.info('Scanning local history for backtestable dateranges.');
 
-  async.parallel({
-    boundry: reader.getBoundry,
-    available: reader.countTotal
-  }, (err, res) => {
+  reader.tableExists('candles', (err, exists) => {
 
-    var first = res.boundry.first;
-    var last = res.boundry.last;
+    if(err)
+      return done(err);
 
-    var optimal = (last - first) / 60;
+    if(!exists)
+      return done(null, []);
 
-    log.debug('Available', res.available);
-    log.debug('Optimal', optimal);
+    async.parallel({
+      boundry: reader.getBoundry,
+      available: reader.countTotal
+    }, (err, res) => {
 
-    // There is a candle for every minute
-    if(res.available === optimal + 1) {
-      log.info('Gekko is able to fully use the local history.');
-      return done(false, [{
-        from: first,
+      var first = res.boundry.first;
+      var last = res.boundry.last;
+
+      var optimal = (last - first) / 60;
+
+      log.debug('Available', res.available);
+      log.debug('Optimal', optimal);
+
+      // There is a candle for every minute
+      if(res.available === optimal + 1) {
+        log.info('Gekko is able to fully use the local history.');
+        return done(false, [{
+          from: first,
+          to: last
+        }]);
+      }
+
+      // figure out where the gaps are..
+
+      var missing = optimal - res.available + 1;
+
+      log.info(`The database has ${missing} candles missing, Figuring out which ones...`);
+      
+      var iterator = {
+        from: last - (BATCH_SIZE * 60),
         to: last
-      }]);
-    }
+      }
 
-    // figure out where the gaps are..
+      var batches = [];
 
-    var missing = optimal - res.available + 1;
+      // loop through all candles we have
+      // in batches and track whether they
+      // are complete
+      async.whilst(
+          () => {
+            return iterator.from > first
+          },
+          next => {
+            var from = iterator.from;
+            var to = iterator.to;
+            reader.count(
+              from,
+              iterator.to,
+              (err, count) => {
+                var complete = count + MISSING_CANDLES_ALLOWED > BATCH_SIZE;
 
-    log.info(`The database has ${missing} candles missing, Figuring out which ones...`);
-    
-    var iterator = {
-      from: last - (BATCH_SIZE * 60),
-      to: last
-    }
+                if(complete)
+                  batches.push({
+                    to: to,
+                    from: from
+                  });
 
-    var batches = [];
+                next();
+              }
+            );
 
-    // loop through all candles we have
-    // in batches and track whether they
-    // are complete
-    async.whilst(
-        () => {
-          return iterator.from > first
-        },
-        next => {
-          var from = iterator.from;
-          var to = iterator.to;
-          reader.count(
-            from,
-            iterator.to,
-            (err, count) => {
-              var complete = count + MISSING_CANDLES_ALLOWED > BATCH_SIZE;
+            iterator.from -= BATCH_SIZE * 60;
+            iterator.to -= BATCH_SIZE * 60;
+          },
+          () => {
+            
+            if(!_.size(batches))
+              util.die('Not enough data to work with (please manually set a valid `backtest.daterange`)..', true);
 
-              if(complete)
-                batches.push({
-                  to: to,
-                  from: from
-                });
+            // batches is now a list like
+            // [ {from: unix, to: unix } ]
+            
+            var ranges = [ batches.shift() ];
 
-              next();
-            }
-          );
+            _.each(batches, batch => {
+              var curRange = _.last(ranges);
+              if(batch.to === curRange.from)
+                curRange.from = batch.from;
+              else
+                ranges.push( batch );
+            })
 
-          iterator.from -= BATCH_SIZE * 60;
-          iterator.to -= BATCH_SIZE * 60;
-        },
-        () => {
-          
-          if(!_.size(batches))
-            util.die('Not enough data to work with (please manually set a valid `backtest.daterange`)..', true);
-
-          // batches is now a list like
-          // [ {from: unix, to: unix } ]
-          
-          var ranges = [ batches.shift() ];
-
-          _.each(batches, batch => {
-            var curRange = _.last(ranges);
-            if(batch.to === curRange.from)
-              curRange.from = batch.from;
-            else
-              ranges.push( batch );
-          })
-
-          // we have been counting chronologically reversed
-          // (backwards, from now into the past), flip definitions
-          ranges = ranges.reverse();
-          _.map(ranges, r => {
-            return {
-              from: r.to,
-              to: r.from
-            }
-          });
+            // we have been counting chronologically reversed
+            // (backwards, from now into the past), flip definitions
+            ranges = ranges.reverse();
+            _.map(ranges, r => {
+              return {
+                from: r.to,
+                to: r.from
+              }
+            });
 
 
-          // ranges is now a list like
-          // [ {from: unix, to: unix } ]
-          //
-          // it contains all valid dataranges available for the
-          // end user.
+            // ranges is now a list like
+            // [ {from: unix, to: unix } ]
+            //
+            // it contains all valid dataranges available for the
+            // end user.
 
-          return done(false, ranges);
-        }
-      )
+            return done(false, ranges);
+          }
+        )
+    });
+
   });
 }
 
