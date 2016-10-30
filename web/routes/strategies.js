@@ -13,12 +13,13 @@ module.exports = function *() {
 
 
   // for every strat, check if there is a config file and it
-  const strategyParamsDir = yield fs.readdir(gekkoRoot + 'config/strategies');
+  const stratConfigPath = gekkoRoot + 'config/strategies';
+  const strategyParamsDir = yield fs.readdir(stratConfigPath);
 
   for(let i = 0; i < strats.length; i++) {
     let strat = strats[i];
     if(strategyParamsDir.indexOf(strat.name + '.toml') !== -1)
-      strat.params = yield fs.readFile(gekkoRoot + 'config/strategies/' + strat.name + '.toml', 'utf8')
+      strat.params = yield fs.readFile(stratConfigPath + '/' + strat.name + '.toml', 'utf8')
     else
       strat.params = '';
   }
