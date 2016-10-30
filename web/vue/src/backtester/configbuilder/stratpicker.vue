@@ -20,13 +20,12 @@
         h3 Parameters
         p {{ strategy }} Parameters:
         textarea.params(v-model='rawStratParams')
+        p.bg--red.p1(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
 </template>
 
 <script>
 
 import _ from 'lodash'
-import markets from './markets'
-import rangePicker from './rangepicker.vue'
 
 export default {
   data: () => {
@@ -36,44 +35,61 @@ export default {
       strategy: 'MACD',
       candleSize: 60,
       historySize: 10,
+
       rawStratParams: '',
-      rawStratParamsError: ''
+      rawStratParamsError: false,
+      stratParams: {}
     };
   },
   created: function () {
     let to = 'http://localhost:3000/api/strategies';
     this.$http.get(to).then((response) => {
         this.strategies = response.body;
-        this.rawStratParams = _.find(this.strategies, { name: this.strategy}).params;
+        this.rawStratParams = _.find(this.strategies, { name: this.strategy }).params;
+        this.emitConfig();
     });
   },
   watch: {
     strategy: function(strat) {
-      strat = _.find(this.strategies, { name: strat});
+      strat = _.find(this.strategies, { name: strat });
       this.rawStratParams = strat.params;
-    }
+
+      this.emitConfig();
+    },
+    candleSize: function() { this.emitConfig() },
+    historySize: function() { this.emitConfig() },
+    rawStratParams: function() { this.emitConfig() }
   },
   computed: {
-    markets: function() {
-      return this.exchanges[ this.exchange ];
-    },
-    currency: function() {
-      return _.first(this.market.split('/'));
-    },
-    asset: function() {
-      return _.last(this.market.split('/'));
-    },
     config: function() {
-      return {
-        watch: {
-          exchange: this.exchange,
-          currency: this.currency,
-          asset: this.asset
+      let config = {
+        tradingAdvisor: {
+          enabled: true,
+          method: this.strategy,
+          candleSize: this.candleSize,
+          historySize: this.historySize
         }
       }
+
+      config[this.strategy] = this.stratParams;
+
+      return config;
     }
   },
   methods: {
+    emitConfig: function() {
+      this.parseParams();
+      this.$emit('stratConfig', this.config);
+    },
+    parseParams: function() {
+      try {
+        this.stratParams = toml.parse(this.rawStratParams);
+        this.rawStratParamsError = false;
+      } catch(e) {
+        this.rawStratParamsError = e;
+        this.stratParams = {};
+      }
+    }
   }
 }
 </script>

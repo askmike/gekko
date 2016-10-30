@@ -1,26 +1,63 @@
 <template lang='jade'>
 .config-builder.my2
-  market-picker.contain
+  market-picker.contain(v-on:marketConfig='onMarketConfig')
   .hr.contain
-  strat-picker.contain
+  strat-picker.contain(v-on:stratConfig='onStratConfig')
 </template>
 
 <script>
 
 import marketPicker from './marketpicker.vue'
 import stratPicker from './stratpicker.vue'
-  
 
 export default {
   data: () => {
-    return {}
+    return {
+      marketConfig: {},
+      stratConfig: {}
+    }
   },
-
   components: {
     marketPicker,
     stratPicker
   },
-  methods: {}
+  computed: {
+    config: function() {
+      let config = {};
+      Object.assign(
+        config,
+        this.marketConfig,
+        this.stratConfig
+      );
+
+      if(this.validConfig(config))
+        config.valid = true;
+
+      return config;
+    }
+  },
+  methods: {
+    validConfig: function(config) {
+      if(!config.backtest.daterange)
+        return false;
+
+      if(!config.watch)
+        return false;
+
+      if(!config.tradingAdvisor)
+        return false;
+
+      return true;
+    },
+    onMarketConfig: function(mc) {
+      this.marketConfig = mc;
+      this.$emit('config', this.config);
+    },
+    onStratConfig: function(sc) {
+      this.stratConfig = sc;
+      this.$emit('config', this.config);
+    }
+  }
 }
 </script>
 

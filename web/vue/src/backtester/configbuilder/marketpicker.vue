@@ -14,7 +14,7 @@
           select(v-model='market')
             option(v-for='market in markets') {{ market }}
     .grd-row-col-3-6.mx1
-      range-picker(:config='config')
+      range-picker(:config='watchConfig', v-on:range='emitConfig')
 </template>
 
 <script>
@@ -26,6 +26,7 @@ import rangePicker from './rangepicker.vue'
 export default {
   data: () => {
     return {
+      range: {},
       exchanges: markets,
 
       exchange: 'Poloniex',
@@ -33,6 +34,10 @@ export default {
       asset: 'ETH',
       market: 'BTC/ETH'
     };
+  },
+
+  created: function() {
+    this.emitConfig();
   },
 
   components: {
@@ -48,7 +53,7 @@ export default {
     asset: function() {
       return _.last(this.market.split('/'));
     },
-    config: function() {
+    watchConfig: function() {
       return {
         watch: {
           exchange: this.exchange,
@@ -58,7 +63,24 @@ export default {
       }
     }
   },
+
+  watch: {
+    currency: function() { this.emitConfig() },
+    market: function() { this.emitConfig() }
+  },
+
   methods: {
+    emitConfig: function(range) {
+      if(range)
+        this.range = range;
+      let config = {
+        backtest: {
+          daterange: range,
+        }
+      };
+      Object.assign(config, this.watchConfig);
+      this.$emit('marketConfig', config);
+    }
   }
 }
 </script>
