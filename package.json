@@ -41,23 +41,13 @@
     "semver": "2.2.1",
     "sqlite3": "3.1.4",
     "tiny-promisify": "^0.1.1",
-    "ws": "^1.1.1",
     "zaif.jp": "^0.1.4"
   },
   "devDependencies": {
-    "babelify": "^7.3.0",
-    "browserify": "^13.1.0",
     "chai": "^2.0.0",
-    "gulp": "^3.9.1",
-    "gulp-notify": "^2.2.0",
-    "gulp-sourcemaps": "^2.1.1",
-    "gulp-uglify": "^2.0.0",
     "mocha": "^2.1.1",
     "proxyquire": "^1.7.10",
-    "sinon": "^1.12.2",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "sinon": "^1.12.2"
   },
   "engines": {
     "node": ">=6.0"
