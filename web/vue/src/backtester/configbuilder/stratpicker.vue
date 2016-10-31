@@ -66,8 +66,8 @@ export default {
         tradingAdvisor: {
           enabled: true,
           method: this.strategy,
-          candleSize: this.candleSize,
-          historySize: this.historySize
+          candleSize: +this.candleSize,
+          historySize: +this.historySize
         }
       }
 
