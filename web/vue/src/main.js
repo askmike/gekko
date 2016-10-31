@@ -18,8 +18,7 @@ const router = new VueRouter({
     { path: '/', component: home },
     { path: '/backtest', component: backtester }
   ]
-})
-
+});
 
 new Vue({
   router,

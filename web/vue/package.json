@@ -1,5 +1,6 @@
 {
   "name": "vue",
+  "version": "0.0.1",
   "description": "A Vue.js project",
   "author": "Mike van Rossum <mike@mikevanrossum.nl>",
   "private": true,
@@ -8,6 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "json-loader": "^0.5.4",
     "vue": "^2.0.1",
     "vue-resource": "^1.0.3"
   },

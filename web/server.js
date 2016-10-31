@@ -2,18 +2,19 @@
 var port = 3000;
 var relayInterval = 250;
 
-var server = require('http').createServer();
-var url = require('url');
 // var WebSocketServer = require('ws').Server;
 // var wss = new WebSocketServer({ server: server });
 var koa = require('koa');
 var serve = require('koa-static');
 var cors = require('koa-cors');
-var router = require('koa-router')();
+var _ = require('lodash');
 var bodyParser = require('koa-bodyparser');
+
+var opn = require('opn');
+var server = require('http').createServer();
+var router = require('koa-router')();
 // var ws = require('ws');
 var app = koa();
-var _ = require('lodash');
 
 // var messages = {};
 // // buffer internally
@@ -56,4 +57,9 @@ app
   .use(router.allowedMethods());
 
 server.on('request', app.callback());
-server.listen(port, () => console.log('Listening on ' + server.address().port));
+server.listen(port, () => {
+  console.log('Listening on ' + server.address().port);
+  console.log(server.address());
+  let host = 'http://localhost';
+  opn(host + ':' + server.address().port);
+});
