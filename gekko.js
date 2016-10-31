@@ -22,6 +22,9 @@
 
 var util = require(__dirname + '/core/util');
 
+if(util.launchUI())
+  return require(util.dirs().web + 'server');
+
 var dirs = util.dirs();
 var pipeline = require(dirs.core + 'pipeline');
 var log = require(dirs.core + 'log');

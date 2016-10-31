@@ -38,12 +38,14 @@ var app = koa();
 // }
 // setInterval(_broadcast, relayInterval);
 
+const WEBROOT = __dirname + '/';
+
 app.use(cors());
 
 // attach routes
-router.post('/api/scan', require('./routes/scanDateRange'));
-router.post('/api/backtest', require('./routes/backtest'));
-router.get('/api/strategies', require('./routes/strategies'));
+router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
+router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));
+router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
 
 // wss.on('connection', ws => {
 //   ws.on('message', _.noop);
@@ -51,7 +53,7 @@ router.get('/api/strategies', require('./routes/strategies'));
 // });
 
 app
-  .use(serve('vue'))
+  .use(serve(WEBROOT + 'vue'))
   .use(bodyParser())
   .use(router.routes())
   .use(router.allowedMethods());
@@ -59,7 +61,6 @@ app
 server.on('request', app.callback());
 server.listen(port, () => {
   console.log('Listening on ' + server.address().port);
-  console.log(server.address());
   let host = 'http://localhost';
   opn(host + ':' + server.address().port);
 });

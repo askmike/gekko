@@ -102,7 +102,8 @@ var util = {
       budfox: ROOT + 'core/budfox/',
       importers: ROOT + 'importers/exchanges/',
       tools: ROOT + 'core/tools/',
-      workers: ROOT + 'core/workers/'
+      workers: ROOT + 'core/workers/',
+      web: ROOT + 'web/'
     }
   },
   inherit: function(dest, source) {
@@ -140,7 +141,13 @@ var util = {
   },
   gekkoEnv: function() {
     return _gekkoEnv || 'standalone';
-  }
+  },
+  launchUI: function() {
+    if(program['ui'])
+      return true;
+    else
+      return false;
+  },
 }
 
 // NOTE: those options are only used
@@ -150,6 +157,7 @@ program
   .option('-c, --config <file>', 'Config file')
   .option('-b, --backtest', 'backtesting mode')
   .option('-i, --import', 'importer mode')
+  .option('--ui', 'launch a web UI')
   .parse(process.argv);
 
 // make sure the current node version is recent enough
