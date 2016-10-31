@@ -1,6 +1,6 @@
 <template lang='jade'>
   div
-    result-summary(:result='result')
+    // result-summary(:result='result')
     chart(:data='result')
 </template>
 
