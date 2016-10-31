@@ -1,9 +1,14 @@
 <template lang='jade'>
   section.measure.p2
-    p This is an early prototype!
-    ul
-      li
-        router-link(to='/backtest') backtest
+    div
+      p Menu:
+      ul
+        li
+          router-link(to='/backtest') backtest
+    hr
+    img(src='/src/assets/gekko.jpg')
+    p
+      em The most valuable commodity I know of is information.
 </template>
 
 <script>

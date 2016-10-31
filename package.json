@@ -1,11 +1,13 @@
 {
   "name": "gekko",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
     "bot",
-    "bitcoin"
+    "bitcoin",
+    "TA",
+    "finance"
   ],
   "scripts": {
     "test": "./node_modules/.bin/mocha test/*.js --recursive test -u tdd --reporter spec"
@@ -34,6 +36,7 @@
     "lodash": "2.x",
     "moment": "2.4.x",
     "okcoin-china": "0.0.7",
+    "opn": "^4.0.2",
     "poloniex.js": "0.0.6",
     "promisify-node": "^0.4.0",
     "prompt-lite": "0.1.1",
