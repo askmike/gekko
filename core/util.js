@@ -103,7 +103,8 @@ var util = {
       importers: ROOT + 'importers/exchanges/',
       tools: ROOT + 'core/tools/',
       workers: ROOT + 'core/workers/',
-      web: ROOT + 'web/'
+      web: ROOT + 'web/',
+      config: ROOT + 'config/'
     }
   },
   inherit: function(dest, source) {

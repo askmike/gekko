@@ -1,8 +1,8 @@
 var _ = require('lodash');
-var util = require('../core/util.js');
+var util = require('../../core/util');
 var config = util.getConfig();
 var dirs = util.dirs();
-var log = require('../core/log.js');
+var log = require(dirs.core + 'log');
 
 var ENV = util.gekkoEnv();
 
@@ -24,7 +24,7 @@ if(config.tradingAdvisor.talib.enabled) {
   var talib = require(dirs.core + 'talib');
 }
 
-var indicatorsPath = '../methods/indicators/';
+var indicatorsPath = dirs.methods + 'indicators/';
 
 var Indicators = {
   MACD: {
