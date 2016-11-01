@@ -57,20 +57,16 @@ from eachother.
 
 This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this method in [his topic](https://bitcointalk.org/index.php?topic=60501.0)
 
-You can configure these parameters for DEMA in config.js:
+You can configure these parameters in config/strategies/DEMA.toml:
 
-    config.DEMA = {
-      // EMA weight (α)
-      // the higher the weight, the more smooth (and delayed) the line
-      short: 10,
-      long: 21,
-      // amount of candles to remember and base initial EMAs on
-      // the difference between the EMAs (to act as triggers)
-      thresholds: {
-        down: -0.025,
-        up: 0.025
-      }
-    };
+    # EMA weight (α)
+    # the higher the weight, the more smooth (and delayed) the line
+    short = 10
+    long = 21
+
+    [thresholds]
+    down = -0.025
+    up = 0.025
 
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
@@ -80,24 +76,21 @@ You can configure these parameters for DEMA in config.js:
 
 This method is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_conve).
 
-You can configure these parameters for MACD in config.js:
+You can configure these parameters in config/strategies/MACD.toml:
 
-    // MACD settings:
-    config.MACD = {
-      // EMA weight (α)
-      // the higher the weight, the more smooth (and delayed) the line
-      short: 10,
-      long: 21,
-      signal: 9,
-      // the difference between the EMAs (to act as triggers)
-      thresholds: {
-        down: -0.025,
-        up: 0.025,
-        // How many candle intervals should a trend persist
-        // before we consider it real?
-        persistence: 1
-      }
-    };
+    # EMA weight (α)
+    # the higher the weight, the more smooth (and delayed) the line
+    short = 10
+    long = 21
+    signal = 9
+
+    # the difference between the EMAs (to act as triggers)
+    [thresholds]
+    down = -0.025
+    up = 0.025
+    # How many candle intervals should a trend persist
+    # before we consider it real?
+    persistence = 1
 
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
@@ -109,22 +102,21 @@ You can configure these parameters for MACD in config.js:
 
 Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_pp).
 
-    // PPO settings:
-    config.PPO = {
-      // EMA weight (α)
-      // the higher the weight, the more smooth (and delayed) the line
-      short: 12,
-      long: 26,
-      signal: 9,
-      // the difference between the EMAs (to act as triggers)
-      thresholds: {
-        down: -0.025,
-        up: 0.025,
-        // How many candle intervals should a trend persist
-        // before we consider it real?
-        persistence: 2
-      }
-    };
+You can configure these parameters in config/strategies/PPO.toml:
+
+    # EMA weight (α)
+    # the higher the weight, the more smooth (and delayed) the line
+    short = 12
+    long = 26
+    signal = 9
+
+    # the difference between the EMAs (to act as triggers)
+    [thresholds]
+    down = -0.025
+    up = 0.025
+    # How many candle intervals should a trend persist
+    # before we consider it real?
+    persistence = 2
 
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
@@ -134,19 +126,18 @@ Very similar to MACD but also a little different, read more [here](http://stockc
 
 ### RSI
 
-The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:relative_strength_in). Configure it like so:
+The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:relative_strength_in).
 
-    // RSI settings:
-    config.RSI = {
-      interval: 14,
-      thresholds: {
-        low: 30,
-        high: 70,
-        // How many candle intervals should a trend persist
-        // before we consider it real?
-        persistence: 1
-      }
-    };
+You can configure these parameters in config/strategies/RSI.toml:
+
+    interval = 14
+
+    [thresholds]
+    low = 30
+    high = 70
+    # How many candle intervals should a trend persist
+    # before we consider it real?
+    persistence = 2
 
 - The interval is the amount of periods the RSI should use.
 - The thresholds determine what level of RSI would trigger an up or downtrend.
@@ -154,12 +145,43 @@ The Relative Strength Index is a momentum oscillator that measures the speed and
 
 ### StochRSI
 
-TODO!
+You can configure these parameters in config/strategies/StochRSI.toml:
+
+    interval = 3
+
+    [thresholds]
+    low = 20
+    high = 80
+    persistence = 3
+
+[TODO!]
+
+You can configure these parameters in config/strategies/StochRSI.toml:
 
 ### CCI
 
-TODO!
+    # constant multiplier. 0.015 gets to around 70% fit
+    constant = 0.015
+
+    # history size, make same or smaller than history
+    history = 90
+
+    [thresholds]
+    up = 100
+    down = -100
+    persistence = 0
+
+[TODO!]
 
 ### talib-macd
 
-TODO!
+    [parameters]
+    optInFastPeriod = 10
+    optInSlowPeriod = 21
+    optInSignalPeriod = 9
+
+    [thresholds]
+    down = -0.025
+    up = 0.025
+
+[TODO!]
