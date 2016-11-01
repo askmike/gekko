@@ -217,8 +217,11 @@ Logger.prototype.calculateReportStatistics = function() {
   let relativeProfit = balance / this.start.balance * 100 - 100
 
   let report = {
-    startTime: this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss'),
-    endTime: this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss'),
+    currency: this.currency,
+    asset: this.asset,
+
+    startTime: this.dates.start.utc().format('DD-MM-YYYY HH:mm:ss'),
+    endTime: this.dates.end.utc().format('DD-MM-YYYY HH:mm:ss'),
     timespan: timespan,
     buynhold: this.endPrice * 100 / this.startPrice - 100,
     
@@ -227,7 +230,7 @@ Logger.prototype.calculateReportStatistics = function() {
     relativeProfit: relativeProfit,
 
     yearlyProfit: this.round(profit / timespan.asYears()),
-    relativeYearlyProfit: this.round(relativeProfit / timespan.asYears())
+    relativeYearlyProfit: this.round(relativeProfit / timespan.asYears()),
   }
 
   return report;
@@ -296,6 +299,10 @@ if(ENV === 'standalone') {
     let report = this.calculateReportStatistics();
 
     report.timespan = report.timespan.humanize();
+    report.startPrice = this.startPrice;
+    report.endPrice = this.endPrice;
+    report.trades = this.trades;
+    report.startBalance = this.start.balance;
 
     process.send({
       type: 'report',

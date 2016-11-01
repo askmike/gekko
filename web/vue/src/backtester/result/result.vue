@@ -1,6 +1,10 @@
 <template lang='jade'>
   div
-    // result-summary(:result='result')
+    .hr.contain
+    div.contain
+      h3 Backtest result
+    result-summary(:report='result.report')
+    .hr.contain
     chart(:data='result')
 </template>
 

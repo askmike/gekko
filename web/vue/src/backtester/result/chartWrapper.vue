@@ -1,6 +1,5 @@
 <template lang='jade'>
 div
-  h2.contain Backtest result
   #chartWrapper
     #chart
 </template>
