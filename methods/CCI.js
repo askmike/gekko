@@ -7,15 +7,8 @@ var config = require('../core/util.js').getConfig();
 var settings = config.CCI;
 var pposettings = config.PPO;
 
-
 // let's create our own method
 var method = {};
-
-// teach our trading method events
-var Util = require('util');
-//var EventEmitter = require('events').EventEmitter;
-//Util.inherits(TradingMethod, EventEmitter);
-
 
 // prepare everything our method needs
 method.init = function() {
@@ -31,13 +24,13 @@ method.init = function() {
   };
   this.historySize = config.tradingAdvisor.historySize;
   this.ppoadv = 'none';
-  this.uplevel = config.CCI.thresholds.up;
-  this.downlevel = config.CCI.thresholds.down;
-  this.persisted = config.CCI.thresholds.persistence;
+  this.uplevel = settings.thresholds.up;
+  this.downlevel = settings.thresholds.down;
+  this.persisted = settings.thresholds.persistence;
 
   // log.debug("CCI started with:\nup:\t", this.uplevel, "\ndown:\t", this.downlevel, "\npersistence:\t", this.persisted);
   // define the indicators we need
-  this.addIndicator('cci', 'CCI', config.CCI);
+  this.addIndicator('cci', 'CCI', settings);
 }
 
 // what happens on every new candle?
@@ -70,9 +63,7 @@ method.log = function() {
  */
 method.check = function() {
 
-
   var price = this.lastPrice;
-
 
     this.age++;
     var cci = this.indicators.cci;
@@ -91,6 +82,7 @@ method.check = function() {
             this.trend.adviced = false;
             if (this.persisted == 0) {
                 this.trend.adviced = true;
+                console.log(2);
                 this.advice('short');
             }
         } else if (cci.result >= this.uplevel) {

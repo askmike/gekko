@@ -1,0 +1,6 @@
+interval = 3
+
+[thresholds]
+low = 20
+high = 80
+persistence = 3

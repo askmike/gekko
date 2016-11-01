@@ -1,0 +1,10 @@
+# constant multiplier. 0.015 gets to around 70% fit
+constant = 0.015
+
+# history size, make same or smaller than history
+history = 90
+
+[thresholds]
+up = 100
+down = -100
+persistence = 0

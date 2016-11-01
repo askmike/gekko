@@ -12,7 +12,7 @@ var from = moment.utc(daterange.from);
 
 if(daterange.to) {
   var to = moment.utc(daterange.to);
-} else{
+} else {
   var to = moment().utc();
   log.debug(
     'No end date specified for importing, setting to',
