@@ -56,4 +56,10 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true
     })
   ])
+} else {
+  module.exports.plugins = [new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: '"development"'
+    }
+  })];
 }

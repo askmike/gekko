@@ -14,6 +14,7 @@
 <script>
 import configBuilder from './configbuilder/configbuilder.vue'
 import result from './result/result.vue'
+import { post } from '../tools/ajax'
 
 export default {
   data: () => {
@@ -35,10 +36,9 @@ export default {
     },
     run: function() {
       this.backtestState = 'fetching';
-      let to = '/api/backtest';
-      this.$http.post(to, this.config).then(function(response) {
+      post('backtest', this.config, (error, response) => {
         this.backtestState = 'fetched';
-        this.backtestResult = response.body;
+        this.backtestResult = response;
       });
     }
   },

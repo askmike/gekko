@@ -26,6 +26,7 @@
 <script>
 
 import _ from 'lodash'
+import { get } from '../../tools/ajax'
 
 export default {
   data: () => {
@@ -42,9 +43,8 @@ export default {
     };
   },
   created: function () {
-    let to = '/api/strategies';
-    this.$http.get(to).then((response) => {
-        this.strategies = response.body;
+    get('strategies', (err, data) => {
+        this.strategies = data;
         this.rawStratParams = _.find(this.strategies, { name: this.strategy }).params;
         this.emitConfig();
     });

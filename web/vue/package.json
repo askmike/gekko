@@ -9,8 +9,9 @@
   },
   "dependencies": {
     "json-loader": "^0.5.4",
-    "vue": "^2.0.1",
-    "vue-resource": "^1.0.3"
+    "superagent": "^2.3.0",
+    "superagent-no-cache": "uditalias/superagent-no-cache",
+    "vue": "^2.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

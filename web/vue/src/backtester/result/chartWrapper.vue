@@ -27,8 +27,6 @@ export default {
     render: function() {
       this.remove();
 
-      console.log(this.data);
-
       chart(this.data.candles, this.data.trades);
     },
     remove: function() {

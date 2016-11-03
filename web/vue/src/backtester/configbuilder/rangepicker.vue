@@ -26,7 +26,7 @@ div
 <script>
 
 import _ from 'lodash'
-// import moment from 'moment'
+import { post } from '../../tools/ajax'
 
 export default {
   props: ['config'],
@@ -40,11 +40,10 @@ export default {
   methods: {
     scan: function() {
       this.scanned = 'fetching';
-      let to = '/api/scan';
       this.selectedRangeIndex = -1;  
-      this.$http.post(to, this.config).then((response) => {
+      post('scan', this.config, (err, response) => {
         this.scanned = true;
-        this.ranges = response.body;
+        this.ranges = response;
         this.selectedRangeIndex = 0;
       });
     },
