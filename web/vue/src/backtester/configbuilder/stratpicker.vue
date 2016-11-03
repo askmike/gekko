@@ -42,7 +42,7 @@ export default {
     };
   },
   created: function () {
-    let to = 'http://localhost:3000/api/strategies';
+    let to = '/api/strategies';
     this.$http.get(to).then((response) => {
         this.strategies = response.body;
         this.rawStratParams = _.find(this.strategies, { name: this.strategy }).params;
