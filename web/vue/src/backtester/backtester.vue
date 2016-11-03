@@ -35,7 +35,7 @@ export default {
     },
     run: function() {
       this.backtestState = 'fetching';
-      let to = 'http://localhost:3000/api/backtest';
+      let to = '/api/backtest';
       this.$http.post(to, this.config).then(function(response) {
         this.backtestState = 'fetched';
         this.backtestResult = response.body;

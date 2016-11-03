@@ -40,7 +40,7 @@ export default {
   methods: {
     scan: function() {
       this.scanned = 'fetching';
-      let to = 'http://localhost:3000/api/scan';
+      let to = '/api/scan';
       this.selectedRangeIndex = -1;  
       this.$http.post(to, this.config).then((response) => {
         this.scanned = true;
