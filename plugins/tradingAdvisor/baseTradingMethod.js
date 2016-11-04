@@ -154,7 +154,7 @@ Base.prototype.tick = function(candle) {
       i.update(price);
     if(i.input === 'candle')
       i.update(candle);
-  });
+  },this);
 
   // update the trading method
   if(!this.asyncTick || this.requiredHistory > this.age) {
@@ -252,18 +252,18 @@ Base.prototype.addIndicator = function(name, type, parameters) {
 }
 
 Base.prototype.advice = function(newPosition) {
-  // Possible values are long and short. Long will trigger a buy method
-  // while short will trigger a sell method
   var advice = 'soft';
   if(newPosition) {
     advice = newPosition;
   }
 
+  let candle = this.candle;
+  candle.start = candle.start.clone();
   _.defer(function() {
     this.emit('advice', {
       recommendation: advice,
       portfolio: 1,
-      candle: this.candle
+      candle
     });
   }.bind(this));
 }

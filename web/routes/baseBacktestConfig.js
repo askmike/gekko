@@ -4,7 +4,7 @@ var config = {};
 //                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-config.silent = true; // for additional logging / debugging
+config.silent = true;
 config.debug = false;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,12 +26,10 @@ config.tradingAdvisor = {
 // do you want Gekko to calculate the profit of its own advice?
 config.profitSimulator = {
   enabled: true,
-  // report the profit in the currency or the asset?
-  reportInCurrency: true,
   // start balance, on what the current balance is compared with
   simulationBalance: {
     // these are in the unit types configured in the watcher.
-    asset: 1,
+    asset: 0,
     currency: 100,
   },
   // how much fee in % does each trade cost?

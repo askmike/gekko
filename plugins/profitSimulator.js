@@ -58,18 +58,20 @@ Logger.prototype.calculateStartBalance = function() {
 // with more BTC than we started with, this function
 // calculates Gekko's profit in %.
 Logger.prototype.updatePosition = function(advice) {
-  var what = advice.recommendation;
+  let what = advice.recommendation;
+  let price = advice.candle.close;
+  let at = advice.candle.start.clone().utc().format();
 
   // virtually trade all {currency} to {asset} at the current price
   if(what === 'long') {
-    this.current.asset += this.extractFee(this.current.currency / this.price);
+    this.current.asset += this.extractFee(this.current.currency / price);
     this.current.currency = 0;
     this.trades++;
   }
 
   // virtually trade all {currency} to {asset} at the current price
   if(what === 'short') {
-    this.current.currency += this.extractFee(this.current.asset * this.price);
+    this.current.currency += this.extractFee(this.current.asset * price);
     this.current.asset = 0;
     this.trades++;
   }
@@ -113,13 +115,6 @@ Logger.prototype.processCandle = function(candle, done) {
   if(!this.start.balance)
     this.calculateStartBalance();
 
-  if(!calcConfig.verbose)
-    return done();
-
-  // skip on history
-  if(++this.historyReceived < this.historySize)
-    return done();
-
   done();
 }
 
@@ -146,7 +141,7 @@ Logger.prototype.jsonReport = function(advice) {
         action: 'buy',
         price: price,
         date: at,
-        balance: this.current.asset * this.price
+        balance: this.current.asset * price
       }
     });
 
