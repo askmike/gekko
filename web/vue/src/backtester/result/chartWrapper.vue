@@ -1,12 +1,12 @@
 <template lang='jade'>
 div
   #chartWrapper
-    #chart
+    svg#chart(width='960', height='500')
 </template>
 
 <script>
 
-import chart from '../../d3/chart3'
+import chart from '../../d3/chart4'
 
 export default {
   props: ['data'],
@@ -30,7 +30,7 @@ export default {
       chart(this.data.candles, this.data.trades);
     },
     remove: function() {
-      d3.select('#chart svg').remove();
+      d3.select('#chart').html('');
     }
   },
   components: {
@@ -39,10 +39,15 @@ export default {
 </script>
 
 <style>
-#chartWrapper {
+
+/*#chartWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#chart {
+  width: 90%;
 }
 
 text {
@@ -107,6 +112,36 @@ path.tradearrow.sell {
 
 .tradearrow path.highlight.sell {
     stroke: #9900FF;
+}*/
+
+.area {
+  fill: steelblue;
+  
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+  clip-path: url(#clip);
+}
+
+.price.line {
+  stroke-width: 2.5px;
+}
+
+circle.buy {
+  fill: #7FFF00;
+}
+
+circle.sell {
+  fill: red;
 }
 
 </style>

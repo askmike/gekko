@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+// techanjs based cancle chart, unused at the moment
+
 export default function(_data, _trades) {
     let MAX_WIDTH = window.innerWidth - 20;
 
