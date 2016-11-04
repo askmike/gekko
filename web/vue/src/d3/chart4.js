@@ -9,13 +9,7 @@ export default function(_data, _trades) {
       date: new Date(t.date),
       action: t.action
     }
-  })
-
-  // var trades = [
-  //   {date: moment("2018-12-30").toDate(), action: 'buy', price: 1012},
-  //   {date: moment("2019-12-30").toDate(), action: 'sell', price: 1016.5},
-  //   {date: moment("2020-12-30").toDate(), action: 'buy', price: 1015}
-  // ];
+  });
 
   const data = _data.map(c => {
     return {
@@ -111,6 +105,14 @@ export default function(_data, _trades) {
       .attr("transform", "translate(0," + height2 + ")")
       .call(xAxis2);
 
+    var circles = focus.append('g').selectAll("circle")
+      .data(trades)
+      .enter().append("circle")
+        .attr('class', function(d) { return d.action })
+        .attr("cx", function(d) { return x(d.date); })
+        .attr("cy", function(d) { return y(d.price); })
+        .attr('r', 5);
+
   context.append("g")
       .attr("class", "brush")
       .call(brush)
@@ -123,20 +125,16 @@ export default function(_data, _trades) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(zoom);
 
-  var circles = focus.append('g').selectAll("circle")
-    .data(trades)
-    .enter().append("circle")
-      .attr('class', function(d) { return d.action })
-      .attr("cx", function(d) { return x(d.date); })
-      .attr("cy", function(d) { return y(d.price); })
-      .attr('r', 5);    
-
   function brushed() {
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
     var s = d3.event.selection || x2.range();
     x.domain(s.map(x2.invert, x2));
 
     scaleY(x.domain());
+
+    circles
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.price); })
 
     focus.select(".line").attr("d", line);
     focus.select(".axis--x").call(xAxis);

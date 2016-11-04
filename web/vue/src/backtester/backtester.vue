@@ -7,14 +7,17 @@
       .hr.contain
       .txt--center
         a.w100--s.my1.btn--blue(href='#', v-if='backtestState !== "fetching"', v-on:click.prevent='run') Backtest
-        p(v-if='backtestState === "fetching"').scan-btn Running backtest..
-    result(v-if='backtestResult', :result='backtestResult')
+        div(v-if='backtestState === "fetching"').scan-btn
+          p Running backtest..
+          spinner
+    result(v-if='backtestResult && backtestState === "fetched"', :result='backtestResult')
 </template>
 
 <script>
 import configBuilder from './configbuilder/configbuilder.vue'
 import result from './result/result.vue'
 import { post } from '../tools/ajax'
+import spinner from '../global/blockSpinner.vue'
 
 export default {
   data: () => {
@@ -44,7 +47,8 @@ export default {
   },
   components: {
     configBuilder,
-    result
+    result,
+    spinner
   }
 }
 </script>
