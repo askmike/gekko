@@ -32,8 +32,8 @@ method.update = function(candle) {
 
 // For debugging purposes.
 method.log = function() {
-  console.log('calculated random number:');
-  console.log('\t', this.randomNumber.toFixed(3));
+  log.write('calculated random number:');
+  log.write('\t', this.randomNumber.toFixed(3));
 }
 
 // Based on the newly calculated

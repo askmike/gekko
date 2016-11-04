@@ -22,7 +22,8 @@ var sendToParent = function() {
   return {
     error: send('error'),
     warn: send('warn'),
-    info: send('info')
+    info: send('info'),
+    write: send('write')
   }
 }
 
@@ -55,6 +56,11 @@ Log.prototype = {
   },
   info: function() {
     this._write('info', arguments);
+  },
+  write: function() {
+    var args = _.toArray(arguments);
+    var message = fmt.apply(null, args);
+    this.output.info(message);
   }
 }
 
@@ -70,6 +76,7 @@ if(silent) {
   Log.prototype.info = _.noop;
   Log.prototype.warn = _.noop;
   Log.prototype.error = _.noop;
+  Log.prototype.write = _.noop;
 }
 
 module.exports = new Log;

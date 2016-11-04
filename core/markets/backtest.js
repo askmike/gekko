@@ -23,10 +23,10 @@ var Market = function() {
 
   Readable.call(this, {objectMode: true});
 
-  console.log('');
+  log.write('');
   log.info('\tWARNING: BACKTESTING FEATURE NEEDS PROPER TESTING');
   log.info('\tWARNING: ACT ON THESE NUMBERS AT YOUR OWN RISK!');
-  console.log('');
+  log.write('');
 
   this.reader = new Reader();
   this.batchSize = config.backtest.batchSize;
