@@ -25,7 +25,6 @@ export default function(_data, _trades) {
 
   svg.attr("width", window.innerWidth - 20);
 
-
   var margin = {top: 20, right: 20, bottom: 110, left: 40};
   var margin2 = {top: 430, right: 20, bottom: 30, left: 40};
   var width = +svg.attr("width") - margin.left - margin.right;
@@ -105,7 +104,10 @@ export default function(_data, _trades) {
       .attr("transform", "translate(0," + height2 + ")")
       .call(xAxis2);
 
-    var circles = focus.append('g').selectAll("circle")
+  var circles = svg
+    .append('g')
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .selectAll("circle")
       .data(trades)
       .enter().append("circle")
         .attr('class', function(d) { return d.action })
@@ -132,6 +134,9 @@ export default function(_data, _trades) {
 
     scaleY(x.domain());
 
+    svg.select(".axis--y")
+      .call(yAxis);
+
     circles
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.price); })
@@ -157,9 +162,6 @@ export default function(_data, _trades) {
       d3.min(set) * 0.9995,
       d3.max(set) * 1.0005
     ]);
-
-    svg.select(".axis--y")
-      .call(yAxis);
   }
 
   function zoomed() {
@@ -167,6 +169,9 @@ export default function(_data, _trades) {
     var t = d3.event.transform;
 
     scaleY(t.rescaleX(x2).domain());    
+
+    svg.select(".axis--y")
+      .call(yAxis);
 
     x.domain(t.rescaleX(x2).domain());
     focus.select(".line").attr("d", line);

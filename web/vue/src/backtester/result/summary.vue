@@ -36,10 +36,8 @@ div.contain
           td {{ round(report.balance) }} {{ report.currency }}
         tr
           th simulated profit
-          td {{ round(report.profit) }} ({{ round(report.relativeProfit) }}%)
-        tr
-          th simulated yearly profit
-          td {{ round(report.yearlyProfit) }} ({{ round(report.relativeYearlyProfit) }}%)
+
+      .big.txt--right {{ round(report.profit) }} ({{ round(report.relativeProfit) }}%)
 
 </template>
 
@@ -56,6 +54,11 @@ export default {
 <style>
 .summary td {
   text-align: right;
+}
+
+.big {
+  font-size: 2em;
+  width: 80%;
 }
 
 .summary table {
