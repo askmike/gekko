@@ -151,9 +151,6 @@ export default function(_data, _trades) {
   function scaleY(domain) {
     let [min, max] = domain;
 
-    min = +moment(min).startOf('day');
-    max = +moment(max).startOf('day').add(1, 'day');
-
     let minIndex = _.sortedIndex(dates, min);
     let maxIndex = _.sortedIndex(dates, max);
 

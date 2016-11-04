@@ -10,11 +10,19 @@
           select(v-model='strategy')
             option(v-for='strat in strategies') {{ strat.name }}
       div
-        label(for='candleSize') Candle Size (in minutes):
-        input(v-model='candleSize')
+        label(for='candleSize') Candle Size
+        .grd-row
+          .grd-row-col-3-6
+            input(v-model='rawCandleSize')
+          .grd-row-col-3-6.align
+            .custom-select.button
+              select(v-model='candleSizeUnit')
+                option minutes
+                option hours
       div
-        label(for='historySize') History Size (in {{ candleSize }} minute candles):
+        label(for='historySize') History Size (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input(v-model='historySize')
+        em.label-like (requires {{ candleSize * historySize }} minutes of history)
     .grd-row-col-2-6.px1
       div
         h3 Parameters
@@ -33,8 +41,10 @@ export default {
     return {
       strategies: [],
 
+      candleSizeUnit: 'hours',
+      rawCandleSize: 1,
+
       strategy: 'MACD',
-      candleSize: 60,
       historySize: 10,
 
       rawStratParams: '',
@@ -61,6 +71,16 @@ export default {
     rawStratParams: function() { this.emitConfig() }
   },
   computed: {
+    candleSize: function() {
+      if(this.candleSizeUnit === 'hours')
+        return this.rawCandleSize * 60;
+      else if(this.candleSizeUnit === 'minutes')
+        return this.rawCandleSize;
+    },
+    singularCandleSizeUnit: function() {
+      // hours -> hour
+      return this.candleSizeUnit.slice(0, -1);
+    },
     config: function() {
       let config = {
         tradingAdvisor: {
@@ -93,4 +113,18 @@ export default {
   }
 }
 </script>
+<style>
+.align .custom-select select {
+  padding: 0.4em 1.2em .3em .8em;
+}
+
+.label-like {
+  display: block;
+  font-size: 0.9em;
+  color: #777;
+}
+
+.align {
+  padding-left: 1em;
+}
 </style>

@@ -37,7 +37,7 @@ div.contain
         tr
           th simulated profit
 
-      .big.txt--right {{ round(report.profit) }} ({{ round(report.relativeProfit) }}%)
+      .big.txt--right {{ round(report.relativeProfit) }}% ({{ round(report.profit) }} {{ report.currency }})
 
 </template>
 
@@ -57,7 +57,7 @@ export default {
 }
 
 .big {
-  font-size: 2em;
+  font-size: 1.7em;
   width: 80%;
 }
 
