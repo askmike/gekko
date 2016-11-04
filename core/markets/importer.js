@@ -20,6 +20,12 @@ if(daterange.to) {
   );
 }
 
+if(!from.isValid())
+  util.die('invalid `from`');
+
+if(!to.isValid())
+  util.die('invalid `to`');
+
 var TradeBatcher = require(dirs.budfox + 'tradeBatcher');
 var CandleManager = require(dirs.budfox + 'candleManager');
 var exchangeChecker = require(dirs.core + 'exchangeChecker');
@@ -94,7 +100,7 @@ Market.prototype.processTrades = function(trades) {
   if(this.done)
     return log.info('Done importing!');
 
-  setTimeout(this.get, 1000);
+  setTimeout(this.get, 300);
 }
 
 module.exports = Market;
