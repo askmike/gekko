@@ -66,11 +66,9 @@ Market.prototype.processCandles = function(err, candles) {
 
   if(amount === 0) {
     if(this.ended) {
-      // _.defer(function() {
-        this.closed = true;
-        this.reader.close();
-        this.emit('end');
-      // }.bind(this));
+      this.closed = true;
+      this.reader.close();
+      this.emit('end');
     } else {
       util.die('Query returned no candles (do you have local data for the specified range?)');
     }
