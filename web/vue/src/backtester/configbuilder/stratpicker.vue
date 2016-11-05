@@ -22,7 +22,7 @@
       div
         label(for='historySize') History Size (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input(v-model='historySize')
-        em.label-like (requires {{ candleSize * historySize }} minutes of history)
+        em.label-like (will use {{ (candleSize * historySize).toLocaleString() }} minutes of data as history)
     .grd-row-col-2-6.px1
       div
         h3 Parameters

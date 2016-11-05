@@ -36,7 +36,8 @@ label {
   font-family: helvetica, sans-serif;
   font-weight: bold;
   color: #444;
-  padding: .6em 1.9em .5em .8em;
+  /*padding: .6em 1.9em .5em .8em;*/
+  padding: 0.4em 1.2em .3em .8em;
   line-height:1.3;
 }
 

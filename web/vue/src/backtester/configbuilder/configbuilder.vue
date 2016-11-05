@@ -1,6 +1,6 @@
 <template lang='jade'>
 .config-builder.my2
-  market-picker.contain(v-on:marketConfig='onMarketConfig')
+  market-picker.contain(v-on:marketConfig='onMarketConfig', has='rangepicker')
   .hr.contain
   strat-picker.contain(v-on:stratConfig='onStratConfig')
 </template>

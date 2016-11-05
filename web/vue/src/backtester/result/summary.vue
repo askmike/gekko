@@ -37,7 +37,7 @@ div.contain
         tr
           th simulated profit
 
-      .big.txt--right {{ round(report.relativeProfit) }}% ({{ round(report.profit) }} {{ report.currency }})
+      .big.txt--right.price(:class='profitClass') {{ round(report.relativeProfit) }}%
 
 </template>
 
@@ -47,6 +47,14 @@ export default {
   props: ['report'],
   methods: {
     round: n => (+n).toFixed(5)
+  },
+  computed: {
+    profitClass: function() {
+      if(this.report.relativeProfit > 0)
+        return 'profit';
+      else
+        return 'loss'
+    }
   }
 }
 </script>
@@ -64,4 +72,13 @@ export default {
 .summary table {
   width: 80%;
 }
+
+.price.profit {
+  color: #7FFF00;
+}
+
+.price.loss {
+  color: red;
+}
+
 </style>

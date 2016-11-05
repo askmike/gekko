@@ -13,7 +13,7 @@
         .custom-select.button
           select(v-model='market')
             option(v-for='market in markets') {{ market }}
-    .grd-row-col-3-6.mx1
+    .grd-row-col-3-6.mx1(v-if='has === "rangepicker"')
       range-picker(:config='watchConfig', v-on:range='emitConfig')
 </template>
 
@@ -24,6 +24,7 @@ import markets from './markets'
 import rangePicker from './rangepicker.vue'
 
 export default {
+  props: ['has'],
   data: () => {
     return {
       range: {},
