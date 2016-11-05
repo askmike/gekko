@@ -9,6 +9,7 @@
 
 import marketPicker from './marketpicker.vue'
 import stratPicker from './stratpicker.vue'
+import _ from 'lodash'
 
 export default {
   data: () => {
@@ -46,6 +47,13 @@ export default {
 
       if(!config.tradingAdvisor)
         return false;
+
+      if(config.tradingAdvisor) {
+        if(_.isNaN(config.tradingAdvisor.candleSize))
+          return false;
+        else if(config.tradingAdvisor.candleSize == 0)
+          return false;
+      }
 
       return true;
     },
