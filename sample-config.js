@@ -271,7 +271,7 @@ config.pushbullet = {
     // Send 'Gekko starting' message if true
   sendMessageOnStart: true,
     // disable advice printout if it's soft
-  muteSoft: true, 
+  muteSoft: true,
     // your pushbullet API key
   key: 'xxx',
     // your email, change it unless you are Azor Ahai
@@ -328,6 +328,12 @@ config.candleWriter = {
   enabled: true
 }
 
+config.adviceWriter = {
+  adapter: 'mongodb',
+  enabled: false,
+  muteSoft: true,
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -357,6 +363,16 @@ config.adapters = {
     dependencies: [{
       module: 'pg',
       version: '6.1.0'
+    }]
+  },
+  // Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
+  mongodb: {
+    path: 'plugins/mongodb',
+    version: 0.1,
+    connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+    dependencies: [{
+      module: 'mongojs',
+      version: '2.4.0'
     }]
   }
 }
