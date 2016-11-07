@@ -115,6 +115,18 @@ export default function(_data, _trades) {
         .attr("cy", function(d) { return y(d.price); })
         .attr('r', 5);
 
+  var brushCircles = context
+    .append('g')
+    // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .selectAll("circle")
+      .data(trades)
+      .enter().append("circle")
+        .attr('class', function(d) { return d.action })
+        .attr("cx", function(d) { return x2(d.date); })
+        .attr("cy", function(d) { return y2(d.price); })
+        .attr('r', 3);
+
+
   context.append("g")
       .attr("class", "brush")
       .call(brush)
