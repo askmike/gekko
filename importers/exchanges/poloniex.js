@@ -61,7 +61,7 @@ var done = false;
 var fetcher = new Fetcher(config.watch);
 
 var fetch = () => {
-  log.debug(
+  log.info(
     'Requesting data from',
     iterator.from.format('YYYY-MM-DD HH:mm:ss') + ',',
     'to',
@@ -71,7 +71,6 @@ var fetch = () => {
 }
 
 var handleFetch = trades => {
-
   iterator.from.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
   iterator.to.add(batchSize, 'minutes').subtract(overlapSize, 'minutes');
 

@@ -38,7 +38,8 @@ var plugins = [
     slug: 'tradingAdvisor',
     async: true,
     modes: ['realtime', 'backtest'],
-    emits: ['advice']
+    emits: ['advice'],
+    path: config => 'tradingAdvisor/tradingAdvisor.js',
   },
   {
     name: 'IRC bot',

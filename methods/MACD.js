@@ -58,7 +58,7 @@ method.log = function() {
   log.debug('\t', 'long:', macd.long.result.toFixed(digits));
   log.debug('\t', 'macd:', diff.toFixed(digits));
   log.debug('\t', 'signal:', signal.toFixed(digits));
-  log.debug('\t', 'macdiff:', macd.result.toFixed(digits));  
+  log.debug('\t', 'macdiff:', macd.result.toFixed(digits));
 }
 
 method.check = function() {

@@ -41,7 +41,7 @@ First navigate to Gekko:
     
 Install Gekko's dependencies:
 
-    npm install
+    npm install --only=production
     
 ### Running Gekko
 

@@ -1,0 +1,8 @@
+[parameters]
+optInFastPeriod = 10
+optInSlowPeriod = 21
+optInSignalPeriod = 9
+
+[thresholds]
+down = -0.025
+up = 0.025

@@ -12,13 +12,19 @@ var from = moment.utc(daterange.from);
 
 if(daterange.to) {
   var to = moment.utc(daterange.to);
-} else{
+} else {
   var to = moment().utc();
   log.debug(
     'No end date specified for importing, setting to',
     to.format('YYYY-MM-DD HH:mm:ss')
   );
 }
+
+if(!from.isValid())
+  util.die('invalid `from`');
+
+if(!to.isValid())
+  util.die('invalid `to`');
 
 var TradeBatcher = require(dirs.budfox + 'tradeBatcher');
 var CandleManager = require(dirs.budfox + 'candleManager');
@@ -94,7 +100,7 @@ Market.prototype.processTrades = function(trades) {
   if(this.done)
     return log.info('Done importing!');
 
-  setTimeout(this.get, 1000);
+  setTimeout(this.get, 300);
 }
 
 module.exports = Market;

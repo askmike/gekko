@@ -1,7 +1,11 @@
-var _ = require('lodash');
+var settings = {
+  wait: 1,
+  advice: 'long'
+};
 
-var config = require('../core/util.js').getConfig();
-var settings = config['debug-advice'];
+// -------
+
+var _ = require('lodash');
 
 var method = {
   init: _.noop,

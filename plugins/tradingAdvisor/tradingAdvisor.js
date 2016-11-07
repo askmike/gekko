@@ -1,6 +1,7 @@
-var util = require('../core/util');
+var util = require('../../core/util');
 var _ = require('lodash');
 var fs = require('fs');
+var toml = require('toml');
 
 var config = util.getConfig();
 var dirs = util.dirs();
@@ -16,6 +17,10 @@ var Actor = function(done) {
 
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
+  this.methodName = config.tradingAdvisor.method;
+
+  this.generalizeMethodSettings();
+
   this.setupTradingMethod();
 
   var mode = util.gekkoMode();
@@ -30,19 +35,42 @@ var Actor = function(done) {
 
 util.makeEventEmitter(Actor);
 
+Actor.prototype.generalizeMethodSettings = function() {
+  // method settings can be either part of the main config OR a seperate
+  // toml configuration file. In case of the toml config file we need to
+  // parse and attach to main config object
+
+  // config already part of 
+  if(config[this.methodName]) {
+    log.warn('\t', 'Config already has', this.methodName, 'parameters. Ignoring toml file');
+    return;
+  }
+
+  var tomlFile = dirs.config + 'strategies/' + this.methodName + '.toml';
+
+  if(!fs.existsSync(tomlFile)) {
+    log.warn('\t', 'toml configuration file not found.');
+    return;
+  }
+
+  var rawSettings = fs.readFileSync(tomlFile);
+  config[this.methodName] = toml.parse(rawSettings);
+
+  util.setConfig(config);
+}
+
 Actor.prototype.setupTradingMethod = function() {
-  var methodName = config.tradingAdvisor.method;
 
-  if(!fs.existsSync(dirs.methods + methodName + '.js'))
-    util.die('Gekko doesn\'t know the method ' + methodName);
+  if(!fs.existsSync(dirs.methods + this.methodName + '.js'))
+    util.die('Gekko doesn\'t know the method ' + this.methodName);
 
-  log.info('\t', 'Using the trading method: ' + methodName);
+  log.info('\t', 'Using the trading method: ' + this.methodName);
 
-  var method = require(dirs.methods + methodName);
+  var method = require(dirs.methods + this.methodName);
 
   // bind all trading method specific functions
   // to the Consultant.
-  var Consultant = require(dirs.core + 'baseTradingMethod');
+  var Consultant = require('./baseTradingMethod');
 
   _.each(method, function(fn, name) {
     Consultant.prototype[name] = fn;

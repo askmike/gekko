@@ -1,6 +1,3 @@
-// relieve is not included in Gekko atm, see
-// @link https://github.com/askmike/gekko/issues/456
-
 /*
 
   Gekko is a Bitcoin trading bot for popular Bitcoin exchanges written 
@@ -23,18 +20,13 @@
 
 */
 
-var util = require(__dirname + '/util');
-
-var dirs = util.dirs();
-var ipc = require('relieve').IPCEE(process);
-
-var config;
-var mode;
-
-ipc.on('start', (mode, config) => {
+var start = (mode, config) => {
+  var util = require(__dirname + '/../../util');
 
   // force correct gekko env
   util.setGekkoEnv('child-process');
+
+  var dirs = util.dirs();
 
   // force correct gekko mode
   util.setGekkoMode(mode);
@@ -48,6 +40,11 @@ ipc.on('start', (mode, config) => {
     config: config,
     mode: mode
   });
+}
+
+process.send('ready');
+
+process.on('message', function(m) {
+  if(m.what === 'start')
+    start(m.mode, m.config);
 });
-
-

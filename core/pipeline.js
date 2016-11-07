@@ -10,6 +10,7 @@
 
 */
 
+
 var util = require('./util');
 var dirs = util.dirs();
 
@@ -19,6 +20,8 @@ var async = require('async');
 var log = require(dirs.core + 'log');
 
 var pipeline = (settings) => {
+
+  var spies = settings.spies || [];
 
   var mode = settings.mode;
   var config = settings.config;
@@ -81,10 +84,15 @@ var pipeline = (settings) => {
       }
     );
 
+    // add possible spies
+    plugins = plugins
+      .concat(spies);
+
     // subscribe interested plugins to
     // emitting plugins
     _.each(plugins, function(plugin) {
       _.each(pluginSubscriptions, function(sub) {
+
         if(_.has(plugin, sub.handler)) {
 
           // if a plugin wants to listen

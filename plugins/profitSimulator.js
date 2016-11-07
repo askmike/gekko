@@ -9,6 +9,8 @@ var config = util.getConfig();
 var calcConfig = config.profitSimulator;
 var watchConfig = config.watch;
 
+var ENV = util.gekkoEnv();
+
 var Logger = function() {
   _.bindAll(this);
 
@@ -26,13 +28,6 @@ var Logger = function() {
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
 
-  this.reportInCurrency = calcConfig.reportInCurrency;
-
-  if(this.reportInCurrency)
-    this.reportIn = this.currency;
-  else
-    this.reportIn = this.asset;
-
   // virtual balance
   this.start = {
     asset: calcConfig.simulationBalance.asset,
@@ -41,11 +36,6 @@ var Logger = function() {
   }
   this.current = _.clone(this.start);
   this.trades = 0;
-  this.tracks = 0;
-
-  if(config.enabled)
-    log.info('Profit reporter active on simulated balance');
-
 }
 
 Logger.prototype.extractFee = function(amount) {
@@ -61,43 +51,54 @@ Logger.prototype.round = function(amount) {
 }
 
 Logger.prototype.calculateStartBalance = function() {
-  if(this.reportInCurrency)
-    this.start.balance = this.start.currency + this.price * this.start.asset;
-  else
-    this.start.balance = this.start.asset + this.start.currency / this.price;
+  this.start.balance = this.start.currency + this.price * this.start.asset;
 }
 
 // after every succesfull trend ride we hopefully end up
 // with more BTC than we started with, this function
 // calculates Gekko's profit in %.
-Logger.prototype.processAdvice = function(advice) {
-  this.tracks++;
+Logger.prototype.updatePosition = function(advice) {
+  let what = advice.recommendation;
+  let price = advice.candle.close;
+  let at = advice.candle.start.clone().utc().format();
 
-  var what = advice.recommendation;
-  var time = this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
-
-  // virtually trade all USD to BTC at the current price
+  // virtually trade all {currency} to {asset} at the current price
   if(what === 'long') {
-    this.current.asset += this.extractFee(this.current.currency / this.price);
-    if(mode === 'backtest') {
-      log.info(`${time}: Profit simulator got advice to long \t${this.current.currency.toFixed(3)} ${this.currency} => ${this.current.asset.toFixed(3)} ${this.asset}`);
-    }
+    this.current.asset += this.extractFee(this.current.currency / price);
     this.current.currency = 0;
     this.trades++;
   }
 
-  // virtually trade all BTC to USD at the current price
+  // virtually trade all {currency} to {asset} at the current price
   if(what === 'short') {
-    this.current.currency += this.extractFee(this.current.asset * this.price);
-    if(mode === 'backtest') {
-      log.info(`${time}: Profit simulator got advice to short \t${this.current.currency.toFixed(3)} ${this.currency} <= ${this.current.asset.toFixed(3)} ${this.asset}`);
-    }
+    this.current.currency += this.extractFee(this.current.asset * price);
     this.current.asset = 0;
     this.trades++;
   }
+}
 
-  if(mode === 'realtime')
-    this.report();
+// how to report depends on what kind of gekko is running
+if(mode === 'realtime') {
+  Logger.prototype.report = function(advice) {
+    this.verboseReport();
+  }
+} else if(mode === 'backtest') {
+  Logger.prototype.report = function(advice) {
+    var what = advice.recommendation;
+
+    if(what === 'soft')
+      return;
+
+    if(ENV === 'standalone')
+      this.summarizedReport(advice);
+    else if(ENV === 'child-process')
+      this.jsonReport(advice);
+  }
+}
+
+Logger.prototype.processAdvice = function(advice) {
+  this.updatePosition(advice);
+  this.report(advice);
 }
 
 Logger.prototype.processCandle = function(candle, done) {
@@ -106,7 +107,7 @@ Logger.prototype.processCandle = function(candle, done) {
     this.startPrice = candle.open;
   }
 
-  this.dates.end = candle.start.clone().add(1, 'm');
+  this.dates.end = candle.start.clone();
   this.endPrice = candle.close;
 
   this.price = candle.close;
@@ -114,35 +115,79 @@ Logger.prototype.processCandle = function(candle, done) {
   if(!this.start.balance)
     this.calculateStartBalance();
 
-  if(!calcConfig.verbose)
-    return done();
-
-  // skip on history
-  if(++this.historyReceived < this.historySize)
-    return done();
-
   done();
 }
 
-Logger.prototype.report = function(timespan) {
+Logger.prototype.jsonReport = function(advice) {
+  var what = advice.recommendation;
+  var price = advice.candle.close;
+  var at = advice.candle.start;
+
+  if(what === 'short')
+    process.send({
+      type: 'trade',
+      trade: {
+        action: 'sell',
+        price: price,
+        date: at,
+        balance: this.current.currency
+      }
+    });
+
+  else if(what === 'long')
+    process.send({
+      type: 'trade',
+      trade: {
+        action: 'buy',
+        price: price,
+        date: at,
+        balance: this.current.asset * price
+      }
+    });
+
+}
+
+Logger.prototype.summarizedReport = function(advice) {
+
+  var time = advice.candle.start.format('YYYY-MM-DD HH:mm:ss');
+  var what = advice.recommendation;
+
+  if(what === 'short')
+
+      log.info(
+        `${time}: Profit simulator got advice to short`,
+        `\t${this.current.currency.toFixed(3)}`,
+        `${this.currency} <= ${this.current.asset.toFixed(3)}`,
+        `${this.asset}`
+      );
+
+  else if(what === 'long')
+
+    log.info(
+      `${time}: Profit simulator got advice to long`,
+      `\t${this.current.currency.toFixed(3)}`,
+      `${this.currency} => ${this.current.asset.toFixed(3)}`,
+      `${this.asset}`
+    );
+
+}
+
+Logger.prototype.verboseReport = function(timespan) {
   if(!this.start.balance)
     return log.warn('Unable to simulate profits without starting balance');
 
-  if(this.reportInCurrency)
-    this.current.balance = this.current.currency + this.price * this.current.asset;
-  else
-    this.current.balance = this.current.asset + this.current.currency / this.price;
+  let report = this.calculateReportStatistics();
 
-  this.profit = this.current.balance - this.start.balance;
-  this.relativeProfit = this.current.balance / this.start.balance * 100 - 100;
+  this.profit = report.profit;
+  this.relativeProfit = report.relativeProfit;
 
   var start = this.round(this.start.balance);
-  var current = this.round(this.current.balance);
+  var current = this.round(report.balance);
 
-  log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.reportIn}`);
-  log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.reportIn}`);
+  log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.currency}`);
+  log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.currency}`);
   log.info(
-    `(PROFIT REPORT) simulated profit:\t\t ${this.round(this.profit)} ${this.reportIn}`,
+    `(PROFIT REPORT) simulated profit:\t\t ${this.round(this.profit)} ${this.currency}`,
     '(' + this.round(this.relativeProfit) + '%)'
   );
 
@@ -150,68 +195,115 @@ Logger.prototype.report = function(timespan) {
     log.info(
       '(PROFIT REPORT)',
       'simulated yearly profit:\t',
-      this.round(this.profit / timespan.asYears()),
-      this.reportIn,
-      '(' + this.round(this.relativeProfit / timespan.asYears()) + '%)'
+      report.yearlyProfit,
+      this.currency,
+      '(' + report.relativeYearlyProfit + '%)'
     );
   }
 }
 
-// finish up stats for backtesting
-Logger.prototype.finalize = function() {
-  log.info('')
-
-  log.info(
-    '(PROFIT REPORT)',
-    'start time:\t\t\t',
-    this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss')
-  );
-
-  log.info(
-    '(PROFIT REPORT)',
-    'end time:\t\t\t',
-    this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss')
-  );
-
-  var timespan = moment.duration(
+Logger.prototype.calculateReportStatistics = function() {
+  // the portfolio's balance is measured in {currency}
+  let balance = this.current.currency + this.price * this.current.asset;
+  let profit = balance - this.start.balance;
+  let timespan = moment.duration(
     this.dates.end.diff(this.dates.start)
   );
+  let relativeProfit = balance / this.start.balance * 100 - 100
 
-  log.info(
-    '(PROFIT REPORT)',
-    'timespan:\t\t\t',
-    timespan.humanize()
-  );
+  let report = {
+    currency: this.currency,
+    asset: this.asset,
 
-  log.info();
+    startTime: this.dates.start.utc().format('DD-MM-YYYY HH:mm:ss'),
+    endTime: this.dates.end.utc().format('DD-MM-YYYY HH:mm:ss'),
+    timespan: timespan,
+    buynhold: this.endPrice * 100 / this.startPrice - 100,
+    
+    balance: balance,
+    profit: profit,
+    relativeProfit: relativeProfit,
 
-  log.info(
-    '(PROFIT REPORT)',
-    'start price:\t\t\t',
-    this.startPrice
-  );
+    yearlyProfit: this.round(profit / timespan.asYears()),
+    relativeYearlyProfit: this.round(relativeProfit / timespan.asYears()),
+  }
 
-  log.info(
-    '(PROFIT REPORT)',
-    'end price:\t\t\t',
-    this.endPrice
-  );
+  return report;
+}
 
-  log.info(
-    '(PROFIT REPORT)',
-    'Buy and Hold profit:\t\t',
-    (this.round(this.endPrice * 100 / this.startPrice) - 100) + '%'
-  );
+// finish up stats for backtesting
+if(ENV === 'standalone') {
+  Logger.prototype.finalize = function() {
 
-  log.info();
+    let report = this.calculateReportStatistics();
 
-  log.info(
-    '(PROFIT REPORT)',
-    'amount of trades:\t\t',
-    this.trades
-  );
+    log.info('')
 
-  this.report(timespan);
+    log.info(
+      '(PROFIT REPORT)',
+      'start time:\t\t\t',
+      report.startTime
+    );
+
+    log.info(
+      '(PROFIT REPORT)',
+      'end time:\t\t\t',
+      report.endTime
+    );
+
+    log.info(
+      '(PROFIT REPORT)',
+      'timespan:\t\t\t',
+      report.timespan.humanize()
+    );
+
+    log.info();
+
+    log.info(
+      '(PROFIT REPORT)',
+      'start price:\t\t\t',
+      this.startPrice,
+      this.currency
+    );
+
+    log.info(
+      '(PROFIT REPORT)',
+      'end price:\t\t\t',
+      this.endPrice,
+      this.currency
+    );
+
+    log.info(
+      '(PROFIT REPORT)',
+      'Buy and Hold profit:\t\t',
+      this.round(report.buynhold) + '%'
+    );
+
+    log.info();
+
+    log.info(
+      '(PROFIT REPORT)',
+      'amount of trades:\t\t',
+      this.trades
+    );
+
+    this.verboseReport(report.timespan);
+  }
+} else if(ENV === 'child-process') {
+  Logger.prototype.finalize = function() {
+    let report = this.calculateReportStatistics();
+
+    report.timespan = report.timespan.humanize();
+    report.startPrice = this.startPrice;
+    report.endPrice = this.endPrice;
+    report.trades = this.trades;
+    report.startBalance = this.start.balance;
+
+    process.send({
+      type: 'report',
+      report: report
+    });
+  }
 }
 
 

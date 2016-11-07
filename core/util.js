@@ -100,7 +100,11 @@ var util = {
       methods: ROOT + 'methods/',
       indicators: ROOT + 'methods/indicators/',
       budfox: ROOT + 'core/budfox/',
-      importers: ROOT + 'importers/exchanges/'
+      importers: ROOT + 'importers/exchanges/',
+      tools: ROOT + 'core/tools/',
+      workers: ROOT + 'core/workers/',
+      web: ROOT + 'web/',
+      config: ROOT + 'config/'
     }
   },
   inherit: function(dest, source) {
@@ -134,13 +138,17 @@ var util = {
     ]
   },
   setGekkoEnv: function(env) {
-    util.die('only standalone supported, see\n\nhttps://github.com/askmike/gekko/issues/456ref-issue-177670116')
-
     _gekkoEnv = env;
   },
   gekkoEnv: function() {
     return _gekkoEnv || 'standalone';
-  }
+  },
+  launchUI: function() {
+    if(program['ui'])
+      return true;
+    else
+      return false;
+  },
 }
 
 // NOTE: those options are only used
@@ -150,6 +158,7 @@ program
   .option('-c, --config <file>', 'Config file')
   .option('-b, --backtest', 'backtesting mode')
   .option('-i, --import', 'importer mode')
+  .option('--ui', 'launch a web UI')
   .parse(process.argv);
 
 // make sure the current node version is recent enough

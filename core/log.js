@@ -14,31 +14,27 @@ var config = util.getConfig();
 var debug = config.debug;
 var silent = config.silent;
 
-var sendIPC = function() {
-  var IPCEE = require('relieve').IPCEE
-  var ipc = IPCEE(process);
-
-  var send = function(method) {
-    return function() {
-      var args = _.toArray(arguments);
-      ipc.send('log', args.join(' '));
-    }
+var sendToParent = function() {
+  var send = method => (...args) => {
+    process.send({'log': args.join(' ')});
   }
 
   return {
     error: send('error'),
     warn: send('warn'),
-    info: send('info')
+    info: send('info'),
+    write: send('write')
   }
 }
 
 var Log = function() {
   _.bindAll(this);
   this.env = util.gekkoEnv();
+
   if(this.env === 'standalone')
     this.output = console;
   else if(this.env === 'child-process')
-    this.output = sendIPC();
+    this.output = sendToParent();
 };
 
 Log.prototype = {
@@ -60,6 +56,11 @@ Log.prototype = {
   },
   info: function() {
     this._write('info', arguments);
+  },
+  write: function() {
+    var args = _.toArray(arguments);
+    var message = fmt.apply(null, args);
+    this.output.info(message);
   }
 }
 
@@ -75,6 +76,7 @@ if(silent) {
   Log.prototype.info = _.noop;
   Log.prototype.warn = _.noop;
   Log.prototype.error = _.noop;
+  Log.prototype.write = _.noop;
 }
 
 module.exports = new Log;

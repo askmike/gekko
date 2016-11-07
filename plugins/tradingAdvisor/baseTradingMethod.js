@@ -1,8 +1,10 @@
 var _ = require('lodash');
-var util = require('../core/util.js');
+var util = require('../../core/util');
 var config = util.getConfig();
 var dirs = util.dirs();
-var log = require('../core/log.js');
+var log = require(dirs.core + 'log');
+
+var ENV = util.gekkoEnv();
 
 if(config.tradingAdvisor.talib.enabled) {
   // verify talib is installed properly
@@ -22,7 +24,7 @@ if(config.tradingAdvisor.talib.enabled) {
   var talib = require(dirs.core + 'talib');
 }
 
-var indicatorsPath = '../methods/indicators/';
+var indicatorsPath = dirs.methods + 'indicators/';
 
 var Indicators = {
   MACD: {
@@ -152,7 +154,7 @@ Base.prototype.tick = function(candle) {
       i.update(price);
     if(i.input === 'candle')
       i.update(candle);
-  });
+  },this);
 
   // update the trading method
   if(!this.asyncTick || this.requiredHistory > this.age) {
@@ -187,6 +189,21 @@ Base.prototype.tick = function(candle) {
 
   // update previous price
   this.lastPrice = price;
+
+  this.propogateCustomCandle(candle);
+}
+
+// if this is a child process the parent might
+// be interested in the custom candle.
+if(ENV !== 'child-process') {
+  Base.prototype.propogateCustomCandle = _.noop;
+} else {
+  Base.prototype.propogateCustomCandle = function(candle) {
+    process.send({
+      type: 'candle',
+      candle: candle
+    });
+  }
 }
 
 Base.prototype.propogateTick = function() {
@@ -235,18 +252,20 @@ Base.prototype.addIndicator = function(name, type, parameters) {
 }
 
 Base.prototype.advice = function(newPosition) {
-  // Possible values are long and short. Long will trigger a buy method
-  // while short will trigger a sell method
   var advice = 'soft';
   if(newPosition) {
     advice = newPosition;
   }
 
-  this.emit('advice', {
-    recommendation: advice,
-    portfolio: 1,
-    moment: this.candle.start
-  });
+  let candle = this.candle;
+  candle.start = candle.start.clone();
+  _.defer(function() {
+    this.emit('advice', {
+      recommendation: advice,
+      portfolio: 1,
+      candle
+    });
+  }.bind(this));
 }
 
 // Because the trading method might be async we need
