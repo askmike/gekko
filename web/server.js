@@ -31,15 +31,6 @@ const broadcast = data => {
 }
 cache.set('broadcast', broadcast);
 
-setInterval(() => {
-  console.log('broadcasting..');
-  let m = {
-    type: 'a',
-    payload: Math.random()
-  }
-  broadcast(m);
-}, 5000)
-
 const WEBROOT = __dirname + '/';
 
 app.use(cors());
