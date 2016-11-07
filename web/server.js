@@ -63,5 +63,5 @@ server.on('request', app.callback());
 server.listen(port, () => {
   let host = 'http://localhost';
   console.log('Serving Gekko UI on ' + host + ':' + server.address().port);
-  // opn(host + ':' + server.address().port);
+  opn(host + ':' + server.address().port);
 });

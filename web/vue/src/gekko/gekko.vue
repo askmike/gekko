@@ -5,7 +5,7 @@
 
 <script>
 
-import marked from 'marked';
+import marked from '../tools/marked';
 
 const text = marked(`
 
