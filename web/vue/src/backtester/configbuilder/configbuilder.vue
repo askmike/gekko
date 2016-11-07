@@ -42,6 +42,9 @@ export default {
       if(!config.backtest.daterange)
         return false;
 
+      if(_.isEmpty(config.backtest.daterange))
+        return false;
+
       if(!config.watch)
         return false;
 

@@ -57,7 +57,7 @@ export default {
   methods: {
     scan: function() {
       this.scanned = 'fetching';
-      this.selectedRangeIndex = -1;  
+      this.selectedRangeIndex = -1;
       post('scan', this.config, (err, response) => {
         this.scanned = true;
         this.ranges = response;
@@ -112,6 +112,7 @@ export default {
     },
     tab: function() {
       this.scanned = false;
+      this.$emit('range', {})
     },
     selectedRangeIndex: function() {
       let selectedRange = this.ranges[this.selectedRangeIndex];
