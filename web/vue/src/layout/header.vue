@@ -31,6 +31,7 @@ export default {}
   display: block;
   text-align: center;
   text-decoration: none;
+  color: inherit;
 }
 
 .menu a:hover {
