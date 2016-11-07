@@ -20,12 +20,7 @@
 
 */
 
-var util = require(__dirname + '/core/util');
-
-var dirs = util.dirs();
-var log = require(dirs.core + 'log');
-
-log.write(`
+console.log(`
     ______   ________  __    __  __    __   ______
    /      \\ /        |/  |  /  |/  |  /  | /      \\
   /$$$$$$  |$$$$$$$$/ $$ | /$$/ $$ | /$$/ /$$$$$$  |
@@ -37,15 +32,19 @@ log.write(`
    $$$$$$/  $$$$$$$$/ $$/   $$/ $$/   $$/  $$$$$$/
 `)
 
-log.write('\tGekko v' + util.getVersion());
-log.write('\tI\'m gonna make you rich, Bud Fox.', '\n\n');
+const util = require(__dirname + '/core/util');
+
+console.log('\tGekko v' + util.getVersion());
+console.log('\tI\'m gonna make you rich, Bud Fox.', '\n\n');
+
+const dirs = util.dirs();
 
 if(util.launchUI())
   return require(util.dirs().web + 'server');
 
-var pipeline = require(dirs.core + 'pipeline');
-var config = util.getConfig();
-var mode = util.gekkoMode();
+const pipeline = require(dirs.core + 'pipeline');
+const config = util.getConfig();
+const mode = util.gekkoMode();
 
 if(
   config.trader.enabled &&
