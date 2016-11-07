@@ -1,6 +1,6 @@
 <template lang='jade'>
   div
-    h2.px2.contain Backtest
+    h2.contain Backtest
     .hr.contain
     config-builder(v-on:config='check')
     div(v-if='backtestable')
@@ -43,6 +43,10 @@ export default {
         this.backtestState = 'fetched';
         this.backtestResult = response;
       });
+    },
+
+    onWSa: function(message) {
+      console.log('backtester onWSa', message);
     }
   },
   components: {

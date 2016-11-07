@@ -31,5 +31,9 @@ export default {
   flex: 1;
 }
 
+.text {
+  max-width: 500px;
+}
+
 /**/
 </style>

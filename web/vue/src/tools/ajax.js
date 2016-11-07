@@ -1,11 +1,6 @@
 import superagent from 'superagent'
 import noCache from 'superagent-no-cache'
-
-if(process.env.NODE_ENV === 'development') {
-  var API_PATH = 'http://localhost:3000/api/';
-} else {
-  var API_PATH = '/api/';
-}
+import { restPath } from './api.js'
 
 const processResponse = next => (err, res) => {
   if(err)
@@ -21,7 +16,7 @@ const processResponse = next => (err, res) => {
 
 export const post = (to, data, next) => {
   superagent
-    .post(API_PATH + to)
+    .post(restPath + to)
     .use(noCache)
     .send(data)
     .end(processResponse(next));
@@ -29,7 +24,7 @@ export const post = (to, data, next) => {
 
 export const get = (to, next) => {
   superagent
-    .get(API_PATH + to)
+    .get(restPath + to)
     .use(noCache)
     .end(processResponse(next));
 }

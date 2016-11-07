@@ -1,43 +1,44 @@
 // config somewhere?
-var port = 3000;
-var relayInterval = 250;
+const port = 3000;
+const relayInterval = 250;
 
-var koa = require('koa');
-var serve = require('koa-static');
-var cors = require('koa-cors');
-var _ = require('lodash');
-var bodyParser = require('koa-bodyparser');
+const koa = require('koa');
+const serve = require('koa-static');
+const cors = require('koa-cors');
+const _ = require('lodash');
+const bodyParser = require('koa-bodyparser');
 
-var opn = require('opn');
-var server = require('http').createServer();
-var router = require('koa-router')();
-var ws = require('ws');
-var app = koa();
+const opn = require('opn');
+const server = require('http').createServer();
+const router = require('koa-router')();
+const ws = require('ws');
+const app = koa();
 
-var WebSocketServer = require('ws').Server;
-var wss = new WebSocketServer({ server: server });
+const WebSocketServer = require('ws').Server;
+const wss = new WebSocketServer({ server: server });
 
-// var messages = {};
-// // buffer internally
-// var broadcast = data => {
-//   if(!messages[data.type])
-//     messages[data.type] = [];
+const cache = require('./cache');
 
-//   messages[data.type].push(data.message);
-// }
-
-// // publish in batches
-var broadcast = data => {
-  if(_.isEmpty(messages))
+// broadcast function
+const broadcast = data => {
+  if(_.isEmpty(data))
     return;
 
   _.each(
     wss.clients,
-    client => client.send(JSON.stringify(messages))
+    client => client.send(JSON.stringify(data))
   );
-  messages = {};
 }
-// setInterval(_broadcast, relayInterval);
+cache.set('broadcast', broadcast);
+
+setInterval(() => {
+  console.log('broadcasting..');
+  let m = {
+    type: 'a',
+    payload: Math.random()
+  }
+  broadcast(m);
+}, 5000)
 
 const WEBROOT = __dirname + '/';
 
@@ -62,5 +63,5 @@ server.on('request', app.callback());
 server.listen(port, () => {
   let host = 'http://localhost';
   console.log('Serving Gekko UI on ' + host + ':' + server.address().port);
-  opn(host + ':' + server.address().port);
+  // opn(host + ':' + server.address().port);
 });
