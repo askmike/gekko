@@ -3,8 +3,6 @@ var webpack = require('webpack')
 var toml = require('toml')
 var fs = require('fs')
 
-var config = toml.parse(fs.readFileSync('../config.toml'))
-
 module.exports = {
   entry: './src/main.js',
   output: {
@@ -48,7 +46,6 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify('"production"'),
-      CONFIG: JSON.stringify(config)
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -63,7 +60,6 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.plugins = [
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify('"development"'),
-      CONFIG: JSON.stringify(config)
     })
   ];
 }
