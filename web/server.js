@@ -1,6 +1,4 @@
-// config somewhere?
-const port = 3000;
-const relayInterval = 250;
+const config = require('./vue/UIconfig').api;
 
 const koa = require('koa');
 const serve = require('koa-static');
@@ -47,12 +45,20 @@ router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
 app
   .use(serve(WEBROOT + 'vue'))
   .use(bodyParser())
+  .use(require('koa-logger')())
   .use(router.routes())
   .use(router.allowedMethods());
 
 server.on('request', app.callback());
-server.listen(port, () => {
-  let host = 'http://localhost';
-  console.log('Serving Gekko UI on ' + host + ':' + server.address().port);
-  opn(host + ':' + server.address().port);
+server.listen(config.port, () => {
+  const host = `${config.host}:${config.port}${config.path}`;
+
+  if(config.ssl) {
+    var location = `https://${host}`;
+  } else {
+    var location = `http://${host}`;
+  }
+
+  console.log('Serving Gekko UI on ' + location +  '\n\n');
+  opn(location);
 });
