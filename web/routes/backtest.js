@@ -7,7 +7,7 @@ const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
 module.exports = function *() {
   var mode = 'backtest';
 
-  var config = require('./baseBacktestConfig');
+  var config = require('./baseConfig');
 
   _.merge(config, this.request.body);
 

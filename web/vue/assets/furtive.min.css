@@ -52,7 +52,7 @@ label {
   top: 50%;
   right: 1em;
   margin-top:-4px;
-  background-image: url(/src/assets/select-arrow.png);
+  background-image: url(/assets/select-arrow.png);
   background-repeat: no-repeat;
   background-size: 100%;
   z-index: 2;

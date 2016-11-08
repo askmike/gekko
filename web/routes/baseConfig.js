@@ -69,4 +69,11 @@ config.backtest = {
   batchSize: 50
 }
 
+config.importer = {
+  daterange: {
+    // NOTE: these dates are in UTC
+    from: "2016-06-01 12:00:00"
+  }
+}
+
 module.exports = config;

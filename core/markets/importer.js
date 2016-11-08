@@ -5,6 +5,8 @@ var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var moment = require('moment');
 
+var ENV = util.gekkoEnv();
+
 var adapter = config.adapters[config.importer.adapter];
 var daterange = config.importer.daterange;
 
@@ -97,10 +99,19 @@ Market.prototype.get = function() {
 Market.prototype.processTrades = function(trades) {
   this.tradeBatcher.write(trades);
 
+  if(ENV === 'child-process') {
+    let lastAtTS = _.last(trades).date;
+    let lastAt = moment.unix(lastAtTS).utc().format();
+    process.send({
+      type: 'update',
+      latest: lastAt
+    });
+  }
+
   if(this.done)
     return log.info('Done importing!');
 
-  setTimeout(this.get, 300);
+  setTimeout(this.get, 1000);
 }
 
 module.exports = Market;

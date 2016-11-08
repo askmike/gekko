@@ -34,9 +34,11 @@ const WEBROOT = __dirname + '/';
 app.use(cors());
 
 // attach routes
+router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
+
 router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
 router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));
-router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
+router.post('/api/import', require(WEBROOT + 'routes/import'));
 
 // wss.on('connection', ws => {
 //   ws.on('message', _.noop);
@@ -59,6 +61,6 @@ server.listen(config.port, () => {
     var location = `http://${host}`;
   }
 
-  console.log('Serving Gekko UI on ' + location +  '\n\n');
+  console.log('Serving Gekko UI on ' + location +  '\n');
   opn(location);
 });
