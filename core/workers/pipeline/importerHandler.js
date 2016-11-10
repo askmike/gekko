@@ -9,17 +9,19 @@ module.exports = cb => {
           latest: message.latest
         })
 
+      else if(message.type === 'error') {
+        cb(message.error);
+        console.error(message.error);
+      }
+
       else if(message.type === 'log')
         console.log(message.log);
     },
     exit: status => {
       if(status !== 0)
-        // todo: upstream error
-        return cb(new Error('ERROR!'));
-
-      cb(null, {
-        done: true
-      });
+        return cb('Child process has died.');
+      else
+        cb(null, { done: true });
     }
   }
 }

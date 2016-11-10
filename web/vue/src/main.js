@@ -13,6 +13,7 @@ import backtester from './backtester/backtester.vue'
 import home from './layout/home.vue'
 import importer from './importer/importer.vue'
 import gekko from './gekko/gekko.vue'
+import singleImport from './importer/singleImport.vue'
 
 const router = new VueRouter({
   mode: 'hash',
@@ -21,7 +22,8 @@ const router = new VueRouter({
     { path: '/', component: home },
     { path: '/backtest', component: backtester },
     { path: '/import', component: importer },
-    { path: '/live-gekko', component: gekko },
+    { path: '/single-import/:id', component: singleImport },
+    { path: '/live-gekko', component: gekko }
   ]
 });
 

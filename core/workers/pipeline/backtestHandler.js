@@ -20,14 +20,13 @@ module.exports = done => {
     },
     exit: status => {
       if(status !== 0)
-        // todo: upstream error
-        return done(new Error('ERROR!'));
-
-      done(null, {
-        trades: trades,
-        candles: candles,
-        report: report
-      });
+        done('Child process has died.');
+      else
+        done(null, {
+          trades: trades,
+          candles: candles,
+          report: report
+        });
     }
   }
 }

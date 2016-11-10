@@ -19,6 +19,7 @@
               select(v-model='candleSizeUnit')
                 option minutes
                 option hours
+                option days
       div
         label(for='historySize') History Size (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input(v-model='historySize')
@@ -72,10 +73,12 @@ export default {
   },
   computed: {
     candleSize: function() {
-      if(this.candleSizeUnit === 'hours')
-        return this.rawCandleSize * 60;
-      else if(this.candleSizeUnit === 'minutes')
+       if(this.candleSizeUnit === 'minutes')
         return this.rawCandleSize;
+      else if(this.candleSizeUnit === 'hours')
+        return this.rawCandleSize * 60;
+      else if(this.candleSizeUnit === 'days')
+        return this.rawCandleSize * 60 * 24;
     },
     singularCandleSizeUnit: function() {
       // hours -> hour

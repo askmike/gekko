@@ -1,34 +1,48 @@
 <template lang='jade'>
-.config-builder.my2
-  market-picker.contain(v-on:marketConfig='onMarketConfig', has='rangepicker')
-  .hr.contain
-  strat-picker.contain(v-on:stratConfig='onStratConfig')
+.contain
+  .grd
+    .grd-row
+      .grd-row-col-3-6.mx1
+        h3 Market
+        market-picker.contain(v-on:market='updateMarket')
+      .grd-row-col-3-6.mx1
+        range-picker(v-on:range='updateRange', :config='market')
+  .hr
+  strat-picker.contain.my2(v-on:stratConfig='updateStrat')
 </template>
 
 <script>
 
-import marketPicker from './marketpicker.vue'
-import stratPicker from './stratpicker.vue'
+import marketPicker from '../global/configbuilder/marketpicker.vue'
+import stratPicker from '../global/configbuilder/stratpicker.vue'
+import rangePicker from '../global/configbuilder/rangepicker.vue'
 import _ from 'lodash'
 
 export default {
   data: () => {
     return {
-      marketConfig: {},
-      stratConfig: {}
+      market: {},
+      strat: {},
+      range: {}
     }
   },
   components: {
     marketPicker,
-    stratPicker
+    stratPicker,
+    rangePicker
   },
   computed: {
     config: function() {
       let config = {};
       Object.assign(
         config,
-        this.marketConfig,
-        this.stratConfig
+        this.market,
+        this.strat,
+        {
+          backtest: {
+            daterange: this.range
+          }
+        }
       );
 
       if(this.validConfig(config))
@@ -39,6 +53,9 @@ export default {
   },
   methods: {
     validConfig: function(config) {
+      if(!config.backtest)
+        return false;
+
       if(!config.backtest.daterange)
         return false;
 
@@ -60,12 +77,16 @@ export default {
 
       return true;
     },
-    onMarketConfig: function(mc) {
-      this.marketConfig = mc;
+    updateMarket: function(mc) {
+      this.market = mc;
       this.$emit('config', this.config);
     },
-    onStratConfig: function(sc) {
-      this.stratConfig = sc;
+    updateRange: function(range) {
+      this.range = range;
+      this.$emit('config', this.config);
+    },
+    updateStrat: function(sc) {
+      this.strat = sc;
       this.$emit('config', this.config);
     }
   }
@@ -73,21 +94,4 @@ export default {
 </script>
 
 <style>
-
-input {
-  background: none;
-  margin-top: 0.5em;
-}
-
-.params {
-  min-height: 235px;
-  line-height: 1.3em;
-}
-
-.hr {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  height: 10px;
-  background-color: rgba(250,250,250,.99);
-}
 </style>

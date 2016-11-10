@@ -25,10 +25,10 @@ div
         a(href='#', v-on:click.prevent='tab = "manual"') Or manually set a daterange
   template(v-if='tab === "manual"')
     div
-      label(for='from') From
+      label(for='from') From:
       input(v-model='from')
     div
-      label(for='to') To
+      label(for='to') To:
       input(v-model='to')
     p.txt--center
     em
@@ -58,6 +58,7 @@ export default {
     scan: function() {
       this.scanned = 'fetching';
       this.selectedRangeIndex = -1;
+
       post('scan', this.config, (err, response) => {
         this.scanned = true;
         this.ranges = response;
@@ -71,12 +72,8 @@ export default {
       let diff = moment.duration(to.diff(from)).humanize();
       return `${fmt(from)} to ${fmt(to)} (${diff})`;
     },
-    fmtTs: function(mom) {
-      return moment.unix(mom).utc();
-    },
-    fmt: function(mom) {
-      return mom.utc().format();
-    },
+    fmtTs: (mom) => moment.unix(mom).utc(),
+    fmt: (mom) => mom.utc().format(),
     emitRange: function(range) {
       this.$emit('range', {
         from: this.fmtTs(range.from),
@@ -85,6 +82,7 @@ export default {
     },
     emitManualEntry: function() {
       if(this.from.length < '4' || this.from.length < '4')
+        // this cannot possibly be a valid date
         return this.$emit('range', {})
 
       let from = moment.utc(this.from);
@@ -96,8 +94,12 @@ export default {
           to: this.fmt(to)
         })
       } else {
-
+        this.$emit('range', {});
       }
+    },
+    reset: function() {
+      this.scanned = false;
+      this.$emit('range', {})
     }
   },
   watch: {
@@ -108,11 +110,10 @@ export default {
       this.emitManualEntry();
     },
     config: function() {
-      this.scanned = false;
+      this.reset();
     },
     tab: function() {
-      this.scanned = false;
-      this.$emit('range', {})
+      this.reset();
     },
     selectedRangeIndex: function() {
       let selectedRange = this.ranges[this.selectedRangeIndex];

@@ -74,19 +74,24 @@ var util = {
     + `\nNodejs version: ${process.version}`;
   },
   die: function(m, soft) {
+    if(_gekkoEnv === 'standalone')
+      var log = console.log.bind(console);
+    else if(_gekkoEnv === 'child-process')
+      var log = m => process.send({type: 'error', error: m});
+
     if(m) {
       if(soft) {
-        console.log('\n', m, '\n\n');
+        log('\n ' + m + '\n\n');
       } else {
-        console.log('\n\nGekko encountered an error and can\'t continue');
-        console.log('\nError:\n');
-        console.log(m, '\n\n');
-        console.log('\nMeta debug info:\n');
-        console.log(util.logVersion());
-        console.log('');
+        log('\n\nGekko encountered an error and can\'t continue');
+        log('\nError:\n');
+        log(m, '\n\n');
+        log('\nMeta debug info:\n');
+        log(util.logVersion());
+        log('');
       }
     }
-    process.exit(0);
+    process.exit(1);
   },
   dirs: function() {
     var ROOT = __dirname + '/../';

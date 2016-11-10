@@ -67,6 +67,14 @@ var fetch = () => {
     'to',
     iterator.to.format('YYYY-MM-DD HH:mm:ss')
   );
+
+  if(util.gekkoEnv === 'child-process') {
+    let msg = ['Requesting data from',
+      iterator.from.format('YYYY-MM-DD HH:mm:ss') + ',',
+      'to',
+      iterator.to.format('YYYY-MM-DD HH:mm:ss')].join('');
+    process.send({type: 'log', log: msg});
+  }
   fetcher.getTrades(iterator, handleFetch);
 }
 

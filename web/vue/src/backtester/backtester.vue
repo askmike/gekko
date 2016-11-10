@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import configBuilder from './configbuilder/configbuilder.vue'
+import configBuilder from './backtestConfigBuilder.vue'
 import result from './result/result.vue'
 import { post } from '../tools/ajax'
 import spinner from '../global/blockSpinner.vue'
@@ -43,10 +43,6 @@ export default {
         this.backtestState = 'fetched';
         this.backtestResult = response;
       });
-    },
-
-    onWSa: function(message) {
-      console.log('backtester onWSa', message);
     }
   },
   components: {

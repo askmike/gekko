@@ -28,6 +28,7 @@ const broadcast = data => {
   );
 }
 cache.set('broadcast', broadcast);
+cache.set('running_imports', []);
 
 const WEBROOT = __dirname + '/';
 
@@ -35,6 +36,7 @@ app.use(cors());
 
 // attach routes
 router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
+router.get('/api/imports', require(WEBROOT + 'routes/imports'));
 
 router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
 router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));

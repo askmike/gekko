@@ -7,6 +7,11 @@ var socket = null;
 
 export const bus = new Vue();
 
+bus.$on('import_update', data => console.log(data))
+bus.$on('import_error', data => {
+  alert('IMPORT ERROR: ' + data.error);
+})
+
 export const info = {
   connected: false
 }

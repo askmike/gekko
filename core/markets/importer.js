@@ -99,7 +99,12 @@ Market.prototype.get = function() {
 Market.prototype.processTrades = function(trades) {
   this.tradeBatcher.write(trades);
 
-  if(ENV === 'child-process') {
+  if(this.done) {
+    log.info('Done importing!');
+    process.exit(0);
+  }
+
+  if(ENV === 'child-process' && _.size(trades)) {
     let lastAtTS = _.last(trades).date;
     let lastAt = moment.unix(lastAtTS).utc().format();
     process.send({
@@ -107,9 +112,6 @@ Market.prototype.processTrades = function(trades) {
       latest: lastAt
     });
   }
-
-  if(this.done)
-    return log.info('Done importing!');
 
   setTimeout(this.get, 1000);
 }
