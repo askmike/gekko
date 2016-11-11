@@ -39,6 +39,8 @@ module.exports = function *() {
 
   let errored = false;
 
+  console.log('Import started');
+
   pipelineRunner(mode, config, (err, event) => {
     if(err) {
       if(errored)
