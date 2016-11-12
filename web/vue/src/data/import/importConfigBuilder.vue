@@ -10,8 +10,8 @@
 
 <script>
 
-import marketPicker from '../global/configbuilder/marketpicker.vue'
-import rangeCreator from '../global/configbuilder/rangecreator.vue'
+import marketPicker from '../../global/configbuilder/marketpicker.vue'
+import rangeCreator from '../../global/configbuilder/rangecreator.vue'
 import _ from 'lodash'
 
 export default {

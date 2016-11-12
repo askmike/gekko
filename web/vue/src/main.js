@@ -11,9 +11,10 @@ Vue.use(VueRouter);
 
 import backtester from './backtester/backtester.vue'
 import home from './layout/home.vue'
-import importer from './importer/importer.vue'
+import importer from './data/import/importer.vue'
 import gekko from './gekko/gekko.vue'
-import singleImport from './importer/singleImport.vue'
+import singleImport from './data/import/singleImport.vue'
+import data from './data/data.vue'
 
 const router = new VueRouter({
   mode: 'hash',
@@ -21,8 +22,9 @@ const router = new VueRouter({
   routes: [
     { path: '/', component: home },
     { path: '/backtest', component: backtester },
-    { path: '/import', component: importer },
-    { path: '/single-import/:id', component: singleImport },
+    { path: '/data', component: data },
+    { path: '/data/importer', component: importer },
+    { path: '/data/importer/import/:id', component: singleImport },
     { path: '/live-gekko', component: gekko }
   ]
 });

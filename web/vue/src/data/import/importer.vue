@@ -19,11 +19,11 @@
 
 <script>
 
-import { post, get } from '../tools/ajax'
-import spinner from '../global/blockSpinner.vue'
+import { post, get } from '../../tools/ajax'
+import spinner from '../../global/blockSpinner.vue'
 import importConfigBuilder from './importConfigBuilder.vue'
 
-import marked from '../tools/marked'
+import marked from '../../tools/marked'
 
 let intro = marked(`
 
@@ -70,7 +70,7 @@ export default {
 
       post('import', this.config, (error, response) => {
         this.$router.push({
-          path: `/single-import/${response.id}`,
+          path: `/data/importer/import/${response.id}`,
           // this doesn't work for some reason...
           // params: {id: response.id}
         })
