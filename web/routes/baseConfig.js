@@ -38,6 +38,11 @@ config.profitSimulator = {
   slippage: 0.05
 }
 
+config.candleWriter = {
+  adapter: 'sqlite',
+  enabled: true
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
