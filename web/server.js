@@ -39,6 +39,7 @@ router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
 router.get('/api/imports', require(WEBROOT + 'routes/imports'));
 
 router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
+router.post('/api/scansets', require(WEBROOT + 'routes/scanDatasets'));
 router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));
 router.post('/api/import', require(WEBROOT + 'routes/import'));
 

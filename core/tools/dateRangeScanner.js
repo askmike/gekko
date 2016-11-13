@@ -126,6 +126,8 @@ var scan = function(done) {
             // it contains all valid dataranges available for the
             // end user.
 
+            reader.close();
+
             return done(false, ranges);
           }
         )

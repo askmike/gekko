@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -14,7 +14,7 @@
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
-    "async": "0.2.x",
+    "async": "2.1.2",
     "bitexthai": "^0.1.0",
     "bitfinex-api-node": "0.2.9",
     "bitstamp": "0.3.x",
