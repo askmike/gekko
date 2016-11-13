@@ -1,42 +1,54 @@
 <template lang='jade'>
 .contain
-  .grd
-    .grd-row
-      .grd-row-col-3-6.mx1
-        h3 Market
-        market-picker.contain(v-on:market='updateMarket')
-      .grd-row-col-3-6.mx1
-        range-picker(v-on:range='updateRange', :config='market')
+  dataset-picker.contain.my2(v-on:dataset='updateDataset')
   .hr
   strat-picker.contain.my2(v-on:stratConfig='updateStrat')
 </template>
 
 <script>
 
-import marketPicker from '../global/configbuilder/marketpicker.vue'
+import datasetPicker from '../global/configbuilder/datasetPicker.vue'
 import stratPicker from '../global/configbuilder/stratpicker.vue'
-import rangePicker from '../global/configbuilder/rangepicker.vue'
 import _ from 'lodash'
 
 export default {
   data: () => {
     return {
-      market: {},
+      dataset: {},
       strat: {},
-      range: {}
     }
   },
   components: {
-    marketPicker,
     stratPicker,
-    rangePicker
+    datasetPicker
   },
   computed: {
+    market: function() {
+      if(!this.dataset.exchange)
+        return {};
+
+      return {
+        exchange: this.dataset.exchange,
+        currency: this.dataset.currency,
+        asset: this.dataset.asset
+      }
+    },
+    range: function() {
+      if(!this.dataset.exchange)
+        return {};
+
+      return {
+        from: this.dataset.from,
+        to: this.dataset.to
+      }
+    },
     config: function() {
       let config = {};
       Object.assign(
         config,
-        this.market,
+        {
+          watch: this.market
+        },
         this.strat,
         {
           backtest: {
@@ -77,12 +89,9 @@ export default {
 
       return true;
     },
-    updateMarket: function(mc) {
-      this.market = mc;
-      this.$emit('config', this.config);
-    },
-    updateRange: function(range) {
-      this.range = range;
+    updateDataset: function(set) {
+      this.dataset = set;
+      // console.log('updateDataset', set);
       this.$emit('config', this.config);
     },
     updateStrat: function(sc) {

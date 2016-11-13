@@ -6,14 +6,13 @@
     p(v-if='imports.length === 0') You currently don't have any imports running.
     ul(v-if='imports.length')
       li(v-for='_import in imports')
-        router-link(:to='"/single-import/" + _import.id') {{ _import.watch.exchange }}:{{ _import.watch.currency }}/{{ _import.watch.asset }}
+        router-link(:to='"/data/importer/import/" + _import.id') {{ _import.watch.exchange }}:{{ _import.watch.currency }}/{{ _import.watch.asset }}
         
     .hr
     h3 Start a new import
     import-config-builder(v-on:config='updateConfig')
     .hr
     .txt--center
-      // router-link(to='/single-import/a').w100--s.my1.btn--blue.b(href='#') Import
       a.w100--s.my1.btn--blue(href='#', v-on:click.prevent='run') Import
 </template>
 
@@ -29,8 +28,7 @@ let intro = marked(`
 
 ## Import data
 
-In order to backtest your strategies using Gekko against
-historical data you first need to import data into Gekko.
+The importer can download historical market data directly from the exchange.
 
 `)
 

@@ -1,5 +1,4 @@
 <template lang='jade'>
-// config.tradingAdvisor
 .grd
   .grd-row
     .grd-row-col-3-6.px1

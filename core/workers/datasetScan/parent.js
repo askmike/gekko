@@ -22,8 +22,6 @@ module.exports = function(config, done) {
       let marketConfig = _.clone(config);
       marketConfig.watch = market;
 
-      console.log(marketConfig);
-
       dateRangeScan(marketConfig, (err, ranges) => {
         if(err)
           return next(err);

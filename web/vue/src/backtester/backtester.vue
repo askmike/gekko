@@ -30,6 +30,7 @@ export default {
   },
   methods: {
     check: function(config) {
+      // console.log('CHECK', config);
       this.config = config;
 
       if(!config.valid)
