@@ -24,7 +24,7 @@ module.exports = function(config, done) {
 
       dateRangeScan(marketConfig, (err, ranges) => {
         if(err)
-          return next(err);
+          return next();
 
         market.ranges = ranges;
 
@@ -32,7 +32,17 @@ module.exports = function(config, done) {
       });
 
     }, err => {
-      done(err, markets);
+      let resp = {
+        datasets: [],
+        errors: []
+      }
+      markets.forEach(market => {
+        if(market.ranges)
+          resp.datasets.push(market);
+        else
+          resp.errors.push(market);
+      })
+      done(err, resp);
     })
   });
 }
