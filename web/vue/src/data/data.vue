@@ -3,11 +3,15 @@
     .text(v-html='intro')
     .hr
     h2 Available datasets
-    .txt--center.my2(v-if='scanstate === "idle"')
+    .txt--center.my2(v-if='datasetScanstate === "idle"')
       a.w100--s.btn--blue.scan-btn(href='#', v-on:click.prevent='scan') scan available data
-    .txt--center.my2(v-if='scanstate === "scanning"')
+    .txt--center.my2(v-if='datasetScanstate === "scanning"')
       spinner
-    .my2(v-if='scanstate === "scanned"')
+    .my2(v-if='datasetScanstate === "scanned"')
+      .bg--orange.p1.warning.my1(v-if='unscannableMakets.length')
+        p Unable to find datasets in the following markets:
+        .mx2(v-for='market in unscannableMakets')
+          | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
       table.full
         thead
           tr
@@ -27,15 +31,15 @@
             td {{ humanizeDuration(set.to.diff(set.from)) }}
     .my2
       h2 Import more data
-      p.text You can easily import more market data directly from the exchange using the importer.
+      p.text You can easily import more market data directly from exchanges using the importer.
       router-link(to='/data/importer') Go to the importer.
 </template>
 
 <script>
 
 import spinner from '../global/blockSpinner.vue'
-import { post } from '../tools/ajax'
 import marked from '../tools/marked'
+import dataset from '../global/mixins/dataset'
 // global moment
 // global humanizeDuration
 
@@ -50,59 +54,16 @@ live market.
 `);
 
 export default {
+  mixins: [ dataset ],
   components: {
     spinner
   },
   data: () => {
     return {
-      intro,
-      datasets: [],
-      scanstate: 'idle'
+      intro
     }
   },
   methods: {
-    scan: function() {
-      this.scanstate = 'scanning';
-
-      post('scansets', {}, (error, response) => {
-        this.scanstate = 'scanned';
-
-        let sets = [];
-
-        response.forEach(market => {
-          market.ranges.forEach(range => {
-            sets.push({
-              exchange: market.exchange,
-              currency: market.currency,
-              asset: market.asset,
-              from: moment.unix(range.from).utc(),
-              to: moment.unix(range.to).utc()
-            });
-          });
-        });
-
-        // for now, filter out sets smaller than 3 hours..
-        sets = sets.filter(set => {
-          if(set.to.diff(set.from, 'hours') > 2)
-            return true;
-        });
-
-        sets = sets.sort((a, b) => {
-          let adiff = a.to.diff(a.from);
-          let bdiff = b.to.diff(b.from);
-
-          if(adiff < bdiff)
-            return -1;
-
-          if(adiff > bdiff)
-            return 1;
-
-          return 0;
-        }).reverse();
-
-        this.datasets = sets;
-      })
-    },
     humanizeDuration: (n) => window.humanizeDuration(n),
     fmt: mom => mom.format('YYYY-MM-DD HH:mm')
   }
@@ -120,5 +81,10 @@ table.full td {
 
 table.full th {
   text-align: center;
+}
+
+.warning p {
+  margin: 0;
+  padding: 0;
 }
 </style>

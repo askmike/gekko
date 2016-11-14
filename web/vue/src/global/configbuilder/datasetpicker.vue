@@ -1,11 +1,11 @@
 <template lang='jade'>
 div
   h3 Select a dataset
-  .txt--center.my2(v-if='scanstate === "idle"')
+  .txt--center.my2(v-if='datasetScanstate === "idle"')
     a.w100--s.btn--blue.scan-btn(href='#', v-on:click.prevent='scan') scan available data
-  .txt--center.my2(v-if='scanstate === "scanning"')
+  .txt--center.my2(v-if='datasetScanstate === "scanning"')
     spinner
-  .my2(v-if='scanstate === "scanned"')
+  .my2(v-if='datasetScanstate === "scanned"')
     table.full
       thead
         tr
@@ -32,6 +32,7 @@ div
 
 import { post } from '../../tools/ajax'
 import spinner from '../../global/blockSpinner.vue'
+import dataset from '../../global/mixins/dataset'
 
 export default {
   components: {
@@ -39,54 +40,11 @@ export default {
   },
   data: () => {
     return {
-      datasets: [],
-      scanstate: 'idle',
       setIndex: -1
     };
   },
+  mixins: [ dataset ],
   methods: {
-    scan: function() {
-      this.scanstate = 'scanning';
-
-      post('scansets', {}, (error, response) => {
-        this.scanstate = 'scanned';
-
-        let sets = [];
-
-        response.forEach(market => {
-          market.ranges.forEach(range => {
-            sets.push({
-              exchange: market.exchange,
-              currency: market.currency,
-              asset: market.asset,
-              from: moment.unix(range.from).utc(),
-              to: moment.unix(range.to).utc()
-            });
-          });
-        });
-
-        // for now, filter out sets smaller than 3 hours..
-        sets = sets.filter(set => {
-          if(set.to.diff(set.from, 'hours') > 2)
-            return true;
-        });
-
-        sets = sets.sort((a, b) => {
-          let adiff = a.to.diff(a.from);
-          let bdiff = b.to.diff(b.from);
-
-          if(adiff < bdiff)
-            return -1;
-
-          if(adiff > bdiff)
-            return 1;
-
-          return 0;
-        }).reverse();
-
-        this.datasets = sets;
-      })
-    },
     humanizeDuration: (n) => {
       return window.humanizeDuration(n, {largest: 4});
     },
