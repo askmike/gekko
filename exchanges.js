@@ -221,7 +221,6 @@ var exchanges = [
       { pair: ['BTC', 'BNS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BONES'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BOST'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTCD'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTCS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTM'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -625,7 +624,6 @@ var exchanges = [
       { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['AUD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['BTC', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
