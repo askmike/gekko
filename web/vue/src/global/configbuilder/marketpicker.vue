@@ -25,7 +25,8 @@ export default {
     return {
       exchanges: markets,
 
-      exchange: 'Poloniex',
+      // defaults:
+      exchange: 'poloniex',
       currency: 'BTC',
       asset: 'ETH',
       market: 'USDT/BTC'
