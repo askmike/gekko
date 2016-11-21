@@ -2,7 +2,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var moment = require('moment');
 
-var util = require('../core/util');
+var util = require('../../core/util');
 var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + '/log');
@@ -17,7 +17,25 @@ Stitcher.prototype.ago = function(ts) {
   return now.diff(then, 'minutes') + ' minutes ago';
 }
 
+Stitcher.prototype.verifyExchange = function() {
+  var exchanges = require(dirs.gekko + 'exchanges');
+  var exchange = _.find(exchanges, function(e) {
+    return e.slug === config.watch.exchange.toLowerCase();
+  });
+
+  if(!exchange)
+    util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)
+
+  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+
+  var error = exchangeChecker.cantMonitor(config.watch);
+  if(error)
+    util.die(error, true);
+}
+
 Stitcher.prototype.prepareHistoricalData = function(done) {
+  this.verifyExchange();
+
   // - step 1: check most recent stored candle window
   // - step 2: check oldest trade reachable by API
   // - step 3: see if overlap

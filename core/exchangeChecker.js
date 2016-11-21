@@ -38,7 +38,7 @@ Checker.prototype.cantMonitor = function(conf) {
   });
 
   if(!pair)
-    return 'Gekko does not support this currency/assets pair';
+    return 'Gekko does not support this currency/assets pair at ' + name;
 
   // everyting okay
   return false;

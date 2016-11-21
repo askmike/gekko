@@ -26,7 +26,7 @@ var Actor = function(done) {
   var mode = util.gekkoMode();
 
   if(mode === 'realtime') {
-    var Stitcher = require(dirs.core + 'dataStitcher');
+    var Stitcher = require(dirs.tools + 'dataStitcher');
     var stitcher = new Stitcher(this.batcher);
     stitcher.prepareHistoricalData(done);
   } else if(mode === 'backtest')

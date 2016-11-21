@@ -45,7 +45,6 @@ var pipeline = (settings) => {
 
   // Instantiate each enabled plugin
   var loadPlugins = function(next) {
-
     // load all plugins
     async.mapSeries(
       pluginParameters,
@@ -63,7 +62,6 @@ var pipeline = (settings) => {
   // Some plugins emit their own events, store
   // a reference to those plugins.
   var referenceEmitters = function(next) {
-
     _.each(plugins, function(plugin) {
       if(plugin.meta.emits)
         emitters[plugin.meta.slug] = plugin;
@@ -144,7 +142,6 @@ var pipeline = (settings) => {
 
   // TODO: move this somewhere where it makes more sense
   var prepareMarket = function(next) {
-
     if(mode === 'backtest' && config.backtest.daterange === 'scan')
       require(dirs.core + 'prepareDateRange')(next);
     else
