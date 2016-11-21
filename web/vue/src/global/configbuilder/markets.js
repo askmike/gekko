@@ -3,7 +3,7 @@ import exchangesRaw from '../../../../../exchanges.js';
 
 const markets = {};
  exchangesRaw.forEach(e => {
-  markets[e.name] = e.markets.map(m => m.pair.join('/'));
+  markets[e.slug] = e.markets.map(m => m.pair.join('/'));
 });
 
 export default markets;
