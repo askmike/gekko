@@ -7,7 +7,7 @@
 
 <script>
 
-import datasetPicker from '../global/configbuilder/datasetPicker.vue'
+import datasetPicker from '../global/configbuilder/datasetpicker.vue'
 import stratPicker from '../global/configbuilder/stratpicker.vue'
 import _ from 'lodash'
 
