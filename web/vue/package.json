@@ -7,7 +7,6 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
-  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
@@ -21,6 +20,7 @@
     "superagent-no-cache": "uditalias/superagent-no-cache",
     "vue": "^2.0.1",
     "vue-loader": "^9.7.0",
+    "vue-router": "^2.0.3",
     "webpack": "^2.1.0-beta.25",
     "webpack-dev-server": "^2.1.0-beta.0"
   }
