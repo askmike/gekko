@@ -1,3 +1,5 @@
+// simple POST request that returns the backtest result
+
 const _ = require('lodash');
 const promisify = require('tiny-promisify');
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));

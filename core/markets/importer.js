@@ -4,8 +4,7 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var moment = require('moment');
-
-var ENV = util.gekkoEnv();
+var cp = require(dirs.core + 'cp');
 
 var adapter = config.adapters[config.importer.adapter];
 var daterange = config.importer.daterange;
@@ -104,13 +103,10 @@ Market.prototype.processTrades = function(trades) {
     process.exit(0);
   }
 
-  if(ENV === 'child-process' && _.size(trades)) {
+  if(_.size(trades)) {
     let lastAtTS = _.last(trades).date;
     let lastAt = moment.unix(lastAtTS).utc().format();
-    process.send({
-      type: 'update',
-      latest: lastAt
-    });
+    cp.update(lastAt);
   }
 
   setTimeout(this.get, 1000);

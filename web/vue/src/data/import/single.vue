@@ -31,7 +31,6 @@
 
 <script>
 
-import spinner from '../../global/blockSpinner.vue'
 import { bus as ws } from '../../tools/ws'
 import { get } from '../../tools/ajax'
 
@@ -54,9 +53,6 @@ export default {
       if(data.import_id === this.$route.params.id)
         this.$router.push({path: '/import'});
     });
-  },
-  components: {
-    spinner
   },
   data: () => {
     return {

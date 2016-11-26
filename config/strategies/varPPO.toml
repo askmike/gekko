@@ -1,4 +1,4 @@
-momentum = TSI # RSI, TSI or UO
+momentum = "TSI" # RSI, TSI or UO
 
 [thresholds]
 weightLow = 120

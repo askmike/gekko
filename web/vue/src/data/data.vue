@@ -12,27 +12,30 @@
         p Unable to find datasets in the following markets:
         .mx2(v-for='market in unscannableMakets')
           | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
-      table.full
-        thead
-          tr
-            th exchange
-            th currency
-            th asset
-            th from
-            th to
-            th duration
-        tbody
-          tr(v-for='set in datasets')
-            td {{ set.exchange }}
-            td {{ set.currency }}
-            td {{ set.asset }}
-            td {{ fmt(set.from) }}
-            td {{ fmt(set.to) }}
-            td {{ humanizeDuration(set.to.diff(set.from)) }}
+      template(v-if='datasets.length')
+        table.full
+          thead
+            tr
+              th exchange
+              th currency
+              th asset
+              th from
+              th to
+              th duration
+          tbody
+            tr(v-for='set in datasets')
+              td {{ set.exchange }}
+              td {{ set.currency }}
+              td {{ set.asset }}
+              td {{ fmt(set.from) }}
+              td {{ fmt(set.to) }}
+              td {{ humanizeDuration(set.to.diff(set.from)) }}
+      template(v-if='!datasets.length')
+        p It looks like you don't have any local data yet.
     .my2
       h2 Import more data
       p.text You can easily import more market data directly from exchanges using the importer.
-      router-link(to='/data/importer') Go to the importer.
+      router-link(to='/data/importer') Go to the importer!
 </template>
 
 <script>

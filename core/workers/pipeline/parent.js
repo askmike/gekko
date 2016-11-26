@@ -5,7 +5,7 @@ module.exports = (mode, config, callback) => {
 
   // How we should handle client messages depends
   // on the mode of the Pipeline that is being ran.
-  var handle = require('./' + mode + 'Handler')(callback);
+  var handle = require('./messageHandlers/' + mode + 'Handler')(callback);
 
   var message = {
     what: 'start',

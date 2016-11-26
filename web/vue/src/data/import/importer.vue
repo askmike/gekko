@@ -36,7 +36,6 @@ export default {
   created: function() {
     get('imports', (error, response) => {
       this.imports = response;
-      // let _import = _.find(list, {id: id});
     });
   },
   components: {

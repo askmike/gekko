@@ -29,6 +29,7 @@ const broadcast = data => {
 }
 cache.set('broadcast', broadcast);
 cache.set('running_imports', []);
+cache.set('live_gekkos', []);
 
 const WEBROOT = __dirname + '/';
 
@@ -37,11 +38,14 @@ app.use(cors());
 // attach routes
 router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
 router.get('/api/imports', require(WEBROOT + 'routes/imports'));
+router.get('/api/livegekkos', require(WEBROOT + 'routes/liveGekkos'));
+router.get('/api/configPart/:part', require(WEBROOT + 'routes/configPart'));
 
 router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
 router.post('/api/scansets', require(WEBROOT + 'routes/scanDatasets'));
 router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));
 router.post('/api/import', require(WEBROOT + 'routes/import'));
+router.post('/api/startGekko', require(WEBROOT + 'routes/startGekko'));
 
 // wss.on('connection', ws => {
 //   ws.on('message', _.noop);

@@ -1,0 +1,8 @@
+enabled = true
+
+fee = 0.25
+slippage = 0.05
+
+[simulationBalance]
+asset = 1
+currency = 100

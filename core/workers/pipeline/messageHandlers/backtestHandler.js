@@ -1,3 +1,7 @@
+// listen to all messages and internally queue
+// all candles and tades, when done report them
+// all back at once
+
 module.exports = done => {
   var trades = [];
   var candles = [];

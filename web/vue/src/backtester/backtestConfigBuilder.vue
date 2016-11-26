@@ -57,8 +57,7 @@ export default {
         }
       );
 
-      if(this.validConfig(config))
-        config.valid = true;
+      config.valid = this.validConfig(config);
 
       return config;
     }
