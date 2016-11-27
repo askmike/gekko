@@ -39,11 +39,16 @@ module.exports = function *() {
       });
     }
 
-    if(event && event.done)
-      importManager.delete(importId)
-    else
-      importManager.update(importId, {latest: event.latest})
+    if(!event)
+      return;
 
+    // update local cache
+    importManager.update(importId, {
+      latest: event.latest,
+      done: event.done
+    });
+
+    // emit update over ws
     let wsEvent = {
       type: 'import_update',
       import_id: importId,
@@ -52,7 +57,6 @@ module.exports = function *() {
         done: event.done
       }
     }
-
     broadcast(wsEvent);
   });
 

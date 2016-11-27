@@ -1,6 +1,6 @@
 <template lang='jade'>
   div.contain.my2
-    div(v-if='!done && data')
+    div(v-if='data && !data.done')
       h2 Importing data..
       p Market: {{ data.watch.exchange }}:{{ data.watch.currency }}/{{ data.watch.asset }}
       .grd
@@ -21,46 +21,32 @@
           | you can already start 
           router-link(to='/backtest') backtesting
           | ).
-    div(v-if='done').txt--center
+    div(v-if='data && data.done').txt--center
       h2 Import done
       p 
         | Go and 
         router-link(to='/backtest') backtest
         |  with your new data!
+    div(v-if='!data').txt--center
+      h2 ERROR: Uknown import
+      p 
+        I don't know this import..
 </template>
 
 <script>
 
-import { bus as ws } from '../../global/ws'
-import { get } from '../../../tools/ajax'
-
 export default {
   created: function() {
-    get('imports', (error, response) => {
-      this.data = _.find(response, {id: this.$route.params.id});
-      if(this.data === undefined)
-        this.done = true;
-    });
-
-    ws.$on('import_update', data => {
-      if(data.import_id !== this.$route.params.id)
-        return;
-
-      this.handleWsMessage(data)
-    });
-
-    ws.$on('import_error', data => {
-      if(data.import_id === this.$route.params.id)
-        this.$router.push({path: '/import'});
-    });
-  },
-  data: () => {
-    return {
-      done: false,
-      data: false, // I cannot name this "_import" for some reason...
-    }
+    let data = 
+    this.data = data;
   },
   computed: {
+    data: function() {
+      return _.find(
+        this.$store.state.imports,
+        { id: this.$route.params.id }
+      );
+    },
     latest: function() {
       if(this.data)
         return this.mom(this.data.latest);
@@ -82,13 +68,6 @@ export default {
     }
   },
   methods: {
-    handleWsMessage: function(data) {
-      if(data.done)
-        return this.done = true;
-
-      if(this.data)
-        this.data.latest = moment.utc(data.latest);
-    },
     fmt: mom => { return mom.format('YYYY-MM-DD HH:mm:ss') },
     mom: str => moment.utc(str)
   }

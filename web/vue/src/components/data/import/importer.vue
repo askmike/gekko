@@ -18,7 +18,7 @@
 
 <script>
 
-import { post, get } from '../../../tools/ajax'
+import { post } from '../../../tools/ajax'
 import spinner from '../../global/blockSpinner.vue'
 import importConfigBuilder from './importConfigBuilder.vue'
 
@@ -33,11 +33,6 @@ The importer can download historical market data directly from the exchange.
 `)
 
 export default {
-  created: function() {
-    get('imports', (error, response) => {
-      this.imports = response;
-    });
-  },
   components: {
     importConfigBuilder,
     spinner
@@ -45,8 +40,12 @@ export default {
   data: () => {
     return {
       intro,
-      imports: [],
       config: {}
+    }
+  },
+  computed: {
+    imports: function() {
+      return this.$store.state.imports
     }
   },
   methods: {
@@ -66,6 +65,11 @@ export default {
         return alert('You can only import at least one day of data..')
 
       post('import', this.config, (error, response) => {
+        if(error)
+          return alert(error);
+
+        this.$store.commit('addImport', response);
+
         this.$router.push({
           path: `/data/importer/import/${response.id}`,
           // this doesn't work for some reason...

@@ -1,15 +1,10 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import App from './App.vue'
 
 import VueRouter from 'vue-router'
-
-import { connect } from './components/global/ws'
-
-connect();
-
-Vue.use(Vuex)
 Vue.use(VueRouter);
+
+import store from './store'
 
 import backtester from './components/backtester/backtester.vue'
 import home from './components/layout/home.vue'
@@ -21,6 +16,8 @@ import singleImport from './components/data/import/single.vue'
 import gekkoList from './components/gekko/list.vue'
 import newGekko from './components/gekko/new.vue'
 import singleGekko from './components/gekko/single.vue'
+import { connect as connectWS } from './components/global/ws'
+import initializeState from './store/init'
 
 const router = new VueRouter({
   mode: 'hash',
@@ -37,8 +34,13 @@ const router = new VueRouter({
   ]
 });
 
+// setup some stuff
+connectWS();
+initializeState();
+
 new Vue({
   router,
+  store,
   el: '#app',
   render: h => h(App)
 })

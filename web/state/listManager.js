@@ -4,10 +4,6 @@
 // - The currently running gekko watchers
 // - The live gekkos
 // - etc..
-
-// this is used in both the frontend
-// as well as the backend!
-
 const _ = require('lodash');
 
 var ListManager = function() {
