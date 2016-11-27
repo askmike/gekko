@@ -38,7 +38,7 @@ app.use(cors());
 // attach routes
 router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
 router.get('/api/imports', require(WEBROOT + 'routes/imports'));
-router.get('/api/livegekkos', require(WEBROOT + 'routes/liveGekkos'));
+router.get('/api/livegekkos', require(WEBROOT + 'routes/livegekkos'));
 router.get('/api/configPart/:part', require(WEBROOT + 'routes/configPart'));
 
 router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
