@@ -34,7 +34,7 @@
 <script>
 
 import _ from 'lodash'
-import { get } from '../../tools/ajax'
+import { get } from '../../../tools/ajax'
 
 export default {
   data: () => {

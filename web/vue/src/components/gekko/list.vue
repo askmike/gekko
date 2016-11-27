@@ -31,8 +31,8 @@
 
 <script>
 
-import { get } from '../tools/ajax'
-import marked from '../tools/marked';
+import { get } from '../../tools/ajax'
+import marked from '../../tools/marked';
 // global moment
 // global humanizeDuration
 

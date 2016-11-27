@@ -1,7 +1,7 @@
 <script>
 
-import top from './layout/header.vue'
-import bottom from './layout/footer.vue'
+import top from './components/layout/header.vue'
+import bottom from './components/layout/footer.vue'
 
 export default {
   name: 'app',

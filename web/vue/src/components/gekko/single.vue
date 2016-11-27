@@ -19,8 +19,8 @@
 <script>
 
 import spinner from '../global/blockSpinner.vue'
-import { bus as ws } from '../tools/ws'
-import { get } from '../tools/ajax'
+import { bus as ws } from '../global/ws'
+import { get } from '../../tools/ajax'
 
 export default {
   created: function() {

@@ -18,11 +18,11 @@
 
 <script>
 
-import { post, get } from '../../tools/ajax'
+import { post, get } from '../../../tools/ajax'
 import spinner from '../../global/blockSpinner.vue'
 import importConfigBuilder from './importConfigBuilder.vue'
 
-import marked from '../../tools/marked'
+import marked from '../../../tools/marked'
 
 let intro = marked(`
 

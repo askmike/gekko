@@ -38,7 +38,7 @@ div
 <script>
 
 import _ from 'lodash'
-import { post } from '../../tools/ajax'
+import { post } from '../../../tools/ajax'
 // global moment
 
 export default {

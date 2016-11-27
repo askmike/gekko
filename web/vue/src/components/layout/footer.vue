@@ -7,8 +7,8 @@
 </template>
 
 <script>
-const gekkoPackage = require('../../../../package.json');
-const uiPackage = require('../../package.json');
+const gekkoPackage = require('../../../../../package.json');
+const uiPackage = require('../../../package.json');
 
 export default {
   data: () => {

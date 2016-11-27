@@ -30,7 +30,7 @@ div
 
 <script>
 
-import { post } from '../../tools/ajax'
+import { post } from '../../../tools/ajax'
 import spinner from '../../global/blockSpinner.vue'
 import dataset from '../../global/mixins/dataset'
 

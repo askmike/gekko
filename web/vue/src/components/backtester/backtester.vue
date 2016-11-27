@@ -16,7 +16,7 @@
 <script>
 import configBuilder from './backtestConfigBuilder.vue'
 import result from './result/result.vue'
-import { post } from '../tools/ajax'
+import { post } from '../../tools/ajax'
 import spinner from '../global/blockSpinner.vue'
 
 export default {

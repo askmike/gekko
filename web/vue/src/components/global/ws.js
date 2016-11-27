@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 
-import { wsPath } from './api'
+import { wsPath } from '../../tools/api'
 
 var socket = null;
 

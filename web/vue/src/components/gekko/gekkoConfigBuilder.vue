@@ -18,7 +18,7 @@ import marketPicker from '../global/configbuilder/marketpicker.vue'
 import typePicker from '../global/configbuilder/typepicker.vue'
 import stratPicker from '../global/configbuilder/stratpicker.vue'
 import paperTrader from '../global/configbuilder/papertrader.vue'
-import { get } from '../tools/ajax'
+import { get } from '../../tools/ajax'
 import _ from 'lodash'
 
 export default {

@@ -1,5 +1,5 @@
 // this is the exchanges file used by Gekko
-import exchangesRaw from '../../../../../exchanges.js';
+import exchangesRaw from '../../../../../../exchanges.js';
 
 const markets = {};
  exchangesRaw.forEach(e => {

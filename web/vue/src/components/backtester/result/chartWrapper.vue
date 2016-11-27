@@ -6,7 +6,7 @@ div
 
 <script>
 
-import chart from '../../d3/chart4'
+import chart from '../../../d3/chart4'
 
 export default {
   props: ['data'],

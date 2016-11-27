@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import marked from '../tools/marked';
+import marked from '../../tools/marked';
 
 const left = marked(`
 

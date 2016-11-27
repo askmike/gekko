@@ -1,4 +1,4 @@
-import { post } from '../../tools/ajax'
+import { post } from '../../../tools/ajax'
 
 var mixin = {
   data: () => {

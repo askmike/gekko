@@ -41,7 +41,7 @@
 <script>
 
 import spinner from '../global/blockSpinner.vue'
-import marked from '../tools/marked'
+import marked from '../../tools/marked'
 import dataset from '../global/mixins/dataset'
 // global moment
 // global humanizeDuration

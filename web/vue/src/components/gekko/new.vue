@@ -9,7 +9,7 @@
 
 <script>
 
-import { post } from '../tools/ajax'
+import { post } from '../../tools/ajax'
 import gekkoConfigBuilder from './gekkoConfigBuilder.vue'
 
 export default {
