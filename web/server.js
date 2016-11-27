@@ -42,6 +42,8 @@ const ROUTE = n => WEBROOT + 'routes/' + n;
 // attach routes
 router.get('/api/strategies', require(ROUTE('strategies')));
 router.get('/api/configPart/:part', require(ROUTE('configPart')));
+router.get('/api/imports', require(ROUTE('routes/imports')));
+router.get('/api/livegekkos', require(ROUTE('routes/livegekkos')));
 
 const listWraper = require(ROUTE('list'));
 router.get('/api/imports', listWraper('imports'));
@@ -79,6 +81,7 @@ server.listen(config.port, () => {
   }
 
   console.log('Serving Gekko UI on ' + location +  '\n');
+
 
   // only open a browser when running `node gekko`
   // this prevents opening the browser during development
