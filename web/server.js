@@ -15,7 +15,8 @@ const app = koa();
 const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server: server });
 
-const cache = require('./cache');
+const cache = require('./state/cache');
+const ListManager = require('./state/listManager');
 
 // broadcast function
 const broadcast = data => {
@@ -28,30 +29,39 @@ const broadcast = data => {
   );
 }
 cache.set('broadcast', broadcast);
-cache.set('running_imports', []);
-cache.set('live_gekkos', []);
+
+// initialize lists and dump into cache
+cache.set('imports', new ListManager);
+cache.set('watchers', new ListManager);
+cache.set('gekkos', new ListManager);
+
+// setup API routes
 
 const WEBROOT = __dirname + '/';
-
-app.use(cors());
+const ROUTE = n => WEBROOT + 'routes/' + n;
 
 // attach routes
-router.get('/api/strategies', require(WEBROOT + 'routes/strategies'));
-router.get('/api/imports', require(WEBROOT + 'routes/imports'));
-router.get('/api/livegekkos', require(WEBROOT + 'routes/liveGekkos'));
-router.get('/api/configPart/:part', require(WEBROOT + 'routes/configPart'));
+router.get('/api/strategies', require(ROUTE('strategies')));
+router.get('/api/configPart/:part', require(ROUTE('configPart')));
 
-router.post('/api/scan', require(WEBROOT + 'routes/scanDateRange'));
-router.post('/api/scansets', require(WEBROOT + 'routes/scanDatasets'));
-router.post('/api/backtest', require(WEBROOT + 'routes/backtest'));
-router.post('/api/import', require(WEBROOT + 'routes/import'));
-router.post('/api/startGekko', require(WEBROOT + 'routes/startGekko'));
+const listWraper = require(ROUTE('list'));
+router.get('/api/imports', listWraper('imports'));
+router.get('/api/gekkos', listWraper('gekkos'));
+router.get('/api/watchers', listWraper('watchers'));
 
+router.post('/api/scan', require(ROUTE('scanDateRange')));
+router.post('/api/scansets', require(ROUTE('scanDatasets')));
+router.post('/api/backtest', require(ROUTE('backtest')));
+router.post('/api/import', require(ROUTE('import')));
+router.post('/api/startGekko', require(ROUTE('startGekko')));
+
+// incoming WS:
 // wss.on('connection', ws => {
 //   ws.on('message', _.noop);
 // });
 
 app
+  .use(cors())
   .use(serve(WEBROOT + 'vue'))
   .use(bodyParser())
   .use(require('koa-logger')())
@@ -69,5 +79,10 @@ server.listen(config.port, () => {
   }
 
   console.log('Serving Gekko UI on ' + location +  '\n');
-  opn(location);
+
+  // only open a browser when running `node gekko`
+  // this prevents opening the browser during development
+  let nodeCommand = _.last(process.argv[1].split('/'));
+  if(nodeCommand === 'gekko')
+    opn(location);
 });

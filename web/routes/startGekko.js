@@ -3,7 +3,7 @@ const promisify = require('tiny-promisify');
 const moment = require('moment');
 
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
-const cache = require('../cache');
+const cache = require('../state/cache');
 const broadcast = cache.get('broadcast');
 
 const base = require('./baseConfig');
