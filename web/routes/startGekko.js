@@ -5,86 +5,89 @@ const moment = require('moment');
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
 const cache = require('../state/cache');
 const broadcast = cache.get('broadcast');
+const gekkoManager = cache.get('gekkos');
 
 const base = require('./baseConfig');
-
-// everything is in memory at the moment:
-// If Gekko UI crashes the import (in child process)
-// will stop anyway
-const addGekkoToCache = gekko => {
-  let list = cache.get('live_gekkos');
-  list.push(_.clone(gekko));
-  cache.set('live_gekkos', list);
-}
-const updateGekkoInCache = (id, updates) => {
-  console.log('UPDATING', updates)
-  let list = cache.get('live_gekkos');
-  let gekko = _.find(list, {id: id});
-  _.merge(gekko, updates);
-  cache.set('live_gekkos', list);
-}
-const removeGekkoFromCache = (id) => {
-  let list = cache.get('live_gekkos');
-  cache.set('live_gekkos', list.filter(im => id !== im.id));
-}
 
 // starts an import
 // requires a post body with a config object
 module.exports = function *() {
-  let mode = 'realtime';
+  const mode = this.request.body.mode;
 
   let config = {}
 
   _.merge(config, base, this.request.body);
 
-  let importId = (Math.random() + '').slice(3);
+  const id = (Math.random() + '').slice(3);
 
   let errored = false;
 
-  console.log('Gekko', importId, 'started');
+  console.log('Gekko', id, 'started');
 
   pipelineRunner(mode, config, (err, event) => {
-    console.log(event);
+
+    console.log('EVENT', err, event);
+
     if(err) {
       if(errored)
         return;
 
       errored = true;
-      console.error('RECEIVED ERROR IN ROUTE', importId);
+      console.error('RECEIVED ERROR IN GEKKO', id);
       console.error(err);
-      removeGekkoFromCache(importId);
+      gekkoManager.delete(id);
       return broadcast({
         type: 'gekko_error',
-        gekko_id: importId,
+        gekko_id: id,
         error: err
       });
     }
 
-    if(event.type === 'update')
-      updateGekkoInCache(importId, {latest: event.latest})
+    if(!event)
+      return;
 
-    if(event.type === 'startAt')
-      updateGekkoInCache(importId, {startAt: event.startAt})
+    if(event.type === 'update' || event.type === 'startAt') {
 
-    event.gekko_id = importId;
-    event.emitter = 'gekko';
+      let updates = {};
 
-    broadcast(event);
+      if(event.type === 'update') {
+        updates.latest = event.latest;
+      } else if(event.type === 'startAt') {
+        updates.startAt = event.startAt;
+      }
+
+      gekkoManager.update(id, updates);
+      // emit update over ws
+      let wsEvent = {
+        type: event.type,
+        gekko_id: id,
+        gekko_mode: mode,
+        emitter: 'gekko',
+        updates
+      }
+      broadcast(wsEvent);
+      return;
+    }
+
+    // else we ignore (for now)
   });
 
   const now = moment.utc().format();
 
   const gekko = {
     watch: config.watch,
-    id: importId,
+    id,
     startAt: '',
     latest: '',
-    type: config.type
+    mode
   }
 
-  addGekkoToCache(gekko);
+  gekkoManager.add(gekko);
 
-  this.body = {
-    id: importId
-  }
+  broadcast({
+    type: 'new_gekko',
+    gekko
+  });
+
+  this.body = {status: 'ok'};
 }

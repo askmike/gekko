@@ -79,6 +79,10 @@ export default {
       if(!config.tradingAdvisor)
         return false;
 
+      let strat = config.tradingAdvisor.method;
+      if(_.isEmpty(config[ strat ]))
+        return false;
+
       if(config.tradingAdvisor) {
         if(_.isNaN(config.tradingAdvisor.candleSize))
           return false;

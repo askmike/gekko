@@ -3,7 +3,6 @@ import store from '../../'
 import { bus } from '../../../components/global/ws'
 
 const init = () => {
-  store.commit('syncImports', []);
   get('imports', (err, resp) => {
     store.commit('syncImports', resp);
   });

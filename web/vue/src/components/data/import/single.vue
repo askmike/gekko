@@ -36,10 +36,6 @@
 <script>
 
 export default {
-  created: function() {
-    let data = 
-    this.data = data;
-  },
   computed: {
     data: function() {
       return _.find(

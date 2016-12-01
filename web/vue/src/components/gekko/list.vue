@@ -2,10 +2,31 @@
   .contain.py2
     .text(v-html='text')
     .hr
-    h2 Running gekkos
-    .text(v-if='!gekkos.length')
-      p You currently do not have any Gekkos running.
-    table.full(v-if='gekkos.length')
+    h3 Market watchers
+    .text(v-if='!watchers.length')
+      p You are currently not watching any markets.
+    table.full(v-if='watchers.length')
+      thead
+        tr
+          th exchange
+          th currency
+          th asset
+          th started at
+          th last update
+          th duration
+      tbody
+        tr.clickable(v-for='gekko in watchers', v-on:click='$router.push({path: `live-gekkos/watcher/${gekko.id}`})')
+          td {{ gekko.watch.exchange }}
+          td {{ gekko.watch.currency }}
+          td {{ gekko.watch.asset }}
+          td {{ fmt(gekko.startAt) }}
+          td {{ fmt(gekko.latest) }}
+          td {{ humanizeDuration(moment(gekko.latest).diff(moment(gekko.startAt))) }}
+    .hr
+    h3 Strat runners
+    .text(v-if='!stratrunners.length')
+      p You are currently not running any strategies.
+    table.full(v-if='stratrunners.length')
       thead
         tr
           th exchange
@@ -25,13 +46,12 @@
           td {{ humanizeDuration(gekko.latest.diff(gekko.startAt)) }}
           td {{ gekko.type }}
     .hr
-    h2 Start a new Gekko
-    router-link(to='/live-gekkos/new') start a new gekko!
+    h2 Start a new live Gekko
+    router-link(to='/live-gekkos/new') start a new live Gekko!
 </template>
 
 <script>
 
-import { get } from '../../tools/ajax'
 import marked from '../../tools/marked';
 // global moment
 // global humanizeDuration
@@ -40,31 +60,35 @@ const text = marked(`
 
 ## Live Gekko
 
-You can use Gekko to run you strategy against the live market!
+You can use Gekko to run your strategy against the live market!
 
-*Note: only paper trading is supported for now.*
+For this you run a live gekko, which consists of two parts:
+
+- A market watcher: this will in realtime gather data from a market (like "Bitstamp:USD/BTC").
+- A strategy: this will use the realtime data from the marketwatcher and run a strategy over it.
+
+*Right now the strategy will be evalutated using a paper trader. If you want to automatically trade using your strat, you have to use the command line for now.*
 
 `);
 
 export default {
-  created: function() {
-    get('liveGekkos', (error, response) => {
-      this.gekkos = _.map(response, g => {
-        g.startAt = moment.utc(g.startAt);
-        g.latest = moment.utc(g.latest);
-        return g;
-      });
-    });
-  },
   data: () => {
     return {
       text,
-      gekkos: []
+    }
+  },
+  computed: {
+    stratrunners: function() {
+      return this.$store.state.stratrunners
+    },
+    watchers: function() {
+      return this.$store.state.watchers
     }
   },
   methods: {
     humanizeDuration: (n) => window.humanizeDuration(n),
-    fmt: mom => mom.format('YYYY-MM-DD HH:mm')
+    moment: mom => moment.utc(mom),
+    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm')
   }
 }
 </script>

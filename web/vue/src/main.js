@@ -15,7 +15,8 @@ import singleImport from './components/data/import/single.vue'
 
 import gekkoList from './components/gekko/list.vue'
 import newGekko from './components/gekko/new.vue'
-import singleGekko from './components/gekko/single.vue'
+import singleGekko from './components/gekko/singleGekko.vue'
+import singleWatcher from './components/gekko/singleWatcher.vue'
 import { connect as connectWS } from './components/global/ws'
 import initializeState from './store/init'
 
@@ -30,7 +31,8 @@ const router = new VueRouter({
     { path: '/data/importer/import/:id', component: singleImport },
     { path: '/live-gekkos', component: gekkoList },
     { path: '/live-gekkos/new', component: newGekko },
-    { path: '/live-gekkos/gekko/:id', component: singleGekko }
+    { path: '/live-gekkos/gekko/:id', component: singleGekko },
+    { path: '/live-gekkos/watcher/:id', component: singleWatcher }
   ]
 });
 

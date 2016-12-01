@@ -72,8 +72,6 @@ export default {
 
         this.$router.push({
           path: `/data/importer/import/${response.id}`,
-          // this doesn't work for some reason...
-          // params: {id: response.id}
         })
       });
     }

@@ -6,10 +6,11 @@
       market-picker.contain(v-on:market='updateMarketConfig')
     .grd-row-col-3-6.mx1
       type-picker(v-on:type='updateType')
-  .hr
-  strat-picker.contain.my2(v-on:stratConfig='updateStrat')
-  .hr
-  paper-trader(v-on:settings='updatePaperTrader')
+  template(v-if='type === "paper trader"')
+    .hr
+    strat-picker.contain.my2(v-on:stratConfig='updateStrat')
+    .hr
+    paper-trader(v-on:settings='updatePaperTrader')
 </template>
 
 <script>
@@ -22,6 +23,7 @@ import { get } from '../../tools/ajax'
 import _ from 'lodash'
 
 export default {
+
   created: function() {
     get('configPart/candleWriter', (error, response) => {
       this.candleWriter = toml.parse(response.part);
@@ -62,10 +64,18 @@ export default {
   },
   methods: {
     validConfig: config => {
-      if(!config.profitSimulator)
+      if(config.type === 'market watcher')
+        return true;
+
+      if(!config.tradingAdvisor)
+        return false;
+      if(_.isNaN(config.tradingAdvisor.candleSize))
+        return false;
+      else if(config.tradingAdvisor.candleSize == 0)
         return false;
 
-      if(!config.profitSimulator.enabled)
+      let strat = config.tradingAdvisor.method;
+      if(_.isEmpty(config[ strat ]))
         return false;
 
       return true;
@@ -86,8 +96,9 @@ export default {
       this.paperTrader = pt;
       this.emitConfig();
     },
+
     emitConfig: function() {
-      this.$emit('config', this.config);
+      this.$emit('config', this.config); 
     }
   }
 }

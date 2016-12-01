@@ -32,7 +32,6 @@ cache.set('broadcast', broadcast);
 
 // initialize lists and dump into cache
 cache.set('imports', new ListManager);
-cache.set('watchers', new ListManager);
 cache.set('gekkos', new ListManager);
 
 // setup API routes
@@ -47,7 +46,6 @@ router.get('/api/configPart/:part', require(ROUTE('configPart')));
 const listWraper = require(ROUTE('list'));
 router.get('/api/imports', listWraper('imports'));
 router.get('/api/gekkos', listWraper('gekkos'));
-router.get('/api/watchers', listWraper('watchers'));
 
 router.post('/api/scan', require(ROUTE('scanDateRange')));
 router.post('/api/scansets', require(ROUTE('scanDatasets')));

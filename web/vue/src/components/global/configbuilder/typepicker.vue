@@ -1,14 +1,15 @@
 <template lang='jade'>
 div
-  h3 Typepicker
+  h3 Type
   template
-    label(for='type').wrapper Type of Gekko:
+    label(for='type').wrapper What do you want to do with gekko?
     form.radio.grd
-      div.grd-row().m1
-        input.grd-row-col-1-6(type='radio', name='type', checked)
-        label.grd-row-col-5-6(for='type') {{ type }}
+      div.grd-row(v-for='(type, i) in types').m1
+        input.grd-row-col-1-6(type='radio', :value='i', v-model='selectedTypeIndex')
+        label.grd-row-col-5-6(:for='i') {{ type }}
+    
 
-    em (Only paper trader supported for now)
+    em (Live trading not supported for now)
 </template>
 
 <script>
@@ -19,7 +20,8 @@ export default {
   },
   data: () => {
     return {
-      type: 'paper-trader', // 'market-watcher'
+      types: ['paper trader', 'market watcher'],
+      selectedTypeIndex: 0,
     }
   },
   methods: {
@@ -30,6 +32,11 @@ export default {
   watch: {
     type: function() {
       this.emitType();
+    }
+  },
+  computed: {
+    type: function() {
+      return this.types[ this.selectedTypeIndex ];
     }
   }
 }

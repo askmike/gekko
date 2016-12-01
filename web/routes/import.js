@@ -21,7 +21,7 @@ module.exports = function *() {
 
   let errored = false;
 
-  console.log('Import started');
+  console.log('Import', importId, 'started');
 
   pipelineRunner(mode, config, (err, event) => {
     if(errored)
