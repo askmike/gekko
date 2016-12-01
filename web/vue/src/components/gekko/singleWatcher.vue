@@ -3,7 +3,7 @@
     div(v-if='!data')
       h1 Unknown Watcher
       p Gekko doesn't know what whatcher this is...
-    div(v-if='data && !error')
+    div(v-if='data')
       h2 Market Watcher
       .grd
         h3 Market
@@ -24,7 +24,7 @@
           .grd-row-col-2-6 Received data until
           .grd-row-col-4-6 {{ fmt(data.latest) }}
         .grd-row
-          .grd-row-col-2-6 Running for
+          .grd-row-col-2-6 Data spanning
           .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
         h3 Market graph
         p TODO: candle price graph!

@@ -60,10 +60,14 @@ export default {
         // check if the specified market is already being watched
         if(this.existingMarketWatcher) {
           alert('This market is already being watched, redirecting you now...')
-          console.log('ROUTING TO EXISTING MARKETWATCHER');
+          this.$router.push({
+            path: `/live-gekkos/watcher/${this.existingMarketWatcher.id}`
+          });
         } else {
-          this.startWatcher(function(error, resp) {
-            console.log('ROUTING TO NEW MARKETWATCHER');
+          this.startWatcher((error, resp) => {
+            this.$router.push({
+              path: `/live-gekkos/watcher/${resp.id}`
+            });
           });
         }
 

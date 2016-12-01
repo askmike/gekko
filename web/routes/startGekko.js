@@ -89,5 +89,5 @@ module.exports = function *() {
     gekko
   });
 
-  this.body = {status: 'ok'};
+  this.body = gekko;
 }
