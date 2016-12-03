@@ -5,7 +5,7 @@
     h3 Market watchers
     .text(v-if='!watchers.length')
       p You are currently not watching any markets.
-    table.full(v-if='watchers.length')
+    table.full.clickable(v-if='watchers.length')
       thead
         tr
           th exchange
@@ -94,6 +94,14 @@ export default {
 </script>
 
 <style>
+table.clickable {
+  border-collapse: separate;
+}
+
+tr.clickable td:nth-child(1) {
+  padding-left: 5px;
+}
+
 tr.clickable {
   cursor: pointer;
 }

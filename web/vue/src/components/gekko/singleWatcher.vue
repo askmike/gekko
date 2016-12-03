@@ -27,17 +27,25 @@
           .grd-row-col-2-6 Data spanning
           .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
         h3 Market graph
-        p TODO: candle price graph!
+        spinner(v-if='candleFetch === "fetching"')
+        template(v-if='candleFetch === "fetched"')
+        p CHART!
 </template>
 
 <script>
 
-import { get } from '../../tools/ajax'
+import { post } from '../../tools/ajax'
 import _ from 'lodash'
+import spinner from '../global/blockSpinner.vue'
 
 export default {
-  created: function() {
-    // todo: get data and spawn chart
+  components: {
+    spinner
+  },
+  data: () => {
+    return {
+      candleFetch: 'idle'
+    }
   },
   computed: {
     watchers: function() {
@@ -45,12 +53,54 @@ export default {
     },
     data: function() {
       return _.find(this.watchers, {id: this.$route.params.id});
+    },
+    getCandleConfig: () => {
+      return {
+        watch: {
+          exchange: 'poloniex',
+          currency: 'USDT',
+          asset: 'BTC'
+        },
+        daterange: {
+          from: '2016-05-22 11:22',
+          to: '2016-06-03 19:56'
+        },
+        adapter: 'sqlite',
+        sqlite: {
+          path: 'plugins/sqlite',
+
+          dataDirectory: 'history',
+          version: 0.1,
+
+          dependencies: [{
+            module: 'sqlite3',
+            version: '3.1.4'
+          }]
+        },
+        candleSize: 100
+      }
+    }
+  },
+  watch: {
+    data: function(val) {
+      console.log('watch data', val, this.candleFetch);
+      if(val && this.candleFetch !== 'fetched')
+        this.getCandles();
     }
   },
   methods: {
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
-    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm')
+    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
+    getCandles: function() {
+      console.log()
+
+      this.candleFetch = 'fetching';
+      post('getCandles', this.getCandleConfig, (err, res) => {
+        this.candleFetch = 'fetched';
+        console.log(err, res);
+      })
+    }
   }
 }
 </script>
