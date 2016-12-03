@@ -28,8 +28,8 @@
           .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
         h3 Market graph
         spinner(v-if='candleFetch === "fetching"')
-        template(v-if='candleFetch === "fetched"')
-        p CHART!
+        template(v-if='candles.length')
+          p CHART!
 </template>
 
 <script>
@@ -37,6 +37,8 @@
 import { post } from '../../tools/ajax'
 import _ from 'lodash'
 import spinner from '../global/blockSpinner.vue'
+import Vue from 'vue'
+// global moment
 
 export default {
   components: {
@@ -44,7 +46,8 @@ export default {
   },
   data: () => {
     return {
-      candleFetch: 'idle'
+      candleFetch: 'idle',
+      candles: []
     }
   },
   computed: {
@@ -54,17 +57,8 @@ export default {
     data: function() {
       return _.find(this.watchers, {id: this.$route.params.id});
     },
-    getCandleConfig: () => {
+    baseCandleConfig: () => {
       return {
-        watch: {
-          exchange: 'poloniex',
-          currency: 'USDT',
-          asset: 'BTC'
-        },
-        daterange: {
-          from: '2016-05-22 11:22',
-          to: '2016-06-03 19:56'
-        },
         adapter: 'sqlite',
         sqlite: {
           path: 'plugins/sqlite',
@@ -76,15 +70,17 @@ export default {
             module: 'sqlite3',
             version: '3.1.4'
           }]
-        },
-        candleSize: 100
+        }
       }
     }
   },
   watch: {
     data: function(val) {
-      console.log('watch data', val, this.candleFetch);
-      if(val && this.candleFetch !== 'fetched')
+      if(
+        val &&
+        this.candleFetch !== 'fetched' &&
+        this.data.firstCandle
+      )
         this.getCandles();
     }
   },
@@ -93,12 +89,46 @@ export default {
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
     getCandles: function() {
-      console.log()
 
       this.candleFetch = 'fetching';
-      post('getCandles', this.getCandleConfig, (err, res) => {
+
+      console.log('last start', this.data.lastCandle.start);
+      console.log('first start', this.data.firstCandle.start)
+
+      // up unto we have data
+      let to = moment.utc(
+        this.data.lastCandle.start
+      ).format();
+
+      console.log('to', to);
+
+      // max 7 days of data
+      let from = Math.max(
+        moment.utc(this.data.firstCandle.start).subtract(7, 'days').unix(),
+        moment.utc(to).subtract(7, 'days').unix()
+      )
+
+      console.log('from1', from);
+
+      from = moment.unix(from).utc().format();
+
+      console.log('from2', from);
+
+      let config = Vue.util.extend(
+        {
+          watch: this.data.watch,
+          daterange: {
+            to, from
+          },
+          // hourly candles
+          candleSize: 60
+        },
+        this.baseCandleConfig
+      );
+
+      post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
-        console.log(err, res);
+        this.candles = res;
       })
     }
   }

@@ -46,30 +46,25 @@ module.exports = function *() {
     if(!event)
       return;
 
-    if(event.type === 'update' || event.type === 'startAt') {
+    let updates = {};
 
-      let updates = {};
+    if(event.type === 'update') {
+      updates.latest = event.latest;
+    } else
+      // all possible events can be found in
+      // @file gekko/core/cp.js
+      updates[event.type] = event[event.type];
 
-      if(event.type === 'update') {
-        updates.latest = event.latest;
-      } else if(event.type === 'startAt') {
-        updates.startAt = event.startAt;
-      }
-
-      gekkoManager.update(id, updates);
-      // emit update over ws
-      let wsEvent = {
-        type: event.type,
-        gekko_id: id,
-        gekko_mode: mode,
-        emitter: 'gekko',
-        updates
-      }
-      broadcast(wsEvent);
-      return;
+    gekkoManager.update(id, updates);
+    // emit update over ws
+    let wsEvent = {
+      type: event.type,
+      gekko_id: id,
+      gekko_mode: mode,
+      emitter: 'gekko',
+      updates
     }
-
-    // else we ignore (for now)
+    broadcast(wsEvent);
   });
 
   const now = moment.utc().format();
