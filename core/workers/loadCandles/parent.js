@@ -50,6 +50,8 @@ module.exports = (config, callback) => {
     if(m === 'ready')
       return child.send(message);
 
+    console.log('done?')
+
     // else we are done and have candles!
     done(null, m);
     child.kill('SIGINT');

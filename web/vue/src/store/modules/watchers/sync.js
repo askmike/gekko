@@ -25,6 +25,8 @@ const sync = () => {
 
   bus.$on('update', update);
   bus.$on('startAt', update);
+  bus.$on('lastCandle', update);
+  bus.$on('firstCandle', update);
 }
 
 export default function() {

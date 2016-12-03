@@ -1,11 +1,11 @@
 <template lang='jade'>
-  div.contain.my2
-    div(v-if='!data')
+  div.my2
+    .contain(v-if='!data')
       h1 Unknown Watcher
       p Gekko doesn't know what whatcher this is...
     div(v-if='data')
-      h2 Market Watcher
-      .grd
+      h2.contain Market Watcher
+      .grd.contain
         h3 Market
         .grd-row
           .grd-row-col-2-6 Exchange
@@ -26,10 +26,10 @@
         .grd-row
           .grd-row-col-2-6 Data spanning
           .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
-        h3 Market graph
-        spinner(v-if='candleFetch === "fetching"')
-        template(v-if='candles.length')
-          p CHART!
+      h3.contain Market graph
+      spinner(v-if='candleFetch === "fetching"')
+      template(v-if='candles.length')
+        chart(:data='chartData')
 </template>
 
 <script>
@@ -38,11 +38,13 @@ import { post } from '../../tools/ajax'
 import _ from 'lodash'
 import spinner from '../global/blockSpinner.vue'
 import Vue from 'vue'
+import chart from '../backtester/result/chartWrapper.vue'
 // global moment
 
 export default {
   components: {
-    spinner
+    spinner,
+    chart
   },
   data: () => {
     return {
@@ -72,6 +74,12 @@ export default {
           }]
         }
       }
+    },
+    chartData: function() {
+      return {
+        candles: this.candles,
+        trades: []
+      }
     }
   },
   watch: {
@@ -92,27 +100,18 @@ export default {
 
       this.candleFetch = 'fetching';
 
-      console.log('last start', this.data.lastCandle.start);
-      console.log('first start', this.data.firstCandle.start)
-
       // up unto we have data
       let to = moment.utc(
         this.data.lastCandle.start
       ).format();
 
-      console.log('to', to);
-
       // max 7 days of data
       let from = Math.max(
         moment.utc(this.data.firstCandle.start).subtract(7, 'days').unix(),
         moment.utc(to).subtract(7, 'days').unix()
-      )
-
-      console.log('from1', from);
+      );
 
       from = moment.unix(from).utc().format();
-
-      console.log('from2', from);
 
       let config = Vue.util.extend(
         {

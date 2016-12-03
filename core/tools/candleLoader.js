@@ -1,3 +1,5 @@
+// TODO: properly handle a daterange for which no data is available.
+
 const batchSize = 1000;
 
 const _ = require('lodash');
@@ -55,6 +57,9 @@ module.exports = function(candleSize, _next) {
 }
 
 const getBatch = () => {
+  console.log('from', iterator.from.format(), iterator.from.unix())
+  console.log('to', iterator.to.format(), iterator.to.unix())
+
   reader.get(
     iterator.from.unix(),
     iterator.to.unix(),
@@ -76,13 +81,12 @@ const handleCandles = (err, data) => {
     util.die('Encountered an error..')
   }
 
-  if(_.last(data).start >= toUnix)
+  if(_.size(data) && _.last(data).start >= toUnix)
     DONE = true;
 
   batcher.write(data);
 
   if(DONE) {
-    console.log('reader closed!');
     reader.close();
   } else {
     shiftIterator();
