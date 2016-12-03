@@ -217,7 +217,6 @@ config.mongodb = {
 // @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
 
 config.backtest = {
-  adapter: 'sqlite',
   daterange: 'scan',
   batchSize: 50
 }

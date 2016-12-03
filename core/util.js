@@ -33,10 +33,6 @@ var util = {
     _config = buildConfig();
     return _config;
   },
-  getTOML: function(fileName) {
-    var raw = fs.readFileSync(fileName);
-    return toml.parse(raw);
-  },
   // overwrite the whole config
   setConfig: function(config) {
     _config = config;

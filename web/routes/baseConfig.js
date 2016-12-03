@@ -12,7 +12,6 @@ config.debug = false;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 config.tradingAdvisor = {
-  adapter: 'sqlite',
   talib: {
     enabled: false, // todo!
     version: '1.0.2'
@@ -39,7 +38,6 @@ config.profitSimulator = {
 }
 
 config.candleWriter = {
-  adapter: 'sqlite',
   enabled: true
 }
 
@@ -47,18 +45,40 @@ config.candleWriter = {
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-config.adapters = {
-  sqlite: {
-    path: 'plugins/sqlite',
+config.adapter = 'sqlite';
 
-    dataDirectory: 'history',
-    version: 0.1,
+config.sqlite = {
+  path: 'plugins/sqlite',
 
-    dependencies: [{
-      module: 'sqlite3',
-      version: '3.1.4'
-    }]
-  }
+  dataDirectory: 'history',
+  version: 0.1,
+
+  dependencies: [{
+    module: 'sqlite3',
+    version: '3.1.4'
+  }]
+}
+
+  // Postgres adapter example config (please note: requires postgres >= 9.5):
+config.postgresql = {
+  path: 'plugins/postgresql',
+  version: 0.1,
+  connectionString: 'postgres://user:pass@localhost:5432', // if default port
+  dependencies: [{
+    module: 'pg',
+    version: '6.1.0'
+  }]
+}
+
+// Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
+config.mongodb = {
+  path: 'plugins/mongodb',
+  version: 0.1,
+  connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+  dependencies: [{
+    module: 'mongojs',
+    version: '2.4.0'
+  }]
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,7 +89,6 @@ config.adapters = {
 // @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
 
 config.backtest = {
-  adapter: 'sqlite',
   daterange: 'scan',
   batchSize: 50
 }

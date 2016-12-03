@@ -1,10 +1,10 @@
-debug = true
+debug = false
 
 # what database should Gekko use?
 adapter = 'sqlite'
 
 [watch]
-exchange = 'Bitstamp'
-currency = 'USD'
+exchange = 'Poloniex'
+currency = 'USDT'
 asset = 'BTC'
 

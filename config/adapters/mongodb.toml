@@ -1,4 +1,7 @@
 connectionString = "mongodb://mongodb/gekko"
-dependencies = [{"module"=>"mongojs", "version"=>"2.4.0"}]
 path = "plugins/mongodb"
 version = 0.1
+
+[[dependencies]]
+module = "mongojs"
+version = "2.4.0"

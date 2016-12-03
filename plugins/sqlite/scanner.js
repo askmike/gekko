@@ -10,7 +10,7 @@ const sqlite3 = require('sqlite3');
 
 // todo: rewrite with generators or async/await..
 module.exports = done => {
-  const dbDirectory = dirs.gekko + config.adapters.sqlite.dataDirectory
+  const dbDirectory = dirs.gekko + config.sqlite.dataDirectory
 
   if(!fs.existsSync(dbDirectory))
     return done(null, []);
