@@ -175,43 +175,38 @@ config.adviceWriter = {
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+config.sqlite = {
+  path: 'plugins/sqlite',
 
+  dataDirectory: 'history',
+  version: 0.1,
 
+  dependencies: [{
+    module: 'sqlite3',
+    version: '3.1.4'
+  }]
+}
 
-
-
-config.adapters = {
-  sqlite: {
-    path: 'plugins/sqlite',
-
-    dataDirectory: 'history',
-    version: 0.1,
-
-    dependencies: [{
-      module: 'sqlite3',
-      version: '3.1.4'
-    }]
-  },
   // Postgres adapter example config (please note: requires postgres >= 9.5):
-  postgresql: {
-    path: 'plugins/postgresql',
-    version: 0.1,
-    connectionString: 'postgres://user:pass@localhost:5432', // if default port
-    dependencies: [{
-      module: 'pg',
-      version: '6.1.0'
-    }]
-  },
-  // Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
-  mongodb: {
-    path: 'plugins/mongodb',
-    version: 0.1,
-    connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
-    dependencies: [{
-      module: 'mongojs',
-      version: '2.4.0'
-    }]
-  }
+config.postgresql = {
+  path: 'plugins/postgresql',
+  version: 0.1,
+  connectionString: 'postgres://user:pass@localhost:5432', // if default port
+  dependencies: [{
+    module: 'pg',
+    version: '6.1.0'
+  }]
+}
+
+// Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
+config.mongodb = {
+  path: 'plugins/mongodb',
+  version: 0.1,
+  connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+  dependencies: [{
+    module: 'mongojs',
+    version: '2.4.0'
+  }]
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -19,8 +19,6 @@ var Actor = function(done) {
 
   this.methodName = config.tradingAdvisor.method;
 
-  this.generalizeMethodSettings();
-
   this.setupTradingMethod();
 
   var mode = util.gekkoMode();
@@ -34,30 +32,6 @@ var Actor = function(done) {
 }
 
 util.makeEventEmitter(Actor);
-
-Actor.prototype.generalizeMethodSettings = function() {
-  // method settings can be either part of the main config OR a seperate
-  // toml configuration file. In case of the toml config file we need to
-  // parse and attach to main config object
-
-  // config already part of 
-  if(config[this.methodName]) {
-    log.warn('\t', 'Config already has', this.methodName, 'parameters. Ignoring toml file');
-    return;
-  }
-
-  var tomlFile = dirs.config + 'strategies/' + this.methodName + '.toml';
-
-  if(!fs.existsSync(tomlFile)) {
-    log.warn('\t', 'toml configuration file not found.');
-    return;
-  }
-
-  var rawSettings = fs.readFileSync(tomlFile);
-  config[this.methodName] = toml.parse(rawSettings);
-
-  util.setConfig(config);
-}
 
 Actor.prototype.setupTradingMethod = function() {
 
