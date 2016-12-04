@@ -17,12 +17,12 @@
           .grd-row-col-2-6 Asset
           .grd-row-col-4-6 {{ data.watch.asset }}
         h3 Statistics
-        .grd-row
+        .grd-row(v-if='data.firstCandle')
           .grd-row-col-2-6 Watching since
-          .grd-row-col-4-6 {{ fmt(data.startAt) }}
-        .grd-row
+          .grd-row-col-4-6 {{ fmt(data.firstCandle.start) }}
+        .grd-row(v-if='data.lastCandle')
           .grd-row-col-2-6 Received data until
-          .grd-row-col-4-6 {{ fmt(data.latest) }}
+          .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
         .grd-row
           .grd-row-col-2-6 Data spanning
           .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
@@ -42,6 +42,14 @@ import chart from '../backtester/result/chartWrapper.vue'
 // global moment
 
 export default {
+  created: function() {
+    if(
+      this.data &&
+      this.candleFetch !== 'fetched' &&
+      this.data.firstCandle
+    )
+      this.getCandles();
+  },
   components: {
     spinner,
     chart
@@ -90,6 +98,10 @@ export default {
         this.data.firstCandle
       )
         this.getCandles();
+    },
+    candles: function() {
+      console.log(moment.unix(_.first(this.candles).start).format())
+      console.log(moment.unix(_.last(this.candles).start).format())
     }
   },
   methods: {
@@ -103,15 +115,26 @@ export default {
       // up unto we have data
       let to = moment.utc(
         this.data.lastCandle.start
-      ).format();
+      ).unix();
 
       // max 7 days of data
       let from = Math.max(
-        moment.utc(this.data.firstCandle.start).subtract(7, 'days').unix(),
+        moment.utc(this.data.firstCandle.start).unix(),
         moment.utc(to).subtract(7, 'days').unix()
       );
 
+      const diff = to - from;
+      let candleSize = 60;
+      if(diff < 60 * 60 * 24) // a day
+        if(diff < 60 * 60 * 12) // 3 hours
+          candleSize = 1;
+        else
+          candleSize = 5;
+
+      console.log(diff, candleSize);
+
       from = moment.unix(from).utc().format();
+      to = moment.unix(to).utc().format();
 
       let config = Vue.util.extend(
         {
@@ -120,14 +143,17 @@ export default {
             to, from
           },
           // hourly candles
-          candleSize: 60
+          candleSize
         },
         this.baseCandleConfig
       );
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
-        this.candles = res;
+        this.candles = res.map(c => {
+          c.start = moment.unix(c.start).utc().format();
+          return c;
+        });
       })
     }
   }

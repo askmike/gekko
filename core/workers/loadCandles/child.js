@@ -12,7 +12,6 @@ var start = (config, candleSize, daterange) => {
 
   var load = require(dirs.tools + 'candleLoader');
   load(config.candleSize, candles => {
-    console.log('LOAD CALLBACK!');
     process.send(candles);
   })
 }

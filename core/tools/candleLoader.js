@@ -57,9 +57,6 @@ module.exports = function(candleSize, _next) {
 }
 
 const getBatch = () => {
-  console.log('from', iterator.from.format(), iterator.from.unix())
-  console.log('to', iterator.to.format(), iterator.to.unix())
-
   reader.get(
     iterator.from.unix(),
     iterator.to.unix(),

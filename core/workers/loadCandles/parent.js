@@ -46,11 +46,8 @@ module.exports = (config, callback) => {
   const done = _.once(callback);
 
   child.on('message', function(m) {
-    console.log('GOT MESSAGE!')
     if(m === 'ready')
       return child.send(message);
-
-    console.log('done?')
 
     // else we are done and have candles!
     done(null, m);
