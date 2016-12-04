@@ -9,6 +9,7 @@ var log = require(dirs.core + 'log');
 var CandleBatcher = require(dirs.core + 'candleBatcher');
 
 var moment = require('moment');
+var isLeecher = config.market && config.market.type === 'leech';
 
 var Actor = function(done) {
   _.bindAll(this);
@@ -23,11 +24,11 @@ var Actor = function(done) {
 
   var mode = util.gekkoMode();
 
-  if(mode === 'realtime') {
+  if(mode === 'realtime' && !isLeecher) {
     var Stitcher = require(dirs.tools + 'dataStitcher');
     var stitcher = new Stitcher(this.batcher);
     stitcher.prepareHistoricalData(done);
-  } else if(mode === 'backtest')
+  } else
     done();
 }
 

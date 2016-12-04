@@ -20,11 +20,12 @@ var util = {
       return _config;
 
     if(program.config) {
+
       // we will use one single config file
-      if(!fs.existsSync(configFile))
+      if(!fs.existsSync(util.dirs().gekko + program.config))
         util.die('Cannot find the specified config file.');
 
-      _config = require(configFile);
+      _config = require(util.dirs().gekko + program.config);
       return _config;
     }
 

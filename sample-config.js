@@ -17,8 +17,8 @@ config.debug = true; // for additional logging / debugging
 config.watch = {
 
   // see https://github.com/askmike/gekko#supported-exchanges
-  exchange: 'Bitstamp',
-  currency: 'USD',
+  exchange: 'Poloniex',
+  currency: 'USDT',
   asset: 'BTC'
 }
 
@@ -38,6 +38,22 @@ config.tradingAdvisor = {
   }
 }
 
+config.MACD = {
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 10,
+  long: 21,
+  signal: 9,
+  // the difference between the EMAs (to act as triggers)
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +69,7 @@ config.trader = {
 }
 
 config.adviceLogger = {
-  enabled: true,
+  enabled: false,
   muteSoft: true // disable advice printout if it's soft
 }
 
@@ -161,12 +177,10 @@ config.redisBeacon = {
 }
 
 config.candleWriter = {
-  adapter: 'sqlite',
-  enabled: true
+  enabled: false
 }
 
 config.adviceWriter = {
-  adapter: 'mongodb',
   enabled: false,
   muteSoft: true,
 }
@@ -174,6 +188,8 @@ config.adviceWriter = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.adapter = 'sqlite';
 
 config.sqlite = {
   path: 'plugins/sqlite',
