@@ -27,7 +27,6 @@ Heart.prototype.pump = function() {
 Heart.prototype.tick = function() {
   if(this.lastTick) {
     // make sure the last tick happened not to lang ago
-    // fixes #514
     // @link https://github.com/askmike/gekko/issues/514
     if(this.lastTick < moment().unix() - TICKRATE * 3)
       util.die('Failed to tick in time, see https://github.com/askmike/gekko/issues/514 for details', true);

@@ -91,17 +91,17 @@ export default {
     }
   },
   watch: {
-    data: function(val) {
-      if(
-        val &&
-        this.candleFetch !== 'fetched' &&
-        this.data.firstCandle
-      )
-        this.getCandles();
+    'data.lastCandle.start': function() {
+      this.candleFetch = 'dirty';
     },
-    candles: function() {
-      console.log(moment.unix(_.first(this.candles).start).format())
-      console.log(moment.unix(_.last(this.candles).start).format())
+    data: function(val, prev) {
+      let complete = val && val.firstCandle && val.lastCandle;
+
+      if(!complete)
+        return;
+
+      if(this.candleFetch !== 'fetched' )
+        this.getCandles();
     }
   },
   methods: {
@@ -123,6 +123,7 @@ export default {
         moment.utc(to).subtract(7, 'days').unix()
       );
 
+      // TODO...
       const diff = to - from;
       let candleSize = 60;
       if(diff < 60 * 60 * 24) // a day
@@ -130,8 +131,6 @@ export default {
           candleSize = 1;
         else
           candleSize = 5;
-
-      console.log(diff, candleSize);
 
       from = moment.unix(from).utc().format();
       to = moment.unix(to).utc().format();

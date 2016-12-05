@@ -35,6 +35,9 @@ Manager.prototype.processTrades = function(tradeBatch) {
 Manager.prototype.relayCandles = function(candles) {
   this.emit('candles', candles);
 
+  if(!_.size(candles))
+    return;
+
   this.messageFirstCandle(_.first(candles));
   cp.lastCandle(_.last(candles));
 }

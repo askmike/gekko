@@ -26,8 +26,6 @@ module.exports = function *() {
 
   pipelineRunner(mode, config, (err, event) => {
 
-    console.log('EVENT', err, event);
-
     if(err) {
       if(errored)
         return;
