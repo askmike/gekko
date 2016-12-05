@@ -23,9 +23,9 @@
         .grd-row(v-if='data.lastCandle')
           .grd-row-col-2-6 Received data until
           .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
-        .grd-row
+        .grd-row(v-if='data.lastCandle && data.firstCandle')
           .grd-row-col-2-6 Data spanning
-          .grd-row-col-4-6 {{ humanizeDuration(moment(data.latest).diff(moment(data.startAt))) }}
+          .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
       h3.contain Market graph
       spinner(v-if='candleFetch === "fetching"')
       template(v-if='candles.length')
