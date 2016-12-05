@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export const addWatcher = (state, watcher) => {
   state.watchers.push(watcher);
   return state;
@@ -9,9 +11,13 @@ export const syncWatchers = (state, watchers) => {
 }
 
 export const updateWatcher = (state, update) => {
-  let item = state.watchers.find(i => i.id === update.gekko_id);
+  let index = state.watchers.findIndex(i => i.id === update.gekko_id);
+  let item = state.watchers[index];
   if(!item)
     return state;
-  _.merge(item, update.updates);
+
+  let updated = Vue.util.extend(item, update.updates);
+  Vue.set(state.watchers, index, updated);
+
   return state;
 }
