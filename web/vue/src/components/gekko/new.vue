@@ -33,9 +33,39 @@ export default {
       watchConfig.mode = 'realtime';
       return watchConfig;
     },
+    requiredHistoricalData: function() {
+      if(!this.config.tradingAdvisor || !this.config.valid)
+        return;
+
+      let stratSettings = this.config.tradingAdvisor;
+      return stratSettings.candleSize * stratSettings.historySize;
+    },
     gekkoConfig: function() {
-      let gekkoConfig = Vue.util.extend({}, this.config);
-      gekkoConfig.mode = 'leech';
+      var startAt;
+
+      if(!this.existingMarketWatcher || !this.requiredHistoricalData)
+        startAt = moment().utc().startOf('minute').format();
+      else {
+        // TODO: figure out whether we can stitch data
+        // without looking at the existing watcher
+        let optimal = moment().utc().startOf('minute')
+          .subtract(this.requiredHistoricalData, 'minutes')
+          .unix();
+
+        let available = moment
+          .utc(this.existingMarketWatcher.firstCandle.start)
+          .unix();
+
+        startAt = moment.unix(Math.max(optimal, available)).utc().format();
+      }
+
+      let gekkoConfig = Vue.util.extend({
+        market: {
+          type: 'leech',
+          from: startAt
+        },
+        mode: 'realtime'
+      }, this.config);
       return gekkoConfig;
     },
     existingMarketWatcher: function() {

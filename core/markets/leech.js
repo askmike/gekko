@@ -29,9 +29,10 @@ if(error)
   util.die(error, true);
 
 if(config.market.from)
-  const fromTs = moment.utc(config.market.from).unix();
+  var fromTs = moment.utc(config.market.from).unix();
 else
-  const fromTs = moment().startOf('minute').unix();
+  var fromTs = moment().startOf('minute').unix();
+
 
 var Market = function() {
 
@@ -69,9 +70,7 @@ Market.prototype.get = function() {
 }
 
 Market.prototype.processCandles = function(err, candles) {
-
   var amount = _.size(candles);
-
   if(amount === 0) {
     // no new candles!
     return;
@@ -82,7 +81,7 @@ Market.prototype.processCandles = function(err, candles) {
     this.push(c);
   }, this);
 
-  this.latestTs = _.last(candles).start + 1;
+  this.latestTs = moment(_.last(candles).start).unix() + 1;
 }
 
 module.exports = Market;
