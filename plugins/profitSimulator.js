@@ -127,7 +127,7 @@ Logger.prototype.jsonReport = function(advice) {
   var price = advice.candle.close;
   var at = advice.candle.start;
 
-  if(what !== 'short' || what !== 'long')
+  if(what !== 'short' && what !== 'long')
     return;
 
   var payload;
@@ -145,7 +145,7 @@ Logger.prototype.jsonReport = function(advice) {
       date: at,
       balance: this.current.asset * price
     }
-  
+
   cp.trade(payload);
 }
 
