@@ -22,7 +22,8 @@ var cp = {
 
   // object like:
   //
-  // { start: '2016-12-03T22:23:00.000Z',
+  // {
+  //   start: '2016-12-03T22:23:00.000Z',
   //   open: 765,
   //   high: 765,
   //   low: 765,
@@ -32,7 +33,17 @@ var cp = {
   //   trades: 0
   // }
   lastCandle: lastCandle => message('lastCandle', { lastCandle }),
-  firstCandle: firstCandle => message('firstCandle', { firstCandle })
+  firstCandle: firstCandle => message('firstCandle', { firstCandle }),
+
+  // object like:
+  //
+  // {
+  //   action: 'sell',
+  //   price: 765,
+  //   date: '2016-12-03T22:23:00.000Z',
+  //   balance: 4242
+  // }
+  trade: trade => message('trade', { trade }),
 }
 
 if(ENV !== 'child-process') {
