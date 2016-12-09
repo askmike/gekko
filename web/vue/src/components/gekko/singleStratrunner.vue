@@ -1,10 +1,10 @@
 <template lang='jade'>
   div.my2
     .contain(v-if='!data')
-      h1 Unknown Watcher
-      p Gekko doesn't know what whatcher this is...
+      h1 Unknown Strat runner
+      p Gekko doesn't know what strat runner this is...
     div(v-if='data')
-      h2.contain Market Watcher
+      h2.contain Strat runner
       .grd.contain
         h3 Market
         .grd-row
@@ -16,6 +16,10 @@
         .grd-row
           .grd-row-col-2-6 Asset
           .grd-row-col-4-6 {{ data.watch.asset }}
+        p(v-if='watcher')
+          em This strat runner gets data from 
+            router-link(:to='"/live-gekkos/watcher/" + watcher.id') this market watcher
+          | .
         h3 Statistics
         spinner(v-if='isLoading')
         template(v-if='!isLoading')
@@ -28,6 +32,8 @@
           .grd-row(v-if='data.lastCandle && data.firstCandle')
             .grd-row-col-2-6 Data spanning
             .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
+          .grd-row.summary
+            // paperTradeSummary(:report='report')
       template(v-if='!isLoading')
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
@@ -37,11 +43,13 @@
 
 <script>
 
-import { post } from '../../tools/ajax'
-import _ from 'lodash'
-import spinner from '../global/blockSpinner.vue'
 import Vue from 'vue'
+import _ from 'lodash'
+
+import { post } from '../../tools/ajax'
+import spinner from '../global/blockSpinner.vue'
 import chart from '../backtester/result/chartWrapper.vue'
+import paperTradeSummary from '../global/paperTradeSummary.vue'
 // global moment
 
 export default {
@@ -51,7 +59,8 @@ export default {
   },
   components: {
     spinner,
-    chart
+    chart,
+    paperTradeSummary
   },
   data: () => {
     return {
@@ -60,11 +69,11 @@ export default {
     }
   },
   computed: {
-    watchers: function() {
-      return this.$store.state.watchers;
+    stratrunners: function() {
+      return this.$store.state.stratrunners;
     },
     data: function() {
-      return _.find(this.watchers, {id: this.$route.params.id});
+      return _.find(this.stratrunners, {id: this.$route.params.id});
     },
     baseCandleConfig: () => {
       return {
@@ -98,15 +107,20 @@ export default {
 
       return false;
     },
+    watchers: function() {
+      return this.$store.state.watchers;
+    },
+    watcher: function() {
+      let watch = Vue.util.extend({}, this.data.watch);
+      return _.find(this.watchers, { watch });
+    },
   },
   watch: {
     'data.lastCandle.start': function() {
       this.candleFetch = 'dirty';
     },
     data: function(val, prev) {
-      let complete = val && val.firstCandle && val.lastCandle;
-
-      if(!complete)
+      if(this.isLoading)
         return;
 
       if(this.candleFetch !== 'fetched' )
@@ -118,31 +132,11 @@ export default {
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
     getCandles: function() {
-
       this.candleFetch = 'fetching';
 
-      // up unto we have data
-      let to = moment.utc(
-        this.data.lastCandle.start
-      ).unix();
-
-      // max 7 days of data
-      let from = Math.max(
-        moment.utc(this.data.firstCandle.start).unix(),
-        moment.utc(to).subtract(7, 'days').unix()
-      );
-
-      // TODO...
-      const diff = to - from;
-      let candleSize = 60;
-      if(diff < 60 * 60 * 24) // a day
-        if(diff < 60 * 60 * 12) // 3 hours
-          candleSize = 1;
-        else
-          candleSize = 5;
-
-      from = moment.unix(from).utc().format();
-      to = moment.unix(to).utc().format();
+      let to = this.data.lastCandle.start;
+      let from = this.data.firstCandle.start;
+      let candleSize = this.data.strat.tradingAdvisor.candleSize;
 
       let config = Vue.util.extend(
         {
@@ -158,6 +152,9 @@ export default {
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
+        if(!res || res.error)
+          return;
+
         this.candles = res.map(c => {
           c.start = moment.unix(c.start).utc().format();
           return c;

@@ -7,15 +7,26 @@ div
 <script>
 
 import chart from '../../../d3/chart4'
+import { draw, clear } from '../../../d3/message'
+
+const MIN_CANDLES = 4;
 
 export default {
   props: ['data'],
   data: () => {
-    return {}
+    return {
+      message: false
+    }
   },
 
   watch: {
-    data: function() { this.render() }
+    data: function() { this.render() },
+    message: function(val) {
+      if(this.message)
+        draw(this.message)
+      else
+        clear();
+    }
   },
 
   created: function() { setTimeout( this.render, 100) },
@@ -27,18 +38,27 @@ export default {
     render: function() {
       this.remove();
 
-      chart(this.data.candles, this.data.trades);
+      if(_.size(this.data.candles) < MIN_CANDLES) {
+        this.message = 'Not enough data to spawn chart';
+      }
+      else {
+        this.message = false;
+        chart(this.data.candles, this.data.trades);
+      }
     },
     remove: function() {
       d3.select('#chart').html('');
     }
-  },
-  components: {
   }
 }
 </script>
 
 <style>
+
+#chart {
+  background-color: #eee;
+  width: 100%;
+}
 
 #chart circle {
   clip-path: url(#clip);

@@ -18,6 +18,15 @@ module.exports = function *() {
 
   _.merge(config, base, this.request.body);
 
+  if(mode === 'realtime') {
+    if(config.market && config.market.type)
+      var type = config.market.type;
+    else
+      var type = 'watcher';
+  } else {
+    var type = '';
+  }
+
   const id = (Math.random() + '').slice(3);
 
   let errored = false;
@@ -59,6 +68,7 @@ module.exports = function *() {
       type: event.type,
       gekko_id: id,
       gekko_mode: mode,
+      gekko_type: type,
       emitter: 'gekko',
       updates
     }
@@ -67,12 +77,21 @@ module.exports = function *() {
 
   const now = moment.utc().format();
 
-  const gekko = {
+  var gekko = {
     watch: config.watch,
     id,
     startAt: '',
     latest: '',
-    mode
+    mode,
+    type
+  }
+
+  if(config.tradingAdvisor && config.tradingAdvisor.enabled) {
+    gekko.strat = {
+      name: config.tradingAdvisor.method,
+      tradingAdvisor: config.tradingAdvisor,
+      params: config[ config.tradingAdvisor.method ]
+    }
   }
 
   gekkoManager.add(gekko);

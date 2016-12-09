@@ -23,35 +23,26 @@ div.contain
           th buy and hold profit
           td {{ round(report.buynhold) }}%
 
-    .grd-row-col-3-6
-      table.p1
-        tr
-          th amount of trades
-          td {{ report.trades }}
-        tr
-          th start balance
-          td {{ round(report.startBalance) }} {{ report.currency }}
-        tr
-          th final balance
-          td {{ round(report.balance) }} {{ report.currency }}
-        tr
-          th simulated profit
-
-      .big.txt--right.price(:class='profitClass') {{ round(report.relativeProfit) }}%
+    paperTradeSummary(:report='report')
 
 </template>
 
 <script>
 
+import paperTradeSummary from '../../global/paperTradeSummary.vue'
+
 export default {
   props: ['report'],
+  components: {
+    paperTradeSummary
+  },
   methods: {
     round: n => (+n).toFixed(5)
   },
   computed: {
     profitClass: function() {
       if(this.report.relativeProfit > 0)
-        return 'profit';
+        return 'profit'
       else
         return 'loss'
     }
@@ -62,23 +53,6 @@ export default {
 <style>
 .summary td {
   text-align: right;
-}
-
-.big {
-  font-size: 1.7em;
-  width: 80%;
-}
-
-.summary table {
-  width: 80%;
-}
-
-.price.profit {
-  color: #7FFF00;
-}
-
-.price.loss {
-  color: red;
 }
 
 </style>

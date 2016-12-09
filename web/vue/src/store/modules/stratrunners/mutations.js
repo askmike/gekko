@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export const addStratrunner = (state, runner) => {
   state.stratrunners.push(runner);
   return state;
@@ -8,10 +10,14 @@ export const syncStratrunners = (state, runners) => {
   return state;
 }
 
-export const updateWatcher = (state, update) => {
-  let item = state.stratrunners.find(i => i.id === update.gekko_id);
+export const updateStratrunner = (state, update) => {
+  let index = state.stratrunners.findIndex(i => i.id === update.gekko_id);
+  let item = state.stratrunners[index];
   if(!item)
     return state;
-  _.merge(item, update.updates);
+
+  let updated = Vue.util.extend(item, update.updates);
+  Vue.set(state.stratrunners, index, updated);
+
   return state;
 }

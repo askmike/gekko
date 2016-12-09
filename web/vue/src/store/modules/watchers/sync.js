@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 const init = () => {
   get('gekkos', (err, resp) => {
-    let watchers = _.filter(resp, {mode: 'realtime'});
+    let watchers = _.filter(resp, {type: 'watcher'});
     store.commit('syncWatchers', watchers);
   });
 }
@@ -13,14 +13,12 @@ const init = () => {
 const sync = () => {
 
   bus.$on('new_gekko', data => {
-    if(data.gekko.mode === 'realtime')
+    if(data.gekko.type === 'watcher')
       store.commit('addWatcher', data.gekko);
   });
 
-
   const update = (data) => {
-    if(data.gekko_mode === 'realtime')
-      store.commit('updateWatcher', data);
+    store.commit('updateWatcher', data);
   }
 
   bus.$on('update', update);

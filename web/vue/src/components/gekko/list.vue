@@ -19,9 +19,12 @@
           td {{ gekko.watch.exchange }}
           td {{ gekko.watch.currency }}
           td {{ gekko.watch.asset }}
-          td {{ fmt(gekko.startAt) }}
-          td {{ fmt(gekko.latest) }}
-          td {{ humanizeDuration(moment(gekko.latest).diff(moment(gekko.startAt))) }}
+          td 
+            template(v-if='gekko.firstCandle') {{ fmt(gekko.firstCandle.start) }}
+          td
+            template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
+          td
+            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
     .hr
     h3 Strat runners
     .text(v-if='!stratrunners.length')
@@ -32,19 +35,21 @@
           th exchange
           th currency
           th asset
-          th started at
-          th last update
           th duration
-          th type
+          th last update
+          th strategy
+          th profit
       tbody
-        tr.clickable(v-for='gekko in gekkos', v-on:click='$router.push({path: `live-gekkos/gekko/${gekko.id}`})')
+        tr.clickable(v-for='gekko in stratrunners', v-on:click='$router.push({path: `live-gekkos/stratrunner/${gekko.id}`})')
           td {{ gekko.watch.exchange }}
           td {{ gekko.watch.currency }}
           td {{ gekko.watch.asset }}
-          td {{ fmt(gekko.startAt) }}
-          td {{ fmt(gekko.latest) }}
-          td {{ humanizeDuration(gekko.latest.diff(gekko.startAt)) }}
-          td {{ gekko.type }}
+          td
+            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
+          td
+            template(v-if='gekko.lastCandle') {{ timespan(moment(), gekko.lastCandle.start) }}
+          td {{ gekko.strat.name }}
+          td TODO!
     .hr
     h2 Start a new live Gekko
     router-link(to='/live-gekkos/new') start a new live Gekko!
@@ -52,7 +57,7 @@
 
 <script>
 
-import marked from '../../tools/marked';
+import marked from '../../tools/marked'
 // global moment
 // global humanizeDuration
 
@@ -74,7 +79,7 @@ For this you run a live gekko, which consists of two parts:
 export default {
   data: () => {
     return {
-      text,
+      text
     }
   },
   computed: {
@@ -88,7 +93,10 @@ export default {
   methods: {
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
-    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm')
+    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
+    timespan: function(a, b) {
+      return this.humanizeDuration(this.moment(a).diff(this.moment(b)))
+    }
   }
 }
 </script>
