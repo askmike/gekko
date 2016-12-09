@@ -9,6 +9,8 @@ const util = require('../util');
 const dirs = util.dirs();
 const config = util.getConfig();
 
+const cp = require(dirs.core + 'cp');
+
 const adapter = config[config.adapter];
 const Reader = require(dirs.gekko + adapter.path + '/reader');
 
@@ -81,7 +83,14 @@ Market.prototype.processCandles = function(err, candles) {
     this.push(c);
   }, this);
 
-  this.latestTs = moment(_.last(candles).start).unix() + 1;
+  this.sendStartAt(_.first(candles));
+  cp.lastCandle(_.last(candles));
+
+  this.latestTs = _.last(candles).start.unix() + 1;
 }
+
+Market.prototype.sendStartAt = _.once(function(candle) {
+  cp.firstCandle(candle);
+});
 
 module.exports = Market;
