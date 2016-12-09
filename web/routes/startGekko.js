@@ -39,10 +39,16 @@ module.exports = function *() {
       if(errored)
         return;
 
+      let deleted = gekkoManager.delete(id);
+
+      if(!deleted)
+        // it was already deleted
+        return;
+
+
       errored = true;
       console.error('RECEIVED ERROR IN GEKKO', id);
       console.error(err);
-      gekkoManager.delete(id);
       return broadcast({
         type: 'gekko_error',
         gekko_id: id,
