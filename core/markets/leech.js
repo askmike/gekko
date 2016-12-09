@@ -78,6 +78,13 @@ Market.prototype.processCandles = function(err, candles) {
     return;
   }
 
+
+  // TODO:
+  // verify that the correct amount of candles was passed:
+  //
+  // if `this.latestTs` was at 10:00 and we receive 3 candles with the latest at 11:00
+  // we know we are missing 57 candles...
+
   _.each(candles, function(c, i) {
     c.start = moment.unix(c.start).utc();
     this.push(c);

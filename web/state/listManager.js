@@ -29,8 +29,13 @@ ListManager.prototype.update = function(id, updates) {
 
 // delete an item from the list
 ListManager.prototype.delete = function(id) {
+  let wasThere = this._list.find(i => i.id === id);
   this._list = this._list.filter(i => i.id !== id);
-  return true;
+
+  if(wasThere)
+    return true;
+  else
+    return false;
 }
 
 // getter
