@@ -215,7 +215,7 @@ methods.bbands = {
             name: "BBANDS",
             inReal: data.close,
             startIdx: 0,
-            endIdx: data.length - 1,
+            endIdx: data.close.length - 1,
             optInTimePeriod: params.optInTimePeriod,
             optInNbDevUp: params.optInNbDevUp,
             optInNbDevDn: params.optInNbDevDn,
