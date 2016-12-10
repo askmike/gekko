@@ -53,6 +53,17 @@ var plugins = [
     }]
   },
   {
+    name: 'Telegram bot',
+    description: 'Telegram module lets you communicate with Gekko on Telegram.',
+    slug: 'telegrambot',
+    async: false,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'node-telegram-bot-api',
+      version: '0.24.0'
+    }]
+  },
+  {
     name: 'XMPP bot',
     description: 'XMPP module lets you communicate with Gekko on Jabber.',
     slug: 'xmppbot',

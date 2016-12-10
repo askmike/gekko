@@ -125,6 +125,13 @@ config.ircbot = {
   botName: 'gekkobot'
 }
 
+config.telegrambot = {
+  enabled: false,
+  emitUpdats: false,
+  token: 'YOUR_TELEGRAM_BOT_TOKEN',
+  botName: 'gekkobot'
+}
+
 config.xmppbot = {
   enabled: false,
   emitUpdats: false,
