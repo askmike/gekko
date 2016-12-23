@@ -136,6 +136,7 @@ config.pushbullet = {
 config.ircbot = {
   enabled: false,
   emitUpdats: false,
+  muteSoft: true,
   channel: '#your-channel',
   server: 'irc.freenode.net',
   botName: 'gekkobot'

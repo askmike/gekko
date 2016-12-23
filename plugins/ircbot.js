@@ -42,6 +42,7 @@ Actor.prototype.processCandle = function(candle, done) {
 };
 
 Actor.prototype.processAdvice = function(advice) {
+  if (advice.recommendation == "soft" && ircbot.muteSoft) return;
   this.advice = advice.recommendation;
   this.adviceTime = utc();
 
