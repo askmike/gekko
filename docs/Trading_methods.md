@@ -107,7 +107,7 @@ You can configure these parameters for MACD in config.js:
 
 ### PPO
 
-Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_pp).
+Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_ppo).
 
     // PPO settings:
     config.PPO = {
