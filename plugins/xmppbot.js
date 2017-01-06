@@ -81,10 +81,11 @@ Actor.prototype.processCandle = function(candle) {
 };
 
 Actor.prototype.processAdvice = function(advice) {
+  if (xmppbot.muteSoft && advice.recommendation === 'soft') return;
   this.advice = advice.recommendation;
   this.adviceTime = utc();
 
-  if(xmppbot.emitUpdats)
+  if(xmppbot.emitUpdates)
     this.newAdvice(xmppbot.receiver);
 };
 

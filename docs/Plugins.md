@@ -150,7 +150,7 @@ IRC bot is a small plugin that connects Gekko to an IRC channel and lets users i
 
     config.ircbot = {
       enabled: false,
-      emitUpdats: false,
+      emitUpdates: false,
       channel: '#your-channel',
       server: 'irc.freenode.net',
       botName: 'gekkobot'
@@ -168,7 +168,7 @@ Campfire bot is a small plugin that connects Gekko to a Campfire room and lets u
 
     config.campfire = {
       enabled: false,
-      emitUpdats: false,
+      emitUpdates: false,
       nickname: 'Gordon',
       roomId: 673783,
       apiKey: 'e3b0c44298fc1c149afbf4c8996',

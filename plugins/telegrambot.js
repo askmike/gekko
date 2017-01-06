@@ -39,10 +39,11 @@ Actor.prototype.processCandle = function(candle, done) {
 };
 
 Actor.prototype.processAdvice = function(advice) {
+  if (telegrambot.muteSoft && advice.recommendation === 'soft') return;
   this.advice = advice.recommendation;
   this.adviceTime = utc();
 
-  if (telegrambot.emitUpdats)
+  if (telegrambot.emitUpdates)
     this.newAdvice();
 };
 

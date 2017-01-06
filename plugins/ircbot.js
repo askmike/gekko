@@ -46,7 +46,7 @@ Actor.prototype.processAdvice = function(advice) {
   this.advice = advice.recommendation;
   this.adviceTime = utc();
 
-  if(ircbot.emitUpdats)
+  if(ircbot.emitUpdates)
     this.newAdvice();
 };
 

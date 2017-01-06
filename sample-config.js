@@ -135,7 +135,7 @@ config.pushbullet = {
 
 config.ircbot = {
   enabled: false,
-  emitUpdats: false,
+  emitUpdates: false,
   muteSoft: true,
   channel: '#your-channel',
   server: 'irc.freenode.net',
@@ -144,14 +144,14 @@ config.ircbot = {
 
 config.telegrambot = {
   enabled: false,
-  emitUpdats: false,
+  emitUpdates: false,
   token: 'YOUR_TELEGRAM_BOT_TOKEN',
   botName: 'gekkobot'
 }
 
 config.xmppbot = {
   enabled: false,
-  emitUpdats: false,
+  emitUpdates: false,
   client_id: 'jabber_id',
   client_pwd: 'jabber_pw',
   client_host: 'jabber_server',
