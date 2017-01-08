@@ -44,6 +44,7 @@ Actor.prototype = {
   },
 
   processAdvice: function(advice) {
+    if (campfire.muteSoft && advice.recommendation === 'soft') return;
     this.advice = advice.recommendation;
     this.adviceTime = Moment.utc();
 
