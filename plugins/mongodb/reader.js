@@ -20,7 +20,7 @@ Reader.prototype.mostRecentWindow = function mostRecentWindow (from, to, next) {
   var maxAmount = to - from + 1;
 
   // Find some documents
-  this.collection.find({ pair: this.pair, start: { $gte: mFrom, $lte: mTo } }).sort({ start: 1 }).toArray((err, docs) => {
+  this.collection.find({ pair: this.pair, start: { $gte: mFrom, $lte: mTo } }).sort({ start: 1 }, (err, docs) => {
     if (err) {
       return util.die('DB error at `mostRecentWindow`');
     }
@@ -65,7 +65,7 @@ Reader.prototype.mostRecentWindow = function mostRecentWindow (from, to, next) {
 
 Reader.prototype.get = function get (from, to, what, next) { // returns all fields in general
   // Find some documents
-  this.collection.find({ pair: this.pair, start: { $gte: from, $lte: to } }).sort({ start: 1 }).toArray((err, docs) => {
+  this.collection.find({ pair: this.pair, start: { $gte: from, $lte: to } }).sort({ start: 1 }, (err, docs) => {
     if (err) {
       return util.die('DB error at `get`');
     }
@@ -92,13 +92,13 @@ Reader.prototype.countTotal = function countTotal (next) {
 }
 
 Reader.prototype.getBoundry = function getBoundry (next) {
-  this.collection.find({ pair: this.pair }, { start: 1 }).sort({ start: 1 }).limit(1).toArray((err, docs) => {
+  this.collection.find({ pair: this.pair }, { start: 1 }).sort({ start: 1 }).limit(1, (err, docs) => {
     if (err) {
       return util.die('DB error at `getBoundry`');
     }
     var start = _.first(docs).start;
 
-    collection.find({ pair: this.pair }, { start: 1 }).sort({ start: -1 }).limit(1).toArray((err2, docs2) => {
+    collection.find({ pair: this.pair }, { start: 1 }).sort({ start: -1 }).limit(1, (err2, docs2) => {
       if (err2) {
         return util.die('DB error at `getBoundry`');
       }
@@ -106,6 +106,16 @@ Reader.prototype.getBoundry = function getBoundry (next) {
       return next(null, { first: start, last: end });
     });
     return null;
+  });
+}
+
+Reader.prototype.tableExists = function(name, next) {
+  this.db.getCollectionNames((err, names) => {
+    if (err) {
+      log.debug(err);
+      return util.die('DB error at `tableExists`');
+    }
+    next(null, names.indexOf(name) > -1);
   });
 }
 

@@ -74,7 +74,7 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
 Reader.prototype.tableExists = function(name, next) {  
 
   this.db.all(`
-    SELECT name FROM sqlite_master WHERE type='table' AND name='${sqliteUtil.table('candles')}';
+    SELECT name FROM sqlite_master WHERE type='table' AND name='${sqliteUtil.table(name)}';
   `, function(err, rows) {
     if(err) {
       console.error(err);
