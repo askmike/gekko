@@ -634,6 +634,27 @@ var exchanges = [
     providesHistory: false,
     tid: 'tid'
   },
+  {
+    name: 'GDAX',
+    slug: 'gdax',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['USD', 'EUR', 'GBP', 'BTC'],
+    assets: ['BTC', 'LTC', 'ETH'],
+    markets: [
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret', 'passphrase'],
+    providesHistory: 'date',
+    providesFullHistory: true,
+    tid: 'tid'
+  }
   // ,
   // ---- Keeping this here for historical purposes. ----
   // {

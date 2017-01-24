@@ -26,6 +26,7 @@
     "co-fs": "^1.2.0",
     "commander": "^2.9.0",
     "gekko": "0.0.6",
+    "gdax": "0.3.0",
     "koa": "^1.2.0",
     "koa-bodyparser": "^2.2.0",
     "koa-cors": "0.0.16",
