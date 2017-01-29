@@ -2,20 +2,13 @@ var log = require('../core/log');
 var moment = require('moment');
 var _ = require('lodash');
 var config = require('../core/util').getConfig();
-var ircbot = config.ircbot;
+var telegrambot = config.telegrambot;
 var utc = moment.utc;
 
-var irc = require("irc");
+var telegram = require("node-telegram-bot-api");
 
 var Actor = function() {
   _.bindAll(this);
-
-  this.bot = new irc.Client(ircbot.server, ircbot.botName, {
-    channels: [ ircbot.channel ] 
-  });
-
-  this.bot.addListener("message", this.verifyQuestion);
-  this.bot.addListener("error", this.logError);
 
   this.advice = 'Dont got one yet :(';
   this.adviceTime = utc();
@@ -24,14 +17,18 @@ var Actor = function() {
   this.priceTime = utc();
 
   this.commands = {
-    ';;advice': 'emitAdvice',
-    ';;price': 'emitPrice',
-    ';;donate': 'emitDonation',
-    ';;real advice': 'emitRealAdvice',
-    ';;help': 'emitHelp'
+    'advice': 'emitAdvice',
+    'price': 'emitPrice',
+    'donate': 'emitDonation',
+    'real advice': 'emitRealAdvice',
+    'help': 'emitHelp'
   };
 
   this.rawCommands = _.keys(this.commands);
+
+  this.chatId = null;
+  this.bot = new telegram(telegrambot.token, { polling: true });
+  this.bot.onText(/(.+)/, this.verifyQuestion);
 }
 
 Actor.prototype.processCandle = function(candle, done) {
@@ -42,25 +39,30 @@ Actor.prototype.processCandle = function(candle, done) {
 };
 
 Actor.prototype.processAdvice = function(advice) {
-  if (advice.recommendation == "soft" && ircbot.muteSoft) return;
+  if (telegrambot.muteSoft && advice.recommendation === 'soft') return;
   this.advice = advice.recommendation;
   this.adviceTime = utc();
 
-  if(ircbot.emitUpdates)
+  if (telegrambot.emitUpdates)
     this.newAdvice();
 };
 
-Actor.prototype.verifyQuestion = function(from, to, text, message) {
-  if(text in this.commands)
-    this[this.commands[text]]();
+Actor.prototype.verifyQuestion = function(msg, text) {
+  this.chatId = msg.chat.id;
+  if (text[1] in this.commands)
+    this[this.commands[text[1]]]();
+  else
+    this.bot.sendMessage(this.chatId, "Hello!");
 }
 
 Actor.prototype.newAdvice = function() {
-  this.bot.say(ircbot.channel, 'Guys! Important news!');
-  this.emitAdvice();
+  if (this.chatId) {
+    this.bot.sendMessage(this.chatId, 'Important news!');
+    this.emitAdvice();
+  }
 }
 
-// sent advice over to the IRC channel
+// sent advice to the last chat
 Actor.prototype.emitAdvice = function() {
   var message = [
     'Advice for ',
@@ -82,12 +84,12 @@ Actor.prototype.emitAdvice = function() {
     ')'
   ].join('');
 
-  this.bot.say(ircbot.channel, message);
+  if (this.chatId)
+    this.bot.sendMessage(this.chatId, message);
 };
 
-// sent price over to the IRC channel
+// sent price over to the last chat
 Actor.prototype.emitPrice = function() {
-
   var message = [
     'Current price at ',
     config.watch.exchange,
@@ -104,7 +106,8 @@ Actor.prototype.emitPrice = function() {
     ')'
   ].join('');
 
-  this.bot.say(ircbot.channel, message);
+  if (this.chatId)
+    this.bot.sendMessage(this.chatId, message);
 };
 
 // sent donation info over to the IRC channel
@@ -112,7 +115,8 @@ Actor.prototype.emitDonation = function() {
   var message = 'You want to donate? How nice of you! You can send your coins here:';
   message += '\nBTC:\t13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW';
 
-  this.bot.say(ircbot.channel, message);
+  if (this.chatId)
+    this.bot.sendMessage(this.chatId, message);
 };
 
 Actor.prototype.emitHelp = function() {
@@ -126,8 +130,8 @@ Actor.prototype.emitHelp = function() {
 
   message = message.substr(0, _.size(message) - 1) + '.';
 
-  this.bot.say(ircbot.channel, message);
-
+  if (this.chatId)
+    this.bot.sendMessage(this.chatId, message);
 }
 
 Actor.prototype.emitRealAdvice = function() {
@@ -143,12 +147,12 @@ Actor.prototype.emitRealAdvice = function() {
     'When I get a hold of the son of a bitch who leaked this, I\'m gonna tear his eyeballs out and I\'m gonna suck his fucking skull.'
   ];
 
-  this.bot.say(ircbot.channel, _.first(_.shuffle(realAdvice)));
+  if (this.chatId)
+    this.bot.sendMessage(this.chatId, _.first(_.shuffle(realAdvice)));
 }
 
 Actor.prototype.logError = function(message) {
-  log.error('IRC ERROR:', message);
+  log.error('Telegram ERROR:', message);
 };
-
 
 module.exports = Actor;

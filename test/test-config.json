@@ -56,14 +56,14 @@
   },
   "ircbot": {
     "enabled": false,
-    "emitUpdats": false,
+    "emitUpdates": false,
     "channel": "#your-channel",
     "server": "irc.freenode.net",
     "botName": "gekkobot"
   },
   "xmppbot": {
     "enabled": false,
-    "emitUpdats": false,
+    "emitUpdates": false,
     "client_id": "jabber_id",
     "client_pwd": "jabber_pw",
     "client_host": "jabber_server",
