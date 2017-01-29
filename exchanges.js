@@ -586,9 +586,9 @@ var exchanges = [
     assets: ['XBT'],
     markets: [
       { pair: ['MYR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'KES'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'NGN'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'ZAR'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
+      { pair: ['KES', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['NGN', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['ZAR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
