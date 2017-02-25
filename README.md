@@ -44,6 +44,7 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 | Exchange        | Monitoring | [Trading](https://github.com/askmike/gekko/blob/stable/docs/Plugins.md#trader) | [Importing](https://github.com/askmike/gekko/blob/stable/docs/Importing.md) | Notes |
 | --------------- |:----------:|:-------:|:---------:|-------|
 | [Poloniex](https://poloniex.com/)      | ✓ | ✓ | ✓ | |
+| [GDAX](https://gdax.com/)      | ✓ | ✓ | ✓ | |
 | [BTCC](https://btcc.com/)      | ✓ | ✓ | ✓ | (=BTCChina) |
 | [Bitstamp](https://bitstamp.com/)      | ✓ | ✓ | ✗ | |
 | [Kraken](https://kraken.com/)      | ✓ | ✓ | ✗ | |
@@ -126,7 +127,6 @@ If you installed Gekko via git you can easily fetch the latest updates by runnin
 
 *Better exchange support:*
 
-- add GDAX exchange (supports [importing](https://docs.gdax.com/#get-historic-rates))
 - support importing at bitfinex ([here](http://docs.bitfinex.com/#trades)).
 - add okcoin China
 - add okcoin
