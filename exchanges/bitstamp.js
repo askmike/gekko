@@ -84,6 +84,10 @@ Trader.prototype.buy = function(amount, price, callback) {
 
   // TODO: fees are hardcoded here?
   // prevent: Ensure that there are no more than 8 digits in total.
+
+  //Decrease amount by 1% to avoid trying to buy more than balance allows.
+  amount -= amount / 100;
+
   amount *= 100000000;
   amount = Math.floor(amount);
   amount /= 100000000;
