@@ -103,7 +103,7 @@ Trader.prototype.buy = function(amount, price, callback) {
 
 Trader.prototype.sell = function(amount, price, callback) {
   var set = function(err, result) {
-    if(err || result.error.status === "error")
+    if(err || result.status === "error")
       return log.error('unable to sell:', err, result.reason);
 
     callback(null, result.id);
