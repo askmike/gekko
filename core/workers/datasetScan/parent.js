@@ -3,17 +3,19 @@ var moment = require('moment');
 var async = require('async');
 
 var util = require('../../util');
-var config = util.getConfig();
 var dirs = util.dirs();
-var log = require(dirs.core + 'log');
-
-var adapter = config[config.adapter];
-var scan = require(dirs.gekko + adapter.path + '/scanner');
 
 var dateRangeScan = require('../dateRangeScan/parent');
 
 module.exports = function(config, done) {
+
+  util.setConfig(config);
+
+  var adapter = config.adapters[config.backtest.adapter];
+  var scan = require(dirs.gekko + adapter.path + '/scanner');
+
   scan((err, markets) => {
+
     if(err)
       return done(err);
 
