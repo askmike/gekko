@@ -3,8 +3,6 @@ var util = require(__dirname + '/../../util');
 var dirs = util.dirs();
 var ipc = require('relieve').IPCEE(process);
 
-var config;
-
 ipc.on('start', config => {
 
   // force correct gekko env
