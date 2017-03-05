@@ -5,6 +5,13 @@ module.exports = cb => {
 
   return {
     message: message => {
+      if(message.type === 'trade') {
+        console.log(message)
+      }
+      if(message.type === 'report') {
+        console.log(message)
+      }
+
       if(message.type === 'error') {
         cb(message.error);
         console.error(message.error);
