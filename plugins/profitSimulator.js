@@ -85,6 +85,7 @@ Logger.prototype.updatePosition = function(advice) {
 if(mode === 'realtime') {
   Logger.prototype.report = function(advice) {
     this.verboseReport();
+    this.messageTrade(advice);
   }
 } else if(mode === 'backtest') {
   Logger.prototype.report = function(advice) {
@@ -96,7 +97,7 @@ if(mode === 'realtime') {
     if(ENV === 'standalone')
       this.summarizedReport(advice);
     else if(ENV === 'child-process')
-      this.jsonReport(advice);
+      this.messageTrade(advice);
   }
 }
 
@@ -122,7 +123,7 @@ Logger.prototype.processCandle = function(candle, done) {
   done();
 }
 
-Logger.prototype.jsonReport = function(advice) {
+Logger.prototype.messageTrade = function(advice) {
   var what = advice.recommendation;
   var price = advice.candle.close;
   var at = advice.candle.start;
