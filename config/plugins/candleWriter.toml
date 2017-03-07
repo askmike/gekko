@@ -1,2 +1,2 @@
 enabled = true
-sqlite = "sqlite"
+adapter = "sqlite"
