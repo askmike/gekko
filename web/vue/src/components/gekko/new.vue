@@ -128,14 +128,15 @@ export default {
         if(this.existingMarketWatcher) {
           // the specified market is already being watched,
           // just start a gekko!
-          startGekko(this.routeToGekko);
+          this.startGekko(this.routeToGekko);
           
         } else {
           // the specified market is not yet being watched,
           // we need to create a watcher
           this.startWatcher((err, resp) => {
             this.pendingStratrunner = true;
-            // now we just wait for 
+            // now we just wait for the watcher to be properly initialized
+            // (see the `watch.existingMarketWatcher` method)
           });
         }
       }

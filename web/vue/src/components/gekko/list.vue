@@ -77,9 +77,25 @@ For this you run a live gekko, which consists of two parts:
 `);
 
 export default {
+<<<<<<< HEAD
   data: () => {
     return {
       text
+=======
+  created: function() {
+    this.timer = setInterval(() => {
+      this.now = moment();
+    }, 1000)
+  },
+  destroyed: function() {
+    clearTimeout(this.timer);
+  },
+  data: () => {
+    return {
+      text,
+      timer: false,
+      now: moment()
+>>>>>>> wip
     }
   },
   computed: {

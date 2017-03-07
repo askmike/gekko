@@ -22,7 +22,11 @@ export default new Vuex.Store({
   state: {
     imports: [],
     stratrunners: [],
-    watchers: []
+    watchers: [],
+    connection: {
+      connected: false,
+      dirtyState: false
+    }
   },
   mutations,
   strict: debug
