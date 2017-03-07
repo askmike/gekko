@@ -31,8 +31,6 @@ const _ = require('lodash');
 const promisify = require('tiny-promisify');
 const candleLoader = promisify(require('../../core/workers/loadCandles/parent'));
 
-// starts a backtest
-// requires a post body with a config object
 module.exports = function *() {
 
   this.body = yield candleLoader(this.request.body);
