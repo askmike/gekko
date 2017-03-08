@@ -77,11 +77,11 @@ For this you run a live gekko, which consists of two parts:
 `);
 
 export default {
-<<<<<<< HEAD
   data: () => {
     return {
       text
-=======
+    }
+  },
   created: function() {
     this.timer = setInterval(() => {
       this.now = moment();
@@ -95,7 +95,6 @@ export default {
       text,
       timer: false,
       now: moment()
->>>>>>> wip
     }
   },
   computed: {
