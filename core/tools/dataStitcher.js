@@ -45,7 +45,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
     return done();
 
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
-  var Reader = require(dirs.plugins + config.tradingAdvisor.adapter + '/reader');
+  var Reader = require(dirs.plugins + config.adapter + '/reader');
 
   this.reader = new Reader;
 

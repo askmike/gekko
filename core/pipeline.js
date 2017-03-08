@@ -159,8 +159,14 @@ var pipeline = (settings) => {
       prepareMarket
     ],
     function() {
-      // load a market based on the mode
-      var Market = require(dirs.markets + mode);
+      // load a market based on the config (or fallback to mode)
+      let marketType;
+      if(config.market)
+        marketType = config.market.type;
+      else
+        marketType = mode;
+
+      var Market = require(dirs.markets + marketType);
 
       var market = new Market(config);
       var gekko = new GekkoStream(candleConsumers);

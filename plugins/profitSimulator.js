@@ -1,10 +1,10 @@
-// NOTE: this is old and has been hacky/wacky updated a couple of times too many
-// TODO: rewrite properly
+var _ = require('lodash');
+var moment = require('moment');
 
 var util = require('../core/util.js');
-var _ = require('lodash');
-var log = require('../core/log.js');
-var moment = require('moment');
+var dirs = util.dirs();
+var log = require(dirs.core + 'log');
+var cp = require(dirs.core + 'cp');
 
 var mode = util.gekkoMode();
 
@@ -13,6 +13,7 @@ var calcConfig = config.profitSimulator;
 var watchConfig = config.watch;
 
 var ENV = util.gekkoEnv();
+
 
 var Logger = function() {
   _.bindAll(this);
@@ -127,28 +128,26 @@ Logger.prototype.messageTrade = function(advice) {
   var price = advice.candle.close;
   var at = advice.candle.start;
 
+  if(what !== 'short' && what !== 'long')
+    return;
+
+  var payload;
   if(what === 'short')
-    process.send({
-      type: 'trade',
-      trade: {
-        action: 'sell',
-        price: price,
-        date: at,
-        balance: this.current.currency
-      }
-    });
+    payload = {
+      action: 'sell',
+      price: price,
+      date: at,
+      balance: this.current.currency
+    }
+  else
+    payload = {
+      action: 'buy',
+      price: price,
+      date: at,
+      balance: this.current.asset * price
+    }
 
-  else if(what === 'long')
-    process.send({
-      type: 'trade',
-      trade: {
-        action: 'buy',
-        price: price,
-        date: at,
-        balance: this.current.asset * price
-      }
-    });
-
+  cp.trade(payload);
 }
 
 Logger.prototype.summarizedReport = function(advice) {

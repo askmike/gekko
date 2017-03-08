@@ -5,13 +5,13 @@ var util = require('../../core/util.js');
 var config = util.getConfig();
 var dirs = util.dirs();
 
-var adapter = config.adapters.sqlite;
+var adapter = config.sqlite;
 
 // verify the correct dependencies are installed
 var pluginHelper = require(dirs.core + 'pluginUtil');
 var pluginMock = {
   slug: 'sqlite adapter',
-  dependencies: config.adapters.sqlite.dependencies
+  dependencies: adapter.dependencies
 };
 
 var cannotLoad = pluginHelper.cannotLoad(pluginMock);
@@ -50,8 +50,7 @@ if(mode === 'realtime' || mode === 'importer') {
 }
 
 var db = new sqlite3.Database(fullPath);
-// enable WAL mode to enable concurrent reads and writes
-// http://sqlite.org/wal.html
-db.run("PRAGMA journal_mode = WAL")
+db.run("PRAGMA journal_mode = WAL");
+
 
 module.exports = db;

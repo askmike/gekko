@@ -6,7 +6,7 @@ var log = require(dirs.core + 'log');
 var moment = require('moment');
 var cp = require(dirs.core + 'cp');
 
-var adapter = config.adapters[config.importer.adapter];
+var adapter = config[config.adapter];
 var daterange = config.importer.daterange;
 
 var from = moment.utc(daterange.from);

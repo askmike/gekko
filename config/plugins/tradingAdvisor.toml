@@ -1,0 +1,9 @@
+enabled = true
+
+candleSize = 60
+historySize = 25
+method = "MACD"
+
+[talib]
+enabled = false
+version = "1.0.2"

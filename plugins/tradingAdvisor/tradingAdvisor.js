@@ -9,6 +9,7 @@ var log = require(dirs.core + 'log');
 var CandleBatcher = require(dirs.core + 'candleBatcher');
 
 var moment = require('moment');
+var isLeecher = config.market && config.market.type === 'leech';
 
 var Actor = function(done) {
   _.bindAll(this);
@@ -19,45 +20,23 @@ var Actor = function(done) {
 
   this.methodName = config.tradingAdvisor.method;
 
-  this.generalizeMethodSettings();
-
   this.setupTradingMethod();
 
   var mode = util.gekkoMode();
 
-  if(mode === 'realtime') {
+  // the stitcher will try to pump in historical data
+  // so that the strat can use this data as a "warmup period"
+  //
+  // the realtime "leech" market won't use the stitcher
+  if(mode === 'realtime' && !isLeecher) {
     var Stitcher = require(dirs.tools + 'dataStitcher');
     var stitcher = new Stitcher(this.batcher);
     stitcher.prepareHistoricalData(done);
-  } else if(mode === 'backtest')
+  } else
     done();
 }
 
 util.makeEventEmitter(Actor);
-
-Actor.prototype.generalizeMethodSettings = function() {
-  // method settings can be either part of the main config OR a seperate
-  // toml configuration file. In case of the toml config file we need to
-  // parse and attach to main config object
-
-  // config already part of 
-  if(config[this.methodName]) {
-    log.warn('\t', 'Config already has', this.methodName, 'parameters. Ignoring toml file');
-    return;
-  }
-
-  var tomlFile = dirs.config + 'strategies/' + this.methodName + '.toml';
-
-  if(!fs.existsSync(tomlFile)) {
-    log.warn('\t', 'toml configuration file not found.');
-    return;
-  }
-
-  var rawSettings = fs.readFileSync(tomlFile);
-  config[this.methodName] = toml.parse(rawSettings);
-
-  util.setConfig(config);
-}
 
 Actor.prototype.setupTradingMethod = function() {
 

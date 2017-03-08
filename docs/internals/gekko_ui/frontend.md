@@ -38,17 +38,16 @@ You first need to install all developer dependencies so the frontend app can be 
 
 After this you can launch a hot reload version of the app which will automatically recompile the frontend and reload your browser:
 
-    # path to gekko
-    cd gekko
-    # launch normal gekko UI - we use this API
-    node gekko --ui
-    # now click away the browser tab (`http://localhost:3000`)
+    # path to webserver
+    cd gekko/web
+    # launch the server - we use this API
+    node server
 
     # path to vue app
-    cd gekko/web/vue
+    cd vue
     npm run dev
 
-Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/build.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node gekko --ui` commmand (on default http://localhost:3000/api) 
+Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/build.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node server` commmand (on default http://localhost:3000/api) 
 
 ### Recompiling the Gekko UI frontend
 

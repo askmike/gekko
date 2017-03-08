@@ -1,0 +1,7 @@
+connectionString = "postgres://user:pass@localhost:5432"
+path = "plugins/postgresql"
+version = 0.1
+
+[[dependencies]]
+module = "pg"
+version = "6.1.0"

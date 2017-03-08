@@ -1,13 +1,15 @@
 <script>
 
-import top from './layout/header.vue'
-import bottom from './layout/footer.vue'
+import top from './components/layout/header.vue'
+import bottom from './components/layout/footer.vue'
+import modal from './components/layout/modal.vue'
 
 export default {
   name: 'app',
   components: {
     top,
-    bottom
+    bottom,
+    modal
   }
 }
 </script>
@@ -18,6 +20,7 @@ export default {
     .fill
       router-view.view
     bottom
+    modal
 </template>
 
 <style>

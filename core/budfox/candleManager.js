@@ -10,6 +10,7 @@ var util = require(__dirname + '/../util');
 var dirs = util.dirs();
 var config = util.getConfig();
 var log = require(dirs.core + 'log');
+var cp = require(dirs.core + 'cp');
 
 var CandleCreator = require(dirs.budfox + 'candleCreator');
 
@@ -20,6 +21,10 @@ var Manager = function() {
 
   this.candleCreator
     .on('candles', this.relayCandles);
+
+  this.messageFirstCandle = _.once(candle => {
+    cp.firstCandle(candle);
+  })
 };
 
 util.makeEventEmitter(Manager);
@@ -29,6 +34,12 @@ Manager.prototype.processTrades = function(tradeBatch) {
 
 Manager.prototype.relayCandles = function(candles) {
   this.emit('candles', candles);
+
+  if(!_.size(candles))
+    return;
+
+  this.messageFirstCandle(_.first(candles));
+  cp.lastCandle(_.last(candles));
 }
 
 module.exports = Manager;

@@ -17,8 +17,8 @@ config.debug = true; // for additional logging / debugging
 config.watch = {
 
   // see https://github.com/askmike/gekko#supported-exchanges
-  exchange: 'Bitstamp',
-  currency: 'USD',
+  exchange: 'Poloniex',
+  currency: 'USDT',
   asset: 'BTC'
 }
 
@@ -37,6 +37,22 @@ config.tradingAdvisor = {
     version: '1.0.2'
   }
 }
+
+config.MACD = {
+  // EMA weight (α)
+  // the higher the weight, the more smooth (and delayed) the line
+  short: 10,
+  long: 21,
+  signal: 9,
+  // the difference between the EMAs (to act as triggers)
+  thresholds: {
+    down: -0.025,
+    up: 0.025,
+    // How many candle intervals should a trend persist
+    // before we consider it real?
+    persistence: 1
+  }
+};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING PLUGINS
@@ -70,7 +86,7 @@ config.trader = {
 }
 
 config.adviceLogger = {
-  enabled: true,
+  enabled: false,
   muteSoft: true // disable advice printout if it's soft
 }
 
@@ -186,12 +202,10 @@ config.redisBeacon = {
 }
 
 config.candleWriter = {
-  adapter: 'sqlite',
-  enabled: true
+  enabled: false
 }
 
 config.adviceWriter = {
-  adapter: 'mongodb',
   enabled: false,
   muteSoft: true,
 }
@@ -200,43 +214,40 @@ config.adviceWriter = {
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+config.adapter = 'sqlite';
 
+config.sqlite = {
+  path: 'plugins/sqlite',
 
+  dataDirectory: 'history',
+  version: 0.1,
 
+  dependencies: [{
+    module: 'sqlite3',
+    version: '3.1.4'
+  }]
+}
 
-
-config.adapters = {
-  sqlite: {
-    path: 'plugins/sqlite',
-
-    dataDirectory: 'history',
-    version: 0.1,
-
-    dependencies: [{
-      module: 'sqlite3',
-      version: '3.1.4'
-    }]
-  },
   // Postgres adapter example config (please note: requires postgres >= 9.5):
-  postgresql: {
-    path: 'plugins/postgresql',
-    version: 0.1,
-    connectionString: 'postgres://user:pass@localhost:5432', // if default port
-    dependencies: [{
-      module: 'pg',
-      version: '6.1.0'
-    }]
-  },
-  // Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
-  mongodb: {
-    path: 'plugins/mongodb',
-    version: 0.1,
-    connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
-    dependencies: [{
-      module: 'mongojs',
-      version: '2.4.0'
-    }]
-  }
+config.postgresql = {
+  path: 'plugins/postgresql',
+  version: 0.1,
+  connectionString: 'postgres://user:pass@localhost:5432', // if default port
+  dependencies: [{
+    module: 'pg',
+    version: '6.1.0'
+  }]
+}
+
+// Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
+config.mongodb = {
+  path: 'plugins/mongodb',
+  version: 0.1,
+  connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+  dependencies: [{
+    module: 'mongojs',
+    version: '2.4.0'
+  }]
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -247,7 +258,6 @@ config.adapters = {
 // @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
 
 config.backtest = {
-  adapter: 'sqlite',
   daterange: 'scan',
   batchSize: 50
 }

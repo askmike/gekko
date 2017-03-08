@@ -12,7 +12,7 @@ module.exports = function *() {
     });
 
 
-  // for every strat, check if there is a config file and it
+  // for every strat, check if there is a config file and add it
   const stratConfigPath = gekkoRoot + 'config/strategies';
   const strategyParamsDir = yield fs.readdir(stratConfigPath);
 

@@ -19,12 +19,19 @@ var util = {
     if(_config)
       return _config;
 
-    var configFile = path.resolve(program.config || util.dirs().gekko + 'config.js');
+    if(program.config) {
 
-    if(!fs.existsSync(configFile))
-      util.die('Cannot find a config file.');
+      // we will use one single config file
+      if(!fs.existsSync(util.dirs().gekko + program.config))
+        util.die('Cannot find the specified config file.');
 
-    _config = require(configFile);
+      _config = require(util.dirs().gekko + program.config);
+      return _config;
+    }
+
+    // build the config out of TOML files
+    var buildConfig = require(util.dirs().tools + 'configBuilder');
+    _config = buildConfig();
     return _config;
   },
   // overwrite the whole config
@@ -153,7 +160,7 @@ var util = {
       return true;
     else
       return false;
-  },
+  }
 }
 
 // NOTE: those options are only used

@@ -22,7 +22,7 @@
           td 
             template(v-if='gekko.firstCandle') {{ fmt(gekko.firstCandle.start) }}
           td
-            template(v-if='gekko.lastCandle') {{ moment(gekko.lastCandle.start).from(now) }}
+            template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
           td
             template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
     .hr
@@ -47,7 +47,7 @@
           td
             template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
           td
-            template(v-if='gekko.lastCandle') {{ moment(gekko.lastCandle.start).from(now) }}
+            template(v-if='gekko.lastCandle') {{ timespan(moment(), gekko.lastCandle.start) }}
           td {{ gekko.strat.name }}
           td TODO!
     .hr
@@ -77,6 +77,11 @@ For this you run a live gekko, which consists of two parts:
 `);
 
 export default {
+  data: () => {
+    return {
+      text
+    }
+  },
   created: function() {
     this.timer = setInterval(() => {
       this.now = moment();

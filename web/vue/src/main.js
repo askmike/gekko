@@ -2,23 +2,23 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import VueRouter from 'vue-router'
-
-import { connect } from './tools/ws'
-
-connect();
-
 Vue.use(VueRouter);
 
-import backtester from './backtester/backtester.vue'
-import home from './layout/home.vue'
+import store from './store'
 
-import data from './data/data.vue'
-import importer from './data/import/importer.vue'
-import singleImport from './data/import/single.vue'
+import backtester from './components/backtester/backtester.vue'
+import home from './components/layout/home.vue'
 
-import gekkoList from './gekko/list.vue'
-import newGekko from './gekko/new.vue'
-import singleGekko from './gekko/single.vue'
+import data from './components/data/data.vue'
+import importer from './components/data/import/importer.vue'
+import singleImport from './components/data/import/single.vue'
+
+import gekkoList from './components/gekko/list.vue'
+import newGekko from './components/gekko/new.vue'
+import singleStratrunner from './components/gekko/singleStratrunner.vue'
+import singleWatcher from './components/gekko/singleWatcher.vue'
+import { connect as connectWS } from './components/global/ws'
+import initializeState from './store/init'
 
 const router = new VueRouter({
   mode: 'hash',
@@ -31,12 +31,18 @@ const router = new VueRouter({
     { path: '/data/importer/import/:id', component: singleImport },
     { path: '/live-gekkos', component: gekkoList },
     { path: '/live-gekkos/new', component: newGekko },
-    { path: '/live-gekkos/gekko/:id', component: singleGekko }
+    { path: '/live-gekkos/stratrunner/:id', component: singleStratrunner },
+    { path: '/live-gekkos/watcher/:id', component: singleWatcher }
   ]
 });
 
+// setup some stuff
+connectWS();
+initializeState();
+
 new Vue({
   router,
+  store,
   el: '#app',
   render: h => h(App)
 })
