@@ -9,9 +9,11 @@
       spinner
     .my2(v-if='datasetScanstate === "scanned"')
       .bg--orange.p1.warning.my1(v-if='unscannableMakets.length')
-        p Unable to find datasets in the following markets:
-        .mx2(v-for='market in unscannableMakets')
-          | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
+        p(v-if='!viewUnscannable', v-on:click.prevent='toggleUnscannable') Some markets where unscannable, click here for details.
+        template(v-if='viewUnscannable')
+          p Unable to find datasets in the following markets:
+          .mx2(v-for='market in unscannableMakets')
+            | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
       template(v-if='datasets.length')
         table.full
           thead
@@ -63,12 +65,14 @@ export default {
   },
   data: () => {
     return {
-      intro
+      intro,
+      viewUnscannable: false
     }
   },
   methods: {
+    toggleUnscannable: function() { this.viewUnscannable = true },
     humanizeDuration: (n) => window.humanizeDuration(n),
-    fmt: mom => mom.format('YYYY-MM-DD HH:mm')
+    fmt: mom => mom.format('YYYY-MM-DD HH:mm'),
   }
 }
 </script>
