@@ -5,6 +5,8 @@ var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 
 var ENV = util.gekkoEnv();
+var mode = util.gekkoMode();
+var startTime = util.getStartTime();
 
 if(config.tradingAdvisor.talib.enabled) {
   // verify talib is installed properly
@@ -208,13 +210,25 @@ if(ENV !== 'child-process') {
 
 Base.prototype.propogateTick = function() {
   this.update(this.candle);
-  if(this.requiredHistory <= this.age) {
+
+  var isAllowedToCheck = this.requiredHistory <= this.age;
+
+  // in live mode we might receive more candles
+  // than minimally needed. In that case check
+  // whether candle start time is > startTime
+  var isPremature;
+  if(mode === 'realtime')
+    isPremature = this.candle.start < startTime;
+  else
+    isPremature = false;
+
+  if(isAllowedToCheck && !isPremature) {
     this.log();
     this.check(this.candle);
   }
   this.processedTicks++;
 
-  // are we totally finished
+  // are we totally finished?
   var done = this.age === this.processedTicks;
   if(done && this.finishCb)
     this.finishCb();

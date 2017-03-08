@@ -5,6 +5,8 @@ var fs = require('fs');
 var semver = require('semver');
 var program = require('commander');
 
+var startTime = moment();
+
 var _config = false;
 var _package = false;
 var _nodeVersion = false;
@@ -16,22 +18,17 @@ var _args = false;
 // helper functions
 var util = {
   getConfig: function() {
+    // cache
     if(_config)
       return _config;
 
-    if(program.config) {
+    if(!program.config)
+        util.die('Please specify a config file.', true);
 
-      // we will use one single config file
-      if(!fs.existsSync(util.dirs().gekko + program.config))
-        util.die('Cannot find the specified config file.');
+    if(!fs.existsSync(util.dirs().gekko + program.config))
+      util.die('Cannot find the specified config file.', true);
 
-      _config = require(util.dirs().gekko + program.config);
-      return _config;
-    }
-
-    // build the config out of TOML files
-    var buildConfig = require(util.dirs().tools + 'configBuilder');
-    _config = buildConfig();
+    _config = require(util.dirs().gekko + program.config);
     return _config;
   },
   // overwrite the whole config
@@ -88,7 +85,7 @@ var util = {
 
     if(m) {
       if(soft) {
-        log('\n ' + m + '\n\n');
+        log('\n ERROR: ' + m + '\n\n');
       } else {
         log('\n\nGekko encountered an error and can\'t continue');
         log('\nError:\n');
@@ -160,6 +157,9 @@ var util = {
       return true;
     else
       return false;
+  },
+  getStartTime: function() {
+    return startTime;
   }
 }
 

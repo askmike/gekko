@@ -17,9 +17,9 @@ config.debug = true; // for additional logging / debugging
 config.watch = {
 
   // see https://github.com/askmike/gekko#supported-exchanges
-  exchange: 'Poloniex',
-  currency: 'USDT',
-  asset: 'BTC'
+  exchange: 'kraken',
+  currency: 'EUR',
+  asset: 'XBT'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,8 +29,8 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: 'MACD',
-  candleSize: 60,
-  historySize: 25,
+  candleSize: 1,
+  historySize: 3,
   adapter: 'sqlite',
   talib: {
     enabled: false,
@@ -284,6 +284,6 @@ config.importer = {
 // understand this.
 //
 // Not sure? Read this first: https://github.com/askmike/gekko/issues/201
-config['I understand that Gekko only automates MY OWN trading strategies'] = false;
+config['I understand that Gekko only automates MY OWN trading strategies'] = true;
 
 module.exports = config;

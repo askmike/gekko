@@ -25,7 +25,12 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
     ORDER BY start DESC
   `, function(err, rows) {
     if(err) {
-      log.error(err)
+
+      // bail out if the table does not exist
+      if(err.message.split(':')[1] === ' no such table')
+        return next(false);
+
+      log.error(err);
       return util.die('DB error while reading mostRecentWindow');
     }
 
