@@ -195,7 +195,7 @@ Manager.prototype.buy = function(amount, price) {
     return log.info(
       'Wanted to buy ' + amount + ' but insufficient',
       this.currency,
-      '(' + available.toFixed(12) + ')',
+      '(' + parseFloat(available).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -207,7 +207,7 @@ Manager.prototype.buy = function(amount, price) {
       'Wanted to buy',
       this.asset,
       'but the amount is too small',
-      '(' + amount.toFixed(12) + ')',
+      '(' + parseFloat(amount).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -240,7 +240,7 @@ Manager.prototype.sell = function(amount, price) {
     return log.info(
       'Wanted to sell ' + amount + ' but insufficient',
       this.asset,
-      '(' + availabe.toFixed(12) + ')',
+      '(' + parseFloat(availabe).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -252,7 +252,7 @@ Manager.prototype.sell = function(amount, price) {
       'Wanted to buy',
       this.currency,
       'but the amount is to small',
-      '(' + amount.toFixed(12) + ')',
+      '(' + parseFloat(amount).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -300,8 +300,7 @@ Manager.prototype.checkOrder = function() {
 Manager.prototype.logPortfolio = function() {
   log.info(this.exchange.name, 'portfolio:');
   _.each(this.portfolio, function(fund) {
-    let fundAmount = parseFloat(fund.amount);
-    log.info('\t', fund.name + ':', fundAmount.toFixed(12));
+    log.info('\t', fund.name + ':', parseFloat(fund.amount).toFixed(12));
   });
 };
 
