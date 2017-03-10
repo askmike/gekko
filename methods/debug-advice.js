@@ -1,20 +1,27 @@
 var settings = {
-  wait: 1,
-  advice: 'long'
+  wait: 0,
+  advice: 'short'
 };
 
 // -------
 
 var _ = require('lodash');
+var log = require('../core/log.js');
+
+var i = 0;
 
 var method = {
   init: _.noop,
   update: _.noop,
   log: _.noop,
   check: function() {
-    console.log('age:', this.age);
-    if(this.age === settings.wait)
-      this.advice(settings.advice);  
+
+    log.info('iteration:', i);
+    if(settings.wait === i)
+      this.advice(settings.advice);
+
+    i++
+
   }
 };
 
