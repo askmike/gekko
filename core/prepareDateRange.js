@@ -23,6 +23,9 @@ var setDateRange = function(from, to) {
 module.exports = function(done) {
   scan((err, ranges) => {
 
+    if(_.size(ranges) === 0)
+      util.die('No history found for this market', true);
+
     if(_.size(ranges) === 1) {
       var r = _.first(ranges);
       log.info('Gekko was able to find a single daterange in the locally stored history:');
