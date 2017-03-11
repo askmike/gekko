@@ -152,7 +152,8 @@ export default {
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
-        if(!res || res.error)
+        // if(!res || res.error)
+        // todo..
 
         this.candles = res.map(c => {
           c.start = moment.unix(c.start).utc().format();
