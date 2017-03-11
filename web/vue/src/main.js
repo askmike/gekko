@@ -24,7 +24,8 @@ const router = new VueRouter({
   mode: 'hash',
   base: __dirname,
   routes: [
-    { path: '/', component: home },
+    { path: '/', redirect: '/home' },
+    { path: '/home', component: home },
     { path: '/backtest', component: backtester },
     { path: '/data', component: data },
     { path: '/data/importer', component: importer },

@@ -13,7 +13,7 @@ config.debug = false;
 
 config.tradingAdvisor = {
   talib: {
-    enabled: false, // todo!
+    enabled: true, // todo!
     version: '1.0.2'
   }
 }
