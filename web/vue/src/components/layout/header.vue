@@ -7,10 +7,10 @@
     nav.bg--light-gray
       .menu.contain
         router-link(to='/home').py1 Home
-        router-link(to='/data').py1 Local data
-        router-link(to='/backtest').py1 Backtest
         router-link(to='/live-gekkos').py1 Live Gekkos
-        a(href='https://gekko.wizb.it/docs', target='_blank').py1 Documentation
+        router-link(to='/backtest').py1 Backtest
+        router-link(to='/data').py1 Local data
+        a(href='https://github.com/askmike/gekko/tree/stable/docs', target='_blank').py1 Documentation
         a(href='https://github.com/askmike/gekko', target='_blank').py1 Code
 
 </template>
@@ -36,7 +36,12 @@ export default {}
   color: inherit;
 }
 
-.menu a:hover {
+.menu .router-link-active {
   background-color: rgba(250,250,250,.99);
 }
+
+.menu a:hover {
+  text-decoration: underline;
+}
+
 </style>

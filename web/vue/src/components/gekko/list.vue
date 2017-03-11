@@ -25,7 +25,6 @@
             template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
           td
             template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
-    .hr
     h3 Strat runners
     .text(v-if='!stratrunners.length')
       p You are currently not running any strategies.
@@ -65,14 +64,7 @@ const text = marked(`
 
 ## Live Gekko
 
-You can use Gekko to run your strategy against the live market!
-
-For this you run a live gekko, which consists of two parts:
-
-- A market watcher: this will in realtime gather data from a market (like "Bitstamp:USD/BTC").
-- A strategy: this will use the realtime data from the marketwatcher and run a strategy over it.
-
-*Right now the strategy will be evalutated using a paper trader. If you want to automatically trade using your strat, you have to use the command line for now.*
+Run your strategy against the live market!
 
 `);
 

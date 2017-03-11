@@ -25,11 +25,6 @@ export default {
 
 <style>
 
-
-nav .menu .router-link-active {
-  text-decoration: underline;
-}
-
 #app {
   display: flex;
   min-height: 100vh;
