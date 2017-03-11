@@ -25,8 +25,8 @@ your network connection.
 
 ## Reconnected
 
-The connection between Gekko and your browser was temporarly lost,
-**please refresh your browser.**
+The connection between Gekko and your browser was
+temporarily lost, **please refresh your browser.**
 
 
   `)
@@ -34,9 +34,6 @@ The connection between Gekko and your browser was temporarly lost,
 }
 
 export default {
-  created: function() {
-    console.log()
-  },
   computed: {
     active: function() {
       if(!this.$store.state.warnings.connected)
@@ -53,14 +50,6 @@ export default {
 
       if(this.$store.state.warnings.reconnected)
         return messages.reconnected;
-    }
-  },
-  methods: {
-    disable: function() {
-      // this.active = false;
-    },
-    enable: function() {
-      this.active = true;
     }
   }
 }
