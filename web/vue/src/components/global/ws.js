@@ -21,14 +21,21 @@ const info = {
   connected: false
 }
 
+
 export const connect = () => {
-  console.log('a');
   socket = new ReconnectingWebSocket(wsPath);
+
+  setTimeout(() => {
+
+    // in case we cannot connect
+    if(!info.connected)
+      bus.$emit('WS_STATUS_CHANGE', info);
+  }, 500);
+
   socket.onopen = () => {
     if(info.connected)
       return;
 
-    console.log('1a');
     info.connected = true;
     bus.$emit('WS_STATUS_CHANGE', info);
   }
@@ -36,7 +43,6 @@ export const connect = () => {
     if(!info.connected)
       return;
 
-    console.log('2a');
     info.connected = false;
     bus.$emit('WS_STATUS_CHANGE', info);
   }
@@ -44,7 +50,6 @@ export const connect = () => {
     if(!info.connected)
       return;
 
-    console.log('3a');
     info.connected = false;
     bus.$emit('WS_STATUS_CHANGE', info);
   }

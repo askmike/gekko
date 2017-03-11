@@ -2,38 +2,65 @@
   div(v-if='active')
     #modal-background(v-on:click='disable')
     #modal.modal
-      .modal-guts
-        p this is a modal!
+      .modal-guts(v-html='content')
 </template>
 
 <script>
 
-import marked from '../../tools/marked'
+import marked from '../../tools/marked';
+
+
+const messages = {
+  disconnected: marked(`
+
+## Disconnected
+
+Something happened to either Gekko or the connection.
+Please check the terminal where Gekko is running or
+your network connection.
+
+  `),
+
+  reconnected: marked(`
+
+## Reconnected
+
+The connection between Gekko and your browser was temporarly lost,
+**please refresh your browser.**
+
+
+  `)
+
+}
 
 export default {
-  data: () => {
-    return {
-      active: false
+  created: function() {
+    console.log()
+  },
+  computed: {
+    active: function() {
+      if(!this.$store.state.warnings.connected)
+        return true;
+
+      if(this.$store.state.warnings.reconnected)
+        return true;
+
+      return false;
+    },
+    content: function() {
+      if(!this.$store.state.warnings.connected)
+        return messages.disconnected;
+
+      if(this.$store.state.warnings.reconnected)
+        return messages.reconnected;
     }
   },
   methods: {
-    clearMessages: function() {
-
-    },
     disable: function() {
-      this.active = false;
+      // this.active = false;
     },
     enable: function() {
       this.active = true;
-    },
-    gekkoCrashed: gekko => {
-      // only 2 types supported
-      let type = gekko.type === 'watcher' ? 'Market watcher' : 'Strat runner';
-      return marked(`
-        The ${type} ${gekko.id} crashed because:
-
-        ${gekko.error}
-      `)
     }
   }
 }
