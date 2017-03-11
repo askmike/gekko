@@ -85,6 +85,9 @@ const handleCandles = (err, data) => {
 
   if(DONE) {
     reader.close();
+
+    setTimeout(doneFn, 100);
+
   } else {
     shiftIterator();
     getBatch();
@@ -93,6 +96,4 @@ const handleCandles = (err, data) => {
 
 const handleBatchedCandles = candle => {
   result.push(candle);
-  if(DONE)
-    doneFn();
 }
