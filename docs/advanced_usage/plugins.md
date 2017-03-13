@@ -1,3 +1,5 @@
+*Note: this documentation was written for runnin Gekko via the command line. If you are using the UI you do not have to manually select plugins.*
+
 ## Enabling plugins
 
 Gekko currently has a couple plugins:

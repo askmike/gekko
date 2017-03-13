@@ -4,39 +4,9 @@ Gekko implements [technical analysis strategies](http://www.investopedia.com/art
 
 This investment advice is going to be either **long** or **short**.
 
-Below you can find simple and limited trading methods that come with Gekko, if you are feeling adventurous you can [write your own](trading_bot/creating_a_trading_method.md).
+Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko, for any serious usage we recommend you [write your own](trading_bot/creating_a_trading_method.md).
 
-## NOTE
-
-On default Gekko does nothing with this advice, Gekko uses [plugins](./Plugins.md) that can do something with this advice:
-
- - trader: trade live on the markets (Gekko becomes a trading bot)
- - profit simulator: simulate trading on advice (Gekko becomes a paper trader)
- - mailer: automatically email advice (Gekko helps in systematic trading)
- - etc..
-
-## Enabling a trading method in Gekko
-
-Open up the config.js file again and configure at this part:
-
-    config.tradingAdvisor = {
-      enabled: true,
-      method: 'DEMA',
-      candleSize: 5,
-      historySize: 20,
-      talib: {
-        enabled: false,
-        version: '1.0.2'
-      }
-    }
-
-- `enabled` tells gekko it should calculate advice.
-- `method` tells gekko what indicator it should calculate (see below for supported methods).
-- `candleSize` tells Gekko the size of the candles (in minutes) you want to calculate the trading method over. If you want MACD advice over hourly candles set this to 60.
-- `historySize` tells gekko how much historical candles Gekko needs before it can calculate the initial advice.
-- `talib` tells gekko whether [talib](https://www.npmjs.com/package/talib) indicators are needed for your method (`false` unless you know what are doing).
-
-Gekko currently supports:
+Gekko currently comes with:
 
  - [DEMA](#DEMA)
  - [MACD](#MACD)

@@ -1,6 +1,6 @@
 <template lang='jade'>
   div(v-if='active')
-    #modal-background(v-on:click='disable')
+    #modal-background
     #modal.modal
       .modal-guts(v-html='content')
 </template>
