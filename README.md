@@ -22,7 +22,7 @@ Gekko is a Bitcoin TA trading and backtesting platform that connects to popular 
  * Broadcast market data over pubsub messaging systems
 * Web interface as well as a commandline interface
 
-![screenshot of gekko ui](https://cloud.githubusercontent.com/assets/969743/23836880/220e3e84-0777-11e7-8e3d-da336e74b40c.png)
+![screenshot of gekko ui](https://cloud.githubusercontent.com/assets/969743/23837675/a95da120-0783-11e7-9cab-6a209d4c928e.png)
 
 ## TA strategies
 
