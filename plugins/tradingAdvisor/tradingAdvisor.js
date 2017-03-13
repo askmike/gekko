@@ -41,9 +41,9 @@ util.makeEventEmitter(Actor);
 Actor.prototype.setupTradingMethod = function() {
 
   if(!fs.existsSync(dirs.methods + this.methodName + '.js'))
-    util.die('Gekko doesn\'t know the method ' + this.methodName);
+    util.die('Gekko can\'t find the strategy "' + this.methodName '"');
 
-  log.info('\t', 'Using the trading method: ' + this.methodName);
+  log.info('\t', 'Using the strategy: ' + this.methodName);
 
   var method = require(dirs.methods + this.methodName);
 
