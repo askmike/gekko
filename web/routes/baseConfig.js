@@ -13,38 +13,16 @@ config.debug = false;
 
 config.tradingAdvisor = {
   talib: {
-    enabled: true, // todo!
+    enabled: require('../supportsTalib'),
     version: '1.0.2'
   }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                       CONFIGURING PLUGINS
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// do you want Gekko to calculate the profit of its own advice?
-config.profitSimulator = {
-  enabled: true,
-  // start balance, on what the current balance is compared with
-  simulationBalance: {
-    // these are in the unit types configured in the watcher.
-    asset: 0,
-    currency: 100,
-  },
-  // how much fee in % does each trade cost?
-  fee: 0.25,
-  // how much slippage/spread should Gekko assume per trade?
-  slippage: 0.05
-}
-
-config.candleWriter = {
-  enabled: true
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// forced for now, other adapters are outdated since 0.4
 config.adapter = 'sqlite';
 
 config.sqlite = {
