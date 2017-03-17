@@ -1,5 +1,5 @@
 // Everything is explained here:
-// @link https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md
+// @link https://github.com/askmike/gekko/blob/stable/docs/advanced_usage/plugins.md
 
 var config = {};
 
@@ -17,9 +17,9 @@ config.debug = true; // for additional logging / debugging
 config.watch = {
 
   // see https://github.com/askmike/gekko#supported-exchanges
-  exchange: 'kraken',
-  currency: 'EUR',
-  asset: 'XBT'
+  exchange: 'poloniex',
+  currency: 'USDT',
+  asset: 'BTC'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,7 +269,7 @@ config.backtest = {
 config.importer = {
   daterange: {
     // NOTE: these dates are in UTC
-    from: "2015-09-09 12:00:00"
+    from: "2016-01-01 00:00:00"
   }
 }
 
