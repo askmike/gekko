@@ -94,6 +94,7 @@ export default {
     },
     updatePaperTrader: function(pt) {
       this.paperTrader = pt;
+      this.paperTrader.enabled = true;
       this.emitConfig();
     },
 

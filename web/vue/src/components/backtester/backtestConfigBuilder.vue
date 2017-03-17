@@ -3,12 +3,16 @@
   dataset-picker.contain.my2(v-on:dataset='updateDataset')
   .hr
   strat-picker.contain.my2(v-on:stratConfig='updateStrat')
+  .hr
+  paper-trader(v-on:settings='updatePaperTrader')
+  .hr
 </template>
 
 <script>
 
 import datasetPicker from '../global/configbuilder/datasetpicker.vue'
 import stratPicker from '../global/configbuilder/stratpicker.vue'
+import paperTrader from '../global/configbuilder/papertrader.vue'
 import _ from 'lodash'
 
 export default {
@@ -16,11 +20,13 @@ export default {
     return {
       dataset: {},
       strat: {},
+      paperTrader: {}
     }
   },
   components: {
     stratPicker,
-    datasetPicker
+    datasetPicker,
+    paperTrader
   },
   computed: {
     market: function() {
@@ -46,9 +52,8 @@ export default {
       let config = {};
       Object.assign(
         config,
-        {
-          watch: this.market
-        },
+        { watch: this.market },
+        { profitSimulator: this.paperTrader },
         this.strat,
         {
           backtest: {
@@ -100,7 +105,12 @@ export default {
     updateStrat: function(sc) {
       this.strat = sc;
       this.$emit('config', this.config);
-    }
+    },
+    updatePaperTrader: function(pt) {
+      this.paperTrader = pt;
+      this.paperTrader.enabled = true;
+      this.$emit('config', this.config);
+    },
   }
 }
 </script>

@@ -4,7 +4,6 @@
     .hr.contain
     config-builder(v-on:config='check')
     div(v-if='backtestable')
-      .hr.contain
       .txt--center
         a.w100--s.my1.btn--blue(href='#', v-if='backtestState !== "fetching"', v-on:click.prevent='run') Backtest
         div(v-if='backtestState === "fetching"').scan-btn

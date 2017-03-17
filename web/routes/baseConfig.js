@@ -18,23 +18,6 @@ config.tradingAdvisor = {
   }
 }
 
-// do you want Gekko to calculate the profit of its own advice?
-config.profitSimulator = {
-  enabled: true,
-  // report the profit in the currency or the asset?
-  reportInCurrency: true,
-  // start balance, on what the current balance is compared with
-  simulationBalance: {
-    // these are in the unit types configured in the watcher.
-    asset: 1,
-    currency: 100,
-  },
-  // how much fee in % does each trade cost?
-  fee: 0.25,
-  // how much slippage/spread should Gekko assume per trade?
-  slippage: 0.05
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
