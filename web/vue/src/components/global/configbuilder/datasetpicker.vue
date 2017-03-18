@@ -64,15 +64,14 @@ export default {
     humanizeDuration: (n) => {
       return window.humanizeDuration(n, {largest: 4});
     },
-    fmt: mom => mom.format('DD-MM-YYYY HH:mm'),
+    fmt: mom => mom.utc().format('DD-MM-YYYY HH:mm'),
     openRange: function() {
       if(this.setIndex === -1)
         return alert('select a range first');
 
-      this.rangeVisible = true;
+      this.updateCustomRange();
 
-      if(!this.customTo)
-        this.updateCustomRange();
+      this.rangeVisible = true;
     },
     updateCustomRange: function() {
       this.customTo = this.fmt(this.set.to);
@@ -88,8 +87,8 @@ export default {
         set = val;
       else {
         set = Vue.util.extend({}, val);
-        set.to = moment(this.customTo);
-        set.from = moment(this.customFrom);
+        set.to = moment.utc(this.customTo, 'DD-MM-YYYY HH:mm').format();
+        set.from = moment.utc(this.customFrom, 'DD-MM-YYYY HH:mm').format();
       }
 
       console.log(set.to, set.from);
