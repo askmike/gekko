@@ -43,7 +43,7 @@ var cp = {
   //   date: '2016-12-03T22:23:00.000Z',
   //   balance: 4242
   // }
-  trade: trade => message('trade', { trade }),
+  trade: trade => message('trade', { trade })
 }
 
 if(ENV !== 'child-process') {

@@ -45,7 +45,6 @@ module.exports = function *() {
         // it was already deleted
         return;
 
-
       errored = true;
       console.error('RECEIVED ERROR IN GEKKO', id);
       console.error(err);
