@@ -8,13 +8,13 @@ var dirs = util.dirs();
 
 var log = require(util.dirs().core + 'log');
 
-var adapter = config.adapters.postgresql;
+var adapter = config.postgresql;
 
 // verify the correct dependencies are installed
 var pluginHelper = require(dirs.core + 'pluginUtil');
 var pluginMock = {
   slug: 'postgresql adapter',
-  dependencies: config.adapters.postgresql.dependencies
+  dependencies: config.postgresql.dependencies
 };
 
 var cannotLoad = pluginHelper.cannotLoad(pluginMock);
@@ -30,10 +30,10 @@ var dbName = config.watch.exchange.toLowerCase();
 
 var mode = util.gekkoMode();
 
-var connectionString = config.adapters.postgresql.connectionString+"/postgres";
+var connectionString = config.postgresql.connectionString+"/postgres";
 
 var checkClient = new pg.Client(connectionString);
-var client = new pg.Client(config.adapters.postgresql.connectionString+"/"+dbName);
+var client = new pg.Client(config.postgresql.connectionString+"/"+dbName);
 
 /* Postgres does not have 'create database if not exists' so we need to check if the db exists first.
 This requires connecting to the default postgres database first. Your postgres user will need appropriate rights. */
