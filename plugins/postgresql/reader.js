@@ -22,7 +22,16 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   SELECT start from ${postgresUtil.table('candles')}
   WHERE start <= ${to} AND start >= ${from}
   ORDER BY start DESC
-  `);
+  `, function (err, result) {
+    if (err) {
+      // bail out if the table does not exist
+      if (err.message.indexOf(' does not exist') !== -1)
+        return next(false);
+
+      log.error(err);
+      return util.die('DB error while reading mostRecentWindow');
+    }
+  });
 
   var rows = [];
   query.on('row', function(row) {
