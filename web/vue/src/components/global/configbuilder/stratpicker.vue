@@ -49,13 +49,21 @@ export default {
 
       rawStratParams: '',
       rawStratParamsError: false,
+
+      emptyStrat: false,
       stratParams: {}
     };
   },
   created: function () {
     get('strategies', (err, data) => {
         this.strategies = data;
+
+        _.each(this.strategies, function(s) {
+          s.empty = s.params === '';
+        });
+
         this.rawStratParams = _.find(this.strategies, { name: this.strategy }).params;
+        this.emptyStrat = _.find(this.strategies, { name: this.strategy }).empty;
         this.emitConfig();
     });
   },
@@ -63,6 +71,7 @@ export default {
     strategy: function(strat) {
       strat = _.find(this.strategies, { name: strat });
       this.rawStratParams = strat.params;
+      this.emptyStrat = strat.empty;
 
       this.emitConfig();
     },
@@ -93,7 +102,10 @@ export default {
         }
       }
 
-      config[this.strategy] = this.stratParams;
+      if(this.emptyStrat)
+        config[this.strategy] = {empty: true}
+      else
+        config[this.strategy] = this.stratParams;
 
       return config;
     }
