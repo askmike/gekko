@@ -37,7 +37,7 @@
       template(v-if='!isLoading')
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
-        template(v-if='candles.length')
+        template(v-if='candles')
           chart(:data='chartData')
 </template>
 
@@ -65,7 +65,7 @@ export default {
   data: () => {
     return {
       candleFetch: 'idle',
-      candles: []
+      candles: false
     }
   },
   computed: {
@@ -152,8 +152,9 @@ export default {
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
-        // if(!res || res.error)
-        // todo..
+        // todo
+        if(!res || res.error)
+          console.log(res);
 
         this.candles = res.map(c => {
           c.start = moment.unix(c.start).utc().format();

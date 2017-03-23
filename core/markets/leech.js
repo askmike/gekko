@@ -90,8 +90,6 @@ Market.prototype.processCandles = function(err, candles) {
     this.push(c);
   }, this);
 
-  console.log('processCandles', amount);
-
   this.sendStartAt(_.first(candles));
   cp.lastCandle(_.last(candles));
 
