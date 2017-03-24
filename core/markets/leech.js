@@ -97,7 +97,6 @@ Market.prototype.processCandles = function(err, candles) {
 }
 
 Market.prototype.sendStartAt = _.once(function(candle) {
-  console.log('sendStartAt');
   cp.firstCandle(candle);
 });
 

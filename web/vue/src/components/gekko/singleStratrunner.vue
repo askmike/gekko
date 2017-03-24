@@ -6,39 +6,69 @@
     div(v-if='data')
       h2.contain Strat runner
       .grd.contain
-        h3 Market
         .grd-row
-          .grd-row-col-2-6 Exchange
-          .grd-row-col-4-6 {{ data.watch.exchange }}
+          .grd-row-col-3-6
+            h3 Market
+            .grd-row
+              .grd-row-col-3-6 Exchange
+              .grd-row-col-3-6 {{ data.watch.exchange }}
+            .grd-row
+              .grd-row-col-3-6 Currency
+              .grd-row-col-3-6 {{ data.watch.currency }}
+            .grd-row
+              .grd-row-col-3-6 Asset
+              .grd-row-col-3-6 {{ data.watch.asset }}
+          .grd-row-col-3-6
+            h3 Runtime
+            spinner(v-if='isLoading')
+            template(v-if='!isLoading')
+              .grd-row(v-if='data.firstCandle')
+                .grd-row-col-2-6 Watching since
+                .grd-row-col-4-6 {{ fmt(data.firstCandle.start) }}
+              .grd-row(v-if='data.lastCandle')
+                .grd-row-col-2-6 Received data until
+                .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
+              .grd-row(v-if='data.lastCandle && data.firstCandle')
+                .grd-row-col-2-6 Data spanning
+                .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
+              .grd-row(v-if='data.lastCandle && data.firstCandle')
+                .grd-row-col-2-6 Amount of trades
+                .grd-row-col-4-6 TODO
         .grd-row
-          .grd-row-col-2-6 Currency
-          .grd-row-col-4-6 {{ data.watch.currency }}
-        .grd-row
-          .grd-row-col-2-6 Asset
-          .grd-row-col-4-6 {{ data.watch.asset }}
+          .grd-row-col-3-6
+            h3 Strategy
+            .grd-row
+              .grd-row-col-3-6 Name
+              .grd-row-col-3-6
+                strong {{ stratName }}
+            | Parameters
+            pre {{ stratParams }}
+          .grd-row-col-3-6
+            h3 Profit report
+            .grd-row
+              .grd-row-col-3-6 Start balance
+              .grd-row-col-3-6 x
+            .grd-row
+              .grd-row-col-3-6 Final balance
+              .grd-row-col-3-6 y
+            .grd-row
+              .grd-row-col-3-6 Profit
+              .grd-row-col-3-6 z
+            .grd-row
+              .grd-row-col-3-6 Market
+              .grd-row-col-3-6 z
+            .grd-row
+              .grd-row-col-3-6 Alpha
+              .grd-row-col-3-6 z
         p(v-if='watcher')
           em This strat runner gets data from 
             router-link(:to='"/live-gekkos/watcher/" + watcher.id') this market watcher
           | .
-        h3 Statistics
-        spinner(v-if='isLoading')
-        template(v-if='!isLoading')
-          .grd-row(v-if='data.firstCandle')
-            .grd-row-col-2-6 Watching since
-            .grd-row-col-4-6 {{ fmt(data.firstCandle.start) }}
-          .grd-row(v-if='data.lastCandle')
-            .grd-row-col-2-6 Received data until
-            .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
-          .grd-row(v-if='data.lastCandle && data.firstCandle')
-            .grd-row-col-2-6 Data spanning
-            .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
-          .grd-row.summary
-            // paperTradeSummary(:report='report')
       template(v-if='!isLoading')
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
         template(v-if='candles')
-          chart(:data='chartData')
+          chart(:data='chartData', :height='300')
 </template>
 
 <script>
@@ -96,6 +126,22 @@ export default {
         candles: this.candles,
         trades: []
       }
+    },
+    stratName: function() {
+      if(this.data)
+        return this.data.strat.tradingAdvisor.method;
+    },
+    stratParams: function() {
+      if(!this.data)
+        return '';
+
+      let stratParams = Vue.util.extend({}, this.data.strat.params);
+      delete stratParams.__empty;
+
+      if(_.isEmpty(stratParams))
+        return 'No paramaters'
+
+      return JSON.stringify(stratParams, null, 4);
     },
     isLoading: function() {
       if(!this.data)

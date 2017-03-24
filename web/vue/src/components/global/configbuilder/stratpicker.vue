@@ -103,7 +103,7 @@ export default {
       }
 
       if(this.emptyStrat)
-        config[this.strategy] = {empty: true}
+        config[this.strategy] = {__empty: true}
       else
         config[this.strategy] = this.stratParams;
 

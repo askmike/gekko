@@ -91,8 +91,6 @@ export default {
         set.from = moment.utc(this.customFrom, 'DD-MM-YYYY HH:mm').format();
       }
 
-      console.log(set.to, set.from);
-
       this.$emit('dataset', set);
     }
   },
