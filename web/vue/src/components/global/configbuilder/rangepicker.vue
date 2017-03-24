@@ -66,7 +66,7 @@ export default {
       });
     },
     printRange: function(range) {
-      let fmt = mom => mom.format('MMM Do YY, HH:mm')
+      let fmt = mom => mom.format('YYYY-MM-DD HH:mm')
       let from = moment.unix(range.from);
       let to = moment.unix(range.to);
       let diff = moment.duration(to.diff(from)).humanize();
