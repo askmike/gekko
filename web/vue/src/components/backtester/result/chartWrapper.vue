@@ -39,7 +39,7 @@ export default {
       if(_.size(this.data.candles) < MIN_CANDLES) {
         drawMessage('Not enough data to spawn chart');
       } else {
-        chart(this.data.candles, this.data.trades);
+        chart(this.data.candles, this.data.trades, this.height);
       }
     },
     remove: function() {
@@ -56,8 +56,8 @@ export default {
 }
 
 #chartWrapper.clickable .shield {
-  cursor: pointer;
-  position:absolute;
+  cursor: zoom-in;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
