@@ -21,6 +21,11 @@ const sync = () => {
     store.commit('updateStratrunner', data);
   }
 
+  const trade = (data) => {
+    store.commit('addTradeToStratrunner', data);
+  }
+
+  bus.$on('trade', trade);
   bus.$on('update', update);
   bus.$on('startAt', update);
   bus.$on('lastCandle', update);

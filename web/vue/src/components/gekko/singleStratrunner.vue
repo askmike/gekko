@@ -33,7 +33,7 @@
                 .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
               .grd-row(v-if='data.lastCandle && data.firstCandle')
                 .grd-row-col-2-6 Amount of trades
-                .grd-row-col-4-6 TODO
+                .grd-row-col-4-6 {{ data.trades.length }}
         .grd-row
           .grd-row-col-3-6
             h3 Strategy
@@ -124,8 +124,14 @@ export default {
     chartData: function() {
       return {
         candles: this.candles,
-        trades: []
+        trades: this.trades
       }
+    },
+    trades: function() {
+      if(!this.data)
+        return [];
+
+      return this.data.trades;
     },
     stratName: function() {
       if(this.data)

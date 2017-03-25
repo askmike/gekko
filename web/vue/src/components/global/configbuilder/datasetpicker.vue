@@ -26,7 +26,8 @@ div
           td {{ fmt(set.from) }}
           td {{ fmt(set.to) }}
           td {{ humanizeDuration(set.to.diff(set.from)) }}
-    a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
+    em
+      a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
     template(v-if='rangeVisible')
       div
         label(for='customFrom') From:

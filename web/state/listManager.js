@@ -27,6 +27,16 @@ ListManager.prototype.update = function(id, updates) {
   return true;
 }
 
+// push a value to a array proprty of an item
+ListManager.prototype.push = function(id, prop, value) {
+  let item = this._list.find(i => i.id === id);
+  if(!item)
+    return false;
+
+  item[prop].push(value);
+  return true;
+}
+
 // delete an item from the list
 ListManager.prototype.delete = function(id) {
   let wasThere = this._list.find(i => i.id === id);

@@ -58,14 +58,32 @@ module.exports = function *() {
     if(!event)
       return;
 
+    if(event.type === 'trade') {
+      let trade = event.trade;
+      gekkoManager.push(id, 'trades', trade);
+      let wsEvent = {
+        type: 'trade',
+        gekko_id: id,
+        gekko_mode: mode,
+        gekko_type: type,
+        emitter: 'gekko',
+        trade
+      }
+      broadcast(wsEvent);
+      return;
+    }
+
     let updates = {};
+
 
     if(event.type === 'update') {
       updates.latest = event.latest;
-    } else
+    }  else {
       // all possible events can be found in
       // @file gekko/core/cp.js
       updates[event.type] = event[event.type];
+    }
+
 
     gekkoManager.update(id, updates);
     // emit update over ws
@@ -96,7 +114,9 @@ module.exports = function *() {
       name: config.tradingAdvisor.method,
       tradingAdvisor: config.tradingAdvisor,
       params: config[ config.tradingAdvisor.method ]
-    }
+    };
+
+    gekko.trades = [];
   }
 
   gekkoManager.add(gekko);
