@@ -45,21 +45,25 @@
             pre {{ stratParams }}
           .grd-row-col-3-6
             h3 Profit report
-            .grd-row
-              .grd-row-col-3-6 Start balance
-              .grd-row-col-3-6 x
-            .grd-row
-              .grd-row-col-3-6 Final balance
-              .grd-row-col-3-6 y
-            .grd-row
-              .grd-row-col-3-6 Profit
-              .grd-row-col-3-6 z
-            .grd-row
-              .grd-row-col-3-6 Market
-              .grd-row-col-3-6 z
-            .grd-row
-              .grd-row-col-3-6 Alpha
-              .grd-row-col-3-6 z
+            template(v-if='!report')
+              p
+                em Waiting for at least one trade..
+            template(v-if='report') 
+              .grd-row
+                .grd-row-col-3-6 Start balance
+                .grd-row-col-3-6 {{ round(report.startBalance) }}
+              .grd-row
+                .grd-row-col-3-6 Current balance
+                .grd-row-col-3-6 {{ round(report.balance) }}
+              .grd-row
+                .grd-row-col-3-6 Market
+                .grd-row-col-3-6 {{ round(report.market) }} {{ data.watch.currency }}
+              .grd-row
+                .grd-row-col-3-6 Profit
+                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }}
+              .grd-row
+                .grd-row-col-3-6 Alpha
+                .grd-row-col-3-6 {{ round(report.alpha) }} {{ data.watch.currency }}
         p(v-if='watcher')
           em This strat runner gets data from 
             router-link(:to='"/live-gekkos/watcher/" + watcher.id') this market watcher
@@ -133,6 +137,12 @@ export default {
 
       return this.data.trades;
     },
+    report: function() {
+      if(!this.data)
+        return;
+
+      return this.data.report;
+    },
     stratName: function() {
       if(this.data)
         return this.data.strat.tradingAdvisor.method;
@@ -180,6 +190,7 @@ export default {
     }
   },
   methods: {
+    round: n => (+n).toFixed(5),
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
