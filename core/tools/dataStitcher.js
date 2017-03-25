@@ -161,7 +161,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
         if(exchangeData.from < idealExchangeStartTimeTS) {
           log.info('\tHowever the exchange returned enough data anyway!');
-        } else {
+        } else if(localData) {
           log.info(
             '\tThe exchange does not return enough data.',
             Math.round((localData.from - idealStartTime.unix()) / 60),
