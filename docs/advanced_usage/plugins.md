@@ -7,7 +7,7 @@ Gekko currently has a couple plugins:
 - trading advisor (run a TA strategy against a market)
 - trader (execute advice from the TA strategy on a real exchange)
 - advice logger
-- profit simulator
+- paper trader
 - Mailer
 - IRC bot
 - Campfire bot
@@ -59,14 +59,14 @@ The advice logged advice will look something like this in the terminal:
     2014-01-15 14:31:44 (INFO):    Market price: 5.96
     2014-01-15 14:31:44 (INFO):    Based on market time: 2014-01-15 14:31:01
 
-### profit simulator (paper trader)
+### Paper trader
 
-The calculator listens to Gekko's advice and on a sell it will swap all (simulated) currency into (simulated) assets at the current price. On a buy it will be the other way around.
+The paper trader listens to Gekko's advice and on a sell it will swap all (simulated) currency into (simulated) assets at the current price. On a buy it will be the other way around.
 
 Go to the config and configure it like this:
 
     // do you want Gekko to calculate the profit of its own advice?
-    config.profitSimulator = {
+    config.paperTrader = {
       enabled: true,
       // report the profit in the currency or the asset?
       reportInCurrency: true,

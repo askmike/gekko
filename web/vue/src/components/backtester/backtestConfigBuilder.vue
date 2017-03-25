@@ -53,7 +53,7 @@ export default {
       Object.assign(
         config,
         { watch: this.market },
-        { profitSimulator: this.paperTrader },
+        { paperTrader: this.paperTrader },
         this.strat,
         {
           backtest: {

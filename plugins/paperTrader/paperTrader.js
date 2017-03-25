@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var util = require('../core/util.js');
+var util = require('../../core/util.js');
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var cp = require(dirs.core + 'cp');
@@ -9,7 +9,7 @@ var cp = require(dirs.core + 'cp');
 var mode = util.gekkoMode();
 
 var config = util.getConfig();
-var calcConfig = config.profitSimulator;
+var calcConfig = config.paperTrader;
 var watchConfig = config.watch;
 
 var ENV = util.gekkoEnv();

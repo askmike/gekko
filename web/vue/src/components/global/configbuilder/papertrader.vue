@@ -17,7 +17,7 @@ import { get } from '../../../tools/ajax'
 
 export default {
   created: function() {
-    get('configPart/profitSimulator', (error, response) => {
+    get('configPart/paperTrader', (error, response) => {
       this.rawPaperTraderParams = response.part;
     });
   },

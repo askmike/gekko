@@ -128,11 +128,12 @@ var plugins = [
     modes: ['realtime']
   },
   {
-    name: 'Profit Simulator',
-    description: 'Paper trader that logs fake profits.',
-    slug: 'profitSimulator',
+    name: 'Paper Trader',
+    description: 'Paper trader that simulates fake trades.',
+    slug: 'paperTrader',
     async: false,
-    modes: ['realtime', 'backtest']
+    modes: ['realtime', 'backtest'],
+    path: config => 'paperTrader/paperTrader.js',
   },
   {
     name: 'Redis beacon',

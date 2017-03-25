@@ -183,8 +183,8 @@ config['talib-macd'] = {
 //                       CONFIGURING PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// do you want Gekko to calculate the profit of its own advice?
-config.profitSimulator = {
+// do you want Gekko to simulate the profit of the strategy's own advice?
+config.paperTrader = {
   enabled: true,
   // report the profit in the currency or the asset?
   reportInCurrency: true,

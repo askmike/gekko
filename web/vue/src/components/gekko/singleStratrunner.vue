@@ -145,7 +145,7 @@ export default {
       delete stratParams.__empty;
 
       if(_.isEmpty(stratParams))
-        return 'No paramaters'
+        return 'No parameters'
 
       return JSON.stringify(stratParams, null, 4);
     },
