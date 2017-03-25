@@ -27,8 +27,6 @@ export default {
 
       // defaults:
       exchange: 'poloniex',
-      currency: 'BTC',
-      asset: 'ETH',
       market: 'USDT/BTC'
     };
   },
