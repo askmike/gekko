@@ -32,7 +32,7 @@
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
         template(v-if='candles.length')
-          chart(:data='chartData')
+          chart(:data='chartData', :height='500')
 </template>
 
 <script>
