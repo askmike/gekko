@@ -38,12 +38,32 @@ var cp = {
   // object like:
   //
   // {
-  //   action: 'sell',
-  //   price: 765,
-  //   date: '2016-12-03T22:23:00.000Z',
-  //   balance: 4242
+  //   action: 'buy',
+  //   price: 942.80838846,
+  //   portfolio: { asset: 1.07839516, currency: 0, balance: false },
+  //   balance: 1016.7200029226638,
+  //   date: <Moment>
   // }
-  trade: trade => message('trade', { trade })
+  trade: trade => message('trade', { trade }),
+  // object like:
+  // {
+  //   currency: 'USDT',
+  //   asset: 'BTC',
+  //   startTime: '2017-03-25 19:41:00',
+  //   endTime: '2017-03-25 20:01:00',
+  //   timespan: '20 minutes',
+  //   market: -0.316304880517734,
+  //   balance: 1016.7200029226638,
+  //   profit: -26.789997197336106,
+  //   relativeProfit: -2.5672966425099304,
+  //   yearlyProfit: '-704041.12634599',
+  //   relativeYearlyProfit: '-67468.55576516',
+  //   startPrice: 945.80000002,
+  //   endPrice: 942.80838846,
+  //   trades: 10,
+  //   startBalance: 1043.5100001199999
+  // }
+  report: report => message('report', { report })
 }
 
 if(ENV !== 'child-process') {
