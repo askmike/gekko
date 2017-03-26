@@ -8,7 +8,7 @@ Before installing any software from the internet, it is always recommended to ch
 
 ## Install nodejs
 
-Gekko runs on nodejs so we have to install that first. Head over the [nodejs homepage](http://nodejs.org/) and click on install. After downloading the installer will run, you can leave everything on default.
+Gekko runs on nodejs so we have to install that first. Head over the [nodejs homepage](http://nodejs.org/) and install the LTS version of nodejs.
 
 ## Install Gekko
 
@@ -16,16 +16,7 @@ The easiest way to download Gekko is to go to the [Github repo](https://github.c
 
 ### Open up command line
 
-Windows 7:
-
 * Start 
-* Type in 'cmd.exe'
-* Press enter
-
-Pre-windows 7:
-
-* Start
-* Run
 * Type in 'cmd.exe'
 * Press enter
 
