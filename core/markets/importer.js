@@ -4,21 +4,28 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var moment = require('moment');
+var cp = require(dirs.core + 'cp');
 
-var adapter = config.adapters[config.importer.adapter];
+var adapter = config[config.adapter];
 var daterange = config.importer.daterange;
 
 var from = moment.utc(daterange.from);
 
 if(daterange.to) {
   var to = moment.utc(daterange.to);
-} else{
+} else {
   var to = moment().utc();
   log.debug(
     'No end date specified for importing, setting to',
     to.format('YYYY-MM-DD HH:mm:ss')
   );
 }
+
+if(!from.isValid())
+  util.die('invalid `from`');
+
+if(!to.isValid())
+  util.die('invalid `to`');
 
 var TradeBatcher = require(dirs.budfox + 'tradeBatcher');
 var CandleManager = require(dirs.budfox + 'candleManager');
@@ -91,8 +98,16 @@ Market.prototype.get = function() {
 Market.prototype.processTrades = function(trades) {
   this.tradeBatcher.write(trades);
 
-  if(this.done)
-    return log.info('Done importing!');
+  if(this.done) {
+    log.info('Done importing!');
+    process.exit(0);
+  }
+
+  if(_.size(trades)) {
+    let lastAtTS = _.last(trades).date;
+    let lastAt = moment.unix(lastAtTS).utc().format();
+    cp.update(lastAt);
+  }
 
   setTimeout(this.get, 1000);
 }

@@ -64,13 +64,6 @@ var pluginHelper = {
 
     plugin.config = config[plugin.slug];
 
-    if(!plugin.config)
-      log.warn(
-        'unable to find',
-        plugin.name,
-        'in the config. Is your config up to date?'
-      );
-
     if(!plugin.config || !plugin.config.enabled)
       return next();
 
@@ -94,7 +87,7 @@ var pluginHelper = {
       return next(cannotLoad);
 
     if(plugin.path)
-      var Constructor = require(pluginDir + plugin.path(plugin.config));
+      var Constructor = require(pluginDir + plugin.path(config));
     else
       var Constructor = require(pluginDir + plugin.slug);
 

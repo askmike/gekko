@@ -25,7 +25,12 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
     ORDER BY start DESC
   `, function(err, rows) {
     if(err) {
-      log.error(err)
+
+      // bail out if the table does not exist
+      if(err.message.split(':')[1] === ' no such table')
+        return next(false);
+
+      log.error(err);
       return util.die('DB error while reading mostRecentWindow');
     }
 
@@ -69,6 +74,20 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
     });
 
   })
+}
+
+Reader.prototype.tableExists = function(name, next) {  
+
+  this.db.all(`
+    SELECT name FROM sqlite_master WHERE type='table' AND name='${sqliteUtil.table(name)}';
+  `, function(err, rows) {
+    if(err) {
+      console.error(err);
+      return util.die('DB error at `get`');
+    }
+
+    next(null, rows.length === 1);
+  });
 }
 
 Reader.prototype.get = function(from, to, what, next) {

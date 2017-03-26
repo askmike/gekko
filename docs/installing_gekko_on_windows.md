@@ -1,15 +1,14 @@
 # Installing Gekko on windows
 
-[Gekko](https://github.com/askmike/gekko/) is an open source Bitcoin trading bot which features multiple technical analysis trading methods. It can report advice or automatically trade at a number of Bitcoin exchanges. This guide will show you how to install Gekko on Windows. 
+[Gekko](https://github.com/askmike/gekko/) is an open source Bitcoin trading bot which features multiple technical analysis trading methods. It can report advice or automatically trade at a number of Bitcoin exchanges. This guide will show you how to install Gekko on Windows.
 
 Before installing any software from the internet, it is always recommended to check the source. All of Gekko's source files are on its [Github repo](https://github.com/askmike/gekko/).
 
 *Note that Gekko runs on every platform that supports Nodejs, so you can install it on your pc (windows, OSX, linux, etc.), server or [quadrocopter](https://speakerdeck.com/felixge/node-dot-js-quadcopter-programming).*
 
-
 ## Install nodejs
 
-Gekko runs on nodejs so we have to install that first. Head over the [nodejs homepage](http://nodejs.org/) and click on install. After downloading the installer will run, you can leave everything on default.
+Gekko runs on nodejs so we have to install that first. Head over the [nodejs homepage](http://nodejs.org/) and install the LTS version of nodejs.
 
 ## Install Gekko
 
@@ -17,16 +16,7 @@ The easiest way to download Gekko is to go to the [Github repo](https://github.c
 
 ### Open up command line
 
-Windows 7:
-
 * Start 
-* Type in 'cmd.exe'
-* Press enter
-
-Pre-windows 7:
-
-* Start
-* Run
 * Type in 'cmd.exe'
 * Press enter
 
@@ -37,17 +27,19 @@ Pre-windows 7:
 First navigate to Gekko:
 
     cd Desktop
-    cd gekko-0.2
+    cd gekko-[version]
+
+*(replace version with the version)*
     
 Install Gekko's dependencies:
 
-    npm install
+    npm install --only=production
     
-### Running Gekko
+### Starting Gekko
 
 In a command line navigated to Gekko type:
 
-    node gekko
+    node gekko --ui
     
 ### Stopping Gekko
 

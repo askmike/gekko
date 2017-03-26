@@ -66,14 +66,28 @@ Manager.prototype.init = function(callback) {
 }
 
 Manager.prototype.setPortfolio = function(callback) {
-  var set = function(err, portfolio) {
+  var set = function(err, fullPortfolio) {
     if(err)
       util.die(err);
+
+    // only include the currency/asset of this market
+    const portfolio = [ this.conf.currency, this.conf.asset ]
+      .map(name => {
+        let item = _.find(fullPortfolio, {name});
+
+        if(!item) {
+          log.debug(`Unable to find "${name}" in portfolio provided by exchange, assuming 0.`);
+          item = {name, amount: 0};
+        }
+
+        return item;
+      });
 
     this.portfolio = portfolio;
 
     if(_.isFunction(callback))
       callback();
+
   }.bind(this);
 
   this.exchange.getPortfolio(set);
@@ -195,7 +209,7 @@ Manager.prototype.buy = function(amount, price) {
     return log.info(
       'Wanted to buy ' + amount + ' but insufficient',
       this.currency,
-      '(' + available.toFixed(12) + ')',
+      '(' + parseFloat(available).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -207,7 +221,7 @@ Manager.prototype.buy = function(amount, price) {
       'Wanted to buy',
       this.asset,
       'but the amount is too small',
-      '(' + amount.toFixed(12) + ')',
+      '(' + parseFloat(amount).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -240,7 +254,7 @@ Manager.prototype.sell = function(amount, price) {
     return log.info(
       'Wanted to sell ' + amount + ' but insufficient',
       this.asset,
-      '(' + availabe.toFixed(12) + ')',
+      '(' + parseFloat(availabe).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -251,8 +265,8 @@ Manager.prototype.sell = function(amount, price) {
     return log.info(
       'Wanted to buy',
       this.currency,
-      'but the amount is to small',
-      '(' + amount.toFixed(12) + ')',
+      'but the amount is too small',
+      '(' + parseFloat(amount).toFixed(12) + ')',
       'at',
       this.exchange.name
     );
@@ -300,7 +314,7 @@ Manager.prototype.checkOrder = function() {
 Manager.prototype.logPortfolio = function() {
   log.info(this.exchange.name, 'portfolio:');
   _.each(this.portfolio, function(fund) {
-    log.info('\t', fund.name + ':', fund.amount.toFixed(12));
+    log.info('\t', fund.name + ':', parseFloat(fund.amount).toFixed(12));
   });
 };
 

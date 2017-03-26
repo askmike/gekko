@@ -1,0 +1,9 @@
+enabled = false
+
+## NOTE: once you filled in the following
+## never share this file with anyone!
+
+key = ""
+secret = ""
+# this is only required at specific exchanges
+username = ""

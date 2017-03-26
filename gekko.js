@@ -20,23 +20,37 @@
 
 */
 
-var util = require(__dirname + '/core/util');
+console.log(`
+    ______   ________  __    __  __    __   ______
+   /      \\ /        |/  |  /  |/  |  /  | /      \\
+  /$$$$$$  |$$$$$$$$/ $$ | /$$/ $$ | /$$/ /$$$$$$  |
+  $$ | _$$/ $$ |__    $$ |/$$/  $$ |/$$/  $$ |  $$ |
+  $$ |/    |$$    |   $$  $$<   $$  $$<   $$ |  $$ |
+  $$ |$$$$ |$$$$$/    $$$$$  \\  $$$$$  \\  $$ |  $$ |
+  $$ \\__$$ |$$ |_____ $$ |$$  \\ $$ |$$  \\ $$ \\__$$ |
+  $$    $$/ $$       |$$ | $$  |$$ | $$  |$$    $$/ 
+   $$$$$$/  $$$$$$$$/ $$/   $$/ $$/   $$/  $$$$$$/
+`);
 
-var dirs = util.dirs();
-var pipeline = require(dirs.core + 'pipeline');
-var log = require(dirs.core + 'log');
+const util = require(__dirname + '/core/util');
 
-var config = util.getConfig();
-var mode = util.gekkoMode();
+console.log('\tGekko v' + util.getVersion());
+console.log('\tI\'m gonna make you rich, Bud Fox.', '\n\n');
+
+const dirs = util.dirs();
+
+if(util.launchUI())
+  return require(util.dirs().web + 'server');
+
+const pipeline = require(dirs.core + 'pipeline');
+const config = util.getConfig();
+const mode = util.gekkoMode();
 
 if(
   config.trader.enabled &&
   !config['I understand that Gekko only automates MY OWN trading strategies']
 )
   util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
-
-log.info('Gekko v' + util.getVersion(), 'started');
-log.info('I\'m gonna make you rich, Bud Fox.', '\n\n');
 
 // > Ever wonder why fund managers can't beat the S&P 500?
 // > 'Cause they're sheep, and sheep get slaughtered.

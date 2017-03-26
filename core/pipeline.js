@@ -10,6 +10,7 @@
 
 */
 
+
 var util = require('./util');
 var dirs = util.dirs();
 
@@ -19,6 +20,8 @@ var async = require('async');
 var log = require(dirs.core + 'log');
 
 var pipeline = (settings) => {
+
+  var spies = settings.spies || [];
 
   var mode = settings.mode;
   var config = settings.config;
@@ -42,7 +45,6 @@ var pipeline = (settings) => {
 
   // Instantiate each enabled plugin
   var loadPlugins = function(next) {
-
     // load all plugins
     async.mapSeries(
       pluginParameters,
@@ -60,7 +62,6 @@ var pipeline = (settings) => {
   // Some plugins emit their own events, store
   // a reference to those plugins.
   var referenceEmitters = function(next) {
-
     _.each(plugins, function(plugin) {
       if(plugin.meta.emits)
         emitters[plugin.meta.slug] = plugin;
@@ -81,10 +82,15 @@ var pipeline = (settings) => {
       }
     );
 
+    // add possible spies
+    plugins = plugins
+      .concat(spies);
+
     // subscribe interested plugins to
     // emitting plugins
     _.each(plugins, function(plugin) {
       _.each(pluginSubscriptions, function(sub) {
+
         if(_.has(plugin, sub.handler)) {
 
           // if a plugin wants to listen
@@ -136,7 +142,6 @@ var pipeline = (settings) => {
 
   // TODO: move this somewhere where it makes more sense
   var prepareMarket = function(next) {
-
     if(mode === 'backtest' && config.backtest.daterange === 'scan')
       require(dirs.core + 'prepareDateRange')(next);
     else
@@ -154,8 +159,14 @@ var pipeline = (settings) => {
       prepareMarket
     ],
     function() {
-      // load a market based on the mode
-      var Market = require(dirs.markets + mode);
+      // load a market based on the config (or fallback to mode)
+      let marketType;
+      if(config.market)
+        marketType = config.market.type;
+      else
+        marketType = mode;
+
+      var Market = require(dirs.markets + marketType);
 
       var market = new Market(config);
       var gekko = new GekkoStream(candleConsumers);

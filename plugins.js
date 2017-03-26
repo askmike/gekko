@@ -38,7 +38,8 @@ var plugins = [
     slug: 'tradingAdvisor',
     async: true,
     modes: ['realtime', 'backtest'],
-    emits: ['advice']
+    emits: ['advice'],
+    path: config => 'tradingAdvisor/tradingAdvisor.js',
   },
   {
     name: 'IRC bot',
@@ -49,6 +50,17 @@ var plugins = [
     dependencies: [{
       module: 'irc',
       version: '0.3.6'
+    }]
+  },
+  {
+    name: 'Telegram bot',
+    description: 'Telegram module lets you communicate with Gekko on Telegram.',
+    slug: 'telegrambot',
+    async: false,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'node-telegram-bot-api',
+      version: '0.24.0'
     }]
   },
   {
@@ -116,11 +128,12 @@ var plugins = [
     modes: ['realtime']
   },
   {
-    name: 'Profit Simulator',
-    description: 'Paper trader that logs fake profits.',
-    slug: 'profitSimulator',
+    name: 'Paper Trader',
+    description: 'Paper trader that simulates fake trades.',
+    slug: 'paperTrader',
     async: false,
-    modes: ['realtime', 'backtest']
+    modes: ['realtime', 'backtest'],
+    path: config => 'paperTrader/paperTrader.js',
   },
   {
     name: 'Redis beacon',

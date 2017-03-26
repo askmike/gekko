@@ -176,7 +176,7 @@ var exchanges = [
        'MMNXT', 'MMXIV', 'MNTA', 'MON', 'MRC', 'MRS', 'MTS', 'MUN', 'MYR',
        'MZC', 'N5X', 'NAS', 'NAUT', 'NAV', 'NBT', 'NEOS', 'NL', 'NMC', 'NOBL',
        'NOTE', 'NOXT', 'NRS', 'NSR', 'NTX', 'NXT', 'NXTI', 'OMNI', 'OPAL',
-       'PAND', 'PAWN', 'PIGGY', 'PINK', 'PLX', 'PMC', 'POT', 'PPC', 'PRC', 
+       'PAND', 'PASC', 'PAWN', 'PIGGY', 'PINK', 'PLX', 'PMC', 'POT', 'PPC', 'PRC',
        'PRT', 'PTS', 'Q2C', 'QBK', 'QCN','QORA', 'QTL', 'RADS', 'RBY', 'RDD', 'REP',
        'RIC', 'RZR', 'SBD', 'SC', 'SDC', 'SHIBE', 'SHOPX', 'SILK', 'SJCX',
        'SLR', 'SMC', 'SOC', 'SPA', 'SQL', 'SRCC', 'SRG', 'SSD', 'STEEM', 'STR',
@@ -221,7 +221,6 @@ var exchanges = [
       { pair: ['BTC', 'BNS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BONES'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BOST'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTCD'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTCS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'BTM'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -372,6 +371,7 @@ var exchanges = [
       { pair: ['BTC', 'OMNI'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'OPAL'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'PAND'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'PASC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'PAWN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'PIGGY'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'PINK'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -587,9 +587,9 @@ var exchanges = [
     assets: ['XBT'],
     markets: [
       { pair: ['MYR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'KES'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'NGN'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
-      { pair: ['XBT', 'ZAR'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
+      { pair: ['KES', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['NGN', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['ZAR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
@@ -625,7 +625,6 @@ var exchanges = [
       { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['AUD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['BTC', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
@@ -634,6 +633,27 @@ var exchanges = [
     providesHistory: false,
     tid: 'tid'
   },
+  {
+    name: 'GDAX',
+    slug: 'gdax',
+    direct: false,
+    infinityOrder: false,
+    currencies: ['USD', 'EUR', 'GBP', 'BTC'],
+    assets: ['BTC', 'LTC', 'ETH'],
+    markets: [
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret', 'passphrase'],
+    providesHistory: 'date',
+    providesFullHistory: true,
+    tid: 'tid'
+  }
   // ,
   // ---- Keeping this here for historical purposes. ----
   // {

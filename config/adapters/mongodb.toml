@@ -1,0 +1,7 @@
+connectionString = "mongodb://mongodb/gekko"
+path = "plugins/mongodb"
+version = 0.1
+
+[[dependencies]]
+module = "mongojs"
+version = "2.4.0"

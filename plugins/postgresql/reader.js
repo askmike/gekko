@@ -74,6 +74,23 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   });
 }
 
+Reader.prototype.tableExists = function(name, next) {
+
+  const query = this.db.query(`
+    SELECT COUNT(*) FROM ${postgresUtil.table(name)}
+  `);
+
+  const rows = [];
+
+  query.on('row', (row) => {
+    rows.push(row);
+  });
+
+  query.on('end', () => {
+    next(null, rows.length === 1 && rows[0].count > 0);
+  });
+}
+
 Reader.prototype.get = function(from, to, what, next) {
   if(what === 'full'){
     what = '*';

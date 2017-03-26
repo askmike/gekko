@@ -1,0 +1,16 @@
+enabled = false
+
+# Send 'Gekko starting' message if true
+sendMessageOnStart = true
+
+# disable advice printout if it's soft
+muteSoft = true
+
+# your email, change it unless you are Azor Ahai
+email = "jon_snow@westeros.org"
+
+# your pushbullet API key
+key = "xxx"
+
+# will make Gekko messages start with [GEKKO]
+tag = "[GEKKO]"

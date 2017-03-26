@@ -1,0 +1,9 @@
+momentum = "TSI" # RSI, TSI or UO
+
+[thresholds]
+weightLow = 120
+weightHigh = -120
+
+# How many candle intervals should a trend persist
+# before we consider it real?
+persistence = 0
