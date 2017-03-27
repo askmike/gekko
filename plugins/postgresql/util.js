@@ -6,9 +6,14 @@ var settings = {
   pair: [watch.currency, watch.asset]
 }
 
+function useLowerCaseTableNames() {
+  return !config.postgresql.noLowerCaseTableName;
+}
+
 module.exports = {
   settings: settings,
   table: function(name) {
-    return [name, settings.pair.join('_')].join('_');
+    var fullName = [name, settings.pair.join('_')].join('_');
+    return useLowerCaseTableNames() ? fullName.toLowerCase() : fullName;
   }
 }
