@@ -6,9 +6,22 @@ var settings = {
   pair: [watch.currency, watch.asset]
 }
 
+function useSingleDatabase() {
+    return !!config.postgres.database;
+}
+
 module.exports = {
   settings: settings,
-  table: function(name) {
+  useSingleDatabase: useSingleDatabase,
+  database: function () {
+    return useSingleDatabase() ?
+      config.postgres.database :
+      config.watch.exchange.toLowerCase();
+  },
+  table: function (name) {
+    if (useSingleDatabase()) {
+      name = watch.exchange + '_' + name;
+    }
     return [name, settings.pair.join('_')].join('_');
   }
 }

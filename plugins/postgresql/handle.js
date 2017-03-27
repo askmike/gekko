@@ -7,6 +7,7 @@ var config = util.getConfig();
 var dirs = util.dirs();
 
 var log = require(util.dirs().core + 'log');
+var postgresUtil = require('./util');
 
 var adapter = config.postgresql;
 
@@ -26,7 +27,7 @@ var plugins = require(util.dirs().gekko + 'plugins');
 
 var version = adapter.version;
 
-var dbName = config.watch.exchange.toLowerCase();
+var dbName = postgresUtil.database;
 
 var mode = util.gekkoMode();
 
@@ -60,8 +61,8 @@ checkClient.connect(function(err){
             });
           }
         });
-      }else if(mode === 'backtest') {
-        util.die(`History database does not exist for exchange ${config.watch.exchange}.`);
+      } else if (mode === 'backtest') {
+        util.die(`History does not exist for exchange ${config.watch.exchange}.`);
       }
     }else{ //database exists
       log.debug("Database exists: "+dbName);
