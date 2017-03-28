@@ -83,11 +83,14 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   });
 }
 
-Reader.prototype.tableExists = function(name, next) {
+Reader.prototype.tableExists = function (name, next) {
   this.db.query(`
-    SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='${postgresUtil.table(name)}';
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema='${postgresUtil.schema()}'
+      AND table_name='${postgresUtil.table(name)}';
   `, function(err, result) {
-    if(err) {
+    if (err) {
       return util.die('DB error at `tableExists`');
     }
 

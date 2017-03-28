@@ -12,6 +12,9 @@ function useLowerCaseTableNames() {
 
 module.exports = {
   settings: settings,
+  schema: function () {
+    return config.postgresql.schema ? config.postgresql.schema : 'public';
+  },
   table: function(name) {
     var fullName = [name, settings.pair.join('_')].join('_');
     return useLowerCaseTableNames() ? fullName.toLowerCase() : fullName;
