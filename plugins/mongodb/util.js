@@ -1,7 +1,7 @@
 var config = require('../../core/util.js').getConfig();
 
 var watch = config.watch;
-var exchangeLowerCase = watch.exchange.toLowerCase();
+var exchangeLowerCase = watch ? watch.exchange.toLowerCase() : watch = {}; // Do not crash on this, not needed to read from db
 
 var settings = {
   exchange: watch.exchange,

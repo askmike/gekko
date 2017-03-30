@@ -10,7 +10,7 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 
-var adapter = config[config.adapter];
+var adapter = config.adapters[config.adapter];
 var Reader = require(dirs.gekko + adapter.path + '/reader');
 
 var reader = new Reader();
