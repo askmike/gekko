@@ -5,7 +5,7 @@ var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var moment = require('moment');
 
-var adapter = config.adapters[config.adapter];
+var adapter = config[config.adapter];
 var Reader = require(dirs.gekko + adapter.path + '/reader');
 var daterange = config.backtest.daterange;
 
