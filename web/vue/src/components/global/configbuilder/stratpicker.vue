@@ -20,9 +20,9 @@
                 option hours
                 option days
       div
-        label(for='historySize') History Size (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
+        label(for='historySize') Warmup period (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input(v-model='historySize')
-        em.label-like (will use {{ (candleSize * historySize).toLocaleString() }} minutes of data as history)
+        em.label-like (will use {{ humanizeDuration(candleSize * historySize * 1000) }} of data as history)
     .grd-row-col-2-6.px1
       div
         h3 Parameters
@@ -111,6 +111,7 @@ export default {
     }
   },
   methods: {
+    humanizeDuration: (n) => window.humanizeDuration(n),
     emitConfig: function() {
       this.parseParams();
       this.$emit('stratConfig', this.config);
