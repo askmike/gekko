@@ -340,7 +340,7 @@ methods.ema = {
             inReal: data.close,
             startIdx: 0,
             endIdx: data.close.length - 1,
-            optInTimePeriod: period
+            optInTimePeriod: params.optInTimePeriod
         });
     }
 }

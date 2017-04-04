@@ -34,8 +34,8 @@
           th exchange
           th currency
           th asset
-          th duration
           th last update
+          th duration
           th strategy
           th profit
       tbody
@@ -44,11 +44,13 @@
           td {{ gekko.watch.currency }}
           td {{ gekko.watch.asset }}
           td
-            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
+            template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
           td
-            template(v-if='gekko.lastCandle') {{ timespan(moment(), gekko.lastCandle.start) }}
+            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
           td {{ gekko.strat.name }}
-          td TODO!
+          td
+            template(v-if='!gekko.report') 0
+            template(v-if='gekko.report') {{ round(gekko.report.profit) }} {{ gekko.watch.currency }}
     .hr
     h2 Start a new live Gekko
     router-link(to='/live-gekkos/new') start a new live Gekko!
@@ -101,6 +103,7 @@ export default {
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
+    round: n => (+n).toFixed(3),
     timespan: function(a, b) {
       return this.humanizeDuration(this.moment(a).diff(this.moment(b)))
     }

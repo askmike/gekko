@@ -90,8 +90,6 @@ Market.prototype.processCandles = function(err, candles) {
     this.push(c);
   }, this);
 
-  console.log('processCandles', amount);
-
   this.sendStartAt(_.first(candles));
   cp.lastCandle(_.last(candles));
 
@@ -99,7 +97,6 @@ Market.prototype.processCandles = function(err, candles) {
 }
 
 Market.prototype.sendStartAt = _.once(function(candle) {
-  console.log('sendStartAt');
   cp.firstCandle(candle);
 });
 

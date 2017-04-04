@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.4.4",
+  "version": "0.4.6",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -45,7 +45,7 @@
     "pushbullet": "1.4.3",
     "relieve": "^2.1.3",
     "semver": "2.2.1",
-    "sqlite3": "3.1.4",
+    "sqlite3": "3.1.8",
     "tiny-promisify": "^0.1.1",
     "toml": "^2.3.0",
     "zaif.jp": "^0.1.4"
@@ -54,8 +54,7 @@
     "chai": "^2.0.0",
     "mocha": "^2.1.1",
     "proxyquire": "^1.7.10",
-    "sinon": "^1.12.2",
-    "vuex": "^2.0.0"
+    "sinon": "^1.12.2"
   },
   "engines": {
     "node": ">=6.0"

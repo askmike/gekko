@@ -21,3 +21,15 @@ export const updateStratrunner = (state, update) => {
 
   return state;
 }
+export const addTradeToStratrunner = (state, update) => {
+  let index = state.stratrunners.findIndex(i => i.id === update.gekko_id);
+  let item = state.stratrunners[index];
+  if(!item)
+    return state;
+
+  let updated = Vue.util.extend({}, item);
+  updated.trades.push(update.trade);
+  Vue.set(state.stratrunners, index, updated);
+
+  return state;
+}

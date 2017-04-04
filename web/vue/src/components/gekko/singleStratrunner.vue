@@ -6,39 +6,73 @@
     div(v-if='data')
       h2.contain Strat runner
       .grd.contain
-        h3 Market
         .grd-row
-          .grd-row-col-2-6 Exchange
-          .grd-row-col-4-6 {{ data.watch.exchange }}
+          .grd-row-col-3-6
+            h3 Market
+            .grd-row
+              .grd-row-col-3-6 Exchange
+              .grd-row-col-3-6 {{ data.watch.exchange }}
+            .grd-row
+              .grd-row-col-3-6 Currency
+              .grd-row-col-3-6 {{ data.watch.currency }}
+            .grd-row
+              .grd-row-col-3-6 Asset
+              .grd-row-col-3-6 {{ data.watch.asset }}
+          .grd-row-col-3-6
+            h3 Runtime
+            spinner(v-if='isLoading')
+            template(v-if='!isLoading')
+              .grd-row(v-if='data.firstCandle')
+                .grd-row-col-2-6 Watching since
+                .grd-row-col-4-6 {{ fmt(data.firstCandle.start) }}
+              .grd-row(v-if='data.lastCandle')
+                .grd-row-col-2-6 Received data until
+                .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
+              .grd-row(v-if='data.lastCandle && data.firstCandle')
+                .grd-row-col-2-6 Data spanning
+                .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
+              .grd-row(v-if='data.lastCandle && data.firstCandle')
+                .grd-row-col-2-6 Amount of trades
+                .grd-row-col-4-6 {{ data.trades.length }}
         .grd-row
-          .grd-row-col-2-6 Currency
-          .grd-row-col-4-6 {{ data.watch.currency }}
-        .grd-row
-          .grd-row-col-2-6 Asset
-          .grd-row-col-4-6 {{ data.watch.asset }}
+          .grd-row-col-3-6
+            h3 Strategy
+            .grd-row
+              .grd-row-col-3-6 Name
+              .grd-row-col-3-6
+                strong {{ stratName }}
+            | Parameters
+            pre {{ stratParams }}
+          .grd-row-col-3-6
+            h3 Profit report
+            template(v-if='!report')
+              p
+                em Waiting for at least one trade..
+            template(v-if='report') 
+              .grd-row
+                .grd-row-col-3-6 Start balance
+                .grd-row-col-3-6 {{ round(report.startBalance) }}
+              .grd-row
+                .grd-row-col-3-6 Current balance
+                .grd-row-col-3-6 {{ round(report.balance) }}
+              .grd-row
+                .grd-row-col-3-6 Market
+                .grd-row-col-3-6 {{ round(report.market) }} {{ data.watch.currency }}
+              .grd-row
+                .grd-row-col-3-6 Profit
+                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }}
+              .grd-row
+                .grd-row-col-3-6 Alpha
+                .grd-row-col-3-6 {{ round(report.alpha) }} {{ data.watch.currency }}
         p(v-if='watcher')
           em This strat runner gets data from 
             router-link(:to='"/live-gekkos/watcher/" + watcher.id') this market watcher
           | .
-        h3 Statistics
-        spinner(v-if='isLoading')
-        template(v-if='!isLoading')
-          .grd-row(v-if='data.firstCandle')
-            .grd-row-col-2-6 Watching since
-            .grd-row-col-4-6 {{ fmt(data.firstCandle.start) }}
-          .grd-row(v-if='data.lastCandle')
-            .grd-row-col-2-6 Received data until
-            .grd-row-col-4-6 {{ fmt(data.lastCandle.start) }}
-          .grd-row(v-if='data.lastCandle && data.firstCandle')
-            .grd-row-col-2-6 Data spanning
-            .grd-row-col-4-6 {{ humanizeDuration(moment(data.lastCandle.start).diff(moment(data.firstCandle.start))) }}
-          .grd-row.summary
-            // paperTradeSummary(:report='report')
       template(v-if='!isLoading')
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
-        template(v-if='candles.length')
-          chart(:data='chartData')
+        template(v-if='candles')
+          chart(:data='chartData', :height='300')
 </template>
 
 <script>
@@ -65,7 +99,7 @@ export default {
   data: () => {
     return {
       candleFetch: 'idle',
-      candles: []
+      candles: false
     }
   },
   computed: {
@@ -94,8 +128,36 @@ export default {
     chartData: function() {
       return {
         candles: this.candles,
-        trades: []
+        trades: this.trades
       }
+    },
+    trades: function() {
+      if(!this.data)
+        return [];
+
+      return this.data.trades;
+    },
+    report: function() {
+      if(!this.data)
+        return;
+
+      return this.data.report;
+    },
+    stratName: function() {
+      if(this.data)
+        return this.data.strat.tradingAdvisor.method;
+    },
+    stratParams: function() {
+      if(!this.data)
+        return '';
+
+      let stratParams = Vue.util.extend({}, this.data.strat.params);
+      delete stratParams.__empty;
+
+      if(_.isEmpty(stratParams))
+        return 'No parameters'
+
+      return JSON.stringify(stratParams, null, 4);
     },
     isLoading: function() {
       if(!this.data)
@@ -128,6 +190,7 @@ export default {
     }
   },
   methods: {
+    round: n => (+n).toFixed(5),
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
@@ -152,8 +215,9 @@ export default {
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
-        // if(!res || res.error)
-        // todo..
+        // todo
+        if(!res || res.error)
+          console.log(res);
 
         this.candles = res.map(c => {
           c.start = moment.unix(c.start).utc().format();

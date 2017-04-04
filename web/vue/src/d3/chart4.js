@@ -1,7 +1,7 @@
 import _ from 'lodash';
 // global moment
 
-export default function(_data, _trades) {
+export default function(_data, _trades, _height) {
 
   const trades = _trades.map(t => {
     return {
@@ -26,10 +26,10 @@ export default function(_data, _trades) {
   svg.attr("width", window.innerWidth - 20);
 
   var margin = {top: 20, right: 20, bottom: 110, left: 40};
-  var margin2 = {top: 430, right: 20, bottom: 30, left: 40};
+  var height = _height - margin.top - margin.bottom;
+  var margin2 = {top: _height - 70, right: 20, bottom: 30, left: 40};
   var width = +svg.attr("width") - margin.left - margin.right;
-  var height = +svg.attr("height") - margin.top - margin.bottom;
-  var height2 = +svg.attr("height") - margin2.top - margin2.bottom;
+  var height2 = _height - margin2.top - margin2.bottom;
 
   var x = d3.scaleTime().range([0, width]),
       x2 = d3.scaleTime().range([0, width]),
@@ -38,7 +38,7 @@ export default function(_data, _trades) {
 
   var xAxis = d3.axisBottom(x),
       xAxis2 = d3.axisBottom(x2),
-      yAxis = d3.axisLeft(y);
+      yAxis = d3.axisLeft(y).ticks(_height / 50);
 
   var brush = d3.brushX()
       .extent([[0, 0], [width, height2]])

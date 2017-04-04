@@ -1,32 +1,27 @@
 <template lang='jade'>
-div
-  #chartWrapper
-    svg#chart(width='960', height='500')
+#chartWrapper(v-bind:class='{ clickable: !isClicked }')
+  .shield(v-on:click.prevent='click')
+  svg#chart(width='960', :height='height')
 </template>
 
 <script>
 
 import chart from '../../../d3/chart4'
-import { draw, clear } from '../../../d3/message'
+import { draw as drawMessage, clear as clearMessage } from '../../../d3/message'
 
 const MIN_CANDLES = 4;
 
 export default {
-  props: ['data'],
-  data: () => {
+  props: ['data', 'height'],
+
+  data: function() {
     return {
-      message: false
+      isClicked: false
     }
   },
 
   watch: {
     data: function() { this.render() },
-    message: function(val) {
-      if(this.message)
-        draw(this.message)
-      else
-        clear();
-    }
   },
 
   created: function() { setTimeout( this.render, 100) },
@@ -35,15 +30,17 @@ export default {
   },
 
   methods: {
+    click: function() {
+      this.isClicked = true;
+    },
     render: function() {
       this.remove();
 
+
       if(_.size(this.data.candles) < MIN_CANDLES) {
-        this.message = 'Not enough data to spawn chart';
-      }
-      else {
-        this.message = false;
-        chart(this.data.candles, this.data.trades);
+        drawMessage('Not enough data to spawn chart');
+      } else {
+        chart(this.data.candles, this.data.trades, this.height);
       }
     },
     remove: function() {
@@ -54,6 +51,21 @@ export default {
 </script>
 
 <style>
+
+#chartWrapper.clickable {
+  position: relative;
+}
+
+#chartWrapper.clickable .shield {
+  cursor: zoom-in;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: grey;
+  opacity: 0.1;
+}
 
 #chart {
   background-color: #eee;

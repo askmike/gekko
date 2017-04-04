@@ -5,7 +5,7 @@
       h3 Backtest result
     result-summary(:report='result.report')
     .hr.contain
-    chart(:data='result')
+    chart(:data='result', height='500')
 </template>
 
 <script>

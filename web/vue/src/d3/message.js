@@ -7,5 +7,5 @@ export const draw = function(message) {
 }
 
 export const clear = function() {
-  svg.find('text').remove();
+  d3.select("#chart").find('text').remove();
 }
