@@ -2,7 +2,7 @@ const _ = require('lodash');
 const fs = require('co-fs');
 
 const parts = {
-  profitSimulator: 'config/plugins/profitSimulator',
+  paperTrader: 'config/plugins/paperTrader',
   candleWriter: 'config/plugins/candleWriter'
 }
 

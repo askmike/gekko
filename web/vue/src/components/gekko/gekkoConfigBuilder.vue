@@ -52,7 +52,7 @@ export default {
         config,
         this.market,
         this.strat,
-        { profitSimulator: this.paperTrader },
+        { paperTrader: this.paperTrader },
         { candleWriter: this.candleWriter },
         { type: this.type }
       );

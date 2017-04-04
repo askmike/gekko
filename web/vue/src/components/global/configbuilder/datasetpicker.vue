@@ -26,7 +26,8 @@ div
           td {{ fmt(set.from) }}
           td {{ fmt(set.to) }}
           td {{ humanizeDuration(set.to.diff(set.from)) }}
-    a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') adjust range
+    em
+      a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
     template(v-if='rangeVisible')
       div
         label(for='customFrom') From:
@@ -64,7 +65,7 @@ export default {
     humanizeDuration: (n) => {
       return window.humanizeDuration(n, {largest: 4});
     },
-    fmt: mom => mom.utc().format('DD-MM-YYYY HH:mm'),
+    fmt: mom => mom.utc().format('YYYY-MM-DD HH:mm'),
     openRange: function() {
       if(this.setIndex === -1)
         return alert('select a range first');
@@ -87,11 +88,9 @@ export default {
         set = val;
       else {
         set = Vue.util.extend({}, val);
-        set.to = moment.utc(this.customTo, 'DD-MM-YYYY HH:mm').format();
-        set.from = moment.utc(this.customFrom, 'DD-MM-YYYY HH:mm').format();
+        set.to = moment.utc(this.customTo, 'YYYY-MM-DD HH:mm').format();
+        set.from = moment.utc(this.customFrom, 'YYYY-MM-DD HH:mm').format();
       }
-
-      console.log(set.to, set.from);
 
       this.$emit('dataset', set);
     }

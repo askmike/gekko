@@ -15,7 +15,7 @@
           .mx2(v-for='market in unscannableMakets')
             | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
       template(v-if='datasets.length')
-        table.full
+        table.full.data
           thead
             tr
               th exchange
@@ -91,7 +91,7 @@ table.full td {
   padding: 0.5rem 0;
 }
 
-table.full th {
+table.full.data th {
   text-align: center;
 }
 

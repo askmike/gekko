@@ -46,8 +46,8 @@ var Fetcher = function(config) {
   this.batcher = new TradeBatcher(this.exchange.tid);
 
   this.pair = [
-    config.asset,
-    config.currency
+    config.watch.asset,
+    config.watch.currency
   ].join('/');
 
   log.info('Starting to watch the market:',

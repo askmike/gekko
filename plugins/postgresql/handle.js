@@ -61,8 +61,10 @@ checkClient.connect(function(err){
             });
           }
         });
-      } else if (mode === 'backtest') {
+      }else if(mode === 'backtest') {
         util.die(`History does not exist for exchange ${config.watch.exchange}.`);
+      }else{
+        util.die(`Start gekko first in realtime mode to create tables. You are currently in the '${mode}' mode.`);
       }
     }else{ //database exists
       log.debug("Database exists: "+dbName);

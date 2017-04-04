@@ -1,0 +1,184 @@
+var _ = require('lodash');
+var moment = require('moment');
+
+var util = require('../../core/util.js');
+var dirs = util.dirs();
+var ENV = util.gekkoEnv();
+
+var config = util.getConfig();
+var calcConfig = config.paperTrader;
+var watchConfig = config.watch;
+
+
+// Load the proper module that handles the results
+var Handler;
+if(ENV === 'child-process')
+  Handler = require('./cpRelay');
+else
+  Handler = require('./logger');
+
+var PaperTrader = function() {
+  _.bindAll(this);
+
+  this.dates = {
+    start: false,
+    end: false
+  }
+
+  this.startPrice = 0;
+  this.endPrice = 0;
+
+  this.verbose = calcConfig.verbose;
+  this.fee = 1 - (calcConfig.fee + calcConfig.slippage) / 100;
+
+  this.currency = watchConfig.currency;
+  this.asset = watchConfig.asset;
+
+  this.handler = new Handler(watchConfig);
+
+  // virtual balance
+  this.start = {
+    asset: calcConfig.simulationBalance.asset,
+    currency: calcConfig.simulationBalance.currency,
+    balance: false
+  }
+  this.current = _.clone(this.start);
+  this.trades = 0;
+}
+
+PaperTrader.prototype.extractFee = function(amount) {
+  amount *= 100000000;
+  amount *= this.fee;
+  amount = Math.floor(amount);
+  amount /= 100000000;
+  return amount;
+}
+
+PaperTrader.prototype.round = function(amount) {
+  return amount.toFixed(8);
+}
+
+PaperTrader.prototype.calculateStartBalance = function() {
+  this.start.balance = this.start.currency + this.price * this.start.asset;
+}
+
+// after every succesfull trend ride we hopefully end up
+// with more BTC than we started with, this function
+// calculates Gekko's profit in %.
+PaperTrader.prototype.updatePosition = function(advice) {
+  let what = advice.recommendation;
+  let price = advice.candle.close;
+  let at = advice.candle.start.clone().utc().format();
+
+  // virtually trade all {currency} to {asset} at the current price
+  if(what === 'long') {
+    this.current.asset += this.extractFee(this.current.currency / price);
+    this.current.currency = 0;
+    this.trades++;
+  }
+
+  // virtually trade all {currency} to {asset} at the current price
+  if(what === 'short') {
+    this.current.currency += this.extractFee(this.current.asset * price);
+    this.current.asset = 0;
+    this.trades++;
+  }
+}
+
+PaperTrader.prototype.processAdvice = function(advice) {
+
+  if(advice.recommendation === 'soft')
+    return;
+
+  this.updatePosition(advice);
+  let trade = this.calcTrade(advice);
+  let report = this.calculateReportStatistics();
+  this.handler.handleTrade(trade, report);
+}
+
+PaperTrader.prototype.processCandle = function(candle, done) {
+  if(!this.dates.start) {
+    this.dates.start = candle.start;
+    this.startPrice = candle.open;
+  }
+
+  this.dates.end = candle.start.clone();
+  this.endPrice = candle.close;
+
+  this.price = candle.close;
+
+  if(!this.start.balance)
+    this.calculateStartBalance();
+
+  done();
+}
+
+PaperTrader.prototype.calcTrade = function(advice) {
+  var what = advice.recommendation;
+  var price = advice.candle.close;
+  var at = advice.candle.start;
+
+  if(what !== 'short' && what !== 'long')
+    return {action: what};
+
+  let action;
+  if(what === 'short') {
+    action = 'sell';
+  } else {
+    action = 'buy';
+  }
+
+  return {
+    action,
+    price,
+    portfolio: _.clone(this.current),
+    balance: this.current.currency + this.price * this.current.asset,
+    date: at
+  }
+}
+
+PaperTrader.prototype.calculateReportStatistics = function() {
+  // the portfolio's balance is measured in {currency}
+  let balance = this.current.currency + this.price * this.current.asset;
+  let profit = balance - this.start.balance;
+  let timespan = moment.duration(
+    this.dates.end.diff(this.dates.start)
+  );
+  let relativeProfit = balance / this.start.balance * 100 - 100
+
+  let report = {
+    currency: this.currency,
+    asset: this.asset,
+
+    startTime: this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss'),
+    endTime: this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss'),
+    timespan: timespan.humanize(),
+    market: this.endPrice * 100 / this.startPrice - 100,
+
+
+    balance: balance,
+    profit: profit,
+    relativeProfit: relativeProfit,
+
+    yearlyProfit: this.round(profit / timespan.asYears()),
+    relativeYearlyProfit: this.round(relativeProfit / timespan.asYears()),
+
+    startPrice: this.startPrice,
+    endPrice: this.endPrice,
+    trades: this.trades,
+    startBalance: this.start.balance
+  }
+
+  report.alpha = report.profit - report.market;
+
+  return report;
+}
+
+PaperTrader.prototype.finalize = function() {
+  const report = this.calculateReportStatistics();
+  this.handler.finalize(report);
+}
+
+
+
+module.exports = PaperTrader;

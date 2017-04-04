@@ -20,9 +20,9 @@
                 option hours
                 option days
       div
-        label(for='historySize') History Size (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
+        label(for='historySize') Warmup period (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input(v-model='historySize')
-        em.label-like (will use {{ (candleSize * historySize).toLocaleString() }} minutes of data as history)
+        em.label-like (will use {{ humanizeDuration(candleSize * historySize * 1000) }} of data as history)
     .grd-row-col-2-6.px1
       div
         h3 Parameters
@@ -49,13 +49,21 @@ export default {
 
       rawStratParams: '',
       rawStratParamsError: false,
+
+      emptyStrat: false,
       stratParams: {}
     };
   },
   created: function () {
     get('strategies', (err, data) => {
         this.strategies = data;
+
+        _.each(this.strategies, function(s) {
+          s.empty = s.params === '';
+        });
+
         this.rawStratParams = _.find(this.strategies, { name: this.strategy }).params;
+        this.emptyStrat = _.find(this.strategies, { name: this.strategy }).empty;
         this.emitConfig();
     });
   },
@@ -63,6 +71,7 @@ export default {
     strategy: function(strat) {
       strat = _.find(this.strategies, { name: strat });
       this.rawStratParams = strat.params;
+      this.emptyStrat = strat.empty;
 
       this.emitConfig();
     },
@@ -93,12 +102,16 @@ export default {
         }
       }
 
-      config[this.strategy] = this.stratParams;
+      if(this.emptyStrat)
+        config[this.strategy] = {__empty: true}
+      else
+        config[this.strategy] = this.stratParams;
 
       return config;
     }
   },
   methods: {
+    humanizeDuration: (n) => window.humanizeDuration(n),
     emitConfig: function() {
       this.parseParams();
       this.$emit('stratConfig', this.config);

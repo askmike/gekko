@@ -20,8 +20,8 @@ div.contain
           th end price
           td {{ round(report.endPrice) }} {{ report.currency }}
         tr
-          th buy and hold profit
-          td {{ round(report.buynhold) }}%
+          th market
+          td {{ round(report.market) }}%
 
     paperTradeSummary(:report='report')
 
