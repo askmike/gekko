@@ -1,6 +1,6 @@
 # Exchanges
 
-*This is a technical document about the requirements per exchange as implemented for Gekko in the `exchange` folder. If you are interested in setting up Gekko for different exchanges check out [Configuring Gekko](https://github.com/askmike/gekko/blob/stable/docs/Configuring_gekko.md).*
+*This is a technical document about the requirements per exchange as implemented for Gekko in the `exchange` folder.*
 
 Gekko arranges all communication about when assets need to be bought or sold between the *trading method* and the *portfolio manager*. Exchanges are implemented by the portfolio manager, all differences between the different API's are abstracted away just below the portfolio manager. This document describes all requirements for adding a new exchange to Gekko. 
 
