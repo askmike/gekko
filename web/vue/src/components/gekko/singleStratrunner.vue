@@ -84,6 +84,7 @@ import { post } from '../../tools/ajax'
 import spinner from '../global/blockSpinner.vue'
 import chart from '../backtester/result/chartWrapper.vue'
 import paperTradeSummary from '../global/paperTradeSummary.vue'
+import config from '../../../../routes/baseConfig.js'
 // global moment
 
 export default {
@@ -111,18 +112,10 @@ export default {
     },
     baseCandleConfig: () => {
       return {
-        adapter: 'sqlite',
-        sqlite: {
-          path: 'plugins/sqlite',
-
-          dataDirectory: 'history',
-          version: 0.1,
-
-          dependencies: [{
-            module: 'sqlite3',
-            version: '3.1.4'
-          }]
-        }
+        adapter: config.adapter,
+        sqlite: config.sqlite,
+        postgresql: config.postgresql,
+        mongodb: config.mongodb,
       }
     },
     chartData: function() {
