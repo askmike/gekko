@@ -26,7 +26,7 @@ Gekko is a Bitcoin TA trading and backtesting platform that connects to popular 
 
 ## TA strategies
 
-Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/strategies/strategies.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/strategies/creating_a_strategy.md). You can use over 130 indicators to create your perfect prediction model ([full list](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) of supported indicators). *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
+Gekko comes with some [basic strategies](https://github.com/askmike/gekko/blob/stable/docs/strategies/strategies.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](https://github.com/askmike/gekko/blob/stable/docs/strategies/creating_a_strategy.md). You can use over 130 indicators to create your perfect prediction model ([full list](https://github.com/askmike/gekko/blob/stable/docs/strategies/talib_indicators.md) of supported indicators). *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
 
 ## Automated Trading platform
 
@@ -84,7 +84,7 @@ See the doc [installing gekko](https://github.com/askmike/gekko/blob/stable/docs
 - Read about [Gekko's overall architecture](https://github.com/askmike/gekko/tree/stable/docs/internals/architecture.md).
 - Read on how to add [a new exchange to Gekko](https://github.com/askmike/gekko/tree/stable/docs/internals/exchanges.md).
 - Read on how to [create your own plugin](https://github.com/askmike/gekko/tree/stable/docs/internals/plugins.md).
-- Implement [your own trading method](https://github.com/askmike/gekko/blob/stable/docs/internals/trading_methods.md) and share it back.
+- Implement [your own trading strategy](https://github.com/askmike/gekko/blob/stable/docs/internals/create_a_strategy.md) and share it back.
 
 ## TODO
 
