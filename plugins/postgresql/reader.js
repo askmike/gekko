@@ -22,7 +22,16 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   SELECT start from ${postgresUtil.table('candles')}
   WHERE start <= ${to} AND start >= ${from}
   ORDER BY start DESC
-  `);
+  `, function (err, result) {
+    if (err) {
+      // bail out if the table does not exist
+      if (err.message.indexOf(' does not exist') !== -1)
+        return next(false);
+
+      log.error(err);
+      return util.die('DB error while reading mostRecentWindow');
+    }
+  });
 
   var rows = [];
   query.on('row', function(row) {
@@ -74,20 +83,18 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   });
 }
 
-Reader.prototype.tableExists = function(name, next) {
+Reader.prototype.tableExists = function (name, next) {
+  this.db.query(`
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema='${postgresUtil.schema()}'
+      AND table_name='${postgresUtil.table(name)}';
+  `, function(err, result) {
+    if (err) {
+      return util.die('DB error at `tableExists`');
+    }
 
-  const query = this.db.query(`
-    SELECT COUNT(*) FROM ${postgresUtil.table(name)}
-  `);
-
-  const rows = [];
-
-  query.on('row', (row) => {
-    rows.push(row);
-  });
-
-  query.on('end', () => {
-    next(null, rows.length === 1 && rows[0].count > 0);
+    next(null, result.rows.length === 1);
   });
 }
 
