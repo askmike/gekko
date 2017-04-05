@@ -358,6 +358,7 @@ config.postgresql = {
   path: 'plugins/postgresql',
   version: 0.1,
   connectionString: 'postgres://user:pass@localhost:5432', // if default port
+  schema: 'public',
   dependencies: [{
     module: 'pg',
     version: '6.1.0'

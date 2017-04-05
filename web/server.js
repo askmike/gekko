@@ -1,4 +1,4 @@
-const config = require('./vue/UIconfig').api;
+const config = require('./vue/UIconfig');
 
 const koa = require('koa');
 const serve = require('koa-static');
@@ -71,10 +71,10 @@ app
   .use(router.allowedMethods());
 
 server.on('request', app.callback());
-server.listen(config.port, () => {
-  const host = `${config.host}:${config.port}${config.path}`;
+server.listen(config.api.port, () => {
+  const host = `${config.api.host}:${config.api.port}${config.api.path}`;
 
-  if(config.ssl) {
+  if(config.api.ssl) {
     var location = `https://${host}`;
   } else {
     var location = `http://${host}`;
@@ -86,6 +86,6 @@ server.listen(config.port, () => {
   // only open a browser when running `node gekko`
   // this prevents opening the browser during development
   let nodeCommand = _.last(process.argv[1].split('/'));
-  if(nodeCommand === 'gekko')
+  if(nodeCommand === 'gekko' && !config.headless)
     opn(location);
 });
