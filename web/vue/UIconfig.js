@@ -2,6 +2,7 @@
 // frontend as well as the web server.
 
 const CONFIG = {
+  headless: true,
   api: {
     ssl: false,
     host: 'localhost',

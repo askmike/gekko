@@ -2,6 +2,7 @@
 
 - *Windows user? Please see the doc [installing Gekko on windows](./installing_gekko_on_windows.md) instead.*
 - *Docker user? You can run Gekko in a docker container, see [installing Gekko using Docker](./installing_gekko_using_docker.md) instead.*
+- *Server user? In order to run Gekko headless, see [installing Gekko on a server](./installing_gekko_on_a_server.md) instead.*
 
 # Installing nodejs
 
