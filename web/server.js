@@ -71,10 +71,10 @@ app
   .use(router.allowedMethods());
 
 server.on('request', app.callback());
-server.listen(config.api.port, () => {
-  const host = `${config.api.host}:${config.api.port}${config.api.path}`;
+server.listen(config.api.host + ':' + config.api.port, () => {
+  const host = `${config.ui.host}:${config.ui.port}${config.ui.path}`;
 
-  if(config.api.ssl) {
+  if(config.ui.ssl) {
     var location = `https://${host}`;
   } else {
     var location = `http://${host}`;

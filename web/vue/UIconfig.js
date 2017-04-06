@@ -1,14 +1,17 @@
-// This config is used in both the
-// frontend as well as the web server.
+// This config is used in the frontend
 
 const CONFIG = {
-  headless: true,
-  api: {
-    ssl: false,
-    host: 'localhost',
-    port: 3000,
-    path: '/'
-  }
+    headless: true,
+    api: {
+        host: '127.0.0.1', // To expose on all interfaces use: 0.0.0.0
+        port: 3000, // The port on which the api will run
+    },
+    ui:{
+        ssl: false,
+        host: 'localhost',
+        port: 3000,
+        path: '/'
+    }
 }
 
 if(typeof window === 'undefined')
