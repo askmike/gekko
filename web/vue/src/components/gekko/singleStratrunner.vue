@@ -84,7 +84,6 @@ import { post } from '../../tools/ajax'
 import spinner from '../global/blockSpinner.vue'
 import chart from '../backtester/result/chartWrapper.vue'
 import paperTradeSummary from '../global/paperTradeSummary.vue'
-import config from '../../../../routes/baseConfig.js'
 // global moment
 
 export default {
@@ -109,14 +108,6 @@ export default {
     },
     data: function() {
       return _.find(this.stratrunners, {id: this.$route.params.id});
-    },
-    baseCandleConfig: () => {
-      return {
-        adapter: config.adapter,
-        sqlite: config.sqlite,
-        postgresql: config.postgresql,
-        mongodb: config.mongodb,
-      }
     },
     chartData: function() {
       return {
@@ -194,17 +185,14 @@ export default {
       let from = this.data.firstCandle.start;
       let candleSize = this.data.strat.tradingAdvisor.candleSize;
 
-      let config = Vue.util.extend(
-        {
+      let config = {
           watch: this.data.watch,
           daterange: {
             to, from
           },
           // hourly candles
           candleSize
-        },
-        this.baseCandleConfig
-      );
+        };
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';

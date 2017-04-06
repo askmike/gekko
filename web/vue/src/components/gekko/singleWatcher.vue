@@ -42,7 +42,6 @@ import _ from 'lodash'
 import spinner from '../global/blockSpinner.vue'
 import Vue from 'vue'
 import chart from '../backtester/result/chartWrapper.vue'
-import config from '../../../../routes/baseConfig.js'
 // global moment
 
 export default {
@@ -66,14 +65,6 @@ export default {
     },
     data: function() {
       return _.find(this.watchers, {id: this.$route.params.id});
-    },
-    baseCandleConfig: () => {
-      return {
-        adapter: config.adapter,
-        sqlite: config.sqlite,
-        postgresql: config.postgresql,
-        mongodb: config.mongodb,
-      }
     },
     chartData: function() {
       return {
@@ -137,17 +128,14 @@ export default {
       from = moment.unix(from).utc().format();
       to = moment.unix(to).utc().format();
 
-      let config = Vue.util.extend(
-        {
+      let config = {
           watch: this.data.watch,
           daterange: {
             to, from
           },
           // hourly candles
           candleSize
-        },
-        this.baseCandleConfig
-      );
+        };
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';

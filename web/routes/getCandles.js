@@ -30,8 +30,11 @@
 const _ = require('lodash');
 const promisify = require('tiny-promisify');
 const candleLoader = promisify(require('../../core/workers/loadCandles/parent'));
+const base = require('./baseConfig');
 
 module.exports = function *() {
 
-  this.body = yield candleLoader(this.request.body);
+  config = {};
+  _.merge(config, base, this.request.body);
+  this.body = yield candleLoader(config);
 }
