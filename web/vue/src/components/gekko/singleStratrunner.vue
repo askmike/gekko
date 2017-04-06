@@ -109,22 +109,6 @@ export default {
     data: function() {
       return _.find(this.stratrunners, {id: this.$route.params.id});
     },
-    baseCandleConfig: () => {
-      return {
-        adapter: 'sqlite',
-        sqlite: {
-          path: 'plugins/sqlite',
-
-          dataDirectory: 'history',
-          version: 0.1,
-
-          dependencies: [{
-            module: 'sqlite3',
-            version: '3.1.4'
-          }]
-        }
-      }
-    },
     chartData: function() {
       return {
         candles: this.candles,
@@ -201,17 +185,14 @@ export default {
       let from = this.data.firstCandle.start;
       let candleSize = this.data.strat.tradingAdvisor.candleSize;
 
-      let config = Vue.util.extend(
-        {
+      let config = {
           watch: this.data.watch,
           daterange: {
             to, from
           },
           // hourly candles
           candleSize
-        },
-        this.baseCandleConfig
-      );
+        };
 
       post('getCandles', config, (err, res) => {
         this.candleFetch = 'fetched';
