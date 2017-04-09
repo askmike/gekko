@@ -9,7 +9,7 @@ var dirs = util.dirs();
 var pluginHelper = require(`${dirs.core}pluginUtil`);
 var pluginMock = {
   slug: 'mongodb adapter',
-  dependencies: config.adapters.mongodb.dependencies
+  dependencies: config.mongodb.dependencies
 }
 
 // exit if plugin couldn't be loaded
@@ -25,7 +25,7 @@ var collections = [
   mongoUtil.settings.adviceCollection
 ]
 
-var connection = mongojs(config.adapters.mongodb.connectionString, collections);
+var connection = mongojs(config.mongodb.connectionString, collections);
 var collection = connection.collection(mongoUtil.settings.historyCollection);
 
 if (mode === 'backtest') {

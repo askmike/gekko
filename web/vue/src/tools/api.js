@@ -1,6 +1,6 @@
 // global window.CONFIG
 
-const config = window.CONFIG.api;
+const config = window.CONFIG.ui;
 const host = `${config.host}:${config.port}${config.path}api/`;
 
 // rest API path
