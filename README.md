@@ -14,7 +14,7 @@ Gekko is a Bitcoin TA trading and backtesting platform that connects to popular 
 
 * Automated trading (trade bot)
 * Paper trading (for TA strategies)
-* Backtester (for TA strategies)
+* [Backtester](https://github.com/askmike/gekko/blob/stable/docs/features/backtesting.md) (for TA strategies)
 * Tool for systematic trading
 * Low level market library
  * Monitor the live market
