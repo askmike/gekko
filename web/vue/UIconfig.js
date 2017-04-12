@@ -1,16 +1,18 @@
 // This config is used in both the
 // frontend as well as the web server.
 
+// see https://github.com/askmike/gekko/blob/stable/docs/installing_gekko_on_a_server.md
+
 const CONFIG = {
-    headless: true,
+    headless: false,
     api: {
-        host: '127.0.0.1', // The interfaces on which the port will be accessible, for all use: 0.0.0.0
-        port: 3000, // The port on which the api will run
+        host: '127.0.0.1',
+        port: 3000,
     },
-    ui:{
-        ssl: false, // Set to true if proxy adds SSL
-        host: 'localhost', // The host the ui will connect to (change this if running behind a proxy)
-        port: 3000, // The port the ui will connect to (change this if running behind a proxy)
+    ui: {
+        ssl: false,
+        host: 'localhost',
+        port: 3000,
         path: '/'
     }
 }
