@@ -70,7 +70,7 @@ You can configure these parameters in config/strategies/MACD.toml:
 
 ### PPO
 
-Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_pp).
+Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_ppo).
 
 You can configure these parameters in config/strategies/PPO.toml:
 

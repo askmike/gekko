@@ -40,13 +40,9 @@ Install Gekko's dependencies:
 In a command line navigated to Gekko type:
 
     node gekko --ui
+
+Your browser should automatically open with the UI. If it doesn't, manually browse to [http://localhost:3000](http://localhost:3000).
     
 ### Stopping Gekko
 
 In the command line hold `ctrl` + `c`.
-    
-## Configure Gekko
-
-Use Windows Explorer to navigate to the `gekko-stable` folder on your desktpop. Cope the file `sample-config.js` to `config.js`. Open `config.js` with a texteditor (like notepad) and check in [the documentation](https://github.com/askmike/gekko/tree/stable/docs/Configuring_gekko.md) hwo you should configure Gekko.
-
-Remember, after changing the settings you have to stop and start Gekko!
