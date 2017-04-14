@@ -6,7 +6,9 @@ var log = require(util.dirs().core + 'log');
 var _ = require('lodash');
 var moment = require('moment');
 
-if(util.getConfig().watch.exchange === 'okcoin')
+if (util.getConfig().watch.tickrate)
+  var TICKRATE = util.getConfig().watch.tickrate;
+else if(util.getConfig().watch.exchange === 'okcoin')
   var TICKRATE = 2;
 else
   var TICKRATE = 20;

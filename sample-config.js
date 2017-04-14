@@ -18,7 +18,12 @@ config.watch = {
   // see https://github.com/askmike/gekko#supported-exchanges
   exchange: 'poloniex',
   currency: 'USDT',
-  asset: 'BTC'
+  asset: 'BTC',
+
+  // You can set your own tickrate (refresh rate).
+  // If you don't set it, the defaults are 2 sec for
+  // okcoin and 20 sec for all other exchanges.
+  // tickrate: 20
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
