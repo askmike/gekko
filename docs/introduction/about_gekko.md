@@ -46,10 +46,7 @@ Gekko is not built for HFT or anything related to being the fastest (like arbitr
 
 ![Gekko architecture](https://wizb.it/gekko/static/architecture.jpg)
 
-- Implement [your own trading strategy](../strategies/creating_a_strategy.md).
-- Read on how to add [a new exchange to Gekko](../extending/add_an_exchange.md).
-- Read on how to [create your own plugin](../extending/add_a_plugin.md).
-- Read about [Gekko's overall architecture](../internals/architecture.md).
+Read more in the [architecture documentation](../internals/architecture.md).
 
 ## Credits
 

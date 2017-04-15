@@ -1,10 +1,10 @@
 # Example Strategies
 
-Gekko implements [technical analysis strategies](http://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp) using trading methods. These methods use a number of *[indicators](http://www.investopedia.com/terms/t/technicalindicator.asp)* to calculate an *investment advice*.
+Gekko uses [technical analysis indicators](http://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp) inside **strategies**.
 
 This investment advice is going to be either **long** or **short**.
 
-Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko and serve as examples, for any serious usage we recommend you [write your own](./creating_a_trading_method.md).
+Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko and serve as examples, for any serious usage we recommend you [write your own](./creating_a_strategy.md).
 
 Gekko currently comes with the following example strategies:
 

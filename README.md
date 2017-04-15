@@ -12,7 +12,7 @@ Gekko is a Bitcoin TA trading and backtesting platform that connects to popular 
 
 ## Documentation
 
-See [the documentation website](https://gekko.wizb.it/docs/introduction/about_gekko.html)
+See [the documentation website](https://gekko.wizb.it/docs/introduction/about_gekko.html).
 
 ## Final
 

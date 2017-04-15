@@ -8,19 +8,19 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 
 | Exchange        | Monitoring | Live Trading | Importing | Notes |
 | --------------- |:----------:|:-------:|:---------:|-------|
-| [Poloniex](https://poloniex.com/)      | ✓ | ✓ | ✓ | |
-| [GDAX](https://gdax.com/)      | ✓ | ✓ | ✓ | |
-| [BTCC](https://btcc.com/)      | ✓ | ✓ | ✓ | (=BTCChina) |
-| [Bitstamp](https://bitstamp.com/)      | ✓ | ✓ | ✗ | |
-| [Kraken](https://kraken.com/)      | ✓ | ✓ | ✗ | |
-| [Bitfinex](https://bitfinex.com/)      | ✓ | ✓ | ✗ | |
-| [BTC-e](https://btc-e.com/)      | ✓ | ✓ | ✗ | |
-| [Okcoin.cn](https://www.okcoin.cn/)      | ✓ | ✓ | ✗ | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
-| [Cex.io](https://cex.io/)      | ✓ | ✓ | ✗ | |
-| [BTC Markets](https://btcmarkets.net)      | ✓ | ✓ | ✗ | |
-| [bitX](https://www.bitx.co/)      | ✓ | ✗ | ✗ | |
-| [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
-| [meXBT](https://mexbt.com/)      | ✓ | ✗ | ✗ | see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974). |
-| [zaif](https://zaif.jp/trade_btc_jpy)      | ✓ | ✗ | ✗ | |
-| [lakeBTC](https://lakebtc.com/)      | ✓ | ✗ | ✗ | |
-| [bx.in.th](https://bx.in.th/)      | ✓ | ✗ | ✗ | |
+| [Poloniex](https://poloniex.com/)      | V | V | V | |
+| [GDAX](https://gdax.com/)      | V | V | V | |
+| [BTCC](https://btcc.com/)      | V | V | V | (=BTCChina) |
+| [Bitstamp](https://bitstamp.com/)      | V | V | X | |
+| [Kraken](https://kraken.com/)      | V | V | X | |
+| [Bitfinex](https://bitfinex.com/)      | V | V | X | |
+| [BTC-e](https://btc-e.com/)      | V | V | X | |
+| [Okcoin.cn](https://www.okcoin.cn/)      | V | V | X | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
+| [Cex.io](https://cex.io/)      | V | V | X | |
+| [BTC Markets](https://btcmarkets.net)      | V | V | X | |
+| [bitX](https://www.bitx.co/)      | V | X | X | |
+| [lakeBTC](https://lakebtc.com/)      | V | X | X | |
+| [meXBT](https://mexbt.com/)      | V | X | X | see [here](https://github.com/askmike/gekko/issues/288#issuecomment-223810974). |
+| [zaif](https://zaif.jp/trade_btc_jpy)      | V | X | X | |
+| [lakeBTC](https://lakebtc.com/)      | V | X | X | |
+| [bx.in.th](https://bx.in.th/)      | V | X | X | |
