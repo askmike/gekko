@@ -8,7 +8,7 @@ Gekko currently comes with [a couple of strategies](../strategies.md) out of box
 
 A strategy is a combination of functions that get market data in the form of candles (OHCL, volume and the average weighted price).
 
-## Boiler plate strategies
+## Boilerplate strategies
 
     // Let's create our own strategy
     var strat = {};

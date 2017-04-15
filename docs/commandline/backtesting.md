@@ -1,6 +1,6 @@
-*Note: this documentation was written for runnin Gekko via the command line. If you are using the UI you can simply use the importer under the "local data" tab.*
-
 # Backtesting with Gekko
+
+*Note: this documentation was written for running Gekko via the command line. If you are using the UI you can simply use the importer under the "local data" tab.*
 
 Gekko is able to backtest strategies against historical data.
 
