@@ -8,7 +8,7 @@
 
 As of now Gekko requires [nodejs](https://nodejs.org/en/) to be installed. Go ahead and install this if it's not already (Gekko requires at least version 6).
 
-## Installing Gekko
+## Downloading Gekko
 
 Either use Git or download the zip. For git, run this in a terminal:
 

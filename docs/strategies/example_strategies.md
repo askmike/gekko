@@ -1,12 +1,12 @@
-# Trading Methods
+# Example Strategies
 
 Gekko implements [technical analysis strategies](http://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp) using trading methods. These methods use a number of *[indicators](http://www.investopedia.com/terms/t/technicalindicator.asp)* to calculate an *investment advice*.
 
 This investment advice is going to be either **long** or **short**.
 
-Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko, for any serious usage we recommend you [write your own](trading_bot/creating_a_trading_method.md).
+Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko and serve as examples, for any serious usage we recommend you [write your own](./creating_a_trading_method.md).
 
-Gekko currently comes with:
+Gekko currently comes with the following example strategies:
 
  - [DEMA](#DEMA)
  - [MACD](#MACD)
@@ -15,8 +15,6 @@ Gekko currently comes with:
  - [StochRSI](#StochRSI)
  - [CCI](#CCI)
  - [talib-macd](#talib-macd)
-
-But you can easily create your custom method, read [here](../trading_bot/creating_a_trading_method.md) how!
 
 ### DEMA
 
@@ -27,7 +25,7 @@ from eachother.
 
 This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this method in [his topic](https://bitcointalk.org/index.php?topic=60501.0)
 
-You can configure these parameters in config/strategies/DEMA.toml:
+You can configure the following parameters:
 
     # EMA weight (α)
     # the higher the weight, the more smooth (and delayed) the line
@@ -46,7 +44,7 @@ You can configure these parameters in config/strategies/DEMA.toml:
 
 This method is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_conve).
 
-You can configure these parameters in config/strategies/MACD.toml:
+You can configure the following parameters:
 
     # EMA weight (α)
     # the higher the weight, the more smooth (and delayed) the line
@@ -72,7 +70,7 @@ You can configure these parameters in config/strategies/MACD.toml:
 
 Very similar to MACD but also a little different, read more [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:price_oscillators_ppo).
 
-You can configure these parameters in config/strategies/PPO.toml:
+You can configure the following parameters:
 
     # EMA weight (α)
     # the higher the weight, the more smooth (and delayed) the line
@@ -98,7 +96,7 @@ You can configure these parameters in config/strategies/PPO.toml:
 
 The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:relative_strength_in).
 
-You can configure these parameters in config/strategies/RSI.toml:
+You can configure the following parameters:
 
     interval = 14
 
@@ -115,7 +113,7 @@ You can configure these parameters in config/strategies/RSI.toml:
 
 ### StochRSI
 
-You can configure these parameters in config/strategies/StochRSI.toml:
+You can configure the following parameters:
 
     interval = 3
 
@@ -126,9 +124,9 @@ You can configure these parameters in config/strategies/StochRSI.toml:
 
 [TODO!]
 
-You can configure these parameters in config/strategies/StochRSI.toml:
-
 ### CCI
+
+You can configure the following parameters:
 
     # constant multiplier. 0.015 gets to around 70% fit
     constant = 0.015
@@ -144,6 +142,8 @@ You can configure these parameters in config/strategies/StochRSI.toml:
 [TODO!]
 
 ### talib-macd
+
+You can configure the following parameters:
 
     [parameters]
     optInFastPeriod = 10
