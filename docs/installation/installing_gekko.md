@@ -15,7 +15,7 @@ Either use Git or download the zip. For git, run this in a terminal:
     git clone git://github.com/askmike/gekko.git
     cd gekko
 
-Alternatively download and extract [the zip here](https://github.com/askmike/gekko/archive/develop.zip).
+Alternatively download and extract [the zip here](https://github.com/askmike/gekko/archive/stable.zip).
 
 ## Installing Gekko dependencies
 
