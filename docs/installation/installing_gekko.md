@@ -6,7 +6,7 @@
 
 ## Installing nodejs
 
-As of now Gekko requires [nodejs](https://nodejs.org/en/) to be installed. Go ahead and install this if it's not already (Gekko requires at least version 6).
+As of now Gekko requires [nodejs](https://nodejs.org/en/) to be installed. Go ahead and install this if it's not already (Gekko requires at least version 6). We advice to download the current LTS.
 
 ## Downloading Gekko
 

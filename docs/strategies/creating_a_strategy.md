@@ -1,8 +1,8 @@
-# Strategies
+# Creating a strategy
 
 Strategies are the core of Gekko's trading bot. They look at the market and decide what to do based on technical analysis indicators. As of now all strategies are limited to a single market on a single exchange.
 
-Gekko currently comes with [a couple of strategies](../strategies.md) out of box. Besides those you can also create your own strategy in javascript. The easiest way to do this is open the file `gekko/strategies/custom.js` and write your own trading method.
+Gekko currently comes with [a couple of strategies](./example_strategies.md) out of box. Besides those you can also create your own strategy in javascript. The easiest way to do this is open the file `gekko/strategies/custom.js` and write your own trading method.
 
 ## Creating a strategy
 
