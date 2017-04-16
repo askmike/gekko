@@ -46,7 +46,7 @@ export default {
 }
 
 .roundtrips table th,
-.roundtrips table td, {
+.roundtrips table td {
   border: 1px solid #c6cbd1;
   padding: 8px 12px;
 }
