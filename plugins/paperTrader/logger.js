@@ -2,15 +2,20 @@
 
 const _ = require('lodash');
 const moment = require('moment');
+const humanizeDuration = require('humanize-duration');
 
 const util = require('../../core/util.js');
 const dirs = util.dirs();
 const mode = util.gekkoMode();
+const config = util.getConfig();
+const calcConfig = config.paperTrader;
 const log = require(dirs.core + 'log');
 
 const Logger = function(watchConfig) {
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
+
+  this.roundtrips = [];
 }
 
 Logger.prototype.round = function(amount) {
@@ -36,8 +41,25 @@ Logger.prototype.logReport = function(trade, report) {
     `(PROFIT REPORT) simulated profit:\t\t ${this.round(report.profit)} ${this.currency}`,
     `(${this.round(report.relativeProfit)}%)`
   );
-
 }
+
+Logger.prototype.logRoundtripHeading = function() {
+  log.info('(ROUNDTRIP)', 'entry date\t\texit date\t\texposed duration P&L\t\t\tprofit');
+}
+
+Logger.prototype.logRoundtrip = function(rt) {
+  const display = [
+    rt.entryAt.format('YYYY-MM-DD HH:mm'),
+    rt.exitAt.format('YYYY-MM-DD HH:mm'),
+    moment.duration(rt.duration).humanize(),
+    rt.pnl,
+    rt.profit
+  ];
+
+  log.info('(ROUNDTRIP)', display.join('\t'));
+}
+
+
 
 if(mode === 'backtest') {
   // we only want to log a summarized one line report, like:
@@ -70,7 +92,13 @@ if(mode === 'backtest') {
 
   Logger.prototype.finalize = function(report) {
 
-    log.info('')
+    log.info();
+    log.info('(ROUNDTRIP) REPORT:');
+
+    this.logRoundtripHeading();
+    _.each(this.roundtrips, this.logRoundtrip, this);
+
+    log.info()
     log.info(`(PROFIT REPORT) start time:\t\t\t ${report.startTime}`);
     log.info(`(PROFIT REPORT) end time:\t\t\t ${report.endTime}`);
     log.info(`(PROFIT REPORT) timespan:\t\t\t ${report.timespan}`);
@@ -89,15 +117,18 @@ if(mode === 'backtest') {
     );
   }
 
-  // Logger.prototype.finalize = function(report) {
-  //   process.send({
-  //     type: 'report',
-  //     report: report
-  //   });
-  // }
+  Logger.prototype.handleRoundtrip = function(rt) {
+    this.roundtrips.push(rt);
+  }
 
 } else if(mode === 'realtime') {
   Logger.prototype.handleTrade = Logger.prototype.logReport;
+
+  Logger.prototype.handleRoundtrip = function(rt) {
+    this.logRoundtripHeading();
+    this.logRoundtrip(rt);
+  }
+
 }
 
 

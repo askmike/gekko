@@ -76,7 +76,7 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
   })
 }
 
-Reader.prototype.tableExists = function(name, next) {  
+Reader.prototype.tableExists = function(name, next) {
 
   this.db.all(`
     SELECT name FROM sqlite_master WHERE type='table' AND name='${sqliteUtil.table(name)}';
