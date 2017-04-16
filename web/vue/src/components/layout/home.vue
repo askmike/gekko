@@ -18,9 +18,9 @@ Gekko is a Bitcoin trading bot and backtesting platform that
 connects to popular Bitcoin exchanges. It is written in javascript
 and runs on nodejs.
 
-[Find out more](https://github.com/askmike/gekko#gekko---).
+[Find out more](https://gekko.wizb.it/).
 
-*Gekko is open source and free, if you paid for this you have been scammed.*
+*Gekko is 100% open source and free, if you paid for this you have been scammed.*
 
 `);
 
