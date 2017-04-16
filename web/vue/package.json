@@ -1,6 +1,6 @@
 {
   "name": "vue",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "The frontend for the Gekko UI",
   "author": "Mike van Rossum <mike@mvr.me>",
   "scripts": {
