@@ -1,15 +1,14 @@
-// If you want to use your own trading methods you can
-// write them here. For more information on everything you
-// can use please refer to this document:
-// 
-// https://github.com/askmike/gekko/blob/stable/docs/trading_methods.md
-// 
-// The example below is pretty stupid: on every new candle there is
-// a 10% chance it will recommand to change your position (to either
+// This is a basic example strategy for Gekko.
+// For more information on everything please refer
+// to this document:
+//
+// https://gekko.wizb.it/docs/strategies/creating_a_strategy.html
+//
+// The example below is pretty bad investment advice: on every new candle there is
+// a 10% chance it will recommend to change your position (to either
 // long or short).
 
-var config = require('../core/util.js').getConfig();
-var settings = config.custom;
+var log = require('../core/log');
 
 // Let's create our own strat
 var strat = {};
@@ -27,13 +26,13 @@ strat.update = function(candle) {
   this.randomNumber = Math.random();
 
   // There is a 10% chance it is smaller than 0.1
-  this.toUpdate = randomNumber < 0.1;
+  this.toUpdate = this.randomNumber < 0.1;
 }
 
 // For debugging purposes.
 strat.log = function() {
-  log.write('calculated random number:');
-  log.write('\t', this.randomNumber.toFixed(3));
+  log.debug('calculated random number:');
+  log.debug('\t', this.randomNumber.toFixed(3));
 }
 
 // Based on the newly calculated
