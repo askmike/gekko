@@ -4,6 +4,7 @@
 
 module.exports = done => {
   var trades = [];
+  var roundtrips = []
   var candles = [];
   var report = false;
 
@@ -15,6 +16,9 @@ module.exports = done => {
 
       else if(message.type === 'trade')
         trades.push(message.trade);
+
+      else if(message.type === 'roundtrip')
+        roundtrips.push(message.roundtrip);
 
       else if(message.type === 'report')
         report = message.report;
@@ -29,7 +33,8 @@ module.exports = done => {
         done(null, {
           trades: trades,
           candles: candles,
-          report: report
+          report: report,
+          roundtrips: roundtrips
         });
     }
   }
