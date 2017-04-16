@@ -63,7 +63,21 @@ var cp = {
   //   trades: 10,
   //   startBalance: 1043.5100001199999
   // }
-  report: report => message('report', { report })
+  report: report => message('report', { report }),
+
+  // object like:
+  // {
+  //   entryAt: Moment<'2017-03-25 19:41:00'>,
+  //   entryPrice: 10.21315498,
+  //   entryBalance: 98.19707799420277,
+  //   exitAt: Moment<'2017-03-25 19:41:00'>
+  //   exitPrice: 10.22011632,
+  //   exitBalance: 97.9692176,
+  //   duration: 3600000,
+  //   pnl: -0.2278603942027786,
+  //   profit: -0.2320439659276161
+  // }
+  roundtrip: roundtrip => message('roundtrip', { roundtrip }),
 }
 
 if(ENV !== 'child-process') {

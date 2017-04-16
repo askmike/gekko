@@ -9,7 +9,6 @@ var config = util.getConfig();
 var calcConfig = config.paperTrader;
 var watchConfig = config.watch;
 
-
 // Load the proper module that handles the results
 var Handler;
 if(ENV === 'child-process')
@@ -85,6 +84,7 @@ PaperTrader.prototype.updatePosition = function(advice) {
 
     if(!calcConfig.reportRoundtrips)
       return;
+
     // register entry for roundtrip
     this.roundTrip.entry = {
       date: advice.candle.start,

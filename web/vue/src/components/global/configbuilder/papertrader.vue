@@ -46,6 +46,7 @@ export default {
     parseParams: function() {
       try {
         this.paperTraderParams = toml.parse(this.rawPaperTraderParams);
+        this.paperTraderParams.reportRoundtrips = true;
         this.rawPaperTraderParamsError = false;
       } catch(e) {
         this.rawPaperTraderParamsError = e;

@@ -16,6 +16,10 @@ Relay.prototype.handleTrade = function(trade, report) {
   cp.report(report);
 }
 
+Relay.prototype.handleRoundtrip = function(rt) {
+  cp.roundtrip(rt);
+}
+
 Relay.prototype.finalize = function(report) {
   cp.report(report);
 }
