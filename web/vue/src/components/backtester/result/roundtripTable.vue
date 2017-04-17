@@ -4,15 +4,19 @@
     table(v-if='roundtrips.length')
       thead
         tr
-          th Entry
-          th Exit
+          th Entry at
+          th Exit at
           th Exposure
+          th Entry balance
+          th Exit balance
           th P&amp;L
           th Profit
         tr(v-for='rt in roundtrips')
           td {{ fmt(rt.entryAt) }}
           td {{ fmt(rt.exitAt) }}
           td {{ diff(rt.duration) }}
+          td {{ round(rt.entryBalance) }}
+          td {{ round(rt.exitBalance) }}
           td {{ round(rt.pnl) }}
           td {{ round(rt.profit) }}
     div(v-if='!roundtrips.length')
