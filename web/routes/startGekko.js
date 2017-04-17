@@ -71,6 +71,19 @@ module.exports = function *() {
       }
       broadcast(wsEvent);
       return;
+    } else if(event.type === 'roundtrip') {
+      let roundtrip = event.roundtrip;
+      gekkoManager.push(id, 'roundtrips', roundtrip);
+      let wsEvent = {
+        type: 'roundtrip',
+        gekko_id: id,
+        gekko_mode: mode,
+        gekko_type: type,
+        emitter: 'gekko',
+        roundtrip
+      }
+      broadcast(wsEvent);
+      return;
     }
 
     let updates = {};
@@ -117,6 +130,7 @@ module.exports = function *() {
     };
 
     gekko.trades = [];
+    gekko.roundtrips = [];
   }
 
   gekkoManager.add(gekko);

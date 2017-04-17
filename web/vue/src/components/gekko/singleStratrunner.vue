@@ -71,8 +71,10 @@
       template(v-if='!isLoading')
         h3.contain Market graph
         spinner(v-if='candleFetch === "fetching"')
-        template(v-if='candles')
+        template(v-if='candleFetch === "fetched"')
           chart(:data='chartData', :height='300')
+        roundtrips(:roundtrips='data.roundtrips')
+
 </template>
 
 <script>
@@ -83,6 +85,7 @@ import _ from 'lodash'
 import { post } from '../../tools/ajax'
 import spinner from '../global/blockSpinner.vue'
 import chart from '../backtester/result/chartWrapper.vue'
+import roundtrips from '../backtester/result/roundtripTable.vue'
 import paperTradeSummary from '../global/paperTradeSummary.vue'
 // global moment
 
@@ -94,7 +97,8 @@ export default {
   components: {
     spinner,
     chart,
-    paperTradeSummary
+    paperTradeSummary,
+    roundtrips
   },
   data: () => {
     return {

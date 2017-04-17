@@ -33,3 +33,16 @@ export const addTradeToStratrunner = (state, update) => {
 
   return state;
 }
+
+export const addRoundtripToStratrunner = (state, update) => {
+  let index = state.stratrunners.findIndex(i => i.id === update.gekko_id);
+  let item = state.stratrunners[index];
+  if(!item)
+    return state;
+
+  let updated = Vue.util.extend({}, item);
+  updated.roundtrips.push(update.roundtrip);
+  Vue.set(state.stratrunners, index, updated);
+
+  return state;
+}

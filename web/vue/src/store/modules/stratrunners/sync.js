@@ -25,12 +25,17 @@ const sync = () => {
     store.commit('addTradeToStratrunner', data);
   }
 
+  const roundtrip = (data) => {
+    store.commit('addRoundtripToStratrunner', data);
+  }
+
   bus.$on('report', update);
   bus.$on('trade', trade);
   bus.$on('update', update);
   bus.$on('startAt', update);
   bus.$on('lastCandle', update);
   bus.$on('firstCandle', update);
+  bus.$on('roundtrip', update);
 }
 
 export default function() {
