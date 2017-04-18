@@ -52,5 +52,4 @@ if(mode === 'realtime' || mode === 'importer') {
 var db = new sqlite3.Database(fullPath);
 db.run("PRAGMA journal_mode = WAL");
 
-
 module.exports = db;

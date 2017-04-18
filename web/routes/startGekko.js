@@ -33,7 +33,7 @@ module.exports = function *() {
 
   console.log('Gekko', id, 'started');
 
-  pipelineRunner(mode, config, (err, event) => {
+  const child = pipelineRunner(mode, config, (err, event) => {
 
     if(err) {
       if(errored)

@@ -11,6 +11,7 @@ var Reader = function() {
   this.db = handle;
 }
 
+
 // returns the most recent window complete candle
 // windows within `from` and `to`
 Reader.prototype.mostRecentWindow = function(from, to, next) {

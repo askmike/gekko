@@ -42,7 +42,8 @@ method.log = function() {
 
   log.debug('calculated RSI properties for candle:');
   log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
-  log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
+  if(this.lastPrice)
+    log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
 }
 
 method.check = function() {
