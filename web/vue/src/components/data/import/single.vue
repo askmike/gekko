@@ -16,6 +16,8 @@
         .grd-row
           .grd-row-col-2-6 To go:
           .grd-row-col-4-6 {{ fromEnd }}
+      .contain
+        progressBar(:progress='progress')
       p 
         em (you don't have to wait until the import is done,
           | you can already start 
@@ -35,7 +37,12 @@
 
 <script>
 
+import progressBar from '../../global/progressBar.vue'
+
 export default {
+  components: {
+    progressBar
+  },
   computed: {
     data: function() {
       return _.find(
@@ -47,12 +54,15 @@ export default {
       if(this.data)
         return this.mom(this.data.latest);
     },
+    fromEndMs: function() {
+      if(this.data)
+        return this.to.diff(this.latest);
+    },
     fromEnd: function() {
       if(!this.latest)
         return 'LOADING'
 
-      let diff = this.to.diff(this.latest);
-      return humanizeDuration(diff);
+      return humanizeDuration(this.fromEndMs);
     },
     from: function() {
       if(this.data)
@@ -61,6 +71,17 @@ export default {
     to: function() {
       if(this.data)
         return this.mom(this.data.to)
+    },
+    timespan: function() {
+      if(this.data)
+        return this.to.diff(this.from)
+    },
+    progress: function() {
+      if(!this.data)
+        return;
+
+      const current = this.timespan - this.fromEndMs;
+      return 100 * current / this.timespan;
     }
   },
   methods: {
