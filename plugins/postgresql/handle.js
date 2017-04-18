@@ -69,6 +69,7 @@ checkClient.connect(function(err){
     }else{ //database exists
       log.debug("Database exists: "+dbName);
       client.connect(function(err){
+        checkClient.end();
         if(err){
           util.die(err);
         }
