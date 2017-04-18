@@ -16,7 +16,8 @@ ipc.on('start', config => {
 
   var scan = require(dirs.tools + 'dateRangeScanner');
   scan(
-    (err, ranges) => {
+    (err, ranges, reader) => {
+      reader.close();
       ipc.send('ranges', ranges)
       process.exit(0);
     }
