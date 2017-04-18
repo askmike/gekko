@@ -1,7 +1,7 @@
 // http://stackoverflow.com/questions/7190898/progress-bar-with-html-and-css
 
 <template lang='jade'>
-.progressbarWrapper
+.progressbarWrapper(v-if='progress')
   p {{ round(progress) }}%
   .progressbar
     div(:style='{width: progress + "%"}')
@@ -11,7 +11,7 @@
 export default {
   props: ['progress'],
   methods: {
-    round: n => {console.log(n);return(+n).toFixed(3)}
+    round: n => (+n).toFixed(2)
   }
 }
 </script>
