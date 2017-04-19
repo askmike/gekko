@@ -61,7 +61,8 @@ var cp = {
   //   startPrice: 945.80000002,
   //   endPrice: 942.80838846,
   //   trades: 10,
-  //   startBalance: 1043.5100001199999
+  //   startBalance: 1043.5100001199999,
+  //   sharpe: -2.676305165560598
   // }
   report: report => message('report', { report }),
 
@@ -75,7 +76,7 @@ var cp = {
   //   exitBalance: 97.9692176,
   //   duration: 3600000,
   //   pnl: -0.2278603942027786,
-  //   profit: -0.2320439659276161
+  //   profit: -0.2320439659276161,
   // }
   roundtrip: roundtrip => message('roundtrip', { roundtrip }),
 }

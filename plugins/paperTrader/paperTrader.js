@@ -45,6 +45,7 @@ const PaperTrader = function() {
   this.current = _.clone(this.start);
   this.trades = 0;
 
+  this.sharpe = 0;
 
   this.roundTrips = [];
   this.roundTrip = {
@@ -132,6 +133,13 @@ PaperTrader.prototype.handleRoundtrip = function() {
 
   this.roundTrips.push(roundtrip);
   this.handler.handleRoundtrip(roundtrip);
+
+  // every time we have a new roundtrip
+  // update the cached sharpe ratio
+  this.sharpe = stats.sharpe(
+    this.roundTrips.map(r => r.profit),
+    calcConfig.riskFreeReturn
+  );
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
@@ -214,14 +222,8 @@ PaperTrader.prototype.calculateReportStatistics = function() {
     startPrice: this.startPrice,
     endPrice: this.endPrice,
     trades: this.trades,
-    startBalance: this.start.balance
-  }
-
-  if(_.size(this.roundTrips)) {
-    report.sharpe = stats.sharpe(
-      this.roundTrips.map(r => r.profit),
-      calcConfig.riskFreeReturn
-    );
+    startBalance: this.start.balance,
+    sharpe: this.sharpe
   }
 
   report.alpha = report.profit - report.market;
