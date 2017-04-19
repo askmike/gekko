@@ -1,10 +1,14 @@
 # Installing Gekko on windows
 
-[Gekko](https://github.com/askmike/gekko/) is an open source Bitcoin trading bot which features multiple technical analysis trading methods. It can report advice or automatically trade at a number of Bitcoin exchanges. This guide will show you how to install Gekko on Windows.
+Here is a youtube video I made that shows exactly how to set up Gekko:
 
-Before installing any software from the internet, it is always recommended to check the source. All of Gekko's source files are on its [Github repo](https://github.com/askmike/gekko/).
+[![screen shot 2017-04-20 at 00 03 45](https://cloud.githubusercontent.com/assets/969743/25205894/e7f4ea64-255c-11e7-891b-28c080a9fbf2.png)](https://www.youtube.com/watch?v=R68IwVujju8)
 
-*Note that Gekko runs on every platform that supports Nodejs, so you can install it on your pc (windows, OSX, linux, etc.), server or [quadrocopter](https://speakerdeck.com/felixge/node-dot-js-quadcopter-programming).*
+To get Gekko running on Windows you need to do the following:
+
+- install nodejs
+- download Gekko
+- install Gekko's dependencies
 
 ## Install nodejs
 
@@ -12,7 +16,7 @@ Gekko runs on nodejs so we have to install that first. Head over the [nodejs hom
 
 ## Install Gekko
 
-The easiest way to download Gekko is to go to the [Github repo](https://github.com/askmike/gekko) and click on the 'zip' button at the top. Once you have downloaded the zip file it's the easiest to extract it to your Desktop. When you have done that we can begin with the cool stuff:
+The easiest way to download Gekko is to go to the [Github repo](https://github.com/askmike/gekko) and click on the 'zip' button at the top. Once you have downloaded the zip file it's the easiest to extract it. When you have done that we can begin with the cool stuff:
 
 ### Open up command line
 
@@ -26,18 +30,15 @@ The easiest way to download Gekko is to go to the [Github repo](https://github.c
 
 First navigate to Gekko:
 
-    cd Desktop
-    cd gekko-[version]
-
-*(replace version with the version)*
+    cd Downloads
+    cd gekko-stable
+    cd gekko-stable
     
 Install Gekko's dependencies:
 
     npm install --only=production
     
 ### Starting Gekko
-
-In a command line navigated to Gekko type:
 
     node gekko --ui
 
