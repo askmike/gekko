@@ -5,6 +5,9 @@
       th amount of trades
       td {{ report.trades }}
     tr
+      th sharpe ratio
+      td {{ round2(report.sharpe) }}
+    tr
       th start balance
       td {{ round(report.startBalance) }} {{ report.currency }}
     tr
@@ -22,6 +25,7 @@
 export default {
   props: ['report'],
   methods: {
+    round2: n => (+n).toFixed(2),
     round: n => (+n).toFixed(5)
   },
   computed: {
@@ -41,7 +45,7 @@ export default {
 }
 
 .big {
-  font-size: 1.7em;
+  font-size: 1.3em;
   width: 80%;
 }
 
