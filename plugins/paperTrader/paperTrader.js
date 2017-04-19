@@ -1,13 +1,14 @@
-var _ = require('lodash');
-var moment = require('moment');
+const _ = require('lodash');
+const moment = require('moment');
 
-var util = require('../../core/util.js');
-var dirs = util.dirs();
-var ENV = util.gekkoEnv();
+const util = require('../../core/util');
+const stats = require('../../core/stats');
+const dirs = util.dirs();
+const ENV = util.gekkoEnv();
 
-var config = util.getConfig();
-var calcConfig = config.paperTrader;
-var watchConfig = config.watch;
+const config = util.getConfig();
+const calcConfig = config.paperTrader;
+const watchConfig = config.watch;
 
 // Load the proper module that handles the results
 var Handler;
@@ -16,7 +17,7 @@ if(ENV === 'child-process')
 else
   Handler = require('./logger');
 
-var PaperTrader = function() {
+const PaperTrader = function() {
   _.bindAll(this);
 
   this.dates = {
@@ -129,6 +130,7 @@ PaperTrader.prototype.handleRoundtrip = function() {
   roundtrip.pnl = roundtrip.exitBalance - roundtrip.entryBalance;
   roundtrip.profit = (100 * roundtrip.exitBalance / roundtrip.entryBalance) - 100;
 
+  this.roundTrips.push(roundtrip);
   this.handler.handleRoundtrip(roundtrip);
 }
 
@@ -202,7 +204,6 @@ PaperTrader.prototype.calculateReportStatistics = function() {
     timespan: timespan.humanize(),
     market: this.endPrice * 100 / this.startPrice - 100,
 
-
     balance: balance,
     profit: profit,
     relativeProfit: relativeProfit,
@@ -214,6 +215,13 @@ PaperTrader.prototype.calculateReportStatistics = function() {
     endPrice: this.endPrice,
     trades: this.trades,
     startBalance: this.start.balance
+  }
+
+  if(_.size(this.roundTrips)) {
+    report.sharpe = stats.sharpe(
+      this.roundTrips.map(r => r.profit),
+      calcConfig.riskFreeReturn
+    );
   }
 
   report.alpha = report.profit - report.market;

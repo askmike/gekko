@@ -202,7 +202,9 @@ config.paperTrader = {
   // how much fee in % does each trade cost?
   fee: 0.25,
   // how much slippage/spread should Gekko assume per trade?
-  slippage: 0.05
+  slippage: 0.05,
+  // what is the risk free return in % (to calculate sharpe ratio)
+  riskFreeReturn: 5
 }
 
 // Want Gekko to perform real trades on buy or sell advice?

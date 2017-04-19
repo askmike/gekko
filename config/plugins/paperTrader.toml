@@ -1,5 +1,6 @@
 fee = 0.25
 slippage = 0.05
+riskFreeReturn = 2
 
 [simulationBalance]
 asset = 1
