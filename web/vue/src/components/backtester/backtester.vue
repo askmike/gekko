@@ -39,7 +39,19 @@ export default {
     },
     run: function() {
       this.backtestState = 'fetching';
-      post('backtest', this.config, (error, response) => {
+
+      const req = {
+        gekkoConfig: this.config,
+        data: {
+          candleProps: ['close', 'start'],
+          indicatorResults: true,
+          report: true,
+          roundtrips: true,
+          trades: true
+        }
+      }
+
+      post('backtest', req, (error, response) => {
         this.backtestState = 'fetched';
         this.backtestResult = response;
       });
