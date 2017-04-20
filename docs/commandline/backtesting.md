@@ -15,11 +15,11 @@ Besides that, make sure to configure `config.watch`.
 
 ## Historical data
 
-Gekko requires historical data to backtest strategies against. The easiest way to get this is to let Gekko import historical data, however this is not supported by a lot of exchanges (see [here](https://github.com/askmike/gekko#supported-exchanges)). The second easiest and most universal way is to run Gekko on real markets with the plugin sqliteWriter enabled (this will cause Gekko to store realtime data on disk).
+Gekko requires historical data to backtest strategies against. The easiest way to get this is to let Gekko import historical data, however this is not supported by a lot of exchanges (see [here](https://github.com/askmike/gekko#supported-exchanges)). The second easiest and most universal way is to run Gekko on real markets using the UI (or alternatively via the commandline with the plugin sqliteWriter enabled). Though this takes a while, as you need to run Gekko for a week to have a week of data.
 
 ## Configure
 
-In your config set the `backtest.daterange` to `scan`. This will force Gekko to scan the local database to figure out what dataranges are available. If you already know exactly what  daterange you would like to backtest against, you can set the `backtest.daterange` directly.
+In your config set the `backtest.daterange` to `scan`. This will force Gekko to scan the local database to figure out what dataranges are available. If you already know exactly what daterange you would like to backtest against, you can set the `backtest.daterange` directly (set `backtest.daterange` as an object with the keys `from` and `to` and the values as a data parsable by [moment](http://momentjs.com/docs/#/parsing/)).
 
 ## Run
 
