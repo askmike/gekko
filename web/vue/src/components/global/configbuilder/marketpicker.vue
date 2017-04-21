@@ -1,22 +1,21 @@
 <template lang='jade'>
 div
-  div
+  .mx1
     label(for='exchange').wrapper Exchange:
     .custom-select.button
       select(v-model='exchange')
         option(v-for='(market, e) in exchanges') {{ e }}
-  div
-    label(for='currency') Currency:
-    .custom-select.button
-      select(v-model='currency')
-        option(v-for='cur in currencies') {{ cur }}
-
-  div
-    label(for='asset') Asset:
-    .custom-select.button
-      select(v-model='asset')
-        option(v-for='asst in assets') {{ asst }}
-
+  .grd-row
+    .grd-row-col-3-6.mx1
+      label(for='currency') Currency:
+      .custom-select.button
+        select(v-model='currency')
+          option(v-for='cur in currencies') {{ cur }}
+    .grd-row-col-3-6.mx1
+      label(for='asset') Asset:
+      .custom-select.button
+        select(v-model='asset')
+          option(v-for='asst in assets') {{ asst }}
 </template>
 
 <script>
