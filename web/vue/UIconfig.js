@@ -14,7 +14,8 @@ const CONFIG = {
         host: 'localhost',
         port: 3000,
         path: '/'
-    }
+    },
+    adapter: 'sqlite'
 }
 
 if(typeof window === 'undefined')
