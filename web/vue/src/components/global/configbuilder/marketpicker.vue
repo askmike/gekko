@@ -6,10 +6,17 @@ div
       select(v-model='exchange')
         option(v-for='(market, e) in exchanges') {{ e }}
   div
-    label(for='currency') Market:
+    label(for='currency') Currency:
     .custom-select.button
-      select(v-model='market')
-        option(v-for='market in markets') {{ market }}
+      select(v-model='currency')
+        option(v-for='cur in currencies') {{ cur }}
+
+  div
+    label(for='asset') Asset:
+    .custom-select.button
+      select(v-model='asset')
+        option(v-for='asst in assets') {{ asst }}
+
 </template>
 
 <script>
@@ -27,7 +34,8 @@ export default {
 
       // defaults:
       exchange: 'poloniex',
-      market: 'USDT/BTC'
+      currency: 'BTC',
+      asset: 'USDT',
     };
   },
 
@@ -38,18 +46,22 @@ export default {
     markets: function() {
       return this.exchanges[ this.exchange ];
     },
-    currency: function() {
-      return _.first(this.market.split('/'));
+
+    assets: function() {
+      return markets[this.exchange][this.currency];
     },
-    asset: function() {
-      return _.last(this.market.split('/'));
+
+    currencies: function() {
+      return _.keys( markets[this.exchange] );
     },
     watchConfig: function() {
       return {
         watch: {
           exchange: this.exchange,
           currency: this.currency,
-          asset: this.asset
+          currencies: this.currencies,
+          asset: this.asset,
+          assets: this.assets,
         }
       }
     }
@@ -57,6 +69,7 @@ export default {
 
   watch: {
     currency: function() { this.emitConfig() },
+    asset: function() { this.emitConfig() },
     market: function() { this.emitConfig() }
   },
 
