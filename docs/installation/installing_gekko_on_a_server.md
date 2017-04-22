@@ -101,7 +101,7 @@ Once NGINX is installed you will need to modify the configuration file. For Debi
 
                 auth_basic "Restricted Content";
                 auth_basic_user_file /etc/nginx/.htpasswd;
-	}
+        }
     }
 
 
