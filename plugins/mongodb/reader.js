@@ -17,10 +17,10 @@ Reader.prototype.mostRecentWindow = function mostRecentWindow (from, to, next) {
   var mFrom = from.unix();
   var mTo = to.unix();
 
-  var maxAmount = to - from + 1;
+  var maxAmount = mTo - mFrom + 1;
 
   // Find some documents
-  this.collection.find({ pair: this.pair, start: { $gte: mFrom, $lte: mTo } }).sort({ start: 1 }, (err, docs) => {
+  this.collection.find({ pair: this.pair, start: { $gte: mFrom, $lte: mTo } }).sort({ start: -1 }, (err, docs) => {
     if (err) {
       return util.die('DB error at `mostRecentWindow`');
     }
