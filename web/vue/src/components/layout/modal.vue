@@ -9,7 +9,6 @@
 
 import marked from '../../tools/marked';
 
-
 const messages = {
   disconnected: marked(`
 
@@ -19,37 +18,18 @@ Something happened to either Gekko or the connection.
 Please check the terminal where Gekko is running or
 your network connection.
 
-  `),
-
-  reconnected: marked(`
-
-## Reconnected
-
-The connection between Gekko and your browser was
-temporarily lost, **please refresh your browser.**
-
-
   `)
-
 }
 
 export default {
   computed: {
     active: function() {
-      if(!this.$store.state.warnings.connected)
-        return true;
-
-      if(this.$store.state.warnings.reconnected)
-        return true;
-
-      return false;
+      return !this.$store.state.warnings.connected;
     },
     content: function() {
       if(!this.$store.state.warnings.connected)
         return messages.disconnected;
-
-      if(this.$store.state.warnings.reconnected)
-        return messages.reconnected;
+      return '';
     }
   }
 }

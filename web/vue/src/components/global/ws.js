@@ -2,6 +2,7 @@ import _ from 'lodash'
 import Vue from 'vue'
 
 import { wsPath } from '../../tools/api'
+import initializeState from '../../store/init'
 
 var socket = null;
 
@@ -38,6 +39,7 @@ export const connect = () => {
 
     info.connected = true;
     bus.$emit('WS_STATUS_CHANGE', info);
+    initializeState();
   }
   socket.onclose = () => {
     if(!info.connected)

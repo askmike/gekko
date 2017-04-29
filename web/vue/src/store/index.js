@@ -22,7 +22,6 @@ export default new Vuex.Store({
   state: {
     warnings: {
       connected: true, // assume we will connect
-      reconnected: false
     },
     imports: [],
     stratrunners: [],

@@ -18,7 +18,6 @@ import newGekko from './components/gekko/new.vue'
 import singleStratrunner from './components/gekko/singleStratrunner.vue'
 import singleWatcher from './components/gekko/singleWatcher.vue'
 import { connect as connectWS } from './components/global/ws'
-import initializeState from './store/init'
 
 const router = new VueRouter({
   mode: 'hash',
@@ -39,7 +38,6 @@ const router = new VueRouter({
 
 // setup some stuff
 connectWS();
-initializeState();
 
 new Vue({
   router,
