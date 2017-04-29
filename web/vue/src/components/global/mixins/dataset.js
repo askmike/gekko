@@ -20,13 +20,14 @@ var mixin = {
         let sets = [];
 
         response.datasets.forEach(market => {
-          market.ranges.forEach(range => {
+          market.ranges.forEach((range, i) => {
             sets.push({
               exchange: market.exchange,
               currency: market.currency,
               asset: market.asset,
               from: moment.unix(range.from).utc(),
-              to: moment.unix(range.to).utc()
+              to: moment.unix(range.to).utc(),
+              id: market.exchange + market.asset + market.currency + i
             });
           });
         });

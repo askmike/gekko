@@ -19,13 +19,19 @@ div
       tbody
         tr(v-for='(set, i) in datasets')
           td.radio
-            input(type='radio', name='dataset', :value='i', v-model='setIndex')
-          td {{ set.exchange }}
-          td {{ set.currency }}
-          td {{ set.asset }}
-          td {{ fmt(set.from) }}
-          td {{ fmt(set.to) }}
-          td {{ humanizeDuration(set.to.diff(set.from)) }}
+            input(type='radio', name='dataset', :value='i', v-model='setIndex', v-bind:id='set.id')
+          td 
+            label(v-bind:for='set.id') {{ set.exchange }}
+          td 
+            label(v-bind:for='set.id') {{ set.currency }}
+          td
+            label(v-bind:for='set.id') {{ set.asset }}
+          td 
+            label(v-bind:for='set.id') {{ fmt(set.from) }}
+          td 
+            label(v-bind:for='set.id') {{ fmt(set.to) }}
+          td
+            label(v-bind:for='set.id') {{ humanizeDuration(set.to.diff(set.from)) }}
     em
       a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
     template(v-if='rangeVisible')
@@ -113,5 +119,9 @@ export default {
 <style>
 td.radio {
   width: 45px;
+}
+td label{
+  display: inline;
+  font-size: 1em;
 }
 </style>
