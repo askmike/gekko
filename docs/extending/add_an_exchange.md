@@ -80,3 +80,7 @@ The callback expects an error and a `trades` object. Trades is an array of trade
 - a `price` property (float) which represents the price in [currency] per 1 [asset]. `
 - an `amount` proprty (float) which represent the amount of [asset].
 - a `tid` property (float) which represents the tradeID.
+
+### Recompiling Gekko UI
+
+Once you added your exchange you can use it with Gekko! However if you want the new exchange to show up in the web interface you need to recompile the frontend (so your updated `exchanges.js` file is used by the webapp). [Read here](https://gekko.wizb.it/docs/internals/gekko_ui.html#Developing-for-the-Gekko-UI-frontend) how to do that.

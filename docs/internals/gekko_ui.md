@@ -1,4 +1,4 @@
-# Context
+# Gekko UI
 
 When you launch Gekko UI, you start a basic nodejs webserver with 3 components:
 
