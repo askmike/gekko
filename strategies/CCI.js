@@ -82,7 +82,6 @@ method.check = function() {
             this.trend.adviced = false;
             if (this.persisted == 0) {
                 this.trend.adviced = true;
-                console.log(2);
                 this.advice('short');
             }
         } else if (cci.result >= this.uplevel) {
