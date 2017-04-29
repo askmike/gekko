@@ -33,8 +33,8 @@ export default {
 
       // defaults:
       exchange: 'poloniex',
-      currency: 'BTC',
-      asset: 'USDT',
+      currency: 'USDT',
+      asset: 'BTC',
     };
   },
 
