@@ -160,7 +160,7 @@ Base.prototype.tick = function(candle) {
 
   // update the trading method
   if(!this.asyncTick || this.requiredHistory > this.age) {
-    this.propogateTick();
+    this.propogateTick(candle);
   } else {
     var next = _.after(
       _.size(this.talibIndicators),
@@ -176,7 +176,7 @@ Base.prototype.tick = function(candle) {
 
       // fn is bound to indicator
       this.result = _.mapValues(result, v => _.last(v));
-      next();
+      next(candle);
     }
 
     // handle result from talib
@@ -208,8 +208,8 @@ if(ENV !== 'child-process') {
   }
 }
 
-Base.prototype.propogateTick = function() {
-  this.update(this.candle);
+Base.prototype.propogateTick = function(candle) {
+  this.update(candle);
 
   var isAllowedToCheck = this.requiredHistory <= this.age;
 
@@ -218,13 +218,13 @@ Base.prototype.propogateTick = function() {
   // whether candle start time is > startTime
   var isPremature;
   if(mode === 'realtime')
-    isPremature = this.candle.start < startTime;
+    isPremature = candle.start < startTime;
   else
     isPremature = false;
 
   if(isAllowedToCheck && !isPremature) {
     this.log();
-    this.check(this.candle);
+    this.check(candle);
   }
   this.processedTicks++;
 
