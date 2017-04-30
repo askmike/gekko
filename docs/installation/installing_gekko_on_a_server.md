@@ -65,7 +65,8 @@ Installing NGINX using your Operating Systems package manager of choice is prett
 Once NGINX is installed you will need to modify the configuration file. For Debian Linux the config is located at /etc/nginx/sites-enabled/default
 
     server {
-	    listen 80;
+        listen 80;
+        listen [::]:80;
         server_name gekko.example.com;
         return 301 https://$server_name$request_uri;
     }
@@ -76,7 +77,7 @@ Once NGINX is installed you will need to modify the configuration file. For Debi
 
     server {
         listen 443 ssl;
-
+        listen [::]:443 ssl;
         root /var/www/html;
 
         ssl_certificate /etc/nginx/ssl/nginx.crt;
