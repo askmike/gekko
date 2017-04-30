@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
