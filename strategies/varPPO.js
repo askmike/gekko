@@ -35,7 +35,7 @@ method.update = function(candle) {
 
 // for debugging purposes log the last 
 // calculated parameters.
-method.log = function() {
+method.log = function(candle) {
   var digits = 8;
   var ppo = this.indicators.ppo;
   var result = ppo.ppo;
@@ -47,7 +47,7 @@ method.log = function() {
   log.debug('\t', 'PPOsignal:', signal.toFixed(digits));
   log.debug('\t', 'PPOhist:', hist.toFixed(digits));
   log.debug('\t', momentum + ':', momentumResult.toFixed(digits));
-  log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
+  log.debug('\t', 'price:', candle.close.toFixed(digits));
 }
 
 method.check = function() {

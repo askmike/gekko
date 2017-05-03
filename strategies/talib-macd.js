@@ -42,8 +42,8 @@ method.log = function() {
 // Based on the newly calculated
 // information, check if we should
 // update or not.
-method.check = function() {
-  var price = this.lastPrice;
+method.check = function(candle) {
+  var price = candle.close;
   var result = this.talibIndicators.mymacd.result;
   var macddiff = result['outMACD'] - result['outMACDSignal'];
 

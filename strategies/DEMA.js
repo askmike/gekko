@@ -37,10 +37,10 @@ method.log = function() {
   log.debug('\t DEMA age:', dema.short.age, 'candles');
 }
 
-method.check = function() {
+method.check = function(candle) {
   var dema = this.indicators.dema;
   var diff = dema.result;
-  var price = this.lastPrice;
+  var price = candle.close;
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
 

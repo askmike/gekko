@@ -29,13 +29,13 @@ method.init = function() {
 
 // for debugging purposes log the last 
 // calculated parameters.
-method.log = function() {
+method.log = function(candle) {
   var digits = 8;
   var uo = this.indicators.uo;
 
   log.debug('calculated Ultimate Oscillator properties for candle:');
   log.debug('\t', 'UO:', uo.uo.toFixed(digits));
-  log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
+  log.debug('\t', 'price:', candle.close.toFixed(digits));
 }
 
 method.check = function() {

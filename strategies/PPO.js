@@ -60,8 +60,8 @@ method.log = function() {
   log.debug('\t', 'ppohist:', (result - ppoSignal).toFixed(digits));  
 }
 
-method.check = function() {
-  var price = this.lastPrice;
+method.check = function(candle) {
+  var price = candle.close;
 
   var ppo = this.indicators.ppo;
   var long = ppo.long.result;

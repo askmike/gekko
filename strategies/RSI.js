@@ -36,14 +36,13 @@ method.init = function() {
 
 // for debugging purposes log the last 
 // calculated parameters.
-method.log = function() {
+method.log = function(candle) {
   var digits = 8;
   var rsi = this.indicators.rsi;
 
   log.debug('calculated RSI properties for candle:');
   log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
-  if(this.lastPrice)
-    log.debug('\t', 'price:', this.lastPrice.toFixed(digits));
+  log.debug('\t', 'price:', candle.close.toFixed(digits));
 }
 
 method.check = function() {

@@ -61,9 +61,9 @@ method.log = function() {
 /*
  * 
  */
-method.check = function() {
+method.check = function(candle) {
 
-  var price = this.lastPrice;
+  var price = candle.close;
 
     this.age++;
     var cci = this.indicators.cci;
