@@ -2,11 +2,11 @@
 
 *This is a technical document about the requirements per exchange as implemented for Gekko in the `exchange` folder.*
 
-Gekko arranges all communication about when assets need to be bought or sold between the *trading method* and the *portfolio manager*. Exchanges are implemented by the portfolio manager, all differences between the different API's are abstracted away just below the portfolio manager. This document describes all requirements for adding a new exchange to Gekko. 
+Gekko arranges all communication about when assets need to be bought or sold between the *strategy* and the *portfolio manager*. Exchanges are implemented by the portfolio manager, all differences between the different API's are abstracted away just below the portfolio manager. This document describes all requirements for adding a new exchange to Gekko.
 
 ## Gekko's expectations
 
-When you add a new exchange to Gekko you need to expose an object that has methods to query the exchange. This exchange file needs to reside in `gekko/exchanges` and the filename is the slug of the exchange name + `.js`. So for example the exchange for Mt. Gox is explained in `gekko/exchanges/mtgox.js`.
+When you add a new exchange to Gekko you need to expose an object that has methods to query the exchange. This exchange file needs to reside in `gekko/exchanges` and the filename is the slug of the exchange name + `.js`. So for example the exchange for Bitstamp is explained in `gekko/exchanges/bitstamp.js`.
 
 It is advised to use a npm module to query an exchange. This will seperate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://www.npmjs.com/package/bitstamp)).
 
@@ -49,7 +49,7 @@ The callback needs to have the parameters of `err` and `portfolio`. Portfolio ne
 
     this.exchange.sell(amount, price, callback);
 
-This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `infinityOrder` to `true` the amount will be 10000. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `order`. The order needs to be something that can be fed back to the exchange to see wether the order has been filled or not.
+This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `order`. The order needs to be something that can be fed back to the exchange to see wether the order has been filled or not.
 
 ### checkOrder
 

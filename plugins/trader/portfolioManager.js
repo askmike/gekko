@@ -5,6 +5,8 @@
   get executed. Besides the orders the manager also keeps track of
   the client's portfolio.
 
+  NOTE: very old code, can only do limit orders
+
 */
 
 var _ = require('lodash');
@@ -36,7 +38,6 @@ var Manager = function(conf) {
   this.action;
 
   this.directExchange = exchangeMeta.direct;
-  this.infinityOrderExchange = exchangeMeta.infinityOrder;
 
   this.marketConfig = _.find(exchangeMeta.markets, function(p) {
     return p.pair[0] === conf.currency && p.pair[1] === conf.asset;
@@ -132,7 +133,6 @@ Manager.prototype.getBalance = function(fund) {
 // How this is done depends on a couple of things:
 //
 // is this a directExchange? (does it support MKT orders)
-// is this a infinityOrderExchange (does it support order
 // requests bigger then the current balance?)
 Manager.prototype.trade = function(what) {
   if(what !== 'BUY' && what !== 'SELL')
@@ -145,11 +145,7 @@ Manager.prototype.trade = function(what) {
 
     if(what === 'BUY') {
 
-      // do we need to specify the amount we want to buy?
-      if(this.infinityOrderExchange)
-        amount = 10000;
-      else
-        amount = this.getBalance(this.currency) / this.ticker.ask;
+      amount = this.getBalance(this.currency) / this.ticker.ask;
 
       // can we just create a MKT order?
       if(this.directExchange)
@@ -161,11 +157,7 @@ Manager.prototype.trade = function(what) {
 
     } else if(what === 'SELL') {
 
-      // do we need to specify the amount we want to sell?
-      if(this.infinityOrderExchange)
-        amount = 10000;
-      else
-        amount = this.getBalance(this.asset);
+      amount = this.getBalance(this.asset);
 
       // can we just create a MKT order?
       if(this.directExchange)
@@ -178,7 +170,8 @@ Manager.prototype.trade = function(what) {
   };
   async.series([
     this.setTicker,
-    this.setPortfolio
+    this.setPortfolio,
+    this.setFee
   ], _.bind(act, this));
 
 };

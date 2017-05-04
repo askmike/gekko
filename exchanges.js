@@ -5,9 +5,6 @@
 // name: Proper name of the exchange
 // slug: slug name of the exchange (needs to match filename in `gekko/exchanges/`)
 // direct: does this exchange support MKT orders?
-// infinityOrder: is this an exchange that supports infinity
-//    orders? (which means that it will accept orders bigger then
-//    the current balance and order at the full balance instead)
 // currencies: all the currencies supported by the exchange
 //    implementation in gekko.
 // assets: all the assets supported by the exchange implementation
@@ -36,7 +33,6 @@ var exchanges = [
     name: 'BTC-e',
     slug: 'btce',
     direct: false,
-    infinityOrder: false,
     currencies: ['USD', 'RUR', 'EUR', 'BTC'],
     assets: [
       'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH'
@@ -72,7 +68,6 @@ var exchanges = [
     name: 'Bitstamp',
     slug: 'bitstamp',
     direct: false,
-    infinityOrder: false,
     currencies: ['USD', 'EUR'],
     assets: ['BTC', 'EUR'],
     maxTradesAge: 60,
@@ -90,7 +85,6 @@ var exchanges = [
     name: 'CEX.io',
     slug: 'cexio',
     direct: false,
-    infinityOrder: false,
     currencies: ['BTC','USD','EUR','RUB'],
     assets: ['GHS','BTC','ETH','LTC'],
     markets: [
@@ -113,7 +107,6 @@ var exchanges = [
     name: 'Kraken',
     slug: 'kraken',
     direct: false,
-    infinityOrder: false,
     currencies: ['ETH', 'XBT', 'CAD', 'EUR', 'GBP', 'JPY', 'XRP', 'XDG', 'XLM', 'USD'],
     assets: ['DAO', 'ETH', 'LTC', 'XBT'],
     markets: [
@@ -154,7 +147,6 @@ var exchanges = [
     name: 'Poloniex',
     slug: 'poloniex',
     direct: false,
-    infinityOrder: false,
     currencies: ['BTC', 'ETH', 'XMR', 'USDT'],
 		assets: [
       '1CR', 'ABY', 'AC', 'ACH', 'ADN', 'AEON', 'AERO', 'AIR', 'AMP', 'APH',
@@ -482,7 +474,6 @@ var exchanges = [
     name: 'Bitfinex',
     slug: 'bitfinex',
     direct: false,
-    infinityOrder: false,
     currencies: ['USD', 'BTC'],
     assets: ['BTC', 'LTC', 'ETH'],
     markets: [
@@ -500,7 +491,6 @@ var exchanges = [
     name: 'meXBT',
     slug: 'mexbt',
     direct: false,
-    infinityOrder: false,
     currencies: ['MXN'],
     assets: ['BTC'],
     markets: [
@@ -516,7 +506,6 @@ var exchanges = [
     name: 'LakeBTC',
     slug: 'lakebtc',
     direct: false,
-    infinityOrder: false,
     currencies: ['USD'],
     assets: ['BTC'],
     markets: [
@@ -533,7 +522,6 @@ var exchanges = [
     name: 'Zaif.jp',
     slug: 'zaif.jp',
     direct: false,
-    infinityOrder: false,
     currencies: ['JPY'],
     assets: ['BTC'],
     markets: [
@@ -550,7 +538,6 @@ var exchanges = [
     name: 'BTCC',
     slug: 'btcc',
     direct: false,
-    infinityOrder: false,
     currencies: ['BTC', 'CNY'],
     assets: ['BTC', 'LTC'],
     markets: [
@@ -566,7 +553,6 @@ var exchanges = [
     name: 'OkCoin',
     slug: 'okcoin',
     direct: false,
-    infinityOrder: false,
     currencies: ['BTC', 'CNY'],
     assets: ['BTC', 'LTC'],
     markets: [
@@ -582,7 +568,6 @@ var exchanges = [
     name: 'BitX',
     slug: 'bitx',
     direct: false,
-    infinityOrder: false,
     currencies: ['MYR', 'KES', 'NGN', 'ZAR'],
     assets: ['XBT'],
     markets: [
@@ -599,7 +584,6 @@ var exchanges = [
     name: 'BX.in.th',
     slug: 'bx.in.th',
     direct: false,
-    infinityOrder: false,
     currencies: ['THB'],
     assets: ['BTC'],
     markets: [
@@ -615,7 +599,6 @@ var exchanges = [
     name: 'BTC Markets',
     slug: 'btc-markets',
     direct: false,
-    infinityOrder: false,
     currencies: ['AUD', 'BTC'],
     assets: [
       'BTC', 'LTC', 'ETH', 'ETC'
@@ -637,7 +620,6 @@ var exchanges = [
     name: 'GDAX',
     slug: 'gdax',
     direct: false,
-    infinityOrder: false,
     currencies: ['USD', 'EUR', 'GBP', 'BTC'],
     assets: ['BTC', 'LTC', 'ETH'],
     markets: [
