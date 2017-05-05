@@ -72,6 +72,9 @@ CandleCreator.prototype.write = function(batch) {
 
   candles = this.addEmptyCandles(candles);
 
+  if(_.isEmpty(candles))
+    return;  
+
   // the last candle is not complete
   this.threshold = candles.pop().start;
 
