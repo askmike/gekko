@@ -10,13 +10,14 @@
         .grd-row
           .grd-row-col-2-6 To:
           .grd-row-col-4-6 {{ fmt(to) }}
-        .grd-row
+        .grd-row(v-if='initialized')
           .grd-row-col-2-6 Imported data until:
           .grd-row-col-4-6 {{ fmt(latest) }}
-        .grd-row
+        .grd-row(v-if='initialized')
           .grd-row-col-2-6 To go:
           .grd-row-col-4-6 {{ fromEnd }}
-      .contain
+      spinner(v-if='!initialized')
+      .contain(v-if='initialized')
         progressBar(:progress='progress')
       p 
         em (you don't have to wait until the import is done,
@@ -37,11 +38,14 @@
 
 <script>
 
+import _ from 'lodash';
 import progressBar from '../../global/progressBar.vue'
+import spinner from '../../global/blockSpinner.vue'
 
 export default {
   components: {
-    progressBar
+    progressBar,
+    spinner
   },
   computed: {
     data: function() {
@@ -49,6 +53,10 @@ export default {
         this.$store.state.imports,
         { id: this.$route.params.id }
       );
+    },
+    initialized: function() {
+      if(this.data && this.latest.isValid())
+        return true
     },
     latest: function() {
       if(this.data)
