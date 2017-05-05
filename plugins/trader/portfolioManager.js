@@ -16,6 +16,8 @@ var events = require("events");
 var log = require(dirs.core + 'log');
 var async = require('async');
 var checker = require(dirs.core + 'exchangeChecker.js');
+var moment = require('moment');
+var async = require('async');
 
 var Manager = function(conf) {
   _.bindAll(this);
@@ -34,10 +36,7 @@ var Manager = function(conf) {
   this.conf = conf;
   this.portfolio = {};
   this.fee;
-  this.order;
   this.action;
-
-  this.directExchange = exchangeMeta.direct;
 
   this.marketConfig = _.find(exchangeMeta.markets, function(p) {
     return p.pair[0] === conf.currency && p.pair[1] === conf.asset;
@@ -46,6 +45,10 @@ var Manager = function(conf) {
 
   this.currency = conf.currency;
   this.asset = conf.asset;
+
+
+  // resets after every order
+  this.orders = [];
 };
 
 Manager.prototype.init = function(callback) {
@@ -128,15 +131,8 @@ Manager.prototype.getBalance = function(fund) {
   return this.getFund(fund).amount;
 };
 
-// This function makes sure order get to the exchange
-// and initiates follow up to make sure the orders will
-// get executed. This is the backbone of the portfolio
-// manager.
-//
-// How this is done depends on a couple of things:
-//
-// is this a directExchange? (does it support MKT orders)
-// requests bigger then the current balance?)
+// This function makes sure the limit order gets submitted
+// to the exchange and initiates order registers watchers.
 Manager.prototype.trade = function(what) {
   if(what !== 'BUY' && what !== 'SELL')
     return;
@@ -150,24 +146,21 @@ Manager.prototype.trade = function(what) {
 
       amount = this.getBalance(this.currency) / this.ticker.ask;
 
-      // can we just create a MKT order?
-      if(this.directExchange)
-        price = false;
-      else
-        price = this.ticker.ask;
+      price = this.ticker.bid;
+      price *= 1e8;
+      price = Math.floor(price);
+      price /= 1e8;
 
       this.buy(amount, price);
 
     } else if(what === 'SELL') {
 
+      price *= 1e8;
+      price = Math.ceil(price);
+      price /= 1e8;
+
       amount = this.getBalance(this.asset);
-
-      // can we just create a MKT order?
-      if(this.directExchange)
-        price = false;
-      else
-        price = this.ticker.bid;
-
+      price = this.ticker.ask;
       this.sell(amount, price);
     }
   };
@@ -191,25 +184,7 @@ Manager.prototype.getMinimum = function(price) {
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
 
-  // sometimes cex.io specifies a price w/ > 8 decimals
-  price *= 100000000;
-  price = Math.floor(price);
-  price /= 100000000;
-
-  var currency = this.getFund(this.currency);
   var minimum = this.getMinimum(price);
-  var available = this.getBalance(this.currency) / price;
-
-  // if not sufficient funds
-  if(amount > available) {
-    return log.info(
-      'Wanted to buy ' + amount + ' but insufficient',
-      this.currency,
-      '(' + parseFloat(available).toFixed(12) + ')',
-      'at',
-      this.exchange.name
-    );
-  }
 
   // if order to small
   if(amount < minimum) {
@@ -239,24 +214,8 @@ Manager.prototype.buy = function(amount, price) {
 // the asset, if so SELL and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.sell = function(amount, price) {
-  // sometimes cex.io specifies a price w/ > 8 decimals
-  price *= 100000000;
-  price = Math.ceil(price);
-  price /= 100000000;
 
   var minimum = this.getMinimum(price);
-  var availabe = this.getBalance(this.asset);
-
-  // if not suficient funds
-  if(amount < availabe) {
-    return log.info(
-      'Wanted to sell ' + amount + ' but insufficient',
-      this.asset,
-      '(' + parseFloat(availabe).toFixed(12) + ')',
-      'at',
-      this.exchange.name
-    );
-  }
 
   // if order to small
   if(amount < minimum) {
@@ -283,7 +242,7 @@ Manager.prototype.sell = function(amount, price) {
 };
 
 Manager.prototype.noteOrder = function(err, order) {
-  this.order = order;
+  this.orders.push(order);
   // if after 1 minute the order is still there
   // we cancel and calculate & make a new one
   setTimeout(this.checkOrder, util.minToMs(1));
@@ -295,20 +254,32 @@ Manager.prototype.checkOrder = function() {
   var finish = function(err, filled) {
     if(!filled) {
       log.info(this.action, 'order was not (fully) filled, cancelling and creating new order');
-      this.exchange.cancelOrder(this.order);
+      this.exchange.cancelOrder(_.last(this.orders));
 
-      // Delay the trade, as cancel -> trade can trigger
-      // an error on cex.io if they happen on the same
-      // unix timestamp second (nonce will not increment).
       var self = this;
-      setTimeout(function() { self.trade(self.action); }, 500);
+      setTimeout(function() { self.trade(self.action); }, 100);
       return;
     }
 
     log.info(this.action, 'was successfull');
+
+    this.relayOrder();
   }
 
-  this.exchange.checkOrder(this.order, _.bind(finish, this));
+  this.exchange.checkOrder(_.last(this.orders), _.bind(finish, this));
+}
+
+
+
+Manager.prototype.relayOrder = function() {
+  // look up all executed orders and relay average.
+  console.log('THIS.ORDERS', this.orders);
+
+  this.exchange.getOrder(_.first(this.orders), (err, res) => console.log(err, res));
+
+  // async.series(
+  //   _.map(this.orders, )
+  // )
 }
 
 Manager.prototype.logPortfolio = function() {

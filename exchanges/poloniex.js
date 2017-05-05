@@ -136,6 +136,31 @@ Trader.prototype.checkOrder = function(order, callback) {
   this.poloniex.myOpenOrders(this.currency, this.asset, check);
 }
 
+Trader.prototype.getOrder = function(order, callback) {
+
+  var get = function(err, result) {
+
+    if(err)
+      return callback(err);
+
+    var price, amount;
+    var date = moment(0);
+
+    _.each(result, trade => {
+
+      date = moment(trade.date);
+      price = (price * amount) + (+trade.price * trade.amount) / (+trade.amount + amount)
+      amount += +trade.amount;
+
+    });
+
+    callback(err, {price, amount, date});
+  }.bind(this);
+
+  console.log(order);
+  this.poloniex.returnOrderTrades(order, get);
+}
+
 Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, result) {
     if(err || !result.success) {
