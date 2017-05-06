@@ -42,6 +42,9 @@ var pipeline = (settings) => {
   // meta information about every plugin that tells Gekko
   // something about every available plugin
   var pluginParameters = require(dirs.gekko + 'plugins');
+  // meta information about the events plugins can broadcast
+  // and how they should hooked up to consumers.
+  var subscriptions = require(dirs.gekko + 'subscriptions');
 
   // Instantiate each enabled plugin
   var loadPlugins = function(next) {
@@ -62,6 +65,7 @@ var pipeline = (settings) => {
   // Some plugins emit their own events, store
   // a reference to those plugins.
   var referenceEmitters = function(next) {
+
     _.each(plugins, function(plugin) {
       if(plugin.meta.emits)
         emitters[plugin.meta.slug] = plugin;
@@ -72,13 +76,29 @@ var pipeline = (settings) => {
 
   // Subscribe all plugins to other emitting plugins
   var subscribePlugins = function(next) {
-    var subscriptions = require(dirs.gekko + 'subscriptions');
 
     // events broadcasted by plugins
     var pluginSubscriptions = _.filter(
       subscriptions,
-      function(sub) {
-        return sub.emitter !== 'market';
+      sub => sub.emitter !== 'market'
+    );
+
+    // some events can be broadcasted by different
+    // plugins, however the pipeline only allows a single
+    // emitting plugin for each event to be enabled.
+    _.each(
+      pluginSubscriptions.filter(s => _.isArray(s.emitter)),
+      subscription => {
+        var singleEventEmitters = subscription.emitter
+          .filter(s => _.size(plugins.filter(p => p.meta.slug === s)
+        ));
+
+        if(_.size(singleEventEmitters) > 1) {
+          var error = `Multiple plugins are broadcasting`;
+          error += `the event "${subscription.event}" (${singleEventEmitters.join(',')}).`;
+          error += 'This is unsupported.'
+          util.die(error);
+        }
       }
     );
 
