@@ -203,7 +203,10 @@ config.paperTrader = {
   fee: 0.25,
   // how much slippage/spread should Gekko assume per trade?
   slippage: 0.05,
-  // what is the risk free return in % (to calculate sharpe ratio)
+}
+
+config.performanceAnalyzer = {
+  enabled: true,
   riskFreeReturn: 5
 }
 

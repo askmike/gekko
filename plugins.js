@@ -138,6 +138,14 @@ var plugins = [
     path: config => 'paperTrader/paperTrader.js',
   },
   {
+    name: 'Performance Analyzer',
+    description: 'Analyzes performances of trades',
+    slug: 'performanceAnalyzer',
+    async: false,
+    modes: ['realtime', 'backtest'],
+    path: config => 'performanceAnalyzer/performanceAnalyzer.js',
+  },
+  {
     name: 'Redis beacon',
     slug: 'redisBeacon',
     description: 'Publish events over Redis Pub/Sub',

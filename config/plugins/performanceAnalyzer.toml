@@ -1,0 +1,5 @@
+# Used to calculate sharpe ratio
+# yearly % of riskfree return for example
+# treasury bonds or bank interest.
+
+riskFreeReturn = 2
