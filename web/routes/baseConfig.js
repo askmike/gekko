@@ -19,10 +19,10 @@ config.tradingAdvisor = {
     version: '1.0.2'
   }
 }
+
 config.candleWriter = {
   enabled: false
 }
-
 config.adviceWriter = {
   enabled: false,
   muteSoft: true,

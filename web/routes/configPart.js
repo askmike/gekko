@@ -3,7 +3,8 @@ const fs = require('co-fs');
 
 const parts = {
   paperTrader: 'config/plugins/paperTrader',
-  candleWriter: 'config/plugins/candleWriter'
+  candleWriter: 'config/plugins/candleWriter',
+  performanceAnalyzer: 'config/plugins/performanceAnalyzer'
 }
 
 const gekkoRoot = __dirname + '/../../';

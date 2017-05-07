@@ -27,7 +27,11 @@ export default {
   created: function() {
     get('configPart/candleWriter', (error, response) => {
       this.candleWriter = toml.parse(response.part);
-    })
+    });
+    get('configPart/performanceAnalyzer', (error, response) => {
+      this.performanceAnalyzer = toml.parse(response.part);
+      this.performanceAnalyzer.enabled = true;
+    });
   },
   data: () => {
     return {
@@ -36,7 +40,8 @@ export default {
       type: '',
       strat: {},
       paperTrader: {},
-      candleWriter: {}
+      candleWriter: {},
+      performanceAnalyzer: {}
     }
   },
   components: {
@@ -54,7 +59,8 @@ export default {
         this.strat,
         { paperTrader: this.paperTrader },
         { candleWriter: this.candleWriter },
-        { type: this.type }
+        { type: this.type },
+        { performanceAnalyzer: this.performanceAnalyzer }
       );
 
       config.valid = this.validConfig(config);
