@@ -96,8 +96,6 @@ if(mode === 'backtest') {
     log.info('(ROUNDTRIP) REPORT:');
 
     this.logRoundtripHeading();
-    // console.log(this.roundtrips.map(rt => rt.exitPrice));
-    // throw 'a';
     _.each(this.roundtrips, this.logRoundtrip, this);
 
     log.info()
