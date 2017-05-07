@@ -98,6 +98,8 @@ var pipeline = (settings) => {
           error += `the event "${subscription.event}" (${singleEventEmitters.join(',')}).`;
           error += 'This is unsupported.'
           util.die(error);
+        } else {
+          subscription.emitter = _.first(singleEventEmitters);
         }
       }
     );
