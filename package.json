@@ -10,7 +10,8 @@
     "finance"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.js --recursive test -u tdd --reporter spec"
+    "test": "./node_modules/.bin/mocha test/*.js --recursive test -u tdd --reporter spec",
+    "start": "node ./gekko --config config.js --ui"
   },
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {

@@ -1,0 +1,7 @@
+node_modules
+.travis.yml
+volumes
+config.js
+sample-config.js
+.git
+.gitignore

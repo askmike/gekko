@@ -1,0 +1,30 @@
+gekko:
+  restart: always
+  build: ./
+  volumes:
+    - ./volumes/gekko/history:/usr/src/app/history
+    - ./config.js:/usr/src/app/config.js
+  links:
+    - redis
+## optionally set nginx vars if you wish to frontend it with nginx
+#  environment:
+#    - VIRTUAL_HOST=gekko
+#    - PORT=3000
+#    - DOMAIN=gekko
+## if you use nginx vars, comment the below ports
+  ports:
+    - "3000:3000"
+
+redis:
+  image: redis:latest
+  volumes:
+    - ./volumes/redis:/data
+
+## optionally uncomment if you wish to use nginx as a frontend
+#nginx:
+#  restart: always
+#  image: jwilder/nginx-proxy
+#  ports:
+#    - "80:80"
+#  volumes:
+#    - /var/run/docker.sock:/tmp/docker.sock:ro
