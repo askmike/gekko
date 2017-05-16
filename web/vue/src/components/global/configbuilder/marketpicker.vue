@@ -21,15 +21,15 @@ div
 <script>
 
 import _ from 'lodash'
-import markets from './markets'
 import rangePicker from './rangepicker.vue'
 import rangeCreator from './rangecreator.vue'
+import { get } from '../../../tools/ajax'
 
 export default {
   props: ['has'],
   data: () => {
     return {
-      exchanges: markets,
+      exchanges: null,
 
       // defaults:
       exchange: 'poloniex',
@@ -37,21 +37,36 @@ export default {
       asset: 'BTC',
     };
   },
-
   created: function() {
-    this.emitConfig();
+    get('exchanges', (err, data) => {
+        var exchangesRaw = data;
+        var exchanegsTemp = {};
+
+        exchangesRaw.forEach(e => {
+          exchanegsTemp[e.slug] = exchanegsTemp[e.slug] || {};
+
+          e.markets.forEach( pair => {
+            let [ currency, asset ] = pair['pair'];
+            exchanegsTemp[e.slug][currency] = exchanegsTemp[e.slug][currency] || [];
+            exchanegsTemp[e.slug][currency].push( asset );
+          });
+        });
+
+        this.exchanges = exchanegsTemp;
+        this.emitConfig();
+    });
   },
   computed: {
     markets: function() {
-      return this.exchanges[ this.exchange ];
+      return this.exchanges ? this.exchanges[ this.exchange ] : null;
     },
 
     assets: function() {
-      return markets[this.exchange][this.currency];
+      return this.exchanges ? this.exchanges[this.exchange][this.currency] : null;
     },
 
     currencies: function() {
-      return _.keys( markets[this.exchange] );
+      return this.exchanges ? _.keys( this.exchanges[this.exchange] ) : null;
     },
     watchConfig: function() {
       return {
