@@ -55,7 +55,6 @@ label {
   background-image: url(/assets/select-arrow.png);
   background-repeat: no-repeat;
   background-size: 100%;
-  z-index: 2;
   /* These hacks make the select behind the arrow clickable in some browsers */
   pointer-events:none;
 }
