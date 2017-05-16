@@ -48,6 +48,7 @@ router.get('/api/configPart/:part', require(ROUTE('configPart')));
 const listWraper = require(ROUTE('list'));
 router.get('/api/imports', listWraper('imports'));
 router.get('/api/gekkos', listWraper('gekkos'));
+router.get('/api/exchanges', require(ROUTE('exchanges')));
 
 router.post('/api/scan', require(ROUTE('scanDateRange')));
 router.post('/api/scansets', require(ROUTE('scanDatasets')));
