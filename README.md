@@ -18,23 +18,6 @@ See [the documentation website](https://gekko.wizb.it/docs/introduction/about_ge
 
 See [the installing Gekko doc](https://gekko.wizb.it/docs/installation/installing_gekko.html).
 
-## Docker
-
-We provide a docker-compose that you can use out of the box:
-
-``` 
-$ docker-compose build
-$ HOST=mydomain.com PORT=3001 docker-compose up -d
-```
-
-You can now find your gekko instance running on mydomain.com:3001. 
-By default these are set to:
-
-```
-HOST=localhost
-PORT=3000
-``` 
-
 ## Final
 
 If Gekko helped you in any way, you can always leave me a tip at (BTC) 13r1jyivitShUiv9FJvjLH7Nh1ZZptumwW
