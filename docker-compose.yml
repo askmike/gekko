@@ -6,14 +6,16 @@ gekko:
     - ./config.js:/usr/src/app/config.js
   links:
     - redis
+  environment:
+   - HOST
+   - PORT
+  ports: # you can comment this out when using the nginx frontend
+    - "${PORT}:${PORT}"
 ## optionally set nginx vars if you wish to frontend it with nginx
 #  environment:
 #    - VIRTUAL_HOST=gekko
 #    - PORT=3000
 #    - DOMAIN=gekko
-## if you use nginx vars, comment the below ports
-  ports:
-    - "3000:3000"
 
 redis:
   image: redis:latest
