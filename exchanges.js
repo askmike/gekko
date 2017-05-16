@@ -456,8 +456,36 @@ var exchanges = [
 
       // *** USDT <-> XXX     
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
-   
+      { pair: ['USDT', 'DASH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'ETC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'LTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'NXT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'REP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'STR'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'XMR'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'XRP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+
+      // *** ETH <-> XXX
+      { pair: ['ETH', 'ETC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'GNO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'GNT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'LSK'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'REP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'STEEM'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+
+      // *** XMR <-> XXX
+      { pair: ['XMR', 'BCN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'BLK'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'BTCD'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'DASH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'LTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'MAID'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'NXT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['XMR', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
+
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
