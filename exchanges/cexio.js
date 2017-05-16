@@ -183,5 +183,29 @@ Trader.prototype.cancelOrder = function(order) {
   this.cexio.cancel_order(order, check);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'CEX.io',
+    slug: 'cexio',
+    currencies: ['BTC', 'USD', 'EUR', 'RUB'],
+    assets: ['GHS', 'BTC', 'ETH', 'LTC'],
+    markets: [
+      { pair: ['BTC', 'GHS'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['RUB', 'BTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.000001, unit: 'currency' } },
+      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.000001, unit: 'currency' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: false,
+    tid: 'tid'
+  };
+}
+
 module.exports = Trader;
 

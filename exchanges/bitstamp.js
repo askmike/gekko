@@ -160,4 +160,23 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     this.bitstamp.transactions(this.market, process);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'Bitstamp',
+    slug: 'bitstamp',
+    currencies: ['USD', 'EUR'],
+    assets: ['BTC', 'EUR'],
+    maxTradesAge: 60,
+    maxHistoryFetch: null,
+    markets: [
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' } },
+      { pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    fetchTimespan: 60,
+    tid: 'tid'
+  };
+}
+
 module.exports = Trader;
