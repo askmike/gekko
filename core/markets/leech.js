@@ -16,10 +16,9 @@ const Reader = require(dirs.gekko + adapter.path + '/reader');
 
 const TICKINTERVAL = 20 * 1000; // 20 seconds
 
-const exchanges = require(dirs.gekko + 'exchanges');
-const exchange = _.find(exchanges, function(e) {
-  return e.slug === config.watch.exchange.toLowerCase();
-});
+const slug = config.watch.exchange.toLowerCase();
+const Trader = require(dirs.exchanges + slug);
+const exchange = Trader.getCapabilities();
 
 if(!exchange)
   util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)

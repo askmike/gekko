@@ -5,10 +5,9 @@ var dirs = util.dirs();
 
 var config = util.getConfig();
 
-var exchanges = require(dirs.gekko + 'exchanges');
-var exchange = _.find(exchanges, function(e) {
-  return e.slug === config.watch.exchange.toLowerCase();
-});
+const slug = config.watch.exchange.toLowerCase();
+const Trader = require(dirs.exchanges + slug);
+const exchange = Trader.getCapabilities();
 
 if(!exchange)
   util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)
