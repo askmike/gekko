@@ -10,7 +10,7 @@ When you add a new exchange to Gekko you need to expose an object that has metho
 
 It is advised to use a npm module to query an exchange. This will seperate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://www.npmjs.com/package/bitstamp)).
 
-Finally Gekko needs to know how it can interact with the exchange, add an object to the `exchanges` array in `gekko/exchanges.js`. The meaning of the properties are described in the top of that document.
+Finally Gekko needs to know how it can interact with the exchange, so add a static method `getCapabilities()` that returns it's properties. The meaning of the properties are described in the Capabilities section in this document.
 
 ## Portfolio manager's expectations
 
@@ -84,3 +84,44 @@ The callback expects an error and a `trades` object. Trades is an array of trade
 ### Recompiling Gekko UI
 
 Once you added your exchange you can use it with Gekko! However if you want the new exchange to show up in the web interface you need to recompile the frontend (so your updated `exchanges.js` file is used by the webapp). [Read here](https://gekko.wizb.it/docs/internals/gekko_ui.html#Developing-for-the-Gekko-UI-frontend) how to do that.
+
+## Capabilities
+
+Each exchange *must* provide a `getCapabilities()` static method that returns an object with these parameters:
+
+- `name`: Proper name of the exchange
+- `slug`: slug name of the exchange (needs to match filename in `gekko/exchanges/`)
+- `currencies`: all the currencies supported by the exchange implementation in gekko.
+- `assets`: all the assets supported by the exchange implementation in gekko.
+- `pairs`: all allowed currency / asset combinations that form a market
+- `maxHistoryFetch`: the parameter fed to the getTrades call to get the max history.
+- `providesHistory`: If the getTrades can be fed a since parameter that Gekko can use to get historical data, set this to:
+    - `date`: When Gekko can pass in a starting point in time to start returning data from.
+    - `tid`: When Gekko needs to pass in a trade id to act as a starting point in time.
+    - `false`: When the exchange does not support to give back historical data at all.
+- `fetchTimespan`: if the timespan between first and last trade per fetch is fixed, set it here in minutes.
+- `monitorError`: if Gekko is currently not able to monitor this exchange, please set it to an URL explaining the problem.
+- `tradeError`: If gekko is currently not able to trade at this exchange, please set it to an URL explaining the problem.
+
+Below is a real-case example how `bistamp` exchange provides its `getCapabilities()` method:
+
+```
+Trader.getCapabilities = function () {
+  return {
+    name: 'Bitstamp',
+    slug: 'bitstamp',
+    currencies: ['USD', 'EUR'],
+    assets: ['BTC', 'EUR'],
+    maxTradesAge: 60,
+    maxHistoryFetch: null,
+    markets: [
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' } },
+      { pair: ['USD', 'EUR'], minimalOrder: { amount: 1, unit: 'currency' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    fetchTimespan: 60,
+    tid: 'tid'
+  };
+}
+```
