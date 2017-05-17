@@ -163,4 +163,21 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }.bind(this), this.pair, since);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'OkCoin',
+    slug: 'okcoin',
+    currencies: ['BTC', 'CNY'],
+    assets: ['BTC', 'LTC'],
+    markets: [
+      { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['CNY', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: false,
+    fetchTimespan: 60,
+    tid: 'date',
+  };
+}
+
 module.exports = Trader;

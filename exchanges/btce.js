@@ -183,4 +183,41 @@ Trader.prototype.processAPIv3Trades = function(cb) {
   }.bind(this)
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'BTC-e',
+    slug: 'btce',
+    currencies: ['USD', 'RUR', 'EUR', 'BTC'],
+    assets: [
+      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH'
+    ],
+    markets: [
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['RUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'NMC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'NMC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'USD'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'EUR'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['LTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } }
+
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    tid: 'tid'
+  };
+}
+
 module.exports = Trader;

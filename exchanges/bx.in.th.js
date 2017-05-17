@@ -69,5 +69,21 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   this.bitexthai.trades(this.pair, process);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'BX.in.th',
+    slug: 'bx.in.th',
+    currencies: ['THB'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['THB', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' },
+      }
+    ],
+    requires: ['key', 'secret'],
+    tradeError: 'NOT IMPLEMENTED YET',
+    providesHistory: false
+  };
+}
 
 module.exports = Trader;

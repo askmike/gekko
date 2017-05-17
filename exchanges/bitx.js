@@ -81,7 +81,7 @@ Trader.prototype.getTicker = function(callback) {
 }
 
 Trader.prototype.getFee = function(callback) {
-  
+
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
@@ -92,5 +92,22 @@ Trader.prototype.cancelOrder = function(order) {
 
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'BitX',
+    slug: 'bitx',
+    currencies: ['MYR', 'KES', 'NGN', 'ZAR'],
+    assets: ['XBT'],
+    markets: [
+      { pair: ['MYR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['KES', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['NGN', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } },
+      { pair: ['ZAR', 'XBT'], minimalOrder: { amount: 0.00001, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    tid: 'msdate'
+  };
+}
 
 module.exports = Trader;

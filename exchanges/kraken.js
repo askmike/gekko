@@ -59,7 +59,7 @@ Trader.prototype.setAssetPair = function() {
 
   if (isFiat(this.asset))
     assetPrefix = "Z";
-  else if(isCrypto(this.currency)) 
+  else if(isCrypto(this.currency))
     assetPrefix = "X";
 
 
@@ -124,7 +124,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   // This appears to not work correctly
   // skipping for now so we have the same
   // behaviour cross exchange.
-  // 
+  //
   // if(!_.isNull(this.since))
   //   reqData.since = this.since;
   this.kraken.api('Trades', reqData, _.bind(process, this));
@@ -248,7 +248,7 @@ Trader.prototype.cancelOrder = function(order) {
   var cancel = function(err, data) {
     if(_.isEmpty(data))
       err = 'no data';
-    
+
     if(!_.isEmpty(data.error))
       err = data.error;
 
@@ -258,5 +258,47 @@ Trader.prototype.cancelOrder = function(order) {
 
   this.kraken.api('CancelOrder', {txid: order}, _.bind(cancel, this));
 };
+
+Trader.getCapabilities = function () {
+  return {
+    name: 'Kraken',
+    slug: 'kraken',
+    currencies: ['ETH', 'XBT', 'CAD', 'EUR', 'GBP', 'JPY', 'XRP', 'XDG', 'XLM', 'USD'],
+    assets: ['DAO', 'ETH', 'LTC', 'XBT'],
+    markets: [
+      { pair: ['ETH', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['XBT', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['CAD', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['EUR', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['GBP', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['JPY', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['USD', 'DAO'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+
+      { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['GBP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['JPY', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+
+      { pair: ['CAD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+
+      { pair: ['LTC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['XDG', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['XLM', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['XRP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['JPY', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } },
+      { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.01, unit: 'currency' } }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    tid: 'date'
+  };
+}
 
 module.exports = Trader;

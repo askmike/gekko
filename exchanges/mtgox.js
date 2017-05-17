@@ -174,5 +174,39 @@ Trader.prototype.getTicker = function(callback) {
   this.mtgox.ticker(_.bind(set, this));
 }
 
+Trader.getCapabilities = function () {
+  return {};
+  // ---- Keeping this here for historical purposes. ----
+  // {
+  //
+  //   name: 'MtGox',
+  //   slug: 'mtgox',
+  //   direct: true,
+  //   infinityOrder: true,
+  //   currencies: [
+  //     'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY',
+  //     'DKK', 'HKD', 'PLN', 'RUB', 'SGD', 'THB'
+  //   ],
+  //   assets: ['BTC'],
+  //   markets: [
+  //     { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CHF', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['CNY', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['DKK', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['HKD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['PLN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['RUB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['SGD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+  //     { pair: ['THB', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } }
+  //   ],
+  //   requires: ['key', 'secret'],
+  //   providesHistory: false
+  // }
+}
+
 module.exports = Trader;
 

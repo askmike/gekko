@@ -117,5 +117,22 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   this.lakebtc.bctrades( _.bind(process, this), since);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'LakeBTC',
+    slug: 'lakebtc',
+    currencies: ['USD'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['USD', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+      }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    fetchTimespan: 60,
+    tid: 'tid'
+  };
+}
 
 module.exports = Trader;

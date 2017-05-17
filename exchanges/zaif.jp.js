@@ -123,5 +123,22 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   this.api.trades('btc_jpy').then(_.bind(process, this));
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'Zaif.jp',
+    slug: 'zaif.jp',
+    currencies: ['JPY'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['JPY', 'BTC'], minimalOrder: { amount: 1, unit: 'currency' }
+      }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: false,
+    fetchTimespan: 60,
+    tid: 'tid'
+  };
+}
 
 module.exports = Trader;

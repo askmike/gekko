@@ -134,5 +134,21 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   }
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'meXBT',
+    slug: 'mexbt',
+    currencies: ['MXN'],
+    assets: ['BTC'],
+    markets: [
+      {
+        pair: ['MXN', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }
+      }
+    ],
+    requires: ['key', 'secret', 'username'],
+    providesHistory: 'date',
+    tid: 'tid'
+  };
+}
 
 module.exports = Trader;

@@ -148,4 +148,23 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   });
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'Bitfinex',
+    slug: 'bitfinex',
+    currencies: ['USD', 'BTC'],
+    assets: ['BTC', 'LTC', 'ETH'],
+    markets: [
+        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+    ],
+    requires: ['key', 'secret'],
+    tid: 'tid'
+
+  };
+}
+
 module.exports = Trader;

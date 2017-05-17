@@ -159,4 +159,27 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   this.btcmakets.getTrades(this.asset, this.currency, process);
 }
 
+Trader.getCapabilities = function () {
+  return {
+    name: 'BTC Markets',
+    slug: 'btc-markets',
+    currencies: ['AUD', 'BTC'],
+    assets: [
+      'BTC', 'LTC', 'ETH', 'ETC'
+    ],
+    markets: [
+      { pair: ['AUD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['AUD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.001, unit: 'asset' } }
+    ],
+    requires: ['key', 'secret'],
+    providesHistory: false,
+    tid: 'tid'
+  };
+}
+
 module.exports = Trader;
