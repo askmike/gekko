@@ -15,8 +15,16 @@ Checker.prototype.notValid = function(conf) {
 }
 
 Checker.prototype.getExchangeCapabilities = function(slug) {
-  var Trader = require(dirs.exchanges + config.watch.exchange);
-  return Trader.getCapabilities();
+  var capabilities;
+
+  try {
+    var Trader = require(dirs.exchanges + slug);
+    capabilities = Trader.getCapabilities();
+  } catch (e) {
+    capabilities = null;
+  }
+
+  return capabilities;
 }
 
 // check if the exchange is configured correctly for monitoring
