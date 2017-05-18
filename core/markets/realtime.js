@@ -3,16 +3,14 @@ var _ = require('lodash');
 var util = require('../util');
 var dirs = util.dirs();
 
+var exchangeChecker = require(dirs.core + 'exchangeChecker');
 var config = util.getConfig();
 
 const slug = config.watch.exchange.toLowerCase();
-const Trader = require(dirs.exchanges + slug);
-const exchange = Trader.getCapabilities();
+const exchange = exchangeChecker.getExchangeCapabilities(slug);
 
 if(!exchange)
-  util.die(`Unsupported exchange: ${config.watch.exchange.toLowerCase()}`)
-
-var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+  util.die(`Unsupported exchange: ${slug}`)
 
 var error = exchangeChecker.cantMonitor(config.watch);
 if(error)
