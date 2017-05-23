@@ -13,6 +13,9 @@ var Trader = function(next) {
   this.manager.init(next);
 }
 
+// teach our trader events
+util.makeEventEmitter(Trader);
+
 Trader.prototype.processAdvice = function(advice) {
   if(advice.recommendation == 'long') {
     log.info(

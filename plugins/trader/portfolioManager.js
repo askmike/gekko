@@ -51,6 +51,9 @@ var Manager = function(conf) {
   this.orders = [];
 };
 
+// teach our trader events
+util.makeEventEmitter(Manager);
+
 Manager.prototype.init = function(callback) {
   log.debug('getting balance & fee from', this.exchange.name);
   var prepare = function() {
@@ -198,6 +201,8 @@ Manager.prototype.buy = function(amount, price) {
     );
   }
 
+  amount = minimum;
+
   log.info(
     'Attempting to BUY',
     amount,
@@ -229,6 +234,8 @@ Manager.prototype.sell = function(amount, price) {
     );
   }
 
+  amount = minimum;
+
   log.info(
     'Attempting to SELL',
     amount,
@@ -251,13 +258,11 @@ Manager.prototype.noteOrder = function(err, order) {
 // check whether the order got fully filled
 // if it is not: cancel & instantiate a new order
 Manager.prototype.checkOrder = function() {
-  var finish = function(err, filled) {
+  var handleCheckResult = function(err, filled) {
     if(!filled) {
       log.info(this.action, 'order was not (fully) filled, cancelling and creating new order');
-      this.exchange.cancelOrder(_.last(this.orders));
+      this.exchange.cancelOrder(_.last(this.orders), _.bind(handleCancelResult, this));
 
-      var self = this;
-      setTimeout(function() { self.trade(self.action); }, 100);
       return;
     }
 
@@ -266,20 +271,55 @@ Manager.prototype.checkOrder = function() {
     this.relayOrder();
   }
 
-  this.exchange.checkOrder(_.last(this.orders), _.bind(finish, this));
+  var handleCancelResult = function() {
+    this.trade(this.action);
+  }
+
+  this.exchange.checkOrder(_.last(this.orders), _.bind(handleCheckResult, this));
 }
-
-
 
 Manager.prototype.relayOrder = function() {
   // look up all executed orders and relay average.
-  console.log('THIS.ORDERS', this.orders);
+  var process = (err, res) => {
 
-  this.exchange.getOrder(_.first(this.orders), (err, res) => console.log(err, res));
+    var price = 0;
+    var amount = 0;
+    var date = moment(0);
 
-  // async.series(
-  //   _.map(this.orders, )
-  // )
+    _.each(res.filter(o => o.amount), order => {
+      date = _.max([moment(order.date), date]);
+      price = ((price * amount) + (order.price * order.amount)) / (order.amount + amount);
+      amount += +order.amount;
+    });
+
+    async.series([
+      this.setPortfolio,
+      this.setTicker
+    ], () => {
+      var asset = _.find(this.portfolio, a => a.name === this.asset).amount;
+      var currency = _.find(this.portfolio, a => a.name === this.currency).amount;
+
+      this.emit('trade', {
+        date,
+        price,
+        action: this.action,
+        portfolio: {
+          currency,
+          asset,
+          balance: currency + (asset * this.ticker.bid)
+        },
+        balance: currency + (asset * this.ticker.bid)
+      });
+    });
+
+  }
+
+  var getOrders = _.map(
+    this.orders,
+    order => next => this.exchange.getOrder(order, next)
+  );
+
+  async.series(getOrders, process);
 }
 
 Manager.prototype.logPortfolio = function() {

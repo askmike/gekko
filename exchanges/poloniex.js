@@ -143,13 +143,17 @@ Trader.prototype.getOrder = function(order, callback) {
     if(err)
       return callback(err);
 
-    var price, amount;
+    var price = 0;
+    var amount = 0;
     var date = moment(0);
+
+    if(result.error === 'Order not found, or you are not the person who placed it.')
+      return callback(null, {price, amount, date});
 
     _.each(result, trade => {
 
       date = moment(trade.date);
-      price = (price * amount) + (+trade.price * trade.amount) / (+trade.amount + amount)
+      price = ((price * amount) + (+trade.rate * trade.amount)) / (+trade.amount + amount);
       amount += +trade.amount;
 
     });
@@ -157,15 +161,18 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(err, {price, amount, date});
   }.bind(this);
 
-  console.log(order);
   this.poloniex.returnOrderTrades(order, get);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
+  var args = _.toArray(arguments);
   var cancel = function(err, result) {
     if(err || !result.success) {
-      log.error('unable to cancel order', order, '(', err, result, ')');
+      log.error('unable to cancel order', order, '(', err, result, '), retrying');
+      return this.retry(this.cancelOrder, args);
     }
+
+    callback();
   }.bind(this);
 
   this.poloniex.cancelOrder(this.currency, this.asset, order, cancel);
