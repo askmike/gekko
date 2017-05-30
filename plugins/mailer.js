@@ -108,6 +108,7 @@ Mailer.prototype.processAdvice = function(advice) {
     '.\n\nThe current ',
     config.watch.asset,
     ' price is ',
+    config.watch.currency,
     this.price
   ].join('');
 
