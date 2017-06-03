@@ -140,8 +140,10 @@ Manager.prototype.getBalance = function(fund) {
 // This function makes sure the limit order gets submitted
 // to the exchange and initiates order registers watchers.
 Manager.prototype.trade = function(what) {
-  if(what !== 'BUY' && what !== 'SELL')
-    return;
+  // if we are still busy executing the last trade
+  // cancel that one (and ignore results = assume not filled)
+  if(_.size(this.orders))
+    return this.cancelLastOrder(() => this.trade(what));
 
   this.action = what;
 
@@ -257,6 +259,14 @@ Manager.prototype.noteOrder = function(err, order) {
   // we cancel and calculate & make a new one
   setTimeout(this.checkOrder, util.minToMs(1));
 };
+
+
+Manager.prototype.cancelLastOrder = function(done) {} {
+  this.exchange.cancelOrder(_.last(this.orders), () => {
+    this.orders = [];
+    done();
+  });
+}
 
 // check whether the order got fully filled
 // if it is not: cancel & instantiate a new order
