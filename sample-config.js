@@ -358,10 +358,7 @@ config.sqlite = {
   dataDirectory: 'history',
   version: 0.1,
 
-  dependencies: [{
-    module: 'sqlite3',
-    version: '3.1.4'
-  }]
+  dependencies: []
 }
 
   // Postgres adapter example config (please note: requires postgres >= 9.5):

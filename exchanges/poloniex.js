@@ -100,7 +100,7 @@ Trader.prototype.getFee = function(callback) {
     if(err || data.error)
       return callback(err || data.error);
 
-    callback(false, parseFloat(data.takerFee));
+    callback(false, parseFloat(data.makerFee));
   }
   this.poloniex._private('returnFeeInfo', _.bind(set, this));
 }

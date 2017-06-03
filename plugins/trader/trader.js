@@ -11,6 +11,14 @@ var Trader = function(next) {
 
   this.manager = new Manager(_.extend(config.trader, config.watch));
   this.manager.init(next);
+
+  this.mananager.on('trade', trade => {
+    this.emit(trade);
+  })
+
+  this.mananager.on('portfolioUpdate', trade => {
+    this.emit(trade);
+  })
 }
 
 // teach our trader events

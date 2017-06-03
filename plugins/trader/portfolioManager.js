@@ -5,7 +5,7 @@
   get executed. Besides the orders the manager also keeps track of
   the client's portfolio.
 
-  NOTE: very old code, can only do limit orders
+  NOTE: Execution strategy is limit orders (to not cross the book)
 
 */
 
@@ -89,6 +89,9 @@ Manager.prototype.setPortfolio = function(callback) {
 
         return item;
       });
+
+    if(_.isEmpty(this.portfolio))
+      this.emit('portfolioUpdate', _.clone(portfolio));
 
     this.portfolio = portfolio;
 
@@ -201,7 +204,7 @@ Manager.prototype.buy = function(amount, price) {
     );
   }
 
-  amount = minimum;
+  amount = 10;//minimum;
 
   log.info(
     'Attempting to BUY',
@@ -234,7 +237,7 @@ Manager.prototype.sell = function(amount, price) {
     );
   }
 
-  amount = minimum;
+  amount = 10;//minimum;
 
   log.info(
     'Attempting to SELL',
@@ -310,6 +313,9 @@ Manager.prototype.relayOrder = function() {
         },
         balance: currency + (asset * this.ticker.bid)
       });
+
+      this.orders = [];
+
     });
 
   }
