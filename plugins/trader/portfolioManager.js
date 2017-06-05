@@ -55,7 +55,7 @@ var Manager = function(conf) {
 util.makeEventEmitter(Manager);
 
 Manager.prototype.init = function(callback) {
-  log.debug('getting balance & fee from', this.exchange.name);
+  log.debug('getting ticker, balance & fee from', this.exchange.name);
   var prepare = function() {
     this.starting = false;
 
@@ -67,6 +67,7 @@ Manager.prototype.init = function(callback) {
   };
 
   async.series([
+    this.setTicker,
     this.setPortfolio,
     this.setFee
   ], _.bind(prepare, this));
@@ -91,7 +92,7 @@ Manager.prototype.setPortfolio = function(callback) {
       });
 
     if(_.isEmpty(this.portfolio))
-      this.emit('portfolioUpdate', _.clone(portfolio));
+      this.emit('portfolioUpdate', this.convertPortfolio(portfolio));
 
     this.portfolio = portfolio;
 
@@ -139,10 +140,10 @@ Manager.prototype.getBalance = function(fund) {
 
 // This function makes sure the limit order gets submitted
 // to the exchange and initiates order registers watchers.
-Manager.prototype.trade = function(what) {
+Manager.prototype.trade = function(what, retry) {
   // if we are still busy executing the last trade
   // cancel that one (and ignore results = assume not filled)
-  if(_.size(this.orders))
+  if(!retry && _.size(this.orders))
     return this.cancelLastOrder(() => this.trade(what));
 
   this.action = what;
@@ -261,7 +262,7 @@ Manager.prototype.noteOrder = function(err, order) {
 };
 
 
-Manager.prototype.cancelLastOrder = function(done) {} {
+Manager.prototype.cancelLastOrder = function(done) {
   this.exchange.cancelOrder(_.last(this.orders), () => {
     this.orders = [];
     done();
@@ -285,10 +286,22 @@ Manager.prototype.checkOrder = function() {
   }
 
   var handleCancelResult = function() {
-    this.trade(this.action);
+    this.trade(this.action, true);
   }
 
   this.exchange.checkOrder(_.last(this.orders), _.bind(handleCheckResult, this));
+}
+
+// convert into the portfolio expected by the performanceAnalyzer
+Manager.prototype.convertPortfolio = function(portfolio) {
+  var asset = _.find(portfolio, a => a.name === this.asset).amount;
+  var currency = _.find(portfolio, a => a.name === this.currency).amount;
+
+  return {
+    currency,
+    asset,
+    balance: currency + (asset * this.ticker.bid)
+  }
 }
 
 Manager.prototype.relayOrder = function() {
@@ -309,23 +322,17 @@ Manager.prototype.relayOrder = function() {
       this.setPortfolio,
       this.setTicker
     ], () => {
-      var asset = _.find(this.portfolio, a => a.name === this.asset).amount;
-      var currency = _.find(this.portfolio, a => a.name === this.currency).amount;
+      const portfolio = this.convertPortfolio(this.portfolio);
 
       this.emit('trade', {
         date,
         price,
         action: this.action,
-        portfolio: {
-          currency,
-          asset,
-          balance: currency + (asset * this.ticker.bid)
-        },
-        balance: currency + (asset * this.ticker.bid)
+        portfolio: portfolio,
+        balance: portfolio.balance
       });
 
       this.orders = [];
-
     });
 
   }
