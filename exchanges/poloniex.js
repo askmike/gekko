@@ -167,6 +167,11 @@ Trader.prototype.getOrder = function(order, callback) {
 Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, result) {
+
+    // check if order is gone already
+    if(result.error === 'Invalid order number, or you are not the person who placed the order.')
+      return callback(true);
+
     if(err || !result.success) {
       log.error('unable to cancel order', order, '(', err, result, '), retrying');
       return this.retry(this.cancelOrder, args);
