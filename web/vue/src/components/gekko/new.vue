@@ -103,7 +103,7 @@ export default {
       // internally a live gekko consists of two parts:
       //
       // - a market watcher
-      // - a live gekko (strat runner + paper trader)
+      // - a live gekko (strat runner + (paper) trader)
       //
       // however if the user selected type "market watcher"
       // the second part won't be created

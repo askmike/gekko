@@ -6,11 +6,11 @@
       market-picker.contain(v-on:market='updateMarketConfig')
     .grd-row-col-3-6.mx1
       type-picker(v-on:type='updateType')
-  template(v-if='type === "paper trader"')
+  template(v-if='type !== "market watcher"')
     .hr
     strat-picker.contain.my2(v-on:stratConfig='updateStrat')
-    .hr
-    paper-trader(v-on:settings='updatePaperTrader')
+    .hr(v-if='type === "paper trader"')
+    paper-trader(v-on:settings='updatePaperTrader', v-if='type === "paper trader"')
 </template>
 
 <script>
@@ -62,6 +62,11 @@ export default {
         { type: this.type },
         { performanceAnalyzer: this.performanceAnalyzer }
       );
+
+      if(this.type === 'tradebot') {
+        delete config.paperTrader;
+        config.trader = { enabled: true }
+      }
 
       config.valid = this.validConfig(config);
 

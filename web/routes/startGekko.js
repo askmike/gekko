@@ -8,6 +8,7 @@ const broadcast = cache.get('broadcast');
 const gekkoManager = cache.get('gekkos');
 
 const base = require('./baseConfig');
+const API_KEYS = require('../../api-keys');
 
 // starts an import
 // requires a post body with a config object
@@ -18,6 +19,13 @@ module.exports = function *() {
 
   _.merge(config, base, this.request.body);
 
+  // Attach API keys
+  if(config.trader && config.trader.enabled) {
+    config.trader.key = API_KEYS[config.watch.exchange].key;
+    config.trader.secret = API_KEYS[config.watch.exchange].secret;
+  }
+
+  // set type
   if(mode === 'realtime') {
     if(config.market && config.market.type)
       var type = config.market.type;
