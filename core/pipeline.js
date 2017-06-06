@@ -21,8 +21,6 @@ var log = require(dirs.core + 'log');
 
 var pipeline = (settings) => {
 
-  var spies = settings.spies || [];
-
   var mode = settings.mode;
   var config = settings.config;
 
@@ -95,7 +93,7 @@ var pipeline = (settings) => {
 
         if(_.size(singleEventEmitters) > 1) {
           var error = `Multiple plugins are broadcasting`;
-          error += `the event "${subscription.event}" (${singleEventEmitters.join(',')}).`;
+          error += ` the event "${subscription.event}" (${singleEventEmitters.join(',')}).`;
           error += 'This is unsupported.'
           util.die(error);
         } else {
@@ -103,10 +101,6 @@ var pipeline = (settings) => {
         }
       }
     );
-
-    // add possible spies
-    plugins = plugins
-      .concat(spies);
 
     // subscribe interested plugins to
     // emitting plugins
