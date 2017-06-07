@@ -15,7 +15,7 @@ config.debug = false; // for additional logging / debugging
 
 config.watch = {
 
-  // see https://github.com/askmike/gekko#supported-exchanges
+  // see https://gekko.wizb.it/docs/introduction/supported_exchanges.html
   exchange: 'poloniex',
   currency: 'USDT',
   asset: 'BTC',
