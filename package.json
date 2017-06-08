@@ -46,6 +46,7 @@
     "prompt-lite": "0.1.1",
     "pushbullet": "1.4.3",
     "relieve": "^2.1.3",
+    "retry": "^0.10.1",
     "semver": "2.2.1",
     "sqlite3": "3.1.8",
     "stats-lite": "^2.0.4",
