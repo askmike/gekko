@@ -91,7 +91,7 @@ Manager.prototype.setPortfolio = function(callback) {
 
   }.bind(this);
 
-  this.exchange.getPortfolio(set);
+  util.retry(this.exchange.getPortfolio, set);
 };
 
 Manager.prototype.setFee = function(callback) {
@@ -104,17 +104,20 @@ Manager.prototype.setFee = function(callback) {
     if(_.isFunction(callback))
       callback();
   }.bind(this);
-  this.exchange.getFee(set);
+  util.retry(this.exchange.getFee, set);
 };
 
 Manager.prototype.setTicker = function(callback) {
   var set = function(err, ticker) {
     this.ticker = ticker;
 
+    if(err)
+      util.die(err);
+    
     if(_.isFunction(callback))
       callback();
   }.bind(this);
-  this.exchange.getTicker(set);
+  util.retry(this.exchange.getTicker, set);
 };
 
 // return the [fund] based on the data we have in memory
@@ -225,7 +228,9 @@ Manager.prototype.buy = function(amount, price) {
     amount,
     this.asset,
     'at',
-    this.exchange.name
+    this.exchange.name,
+    'price:',
+    price
   );
   this.exchange.buy(amount, price, this.noteOrder);
 };
@@ -270,7 +275,9 @@ Manager.prototype.sell = function(amount, price) {
     amount,
     this.asset,
     'at',
-    this.exchange.name
+    this.exchange.name,
+    'price:',
+    price
   );
   this.exchange.sell(amount, price, this.noteOrder);
 };
