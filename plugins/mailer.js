@@ -81,13 +81,14 @@ Mailer.prototype.setup = function(done) {
 };
 
 Mailer.prototype.mail = function(subject, content, done) {
-
-  this.server.send({
-    text: content,
-    from: mailConfig.from,
-    to: mailConfig.to,
-    subject: mailConfig.tag + subject
-  }, done || this.checkResults);
+  util.retry(function(cb) {
+    this.server.send({
+      text: content,
+      from: mailConfig.from,
+      to: mailConfig.to,
+      subject: mailConfig.tag + subject
+    }, cb);
+  }.bind(this), done || this.checkResults);
 };
 
 Mailer.prototype.processCandle = function(candle, done) {
