@@ -4,6 +4,7 @@ var path = require('path');
 var fs = require('fs');
 var semver = require('semver');
 var program = require('commander');
+var retry = require('retry');
 
 var startTime = moment();
 
@@ -160,6 +161,24 @@ var util = {
   },
   getStartTime: function() {
     return startTime;
+  },
+  retry: function(fn, callback) {
+    var operation = retry.operation({
+      retries: 5,
+      factor: 1.2,
+      minTimeout: 1 * 1000,
+      maxTimeout: 3 * 1000
+    });
+ 
+    operation.attempt(function(currentAttempt) {
+      fn(function(err, result) {
+        if (operation.retry(err)) {
+          return;
+        }
+
+        callback(err ? operation.mainError() : null, result);
+      });
+    });
   }
 }
 
