@@ -106,9 +106,12 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
+  var args = _.toArray(arguments);
   var set = function(err, result) {
-    if(err || result.error)
-      return log.error('unable to buy:', err, result);
+    if(err || result.error) {
+      log.error('unable to buy:', err, result);
+      return this.retry(this.buy, args);
+    }
 
     callback(null, result.orderNumber);
   }.bind(this);
@@ -117,9 +120,12 @@ Trader.prototype.buy = function(amount, price, callback) {
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+  var args = _.toArray(arguments);
   var set = function(err, result) {
-    if(err || result.error)
-      return log.error('unable to sell:', err, result);
+    if(err || result.error) {
+      log.error('unable to sell:', err, result);
+      return this.retry(this.sell, args);
+    }
 
     callback(null, result.orderNumber);
   }.bind(this);
