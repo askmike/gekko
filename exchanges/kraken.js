@@ -32,44 +32,33 @@ var isFiat = function(value) {
   return _.contains(fiat_currencies, value);
 };
 
+var addPrefix = function(value) {
+
+  var fiatPrefix = "Z";
+  var cryptoPrefix = "X";
+
+  if(isFiat(value))
+    return fiatPrefix + value;
+  else
+    return cryptoPrefix + value;
+}
+
 var Trader = function(config) {
   _.bindAll(this);
-
-  // Default currency / asset
-  this.currency = "EUR";
-  this.asset = "XBT";
 
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
-    this.currency = config.currency.toUpperCase();
+    this.currency = config.currency.toUpperCase()
     this.asset = config.asset.toUpperCase();
   }
 
-  this.setAssetPair();
+  this.pair = addPrefix(this.asset) + addPrefix(this.currency);
   this.name = 'kraken';
   this.since = null;
 
   this.kraken = new Kraken(this.key, this.secret);
 }
-
-Trader.prototype.setAssetPair = function() {
-  var assetPrefix = "X";
-  var currencyPrefix = "Z";
-
-  if (isFiat(this.asset))
-    assetPrefix = "Z";
-  else if(isCrypto(this.currency))
-    assetPrefix = "X";
-
-
-  if (isFiat(this.currency))
-    currencyPrefix = "Z";
-  else if(isCrypto(this.currency))
-    currencyPrefix = "X";
-
-  this.pair = assetPrefix + this.asset + currencyPrefix + this.currency;
-};
 
 Trader.prototype.retry = function(method, args, err) {
   var wait = +moment.duration(10, 'seconds');
@@ -133,19 +122,33 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var set = function(err, data) {
+
     if(_.isEmpty(data))
       err = 'no data';
 
-    if(!_.isEmpty(data.error))
+    else if(!_.isEmpty(data.error))
       err = data.error;
 
-    if (err)
+    if (err || !data.result)
       return this.retry(this.getPortfolio, args, JSON.stringify(err));
 
-    var portfolio = [];
-    _.each(data.result, function(amount, asset) {
-      portfolio.push({name: asset.substr(1), amount: parseFloat(amount)});
-    });
+    var assetAmount = parseFloat( data.result[addPrefix(this.asset)] );
+    var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
+
+    if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
+      log.error(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
+      assetAmount = 0;
+    }
+
+    if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
+      log.error(`Kraken did not return portfolio for ${this.currency}, assuming 0.`);
+      currencyAmount = 0;
+    }
+
+    var portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount }
+    ];
     callback(err, portfolio);
   };
 

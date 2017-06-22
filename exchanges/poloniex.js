@@ -58,7 +58,10 @@ Trader.prototype.getPortfolio = function(callback) {
     var assetAmount = parseFloat( data[this.asset] );
     var currencyAmount = parseFloat( data[this.currency] );
 
-    if(!_.isNumber(assetAmount) || !_.isNumber(currencyAmount)) {
+    if(
+      !_.isNumber(assetAmount) || _.isNaN(assetAmount) ||
+      !_.isNumber(currencyAmount) || _.isNaN(currencyAmount)
+    ) {
       log.info('asset:', this.asset);
       log.info('currency:', this.currency);
       log.info('exchange data:', data);
