@@ -207,7 +207,7 @@ Manager.prototype.buy = function(amount, price) {
     );
   }
 
-  amount = 10;//minimum;
+  amount = minimum;
 
   log.info(
     'Attempting to BUY',
@@ -240,7 +240,7 @@ Manager.prototype.sell = function(amount, price) {
     );
   }
 
-  amount = 10;//minimum;
+  amount = minimum;
 
   log.info(
     'Attempting to SELL',
@@ -255,6 +255,10 @@ Manager.prototype.sell = function(amount, price) {
 };
 
 Manager.prototype.noteOrder = function(err, order) {
+  if(err) {
+    util.die(err);
+  }
+
   this.orders.push(order);
   // if after 1 minute the order is still there
   // we cancel and calculate & make a new one

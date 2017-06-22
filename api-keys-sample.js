@@ -3,5 +3,9 @@ module.exports = {
   poloniex: {
       key: '',
       secret: ''
+  },
+  kraken: {
+    key: '',
+    secret: ''
   }
 }
