@@ -75,15 +75,13 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   var set = function(err, result) {
-    if(err || result.status === "error")
-      return log.error('unable to buy:', err, result.reason);
-
+    if(err || result.status === "error") {
+      log.error('unable to buy:', err, result.reason, 'retrying...');
+      return this.retry(this.buy, args);
+    }
 
     callback(null, result.id);
   }.bind(this);
-
-  // TODO: fees are hardcoded here?
-  // prevent: Ensure that there are no more than 8 digits in total.
 
   //Decrease amount by 1% to avoid trying to buy more than balance allows.
   amount -= amount / 100;
@@ -102,9 +100,12 @@ Trader.prototype.buy = function(amount, price, callback) {
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+  var args = _.toArray(arguments);
   var set = function(err, result) {
-    if(err || result.status === "error")
-      return log.error('unable to sell:', err, result.reason);
+    if(err || result.status === "error") {
+      log.error('unable to sell:', err, result.reason, 'retrying...');
+      return this.retry(this.sell, args);
+    }
 
     callback(null, result.id);
   }.bind(this);
