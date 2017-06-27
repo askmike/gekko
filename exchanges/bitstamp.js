@@ -149,10 +149,14 @@ Trader.prototype.getOrder = function(id, callback) {
     var order = _.find(data, o => o.order_id === +id);
 
     if(!order) {
-      var price = 0;
-      var amount = 0;
-      var date = moment(0);
-      return callback(err, {price, amount, date});
+      // if the order was cancelled we are unable
+      // to retrieve it, assume that this is what
+      // is happening.
+      return callback(err, {
+        price: 0,
+        amount: 0,
+        date: moment(0)
+      });
     }
 
     var price = parseFloat( order[this.market] );
