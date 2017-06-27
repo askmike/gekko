@@ -219,7 +219,7 @@ Trader.getCapabilities = function () {
       'UVC', 'VIA', 'VOOT', 'VOX', 'VRC', 'VTC', 'WC', 'WDC', 'WIKI', 'WOLF',
       'X13', 'XAI', 'XAP', 'XBC', 'XC', 'XCH', 'XCN', 'XCP', 'XCR', 'XDN',
       'XDP', 'XEM', 'XHC', 'XLB', 'XMG', 'XMR', 'XPB', 'XPM', 'XRP', 'XSI',
-      'XST', 'XSV', 'XUSD', 'XVC', 'XXC', 'YACC', 'YANG', 'YC', 'YIN'
+      'XST', 'XSV', 'XUSD', 'XVC', 'XXC', 'YACC', 'YANG', 'YC', 'YIN', 'ZEC'
     ],
     markets: [
       // *** BTC <-> XXX
