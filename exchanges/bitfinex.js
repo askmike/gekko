@@ -14,7 +14,9 @@ var Trader = function(config) {
   this.name = 'Bitfinex';
   this.balance;
   this.price;
-  this.pair = config.asset + config.currency;
+  this.asset = config.asset;
+  this.currency = config.currency;
+  this.pair = this.asset + this.currency;
   this.bitfinex = new Bitfinex(this.key, this.secret).rest;
 }
 
@@ -43,31 +45,51 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   this.bitfinex.wallet_balances(function (err, data, body) {
-    var portfolio = _(data).filter(function(data) {
-      return data.type === 'exchange'
-    }).map(function (asset) {
-      return {
-        name: asset.currency.toUpperCase(),
-        // TODO: use .amount instead of .available?
-        amount: asset.available
-      }
-    }).value();
+
+    if(err && err.message === '401') {
+      let e = 'Bitfinex replied with an unauthorized error. ';
+      e += 'Double check whether your API key is correct.';
+      util.die(e);
+    }
+
+    // We are only interested in funds in the "exchange" wallet
+    data = data.filter(c => c.type === 'exchange');
+
+    const asset = _.find(data, c => c.currency.toUpperCase() === this.asset);
+    const currency = _.find(data, c => c.currency.toUpperCase() === this.currency);
+
+    let assetAmount, currencyAmount;
+
+    if(_.isObject(asset) && _.isNumber(+asset.available) && !_.isNaN(+asset.available))
+      assetAmount = +asset.available;
+    else {
+      log.error(`Bitfinex did not provide ${this.asset} amount, assuming 0`);
+      assetAmount = 0;
+    }
+
+    if(_.isObject(currency) && _.isNumber(+currency.available) && !_.isNaN(+currency.available))
+      currencyAmount = +currency.available;
+    else {
+      log.error(`Bitfinex did not provide ${this.currency} amount, assuming 0`);
+      currencyAmount = 0;
+    }
+
+    const portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount },
+    ];
+
     callback(err, portfolio);
-  });
+  }.bind(this));
 }
 
 Trader.prototype.getTicker = function(callback) {
-  var args = [this.pair, process]
+  var args = _.toArray(arguments);
   // the function that will handle the API callback
   var process = function(err, data, body) {
     if (err)
-      // on error we need to recurse this function
-      // however we don't want to hit any API ratelimits
-      // so we use this.retry since this will wait first
-      // before we retry.
-      // the arguments we need to pass the the ticker method
-      //>> Thanks Mike :)
-        return this.retry(this.bitfinex.ticker(args));
+        return this.retry(this.getTicker(args));
+
     // whenever we reach this point we have valid
     // data, the callback is still the same since
     // we are inside the same javascript scope.
@@ -155,15 +177,14 @@ Trader.getCapabilities = function () {
     currencies: ['USD', 'BTC'],
     assets: ['BTC', 'LTC', 'ETH'],
     markets: [
-        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
     ],
     requires: ['key', 'secret'],
     tid: 'tid'
-
   };
 }
 
