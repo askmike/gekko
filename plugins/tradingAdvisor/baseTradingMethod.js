@@ -91,6 +91,8 @@ var Base = function() {
   this.asyncTick = false;
   this.candlePropsCacheSize = 1000;
 
+  this._prevAdvice;
+
   this.candleProps = {
     open: [],
     high: [],
@@ -110,12 +112,6 @@ var Base = function() {
 
   // let's run the implemented starting point
   this.init();
-
-  // should be set up now, check some things
-  // to make sure everything is implemented
-  // correctly.
-  if(!this.name)
-    log.warn('Warning, trading method has no name');
 
   if(!config.debug || !this.log)
     this.log = function() {};
@@ -266,16 +262,20 @@ Base.prototype.addIndicator = function(name, type, parameters) {
 }
 
 Base.prototype.advice = function(newPosition) {
-  var advice = 'soft';
-  if(newPosition) {
-    advice = newPosition;
-  }
+  // ignore soft advice coming from legacy
+  // strategies.
+  if(!newPosition)
+    return;
 
-  let candle = this.candle;
-  candle.start = candle.start.clone();
+  // ignore if advice equals previous advice
+  if(newPosition === this._prevAdvice)
+    return;
+
+  this._prevAdvice = newPosition;
+
   _.defer(function() {
     this.emit('advice', {
-      recommendation: advice,
+      recommendation: newPosition,
       portfolio: 1,
       candle
     });
