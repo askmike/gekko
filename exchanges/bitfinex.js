@@ -106,8 +106,9 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.submit_order = function(type, amount, price, callback) {
-  amount = Math.floor(amount*100000000)/100000000;
+  var args = _.toArray(arguments);
 
+  amount = Math.floor(amount*100000000)/100000000;
   this.bitfinex.new_order(
     this.pair,
     amount + '',
@@ -116,8 +117,10 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
     type,
     'exchange limit',
     function (err, data, body) {
-      if (err)
-        return log.error('unable to ' + type, err, body);
+      if (err) {
+        log.error('unable to ' + type, err, body);
+        return this.retry(this.submit_order, args);
+      }
 
       callback(err, data.order_id);
     });
@@ -125,7 +128,6 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   this.submit_order('buy', amount, price, callback);
-
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -133,14 +135,22 @@ Trader.prototype.sell = function(amount, price, callback) {
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
+  var args = _.toArray(arguments);
   this.bitfinex.order_status(order_id, function (err, data, body) {
+
+    if(err || !data)
+      return this.retry(this.checkOrder, arguments);
+
     callback(err, !data.is_live);
   }.bind(this));
 }
 
 
 Trader.prototype.getOrder = function(order, callback) {
+  var args = _.toArray(arguments);
   var get = function(err, data) {
+    if(err || !data)
+      return this.retry(this.getOrder, arguments);
 
     var price = parseFloat(data.avg_execution_price);
     var amount = parseFloat(data.executed_amount);
@@ -153,17 +163,24 @@ Trader.prototype.getOrder = function(order, callback) {
 }
 
 
-
 Trader.prototype.cancelOrder = function(order_id, callback) {
+  var args = _.toArray(arguments);
   this.bitfinex.cancel_order(order_id, function (err, data, body) {
-      if (err || !data || !data.is_cancelled)
-        log.error('unable to cancel order', order_id, '(', err, data, ')');
-  });
+      if (err || !data) {
+        // bitfinex way of telling it was already cancelled..
+        if(err.message === 'Order could not be cancelled.')
+          return callback();
+
+        log.error('unable to cancel order', order_id, '(', err, data, '), retrying...');
+        return this.retry(this.cancelOrder, args);
+      }
+
+      return callback();
+  }.bind(this));
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var self = this;
 
   var path = this.pair;
   if(since)
@@ -171,7 +188,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   this.bitfinex.trades(path, function(err, data) {
     if (err)
-      return self.retry(self.getTrades, args);
+      return this.retry(this.getTrades, args);
 
     var trades = _.map(data, function(trade) {
       return {
@@ -183,7 +200,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     });
 
     callback(null, descending ? trades : trades.reverse());
-  });
+  }.bind(this));
 }
 
 Trader.getCapabilities = function () {

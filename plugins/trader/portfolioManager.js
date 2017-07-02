@@ -207,8 +207,6 @@ Manager.prototype.buy = function(amount, price) {
     );
   }
 
-  amount = minimum;
-
   log.info(
     'Attempting to BUY',
     amount,
@@ -239,8 +237,6 @@ Manager.prototype.sell = function(amount, price) {
       this.exchange.name
     );
   }
-
-  amount = minimum;
 
   log.info(
     'Attempting to SELL',
