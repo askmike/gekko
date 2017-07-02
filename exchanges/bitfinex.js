@@ -135,8 +135,24 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order_id, callback) {
   this.bitfinex.order_status(order_id, function (err, data, body) {
     callback(err, !data.is_live);
-  });
+  }.bind(this));
 }
+
+
+Trader.prototype.getOrder = function(order, callback) {
+  var get = function(err, data) {
+
+    var price = parseFloat(data.avg_execution_price);
+    var amount = parseFloat(data.executed_amount);
+    var date = moment.unix(data.timestamp);
+
+    callback(undefined, {price, amount, date});
+  }.bind(this);
+
+  this.bitfinex.order_status(order, get);
+}
+
+
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
   this.bitfinex.cancel_order(order_id, function (err, data, body) {
@@ -177,11 +193,11 @@ Trader.getCapabilities = function () {
     currencies: ['USD', 'BTC'],
     assets: ['BTC', 'LTC', 'ETH'],
     markets: [
-        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
     ],
     requires: ['key', 'secret'],
     tid: 'tid'

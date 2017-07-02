@@ -207,7 +207,7 @@ Manager.prototype.buy = function(amount, price) {
     );
   }
 
-  amount = minimum * 1.1;
+  amount = minimum;
 
   log.info(
     'Attempting to BUY',
@@ -240,7 +240,7 @@ Manager.prototype.sell = function(amount, price) {
     );
   }
 
-  amount = minimum * 1.1;
+  amount = minimum;
 
   log.info(
     'Attempting to SELL',
