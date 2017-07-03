@@ -277,7 +277,7 @@ Base.prototype.advice = function(newPosition) {
     this.emit('advice', {
       recommendation: newPosition,
       portfolio: 1,
-      candle
+      candle: this.candle
     });
   }.bind(this));
 }
