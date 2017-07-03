@@ -8,6 +8,8 @@ var log = require('../core/log')
 var Trader = function(config) {
   this.key = config.key;
   this.secret = config.secret;
+  this.asset = config.asset;
+  this.currency = config.currency;
   this.pair = [config.asset, config.currency].join('_').toLowerCase();
   this.name = 'BTC-E';
 
@@ -35,10 +37,10 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount = this.round(amount);
 
   var set = function(err, data) {
-    if(err)
+    if(err || !data || !data.return)
       return log.error('unable to buy:', err);
 
-    callback(null, data.order_id);
+    callback(null, data.return.order_id);
   }.bind(this);
 
   // workaround for nonce error
@@ -51,10 +53,10 @@ Trader.prototype.sell = function(amount, price, callback) {
   amount = this.round(amount);
 
   var set = function(err, data) {
-    if(err)
+    if(err || !data || !data.return)
       return log.error('unable to sell:\n\n', err);
 
-    callback(null, data.order_id);
+    callback(null, data.return.order_id);
   };
 
   // workaround for nonce error
@@ -80,19 +82,40 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
+  var args = _.toArray(arguments);
   var calculate = function(err, data) {
 
     if(err) {
       if(err.message === 'invalid api key')
         util.die('Your ' + this.name + ' API keys are invalid');
 
-      return this.retry(this.btce.getInfo, calculate);
+      return this.retry(this.getPortfolio, args);
     }
 
-    var portfolio = [];
-    _.each(data.funds, function(amount, asset) {
-      portfolio.push({name: asset.toUpperCase(), amount: amount});
-    });
+    if(_.isEmpty(data))
+      err = 'no data';
+
+    if (err || !data.return || !data.return.funds)
+      return this.retry(this.getPortfolio, args);
+
+    var assetAmount = parseFloat( data.return.funds[this.asset.toLowerCase()] );
+    var currencyAmount = parseFloat( data.return.funds[this.currency.toLowerCase()] );
+
+    if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
+      log.error(`BTC-e did not return portfolio for ${this.asset}, assuming 0.`);
+      assetAmount = 0;
+    }
+
+    if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
+      log.error(`BTC-e did not return portfolio for ${this.currency}, assuming 0.`);
+      currencyAmount = 0;
+    }
+
+    var portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount }
+    ];
+
     callback(err, portfolio);
   }.bind(this);
 
@@ -107,10 +130,11 @@ Trader.prototype.getTicker = function(callback) {
     if(err)
       return this.retry(this.btce.ticker, [this.pair, set]);
 
-    var ticker = _.extend(data.ticker, {
+    var ticker = {
       ask: data.ticker.buy,
       bid: data.ticker.sell
-    });
+    };
+
     callback(err, ticker);
   }.bind(this);
 
@@ -135,15 +159,45 @@ Trader.prototype.checkOrder = function(order, callback) {
       callback(false, true);
     else
       callback(err, !result[order]);
-  };
+  }.bind(this);
 
-  this.btce.orderList({}, _.bind(check, this));
+  this.btce.orderList({}, check);
 }
 
-Trader.prototype.cancelOrder = function(order) {
-  // TODO: properly test
-  var devNull = function() {}
-  this.btce.orderList(order, devNull);
+Trader.prototype.getOrder = function(orderId, callback) {
+  console.log('getOrder', orderId);
+  var args = _.toArray(arguments);
+  var check = function(err, result) {
+    if(err) {
+      log.error('error on getOrder', err);
+      return this.retry(this.getOrder, args);
+    }
+
+    var order = null;
+
+    _.each(result.return, o => {
+      if(o.order_id === +orderId)
+        order = o;
+    });
+
+    if(!order)
+      return log.error('BTC-e did not provide the order');
+
+    var price = parseFloat(order.rate);
+    var amount = parseFloat(order.amount);
+    var date = moment.unix(order.timestamp);
+
+    callback(undefined, {price, amount, date});
+  }.bind(this);
+
+  this.btce.tradeHistory({pair: this.pair}, check);
+}
+
+
+Trader.prototype.cancelOrder = function(order, callback) {
+  this.btce.orderList(order, (err, result) => {
+    callback();
+  });
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {

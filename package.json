@@ -21,7 +21,7 @@
     "bitstamp": "1.0.x",
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",
-    "btc-e": "0.0.x",
+    "btc-e": "^1.0.5",
     "btc-markets": "0.0.6",
     "cexio": "0.0.x",
     "co-fs": "^1.2.0",
