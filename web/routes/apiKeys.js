@@ -1,15 +1,17 @@
-const manager = require('../apiKeyManager');
+module.exports = manager => {
 
-module.exports = {
-  get: function *() {
-    this.body = manager.get();
-  },
-  add: function *() {
-    const content = this.request.body;
+  return {
+    get: function *() {
+      this.body = manager.get();
+    },
+    add: function *() {
+      const content = this.request.body;
 
-    manager.add(content.exchange, content.values);
+      manager.add(content.exchange, content.values);
 
-    this.body = 'ok';
-  }
+      this.body = 'ok';
+    }
+  };
+
 }
 

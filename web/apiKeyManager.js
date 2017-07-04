@@ -16,13 +16,27 @@ if(noApiKeysFile) {
 
 const apiKeys = require(apiKeysFile);
 
-module.exports = {
-  get: () => _.keys(apiKeys),
+module.exports = broadcast => {
 
-  // note: overwrites if exists
-  add: (exchange, props) => {
-    apiKeys[exchange] = props;
-    fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+  return {
+    get: () => _.keys(apiKeys),
+
+    // note: overwrites if exists
+    add: (exchange, props) => {
+      apiKeys[exchange] = props;
+      fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+
+      broadcast({
+        type: 'config',
+        config: {
+          exchanges: _.keys(apiKeys)
+        }
+      });
+    },
+
+    // retrieve api keys, this cannot touch the frontend
+    _getApiKeyPair: key => apiKeys[key]
   }
 
 }
+
