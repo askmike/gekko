@@ -5,10 +5,10 @@ const moment = require('moment');
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
 const cache = require('../state/cache');
 const broadcast = cache.get('broadcast');
+const apiKeyManager= cache.get('apiKeyManager');
 const gekkoManager = cache.get('gekkos');
 
 const base = require('./baseConfig');
-const API_KEYS = require('../../api-keys');
 
 // starts an import
 // requires a post body with a config object
@@ -21,8 +21,10 @@ module.exports = function *() {
 
   // Attach API keys
   if(config.trader && config.trader.enabled) {
-    config.trader.key = API_KEYS[config.watch.exchange].key;
-    config.trader.secret = API_KEYS[config.watch.exchange].secret;
+    _.merge(
+      config.trader,
+      apiKeyManager._getApiKeyPair(config.watch.exchange)
+    );
   }
 
   // set type

@@ -35,8 +35,7 @@ cache.set('broadcast', broadcast);
 // initialize lists and dump into cache
 cache.set('imports', new ListManager);
 cache.set('gekkos', new ListManager);
-
-const apiKeyManager = require('./apiKeyManager')(broadcast);
+cache.set('apiKeyManager', require('./apiKeyManager'));
 
 // setup API routes
 
@@ -44,7 +43,7 @@ const WEBROOT = __dirname + '/';
 const ROUTE = n => WEBROOT + 'routes/' + n;
 
 // attach routes
-const apiKeys = require(ROUTE('apiKeys'))(apiKeyManager);
+const apiKeys = require(ROUTE('apiKeys'));
 router.get('/api/strategies', require(ROUTE('strategies')));
 router.get('/api/configPart/:part', require(ROUTE('configPart')));
 router.get('/api/apiKeys', apiKeys.get);

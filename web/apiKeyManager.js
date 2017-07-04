@@ -1,5 +1,7 @@
 const fs = require('fs');
-const _ = require('lodash')
+const _ = require('lodash');
+const cache = require('./state/cache');
+const broadcast = cache.get('broadcast');
 
 const apiKeysFile = '../api-keys.js';
 
@@ -16,27 +18,22 @@ if(noApiKeysFile) {
 
 const apiKeys = require(apiKeysFile);
 
-module.exports = broadcast => {
+module.exports = {
+  get: () => _.keys(apiKeys),
 
-  return {
-    get: () => _.keys(apiKeys),
+  // note: overwrites if exists
+  add: (exchange, props) => {
+    apiKeys[exchange] = props;
+    fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
 
-    // note: overwrites if exists
-    add: (exchange, props) => {
-      apiKeys[exchange] = props;
-      fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+    broadcast({
+      type: 'config',
+      config: {
+        exchanges: _.keys(apiKeys)
+      }
+    });
+  },
 
-      broadcast({
-        type: 'config',
-        config: {
-          exchanges: _.keys(apiKeys)
-        }
-      });
-    },
-
-    // retrieve api keys, this cannot touch the frontend
-    _getApiKeyPair: key => apiKeys[key]
-  }
-
+  // retrieve api keys, this cannot touch the frontend
+  _getApiKeyPair: key => apiKeys[key]
 }
-
