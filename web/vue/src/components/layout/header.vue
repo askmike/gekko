@@ -10,8 +10,8 @@
         router-link(to='/live-gekkos').py1 Live Gekkos
         router-link(to='/backtest').py1 Backtest
         router-link(to='/data').py1 Local data
+        router-link(to='/config').py1 Config
         a(href='https://gekko.wizb.it/docs/introduction/about_gekko.html', target='_blank').py1 Documentation
-        a(href='https://github.com/askmike/gekko', target='_blank').py1 Code
 
 </template>
 

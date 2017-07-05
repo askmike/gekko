@@ -27,10 +27,8 @@ module.exports = {
     fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
 
     broadcast({
-      type: 'config',
-      config: {
-        exchanges: _.keys(apiKeys)
-      }
+      type: 'apiKeys',
+      exchanges: _.keys(apiKeys)
     });
   },
 

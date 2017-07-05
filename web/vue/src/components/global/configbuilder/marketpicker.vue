@@ -37,26 +37,10 @@ export default {
       asset: 'BTC',
     };
   },
-  created: function() {
-    get('exchanges', (err, data) => {
-        var exchangesRaw = data;
-        var exchanegsTemp = {};
-
-        exchangesRaw.forEach(e => {
-          exchanegsTemp[e.slug] = exchanegsTemp[e.slug] || {};
-
-          e.markets.forEach( pair => {
-            let [ currency, asset ] = pair['pair'];
-            exchanegsTemp[e.slug][currency] = exchanegsTemp[e.slug][currency] || [];
-            exchanegsTemp[e.slug][currency].push( asset );
-          });
-        });
-
-        this.exchanges = exchanegsTemp;
-        this.emitConfig();
-    });
-  },
   computed: {
+    exchanges: function() {
+      return this.$store.state.exchanges;
+    },
     markets: function() {
       return this.exchanges ? this.exchanges[ this.exchange ] : null;
     },
@@ -84,7 +68,8 @@ export default {
   watch: {
     currency: function() { this.emitConfig() },
     asset: function() { this.emitConfig() },
-    market: function() { this.emitConfig() }
+    market: function() { this.emitConfig() },
+    exchanges: function() { this.emitConfig() }
   },
 
   methods: {
