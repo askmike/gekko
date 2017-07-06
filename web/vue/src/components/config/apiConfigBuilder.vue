@@ -32,6 +32,9 @@ export default {
     exchangePicker
   },
   computed: {
+    apiKeySets: function() {
+      return this.$store.state.apiKeys;
+    },
     exchanges: function() {
       return this.$store.state.exchanges;
     },
@@ -73,10 +76,10 @@ export default {
 
       if(
         this.exchanges &&
-        this.exchanges[exchange] &&
-        !confirm(`You already have API keys for ${exchange} defined, want to overwrite them?`)
+        this.apiKeySets.includes(exchange) &&
+        !confirm(`You already have API keys for ${exchange} defined, do you want to overwrite them?`)
       )
-        return;
+          return;
 
       post('addApiKey', this.config, (error, response) => {
         if(error)
