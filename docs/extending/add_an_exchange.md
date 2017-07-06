@@ -100,8 +100,8 @@ Each exchange *must* provide a `getCapabilities()` static method that returns an
     - `tid`: When Gekko needs to pass in a trade id to act as a starting point in time.
     - `false`: When the exchange does not support to give back historical data at all.
 - `fetchTimespan`: if the timespan between first and last trade per fetch is fixed, set it here in minutes.
-- `monitorError`: if Gekko is currently not able to monitor this exchange, please set it to an URL explaining the problem.
-- `tradeError`: If gekko is currently not able to trade at this exchange, please set it to an URL explaining the problem.
+- `tradable`: if gekko supports automatic trading on this exchange.
+- `requires`: if gekko supports automatic trading, this is an array of required api credentials gekko needs to pass into the constructor.
 
 Below is a real-case example how `bistamp` exchange provides its `getCapabilities()` method:
 

@@ -15,7 +15,7 @@ const base = require('./baseConfig');
 module.exports = function *() {
   const mode = this.request.body.mode;
 
-  let config = {}
+  let config = {};
 
   _.merge(config, base, this.request.body);
 

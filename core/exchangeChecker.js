@@ -84,8 +84,8 @@ Checker.prototype.cantTrade = function(conf) {
   var exchange = this.getExchangeCapabilities(slug);
   var name = exchange.name;
 
-  if('tradeError' in exchange)
-    return 'At this moment Gekko can\'t trade at ' + name + ', find out more info here:\n\n' + exchange.tradeError;
+  if(!exchange.tradable)
+    return 'At this moment Gekko can\'t trade at ' + name + '.';
 
   if(conf.key === 'your-key')
     return '"your-key" is not a valid API key';

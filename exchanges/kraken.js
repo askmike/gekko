@@ -319,7 +319,8 @@ Trader.getCapabilities = function () {
     ],
     requires: ['key', 'secret'],
     providesHistory: false,
-    tid: 'date'
+    tid: 'date',
+    tradable: true
   };
 }
 

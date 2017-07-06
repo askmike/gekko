@@ -1,3 +1,5 @@
+// HERE FOR HISTORICAL PURPOSES
+
 var MtGoxClient = require("mtgox-apiv2");
 var _ = require('lodash');
 var moment = require('moment');

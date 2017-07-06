@@ -10,6 +10,17 @@ module.exports = {
 
     manager.add(content.exchange, content.values);
 
-    this.body = 'ok';
+    this.body = {
+      status: 'ok'
+    };
+  },
+  remove: function *() {
+    const exchange = this.request.body.exchange;
+
+    manager.remove(exchange);
+
+    this.body = {
+      status: 'ok'
+    };
   }
 }

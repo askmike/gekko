@@ -31,7 +31,20 @@ module.exports = {
       exchanges: _.keys(apiKeys)
     });
   },
+  remove: exchange => {
+    if(!apiKeys[exchange])
+      return;
 
-  // retrieve api keys, this cannot touch the frontend
+    delete apiKeys[exchange];
+    fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+
+    broadcast({
+      type: 'apiKeys',
+      exchanges: _.keys(apiKeys)
+    });
+  },
+
+  // retrieve api keys
+  // this cannot touch the frontend for security reaons.
   _getApiKeyPair: key => apiKeys[key]
 }
