@@ -6,7 +6,9 @@ div.contain
   p(v-if='!apiKeySets.length')
     em You don't have any API keys yet.
   ul
-    li(v-for='exchange in apiKeySets') {{ exchange }}
+    li(v-for='exchange in apiKeySets') {{ exchange }} (
+      a(href='#', v-on:click.prevent='removeApiKey(exchange)') remove
+      | )
   a(href='#', v-if='!addApiToggle', v-on:click.prevent='openAddApi') add an API key
   template(v-if='addApiToggle')
     .hr
@@ -17,6 +19,7 @@ div.contain
 
 <script>
 import apiConfigBuilder from './apiConfigBuilder.vue';
+import { post } from '../../tools/ajax';
 
 export default {
   components: {
@@ -32,7 +35,13 @@ export default {
       this.addApiToggle = true;
     },
     removeApiKey: function(exchange) {
+      if(!confirm('Are you sure you want to delete these API keys?'))
+        return;
 
+      post('removeApiKey', {exchange}, (error, response) => {
+        if(error)
+          return alert(error);
+      });
     }
   },
   computed: {

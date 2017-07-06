@@ -54,6 +54,7 @@ router.get('/api/gekkos', listWraper('gekkos'));
 router.get('/api/exchanges', require(ROUTE('exchanges')));
 
 router.post('/api/addApiKey', apiKeys.add);
+router.post('/api/removeApiKey', apiKeys.remove);
 router.post('/api/scan', require(ROUTE('scanDateRange')));
 router.post('/api/scansets', require(ROUTE('scanDatasets')));
 router.post('/api/backtest', require(ROUTE('backtest')));
