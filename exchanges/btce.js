@@ -195,7 +195,7 @@ Trader.prototype.getOrder = function(orderId, callback) {
 
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  this.btce.orderList(order, (err, result) => {
+  this.btce.cancelOrder(order, (err, result) => {
     callback();
   });
 }
