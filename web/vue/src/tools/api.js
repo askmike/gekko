@@ -9,7 +9,6 @@ if(config.ssl) {
 } else {
   var restPath = `http://${host}`;
 }
-export var restPath;
 
 // ws API path
 if(config.ssl) {
@@ -17,4 +16,4 @@ if(config.ssl) {
 } else {
   var wsPath = `ws://${host}`;
 }
-export var wsPath;
+export {wsPath,restPath};
