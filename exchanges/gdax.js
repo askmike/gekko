@@ -101,17 +101,17 @@ Trader.prototype.buy = function(amount, price, callback) {
     };
     var result = function(err, response, data) {
         if (err || data.hasOwnProperty('message')) {
-            log.error('Error buying at GDAX:', data.message, error);
+            log.error('Error buying at GDAX:', err || data.message);
             return this.retry(this.buy, args);
         }
-
         callback(err, data.id);
-    };
+    }.bind(this);
 
     this.gdax.buy(buyParams, result);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+    var args = _.toArray(arguments);
     var sellParams = {
         'price': price,
         'size': amount,
@@ -120,25 +120,25 @@ Trader.prototype.sell = function(amount, price, callback) {
     };
     var result = function(err, response, data) {
         if (err || data.hasOwnProperty('message')) {
-            log.error('Error selling at GDAX:', data.message, error);
+            log.error('Error selling at GDAX:', err || data.message);
             return this.retry(this.sell, args);
         }
         callback(err, data.id);
-    };
+    }.bind(this);
 
     this.gdax.sell(sellParams, result);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
-
     var args = _.toArray(arguments);
+
     if (order == null) {
         return callback('EMPTY ORDER_ID', false);
     }
 
     var result = function(err, response, data) {
-        if(err || (data && data.message)) {
-            log.error('GDAX ERROR:', err, data.message);
+        if (err || data.hasOwnProperty('message')) {
+            log.error('GDAX ERROR:', err || data.message);
             return this.retry(this.checkOrder, args);
         }
 
@@ -157,15 +157,14 @@ Trader.prototype.checkOrder = function(order, callback) {
 }
 
 Trader.prototype.getOrder = function(order, callback) {
-
     var args = _.toArray(arguments);
     if (order == null) {
         return callback('EMPTY ORDER_ID', false);
     }
 
     var result = function(err, response, data) {
-        if(err || (data && data.message)) {
-            log.error('GDAX ERROR:', err, data.message);
+        if (err || data.hasOwnProperty('message')) {
+            log.error('GDAX ERROR:', err || data.message);
             return this.retry(this.checkOrder, args);
         }
 
