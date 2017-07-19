@@ -62,6 +62,8 @@ var fetcher = new Fetcher(config.watch);
 
 var fetch = () => {
   log.info(
+    config.watch.currency,
+    config.watch.asset,
     'Requesting data from',
     iterator.from.format('YYYY-MM-DD HH:mm:ss') + ',',
     'to',
