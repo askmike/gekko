@@ -202,7 +202,7 @@ Trader.getCapabilities = function () {
       'EMO', 'ENC', 'ETC', 'ETH', 'eTOK', 'EXE', 'EXP', 'FAC', 'FCN', 'FCT',
       'FIBRE', 'FLAP', 'FLDC', 'FLO', 'FLT', 'FOX', 'FRAC', 'FRK', 'FRQ',
       'FVZ', 'FZ', 'FZN', 'GAME', 'GAP', 'GDN', 'GEMZ', 'GEO', 'GIAR', 'GLB',
-      'GML', 'GNS', 'GOLD', 'GPC', 'GPUC', 'GRC', 'GRCX', 'GRS', 'GUE', 'H2O',
+      'GML', 'GNS', 'GNT', 'GOLD', 'GPC', 'GPUC', 'GRC', 'GRCX', 'GRS', 'GUE', 'H2O',
       'HIRO', 'HOT', 'HUC', 'HUGE', 'HVC', 'HYP', 'HZ', 'IFC', 'INDEX', 'IOC',
       'ITC', 'IXC', 'JLH', 'JPC', 'JUG', 'KDC', 'KEY', 'LBC', 'LC', 'LCL',
       'LEAF', 'LGC', 'LOL', 'LOVE', 'LQD', 'LSK', 'LTBC', 'LTC', 'LTCX',
