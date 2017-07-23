@@ -21,9 +21,17 @@ module.exports = function *() {
 
   // Attach API keys
   if(config.trader && config.trader.enabled) {
+
+    const keys = apiKeyManager._getApiKeyPair(config.watch.exchange);
+
+    if(!keys) {
+      this.body = 'No API keys found for this exchange.';
+      return;
+    }
+
     _.merge(
       config.trader,
-      apiKeyManager._getApiKeyPair(config.watch.exchange)
+      keys
     );
   }
 
@@ -141,6 +149,11 @@ module.exports = function *() {
 
     gekko.trades = [];
     gekko.roundtrips = [];
+
+    if(config.trader && config.trader.enabled)
+      gekko.trader = 'tradebot';
+    else
+      gekko.trader = 'paper trader';
   }
 
   gekkoManager.add(gekko);

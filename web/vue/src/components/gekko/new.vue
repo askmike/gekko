@@ -28,6 +28,9 @@ export default {
     watchers: function() {
       return this.$store.state.watchers;
     },
+    stratrunners: function() {
+      return this.$store.state.stratrunners;
+    },
     watchConfig: function() {
       let raw = _.pick(this.config, 'watch', 'candleWriter');
       let watchConfig = Vue.util.extend({}, raw);
@@ -53,18 +56,18 @@ export default {
       else {
         // TODO: figure out whether we can stitch data
         // without looking at the existing watcher
-        let optimal = moment().utc().startOf('minute')
+        const optimal = moment().utc().startOf('minute')
           .subtract(this.requiredHistoricalData, 'minutes')
           .unix();
 
-        let available = moment
+        const available = moment
           .utc(this.existingMarketWatcher.firstCandle.start)
           .unix();
 
         startAt = moment.unix(Math.max(optimal, available)).utc().format();
       }
 
-      let gekkoConfig = Vue.util.extend({
+      const gekkoConfig = Vue.util.extend({
         market: {
           type: 'leech',
           from: startAt
@@ -74,8 +77,20 @@ export default {
       return gekkoConfig;
     },
     existingMarketWatcher: function() {
-      let market = Vue.util.extend({}, this.watchConfig.watch);
+      const market = Vue.util.extend({}, this.watchConfig.watch);
       return _.find(this.watchers, {watch: market});
+    },
+    exchange: function() {
+      return this.watchConfig.watch.exchange;
+    },
+    existingTradebot: function() {
+      return _.find(
+        this.stratrunners.filter(s => s.trader === 'tradebot'),
+        { watch: { exchange: this.exchange } }
+      );
+    },
+    availableApiKeys: function() {
+      return this.$store.state.apiKeys;
     }
   },
   watch: {
@@ -100,6 +115,20 @@ export default {
       this.config = config;
     },
     start: function() {
+
+      // if the user starts a tradebot we do some
+      // checks first.
+      if(this.config.type === 'tradebot') {
+        if(this.existingTradebot) {
+          let str = 'You already have a tradebot running on this exchange';
+          str += ', you can only run one tradebot per exchange.';
+          return alert(str);
+        }
+
+        if(!this.availableApiKeys.includes(this.exchange))
+          return alert('Please first configure API keys for this exchange in the config page.')
+      }
+
       // internally a live gekko consists of two parts:
       //
       // - a market watcher
@@ -111,7 +140,7 @@ export default {
 
         // check if the specified market is already being watched
         if(this.existingMarketWatcher) {
-          alert('This market is already being watched, redirecting you now...')
+          alert('This market is already being watched, redirecting you now...');
           this.$router.push({
             path: `/live-gekkos/watcher/${this.existingMarketWatcher.id}`
           });

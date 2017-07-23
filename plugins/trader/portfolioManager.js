@@ -1,4 +1,4 @@
-\/*
+/*
 
   The portfolio manager is responsible for making sure that
   all decisions are turned into orders and make sure these orders
