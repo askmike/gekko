@@ -35,7 +35,7 @@ dwsync.xml
 *.esproj
 *.espressostorage
 
-# Folders to ignore
+# Folders & files to ignore
 
 node_modules
 candles.csv
@@ -44,3 +44,4 @@ history
 TMP_*
 .idea
 volumes
+SECRET-api-keys.json

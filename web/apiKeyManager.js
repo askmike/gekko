@@ -3,20 +3,18 @@ const _ = require('lodash');
 const cache = require('./state/cache');
 const broadcast = cache.get('broadcast');
 
-const apiKeysFile = '../api-keys.js';
-
-const prefix = `//DO NOT SHARE THIS FILE WITH ANYONE
-module.exports = `;
+const apiKeysFile = __dirname + '/../SECRET-api-keys.json';
 
 // on init:
 const noApiKeysFile = !fs.existsSync(apiKeysFile);
 
-if(noApiKeysFile) {
-  let content = prefix + '{}';
-  fs.writeFileSync(apiKeysFile, content);
-}
+if(noApiKeysFile)
+  fs.writeFileSync(
+    apiKeysFile,
+    JSON.stringify({})
+  );
 
-const apiKeys = require(apiKeysFile);
+const apiKeys = JSON.parse( fs.readFileSync(apiKeysFile, 'utf8') );
 
 module.exports = {
   get: () => _.keys(apiKeys),
@@ -24,7 +22,7 @@ module.exports = {
   // note: overwrites if exists
   add: (exchange, props) => {
     apiKeys[exchange] = props;
-    fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+    fs.writeFileSync(apiKeysFile, JSON.stringify(apiKeys));
 
     broadcast({
       type: 'apiKeys',
@@ -36,7 +34,7 @@ module.exports = {
       return;
 
     delete apiKeys[exchange];
-    fs.writeFileSync(apiKeysFile, prefix + JSON.stringify(apiKeys));
+    fs.writeFileSync(apiKeysFile, JSON.stringify(apiKeys));
 
     broadcast({
       type: 'apiKeys',
