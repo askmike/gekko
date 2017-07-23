@@ -1,4 +1,4 @@
-/*
+\/*
 
   The portfolio manager is responsible for making sure that
   all decisions are turned into orders and make sure these orders
@@ -197,7 +197,7 @@ Manager.prototype.buy = function(amount, price) {
 
   // if order to small
   if(amount < minimum) {
-    return log.info(
+    return log.error(
       'Wanted to buy',
       this.asset,
       'but the amount is too small',
@@ -206,8 +206,6 @@ Manager.prototype.buy = function(amount, price) {
       this.exchange.name
     );
   }
-
-  amount = minimum;
 
   log.info(
     'Attempting to BUY',
@@ -230,7 +228,7 @@ Manager.prototype.sell = function(amount, price) {
 
   // if order to small
   if(amount < minimum) {
-    return log.info(
+    return log.error(
       'Wanted to buy',
       this.currency,
       'but the amount is too small',
@@ -239,8 +237,6 @@ Manager.prototype.sell = function(amount, price) {
       this.exchange.name
     );
   }
-
-  amount = minimum;
 
   log.info(
     'Attempting to SELL',
@@ -315,7 +311,7 @@ Manager.prototype.convertPortfolio = function(portfolio) {
 
 Manager.prototype.relayOrder = function(done) {
   // look up all executed orders and relay average.
-  var process = (err, res) => {
+  var relay = (err, res) => {
 
     var price = 0;
     var amount = 0;
@@ -336,9 +332,14 @@ Manager.prototype.relayOrder = function(done) {
       this.emit('trade', {
         date,
         price,
-        action: this.action,
         portfolio: portfolio,
-        balance: portfolio.balance
+        balance: portfolio.balance,
+
+        // NOTE: within the portfolioManager
+        // this is in uppercase, everywhere else
+        // (UI, performanceAnalyzer, etc. it is
+        // lowercase)
+        action: this.action.toLowerCase()
       });
 
       this.orders = [];
@@ -354,7 +355,7 @@ Manager.prototype.relayOrder = function(done) {
     order => next => this.exchange.getOrder(order, next)
   );
 
-  async.series(getOrders, process);
+  async.series(getOrders, relay);
 }
 
 Manager.prototype.logPortfolio = function() {
