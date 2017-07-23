@@ -3,7 +3,7 @@
   .grd-row
     .grd-row-col-3-6.mx1
       h3 Market
-      market-picker.contain(v-on:market='updateMarketConfig')
+      market-picker.contain(v-on:market='updateMarketConfig', :only-tradable='isTradebot')
     .grd-row-col-3-6.mx1
       type-picker(v-on:type='updateType')
   template(v-if='type !== "market watcher"')
@@ -51,6 +51,9 @@ export default {
     paperTrader
   },
   computed: {
+    isTradebot: function() {
+      return this.type === 'tradebot';
+    },
     config: function() {
       let config = {};
       Object.assign(
@@ -63,7 +66,7 @@ export default {
         { performanceAnalyzer: this.performanceAnalyzer }
       );
 
-      if(this.type === 'tradebot') {
+      if(this.isTradebot) {
         delete config.paperTrader;
         config.trader = { enabled: true }
       }
