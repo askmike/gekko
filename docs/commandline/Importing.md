@@ -2,11 +2,11 @@
 
 *Note: this documentation was written for running Gekko via the command line. If you are using the UI you can simply use the importer under the "local data" tab.*
 
-If you want to use Gekko to [backtest against historical data](./Backtesting.md), you most likely need some historical data to test against. Gekko comes with the functionality to automatically import historical data from some exchanges. However, only a few exchanges support this. You can find out with which exchanges Gekko is able to do this [here](https://github.com/askmike/gekko#supported-exchanges).
+If you want to use Gekko to [backtest against historical data](./backtesting.md), you most likely need some historical data to test against. Gekko comes with the functionality to automatically import historical data from some exchanges. However, only a few exchanges support this. You can find out with which exchanges Gekko is able to do this [here](https://github.com/askmike/gekko#supported-exchanges).
 
 ## Setup
 
-For importing you should [enable and configure](./Plugins.md) the following plugin:
+For importing you should [enable and configure](./plugins.md) the following plugin:
 
  - candleWriter (to store the imported data in a database)
 
