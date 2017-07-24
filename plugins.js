@@ -163,6 +163,13 @@ var plugins = [
     async: false,
     modes: ['realtime']
   },
+  {
+    name: 'Twitter',
+    description: 'Sends trades to twitter.',
+    slug: 'twitter',
+    async: false,
+    modes: ['realtime']
+  },
 ];
 
 module.exports = plugins;

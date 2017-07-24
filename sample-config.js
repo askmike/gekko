@@ -302,6 +302,24 @@ config.telegrambot = {
   botName: 'gekkobot'
 }
 
+config.twitter = {
+    // sends pushbullets if true
+  enabled: false,
+    // Send 'Gekko starting' message if true
+  sendMessageOnStart: false,
+    // disable advice printout if it's soft
+  muteSoft: false,
+  tag: '[GEKKO]',
+    // twitter consumer key
+  consumer_key: '',
+    // twitter consumer secret
+  consumer_secret: '',
+    // twitter access token key
+  access_token_key: '',
+    // twitter access token secret
+  access_token_secret: ''
+};
+
 config.xmppbot = {
   enabled: false,
   emitUpdates: false,
