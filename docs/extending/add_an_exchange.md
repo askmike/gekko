@@ -51,17 +51,23 @@ The callback needs to have the parameters of `err` and `portfolio`. Portfolio ne
 
 This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `order`. The order needs to be something that can be fed back to the exchange to see wether the order has been filled or not.
 
+### getOrder
+
+    this.exchange.getOrder(order, callback);
+
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `order`. Order is an object with properties `price`, `amount` and `date`. Price is the (volume weighted) average price of all trades necesarry to execute the order. Amount is the amount of currency traded and Date is a moment object of the last trade part of this order.
+
 ### checkOrder
 
     this.exchange.checkOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not. Currently only partially filled orders should be treated as not filled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not. Currently partially filled orders should be treated as not filled.
 
 ### cancelOrder
 
-    this.exchange.cancelOrder(order);
+    this.exchange.cancelOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameterer `err`.
 
 ## Trading method's expectations
 
