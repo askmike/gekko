@@ -24,5 +24,8 @@
     "vuex": "^2.2.1",
     "webpack": "^2.1.0-beta.25",
     "webpack-dev-server": "^2.1.0-beta.0"
+  },
+  "dependencies": {
+    "jade": "^1.11.0"
   }
 }
