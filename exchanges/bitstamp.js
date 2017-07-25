@@ -232,7 +232,8 @@ Trader.getCapabilities = function () {
     ],
     requires: ['key', 'secret', 'username'],
     fetchTimespan: 60,
-    tid: 'tid'
+    tid: 'tid',
+    tradable: true
   };
 }
 
