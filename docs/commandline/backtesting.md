@@ -8,8 +8,9 @@ Gekko is able to backtest strategies against historical data.
 
 For backtesting you should [enable and configure](./Plugins.md) the following plugins:
 
- - trading advisor (to run your strategy)
- - profit simulator (to calculate how succesfull the strategy would have been)
+ - trading advisor (to run your strategy).
+ - paper trader (to execute simulated trades).
+ - performance analyzer (to calculate how succesfull the strategy would have been).
 
 Besides that, make sure to configure `config.watch`.
 
