@@ -123,7 +123,7 @@ Below you can choose between creating a self signed certificate useful if you do
 
 Install certbot, a client to obtain signed ssl certificates for your domain.
 
-    sudo apt-get certbot
+    sudo apt-get install certbot
 
 Run the following command:
 
