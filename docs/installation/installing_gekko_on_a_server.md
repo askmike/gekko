@@ -28,7 +28,9 @@ Edit the uiconfig file like so:
             host: 'x.x.x.x', // Set this to the IP of the machine that will run Gekko
             port: 3000,
             path: '/'
-        }
+        },
+        adapter: 'sqlite'
+
     }
 
 You can now access the Gekko UI by going to `http://x.x.x.x:3000` in a browser (change `x.x.x.x` with the IP of the machine that will run Gekko).
@@ -52,7 +54,8 @@ The following assumes you configured a reverse proxy, if you did not simply foll
             host: 'gekko.example.com',
             port: 443,
             path: '/' // change this if you are serving from something like `example.com/gekko`
-        }
+        },
+        adapter: 'sqlite'
     }
 
 
