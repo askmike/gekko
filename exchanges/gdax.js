@@ -91,6 +91,21 @@ Trader.prototype.getFee = function(callback) {
     callback(false, this.post_only ? 0 : 0.0025);
 }
 
+Trader.prototype.normalizeResult = callback => {
+    return (err, resp, data) => {
+        if(err)
+            return callback(err);
+
+        if(!data)
+            return callback('No data');
+
+        if(data.message)
+            return callback(data);
+
+        callback(undefined, data);
+    }
+}
+
 Trader.prototype.buy = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var buyParams = {
@@ -99,15 +114,16 @@ Trader.prototype.buy = function(amount, price, callback) {
         'product_id': this.pair,
         'post_only': this.post_only
     };
-    var result = function(err, response, data) {
-        if (err || data.hasOwnProperty('message')) {
-            log.error('Error buying at GDAX:', err || data.message);
+
+    var result = (err, data) => {
+        if(err) {
+            log.error('Error buying at GDAX:', err);
             return this.retry(this.buy, args);
         }
         callback(err, data.id);
-    }.bind(this);
+    }
 
-    this.gdax.buy(buyParams, result);
+    this.gdax.buy(buyParams, this.normalizeResult(result));
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -118,15 +134,15 @@ Trader.prototype.sell = function(amount, price, callback) {
         'product_id': this.pair,
         'post_only': this.post_only
     };
-    var result = function(err, response, data) {
-        if (err || data.hasOwnProperty('message')) {
-            log.error('Error selling at GDAX:', err || data.message);
+    var result = function(err, data) {
+        if(err) {
+            log.error('Error selling at GDAX:', err);
             return this.retry(this.sell, args);
         }
         callback(err, data.id);
     }.bind(this);
 
-    this.gdax.sell(sellParams, result);
+    this.gdax.sell(sellParams, this.normalizeResult(result));
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
@@ -136,9 +152,9 @@ Trader.prototype.checkOrder = function(order, callback) {
         return callback('EMPTY ORDER_ID', false);
     }
 
-    var result = function(err, response, data) {
-        if (err || data.hasOwnProperty('message')) {
-            log.error('GDAX ERROR:', err || data.message);
+    var result = function(err, data) {
+        if (err) {
+            log.error('GDAX ERROR:', err);
             return this.retry(this.checkOrder, args);
         }
 
@@ -153,7 +169,7 @@ Trader.prototype.checkOrder = function(order, callback) {
         callback(err, false);
     }.bind(this);
 
-    this.gdax.getOrder(order, result);
+    this.gdax.getOrder(order, this.normalizeResult(result));
 }
 
 Trader.prototype.getOrder = function(order, callback) {
@@ -162,9 +178,9 @@ Trader.prototype.getOrder = function(order, callback) {
         return callback('EMPTY ORDER_ID', false);
     }
 
-    var result = function(err, response, data) {
-        if (err || data.hasOwnProperty('message')) {
-            log.error('GDAX ERROR:', err || data.message);
+    var result = function(err, data) {
+        if(err) {
+            log.error('GDAX ERROR:', err);
             return this.retry(this.checkOrder, args);
         }
 
@@ -175,20 +191,21 @@ Trader.prototype.getOrder = function(order, callback) {
         callback(undefined, {price, amount, date});
     }.bind(this);
 
-    this.gdax.getOrder(order, result);
+    this.gdax.getOrder(order, this.normalizeResult(result));
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
+    var args = _.toArray(arguments);
     if (order == null) {
         return;
     }
 
-    var result = function(err, response, data) {
-        // todo..
+    var result = function(err, data) {
+        // todo, verify result..
         callback();
     };
 
-    this.gdax.cancelOrder(order, result);
+    this.gdax.cancelOrder(order, this.normalizeResult(result));
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
