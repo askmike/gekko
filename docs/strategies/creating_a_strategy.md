@@ -31,7 +31,7 @@ A strategy is a combination of functions that get market data in the form of can
     // Based on the newly calculated
     // information, check if we should
     // update or not.
-    strat.check = function() {
+    strat.check = function(candle) {
       // your code!
     }
 
