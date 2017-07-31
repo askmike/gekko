@@ -49,8 +49,8 @@ Actor.prototype.processAdvice = function(advice) {
 
 Actor.prototype.verifyQuestion = function(msg, text) {
   this.chatId = msg.chat.id;
-  if (text[1] in this.commands)
-    this[this.commands[text[1]]]();
+  if (text[1].toLowerCase() in this.commands)
+    this[this.commands[text[1].toLowerCase()]]();
   else
     this.bot.sendMessage(this.chatId, "Hello!");
 }
