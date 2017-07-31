@@ -66,6 +66,70 @@ If you find out in the check function that you want to give a new advice to the 
     this.advice('short');
     // or
     this.advice('long');
+    
+### candle variables when creating your strategy
+
+You can use different candle variables when writing your strategies, depending on what you have in mind, using additional variables might help you to improve your results.
+
+Possible candle variables are:
+ - candle.close: the closing price of the candle
+ - candle.high: the highest price of the candle
+ - candle.low: the lowest price of the candle
+ - candle.volume: the trading volume of that candle
+ - candle.trades: number of trades in that candle
+ 
+Keep in mind that this variables will give you different results depending on the candle-size you're using.
+
+
+### basic strategy example
+
+This a basic strategy example that buys and sells BTC/USDT when it hits a specific price.
+
+    // Let's create our own buy and sell strategy 
+    var strat = {};
+
+    // Prepare everything our strat needs
+    strat.init = function() {
+      // setting buy price
+      this.buyPrice = 2000;
+      
+      // setting sell price
+      this.sellPrice = 2500;
+    }
+
+    // What happens on every new candle?
+    strat.update = function(candle) {
+      // your code!
+    }
+
+    // For debugging purposes.
+    strat.log = function() {
+      // your code!
+    }
+
+    // Based on the newly calculated
+    // information, check if we should
+    // update or not.
+    strat.check = function() {
+        // buy when it hits buy price
+        if(candle.close <= this.buyPrice) {
+            this.advice("long");
+            // do some output
+            console.log("buying BTC @", candle.close);
+            return;
+        }
+        
+        // sell when it hits sell price
+        if(candle.close >= this.sellPrice) {
+            this.advice("short");
+            // do some output
+            console.log("selling BTC @", candle.close);
+            console.log("Profit:", (candle.close-this.buyPrice));
+            return;
+        }
+    }
+
+    module.exports = strat;
 
 ## Strategy rules
 
