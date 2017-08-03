@@ -547,6 +547,7 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'YANG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'YC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'YIN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
 
       // *** USDT <-> XXX
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
