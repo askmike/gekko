@@ -217,7 +217,8 @@ Trader.getCapabilities = function () {
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
     ],
     requires: ['key', 'secret'],
-    tid: 'tid'
+    tid: 'tid',
+    tradable: true
   };
 }
 
