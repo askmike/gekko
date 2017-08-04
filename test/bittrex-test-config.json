@@ -1,0 +1,130 @@
+{
+  "silent": true,
+  "watch": {
+    "exchange": "Bittrex",
+    "currency": "USDT",
+    "asset": "ETH"
+  },
+  "tradingAdvisor": {
+    "enabled": false
+  },
+  "trader": {
+    "enabled": false
+  },
+  "adviceLogger": {
+    "enabled": false
+  },
+  "profitSimulator": {
+    "enabled": false,
+    "reportInCurrency": true,
+    "simulationBalance": {
+      "asset": 1,
+      "currency": 100
+    },
+    "fee": 0.25,
+    "slippage": 0.05
+  },
+  "pushover": {
+    "enabled": false,
+    "sendPushoverOnStart": false,
+    "muteSoft": true,
+    "tag": "[GEKKO]",
+    "key": "",
+    "user": ""
+  },
+  "mailer": {
+    "enabled": false,
+    "sendMailOnStart": true,
+    "email": "",
+    "muteSoft": true,
+    "password": "",
+    "tag": "[GEKKO] ",
+    "server": "smtp.gmail.com",
+    "smtpauth": true,
+    "user": "",
+    "from": "",
+    "to": "",
+    "ssl": true,
+    "port": ""
+  },
+  "pushbullet": {
+    "enabled": false,
+    "sendMessageOnStart": true,
+    "key": "xxx",
+    "email": "jon_snow@westeros.org",
+    "tag": "[GEKKO]"
+  },
+  "ircbot": {
+    "enabled": false,
+    "emitUpdates": false,
+    "channel": "#your-channel",
+    "server": "irc.freenode.net",
+    "botName": "gekkobot"
+  },
+  "xmppbot": {
+    "enabled": false,
+    "emitUpdates": false,
+    "client_id": "jabber_id",
+    "client_pwd": "jabber_pw",
+    "client_host": "jabber_server",
+    "client_port": 5222,
+    "status_msg": "I'm online",
+    "receiver": "jabber_id_for_updates"
+  },
+  "campfire": {
+    "enabled": false,
+    "emitUpdates": false,
+    "nickname": "Gordon",
+    "roomId": null,
+    "apiKey": "",
+    "account": ""
+  },
+  "redisBeacon": {
+    "enabled": false,
+    "port": 6379,
+    "host": "127.0.0.1",
+    "channelPrefix": "",
+    "broadcast": [
+      "candle"
+    ]
+  },
+  "candleWriter": {
+    "adapter": "sqlite",
+    "enabled": true
+  },
+  "adapters": {
+    "sqlite": {
+      "path": "plugins/sqlite",
+      "dataDirectory": "./history",
+      "version": 0.1,
+      "dependencies": [
+        {
+          "module": "sqlite3",
+          "version": "3.1.4"
+        }
+      ]
+    },
+    "postgresql": {
+      "path": "plugins/postgresql",
+      "version": 0.1,
+      "connectionString": "postgres://user:pass@localhost:5432",
+      "dependencies": [
+        {
+          "module": "pg",
+          "version": "6.1.0"
+        }
+      ]
+    }
+  },
+  "backtest": {
+    "adapter": "sqlite",
+    "daterange": "scan",
+    "batchSize": 50
+  },
+  "importer": {
+    "daterange": {
+      "from": "2015-09-09 12:00:00"
+    }
+  },
+  "I understand that Gekko only automates MY OWN trading strategies": false
+}
