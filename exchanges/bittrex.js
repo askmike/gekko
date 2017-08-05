@@ -225,7 +225,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.getOrder = function(order, callback) {
 
-  var get = function(result, errors) {
+  var get = function(result, err) {
     
     this.logAction('getOrder', 'called');
 
