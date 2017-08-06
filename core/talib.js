@@ -7,9 +7,9 @@ var talibError = 'Gekko was unable to configure talib indicator:\n\t';
 var execute = function(callback, params) {
     return talib.execute(
         params,
-        function(result) {
-            if(result.error)
-                return callback(result.error);
+        function(err, result) {
+            if(err)
+                return callback(err);
 
             callback(null, result.result);
         }
