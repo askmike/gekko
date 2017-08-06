@@ -1,7 +1,7 @@
 // global window.CONFIG
 
 const config = window.CONFIG.ui;
-const host = `${config.host}:${config.port}${config.path}api/`;
+const host = `${config.host}${config.port === 80 ? '' : `:${config.port}`}${config.path}api/`;
 
 // rest API path
 if(config.ssl) {
@@ -16,4 +16,5 @@ if(config.ssl) {
 } else {
   var wsPath = `ws://${host}`;
 }
+
 export {wsPath,restPath};
