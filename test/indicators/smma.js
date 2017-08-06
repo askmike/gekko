@@ -28,26 +28,26 @@ describe('indicators/SMMA', function() {
   var verified_smma26results = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51.15384615384615, 49.84023668639053, 51.384842967683205, 52.75465669969539, 54.0333237497071, 55.76281129779529, 53.73347240172624, 54.35910807858292, 52.30683469094512, 51.33349489513954, 49.70528355301879, 51.33200341636422, 51.973080208042525, 50.32026943081012];
 
   it('should correctly calculate SMMAs with weight 2', function() {
-    var ema = new SMMA(2);
+    var smma = new SMMA(2);
     _.each(prices, function(p, i) {
-      ema.update(p);
-      expect(ema.result).to.equal(verified_smma2results[i]);
+      smma.update(p);
+      expect(smma.result).to.equal(verified_smma2results[i]);
     });
   });
 
-  it('should correctly calculate EMAs with weight 12', function() {
-    var ema = new SMMA(12);
+  it('should correctly calculate SMMAs with weight 12', function() {
+    var smma = new SMMA(12);
     _.each(prices, function(p, i) {
-      ema.update(p);
-      expect(ema.result).to.equal(verified_smma12results[i]);
+      smma.update(p);
+      expect(smma.result).to.equal(verified_smma12results[i]);
     });
   });
 
-  it('should correctly calculate EMAs with weight 26', function() {
-    var ema = new SMMA(26);
+  it('should correctly calculate SMMAs with weight 26', function() {
+    var smma = new SMMA(26);
     _.each(prices, function(p, i) {
-      ema.update(p);
-      expect(ema.result).to.equal(verified_smma26results[i]);
+      smma.update(p);
+      expect(smma.result).to.equal(verified_smma26results[i]);
     });
   });
 });
