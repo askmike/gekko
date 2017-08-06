@@ -1,5 +1,5 @@
 // required indicators
-var SMA = require('./sma');
+var SMA = require('./SMA');
 
 var Indicator = function (weight) {
   this.sma = new SMA(weight);
