@@ -1,19 +1,25 @@
 var talib = require("talib");
+var semver = require("semver");
 var _ = require('lodash');
 
 var talibError = 'Gekko was unable to configure talib indicator:\n\t';
+var talibGTEv103 = semver.gte(talib.version, '1.0.3');
 
 // Wrapper that executes a talib indicator
 var execute = function(callback, params) {
-    return talib.execute(
-        params,
-        function(err, result) {
-            if(err)
-                return callback(err);
+    // talib callback style since talib-v1.0.3
+    var talibCallback = function(err, result) {
+        if(err) return callback(err);
+        callback(null, result.result);
+    };
 
-            callback(null, result.result);
-        }
-    );
+    // talib legacy callback style before talib-v1.0.3
+    var talibLegacyCallback = function(result) {
+        var error = result.error;
+        talibCallback.apply(this, [error, result]);
+    };
+
+    return talib.execute(params, talibGTEv103 ? talibCallback : talibLegacyCallback);
 }
 
 // Helper that makes sure all required parameters
