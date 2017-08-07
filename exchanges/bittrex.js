@@ -175,11 +175,13 @@ Trader.prototype.getFee = function(callback) {
 Trader.prototype.buy = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
-   this.logAction('buy', 'called');
+   this.logAction('buy', 'called', {amoutn: amount, price: price});
 
   var set = function(result, err) {
     if(err || result.error) {
-      log.error('unable to buy:', err, result);
+     // log.error('unable to buy:', err, result);
+      this.logAction('unable to buy:', 'err', err);
+       this.logAction('unable to buy:', 'result', result);
       return this.retry(this.buy, args);
     }
 
@@ -194,11 +196,12 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
-  this.logAction('sell', 'called');
+  this.logAction('sell', 'called', {amoutn: amount, price: price});
 
   var set = function(result, err) {
     if(err || result.error) {
-      log.error('unable to sell:', err, result);
+       this.logAction('unable to sell:', 'err', err);
+       this.logAction('unable to sell:', 'result', result);
       return this.retry(this.sell, args);
     }
 
