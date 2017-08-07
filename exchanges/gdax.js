@@ -9,7 +9,7 @@ var batchSize = 100;
 var Trader = function(config) {
     _.bindAll(this);
 
-    this.post_only = false;
+    this.post_only = true;
     this.use_sandbox = false;
     this.name = 'GDAX';
     this.import = false;
@@ -23,7 +23,7 @@ var Trader = function(config) {
         this.passphrase = config.passphrase;
 
         this.pair = [config.asset, config.currency].join('-').toUpperCase();
-        this.post_only = config.post_only ? config.post_only : false;
+        this.post_only = config.post_only ? config.post_only : true;
     }
 
     this.gdax_public = new Gdax.PublicClient(this.pair, this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined);
@@ -109,8 +109,8 @@ Trader.prototype.normalizeResult = callback => {
 Trader.prototype.buy = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var buyParams = {
-        'price': price,
-        'size': amount,
+        'price': Math.floor(parseFloat(price) * 1e8) / 1e8,
+        'size': Math.floor(parseFloat(amount) * 1e8) / 1e8,
         'product_id': this.pair,
         'post_only': this.post_only
     };
@@ -129,8 +129,8 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var sellParams = {
-        'price': price,
-        'size': amount,
+        'price': Math.floor(parseFloat(price) * 1e8) / 1e8,
+        'size': Math.floor(parseFloat(amount) * 1e8) / 1e8,
         'product_id': this.pair,
         'post_only': this.post_only
     };
@@ -300,7 +300,7 @@ Trader.getCapabilities = function () {
       { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },      
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } }
