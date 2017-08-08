@@ -21,8 +21,8 @@ var Trader = function(config) {
     config.secret = keys.secret;
   } else {
     // no api key defined -> we need to set a dummy key, otherwise the Bittrex module will not work even for public requests
-    config.key = 'sdfsdf32424dfdb'; 
-    config.secret = 'sdfsdf32424dfdb';
+    config.key = 'dummyApiKey'; 
+    config.secret = 'dummyApiKey';
   }
 
   if(_.isObject(config)) {
@@ -81,8 +81,11 @@ Trader.prototype.getPortfolio = function(callback) {
   this.logAction('getPortfolio', 'called');
 
   var set = function(data, err) {
-    if(err)
+    if(err) {
+      this.logAction('getPortfolio', 'Error', err);
       return this.retry(this.getPortfolio, args);
+    }
+      
 
     data = data.result;
 
@@ -175,13 +178,19 @@ Trader.prototype.getFee = function(callback) {
 Trader.prototype.buy = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
-   this.logAction('buy', 'called', {amoutn: amount, price: price});
+  this.logAction('buy', 'called', {amount: amount, price: price});
+  // correct the amount to avoid an INSUFFICIENT_FUNDS exception
+  amount = amount - (0.00255*amount);
+  this.logAction('buy', 'corrected amount', {amount: amount, price: price});
 
   var set = function(result, err) {
     if(err || result.error) {
-     // log.error('unable to buy:', err, result);
+      if(err && err.message === 'INSUFFICIENT_FUNDS') {
+        // retry with the already reduced amount, will be reduced again in the recursive call
+         return this.retry(this.buy, [amount, price, callback]);
+      }
       this.logAction('unable to buy:', 'err', err);
-       this.logAction('unable to buy:', 'result', result);
+      this.logAction('unable to buy:', 'result', result);
       return this.retry(this.buy, args);
     }
 
