@@ -170,6 +170,13 @@ var plugins = [
     async: false,
     modes: ['realtime']
   },
+  {
+    name: 'Slack',
+    description: 'Sends trades to slack channel.',
+    slug: 'slack',
+    async: false,
+    modes: ['realtime']
+  },
 ];
 
 module.exports = plugins;

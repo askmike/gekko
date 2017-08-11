@@ -355,6 +355,14 @@ config.redisBeacon = {
   ]
 }
 
+config.slack = {
+  enabled: false,
+  token: '',
+  sendMessageOnStart: true,
+  muteSoft: true,
+  channel: '' // #tradebot
+}
+
 config.candleWriter = {
   enabled: false
 }
