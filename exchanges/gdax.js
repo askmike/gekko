@@ -86,9 +86,11 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
     //https://www.gdax.com/fees
+    const fee = config.asset == 'BTC' ? 0.0025 : 0.003;
+
     //There is no maker fee, not sure if we need taker fee here
     //If post only is enabled, gdax only does maker trades which are free
-    callback(false, this.post_only ? 0 : 0.0025);
+    callback(false, this.post_only ? 0 : fee);
 }
 
 Trader.prototype.normalizeResult = callback => {
