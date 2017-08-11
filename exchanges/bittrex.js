@@ -286,28 +286,31 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
 
+  log.debug('getTrades called!', { descending: descending} );
+
   var firstFetch = !!since;
 
   var args = _.toArray(arguments);
   var process = function(data, err) {
     if(err) {
+      log.error('Error getTrades()', err)
       return this.retry(this.getTrades, args);
     }
 
-    let result = data.result;
+    var result = data.result;
 
     // Edge case, see here:
     // @link https://github.com/askmike/gekko/issues/479
     if(firstFetch && _.size(result) === 50000)
       util.die(
         [
-          'Poloniex did not provide enough data. Read this:',
+          'Bittrex did not provide enough data. Read this:',
           'https://github.com/askmike/gekko/issues/479'
         ].join('\n\n')
       );
 
       result = _.map(result, function(trade) {
-        let mr = {
+        var mr = {
             tid: trade.Id,
             amount: +trade.Quantity,
             date: moment.utc(trade.TimeStamp).unix(),
@@ -336,13 +339,14 @@ Trader.getCapabilities = function () {
     slug: 'bittrex',
     currencies: ['BTC', 'ETH', 'USDT'],
     assets: [
-      'BTC', 'BCC','ETH','NEO','BCC'
+      'BTC', 'BCC','ETH','NEO','BCC','PAY'
     ],
     markets: [
       // *** BTC <-> XXX
       { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'PAY'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       
       // *** USDT <-> XXX
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -354,7 +358,8 @@ Trader.getCapabilities = function () {
       // *** ETH <-> XXX
       { pair: ['ETH', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
+      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'PAY'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
      
 
     ],
