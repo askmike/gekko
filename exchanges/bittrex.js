@@ -25,6 +25,7 @@ var Trader = function(config) {
     config.secret = 'dummyApiKey';
   }
 
+  // override if cmd line mode (not --ui)
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
@@ -46,7 +47,7 @@ var Trader = function(config) {
     'cleartext': false 
   });
 
-  this.logAction('Init', 'New Trader', {currency: this.currency, asset: this.asset});
+  log.debug('Init', 'New Bittrex Trader', {currency: this.currency, asset: this.asset});
 
   this.bittrexApi = Bittrex;
 }
@@ -55,9 +56,7 @@ var Trader = function(config) {
 // waiting 10 seconds
 Trader.prototype.retry = function(method, args) {
   var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..');
-
-  this.logAction('retry', 'returned an error, retrying..');
+  log.debug(this.name, 'returned an error, retrying.', args);
 
   var self = this;
 
@@ -78,11 +77,11 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
-  this.logAction('getPortfolio', 'called');
+  log.debug('getPortfolio', 'called');
 
   var set = function(data, err) {
     if(err) {
-      this.logAction('getPortfolio', 'Error', err);
+      log.error('getPortfolio', 'Error', err);
       return this.retry(this.getPortfolio, args);
     }
       
@@ -124,7 +123,7 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount }
     ];
 
-    this.logAction('getPortfolio', 'result:', portfolio);
+    log.debug('getPortfolio', 'result:', portfolio);
 
     callback(err, portfolio);
   }.bind(this);
@@ -135,7 +134,7 @@ Trader.prototype.getPortfolio = function(callback) {
 Trader.prototype.getTicker = function(callback) {
   var args = _.toArray(arguments);
 
-  this.logAction('getTicker', 'called');
+  log.debug('getTicker', 'called');
 
   this.bittrexApi.getticker({market: this.pair}, function(data, err) {
     if(err)
@@ -143,7 +142,7 @@ Trader.prototype.getTicker = function(callback) {
 
     var tick = data.result;
 
-    this.logAction('getTicker', 'result', tick);
+    log.debug('getTicker', 'result', tick);
 
     callback(null, {
       bid: parseFloat(tick.Bid),
@@ -155,7 +154,7 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
 
-  this.logAction('getFee', 'called');
+  log.debug('getFee', 'called');
   /*var set = function(data, err) {
     if(err || data.error)
       return callback(err || data.error);
@@ -178,10 +177,10 @@ Trader.prototype.getFee = function(callback) {
 Trader.prototype.buy = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
-  this.logAction('buy', 'called', {amount: amount, price: price});
+  log.debug('buy', 'called', {amount: amount, price: price});
   // correct the amount to avoid an INSUFFICIENT_FUNDS exception
   amount = amount - (0.00255*amount);
-  this.logAction('buy', 'corrected amount', {amount: amount, price: price});
+  log.debug('buy', 'corrected amount', {amount: amount, price: price});
 
   var set = function(result, err) {
     if(err || result.error) {
@@ -189,12 +188,11 @@ Trader.prototype.buy = function(amount, price, callback) {
         // retry with the already reduced amount, will be reduced again in the recursive call
          return this.retry(this.buy, [amount, price, callback]);
       }
-      this.logAction('unable to buy:', 'err', err);
-      this.logAction('unable to buy:', 'result', result);
+      log.error('unable to buy:', {err: err, result: result});
       return this.retry(this.buy, args);
     }
 
-    this.logAction('buy', 'result', result);
+    log.debug('buy', 'result', result);
 
     callback(null, result.result.uuid);
   }.bind(this);
@@ -205,16 +203,15 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
-  this.logAction('sell', 'called', {amoutn: amount, price: price});
+  log.debug('sell', 'called', {amount: amount, price: price});
 
   var set = function(result, err) {
     if(err || result.error) {
-       this.logAction('unable to sell:', 'err', err);
-       this.logAction('unable to sell:', 'result', result);
+       log.error('unable to sell:',  {err: err, result: result});
       return this.retry(this.sell, args);
     }
 
-   this.logAction('sell', 'result', result);
+    log.debug('sell', 'result', result);
 
     callback(null, result.result.uuid);
   }.bind(this);
@@ -224,11 +221,11 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(result, err) {
-    this.logAction('checkOrder', 'called');
+    log.debug('checkOrder', 'called');
 
     var stillThere = _.find(result.result, function(o) { return o.OrderUuid === order });
 
-    this.logAction('checkOrder', 'result', stillThere);
+    log.debug('checkOrder', 'result', stillThere);
     callback(err, !stillThere);
   }.bind(this);
 
@@ -239,7 +236,7 @@ Trader.prototype.getOrder = function(order, callback) {
 
   var get = function(result, err) {
     
-    this.logAction('getOrder', 'called');
+    log.debug('getOrder', 'called');
 
     if(err)
       return callback(err);
@@ -262,7 +259,7 @@ Trader.prototype.getOrder = function(order, callback) {
        date = moment(resultOrder.Closed);
     }
 
-    this.logAction('getOrder', 'result', {price, amount, date});
+    log.debug('getOrder', 'result', {price, amount, date});
     callback(err, {price, amount, date});
   }.bind(this);
 
@@ -272,14 +269,14 @@ Trader.prototype.getOrder = function(order, callback) {
 Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(result, err) {
-    this.logAction('cancelOrder', 'called', order);
+    log.debug('cancelOrder', 'called', order);
 
     if(err || !result.success) {
       log.error('unable to cancel order', order, '(', err, result, '), retrying');
       return this.retry(this.cancelOrder, args);
     }
 
-    this.logAction('getOrder', 'result', result);
+    log.debug('getOrder', 'result', result);
 
     callback();
   }.bind(this);
@@ -339,23 +336,25 @@ Trader.getCapabilities = function () {
     slug: 'bittrex',
     currencies: ['BTC', 'ETH', 'USDT'],
     assets: [
-      'BTC', 'BCC','ETH','ANS','BCC'
+      'BTC', 'BCC','ETH','NEO','BCC'
     ],
     markets: [
       // *** BTC <-> XXX
       { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'ANS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       
       // *** USDT <-> XXX
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['USDT', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
      
 
       // *** ETH <-> XXX
       { pair: ['ETH', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'ANS'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
+      { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
      
 
     ],
@@ -367,11 +366,6 @@ Trader.getCapabilities = function () {
   };
 }
 
-Trader.prototype.logAction = function(method, msg, obj) {
-  console.info(this.name +' ' + method + ': ' + msg);
-  if(_.isObject(obj)) {
-    console.info(obj);
-  }
-}
+
 
 module.exports = Trader;
