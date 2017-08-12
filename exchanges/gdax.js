@@ -112,8 +112,8 @@ Trader.prototype.normalizeResult = callback => {
 Trader.prototype.buy = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var buyParams = {
-        'price': (Math.floor(parseFloat(price) * 1e8) / 1e8).toFixed(8),
-        'size': (Math.floor(parseFloat(amount) * 1e8) / 1e8).toFixed(8),
+        'price': getMaxDecimalsNumber(price),
+        'size': getMaxDecimalsNumber(amount),
         'product_id': this.pair,
         'post_only': this.post_only
     };
@@ -132,8 +132,8 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var sellParams = {
-        'price': (Math.floor(parseFloat(price) * 1e8) / 1e8).toFixed(8),
-        'size': (Math.floor(parseFloat(amount) * 1e8) / 1e8).toFixed(8),
+        'price': getMaxDecimalsNumber(price),
+        'size': getMaxDecimalsNumber(amount),
         'product_id': this.pair,
         'post_only': this.post_only
     };
@@ -290,6 +290,19 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }
 
 }
+
+Trader.prototype.getMaxDecimalsNumber = function (number, decimalLimit = 8) {
+  var decimalNumber = parseFloat(number);
+
+  // toFixed produces a fixed representation accurate to 20 decimal places
+  // without an exponent.
+  // The ^-?\d*\. strips off any sign, integer portion, and decimal point
+  // leaving only the decimal fraction.
+  // The 0+$ strips off any trailing zeroes.
+  var decimalCount = ((+decimalNumber).toString()).replace(/^-?\d*\.?|0+$/g, '').length;
+
+  return decimalCount <= decimalLimit ? decimalNumber.toString() : (Math.floor(decimalNumber * 1e8) / 1e8).toFixed(8);
+};
 
 Trader.getCapabilities = function () {
   return {
