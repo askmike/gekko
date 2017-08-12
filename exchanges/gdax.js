@@ -16,6 +16,7 @@ var Trader = function(config) {
     this.scanback = false;
     this.scanbackTid = 0;
     this.scanbackResults = [];
+    this.asset = config.asset;
 
     if(_.isObject(config)) {
         this.key = config.key;
@@ -86,7 +87,7 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.getFee = function(callback) {
     //https://www.gdax.com/fees
-    const fee = config.asset == 'BTC' ? 0.0025 : 0.003;
+    const fee = this.asset == 'BTC' ? 0.0025 : 0.003;
 
     //There is no maker fee, not sure if we need taker fee here
     //If post only is enabled, gdax only does maker trades which are free
