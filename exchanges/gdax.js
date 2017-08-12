@@ -112,8 +112,8 @@ Trader.prototype.normalizeResult = callback => {
 Trader.prototype.buy = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var buyParams = {
-        'price': Math.floor(parseFloat(price) * 1e8) / 1e8,
-        'size': Math.floor(parseFloat(amount) * 1e8) / 1e8,
+        'price': (Math.floor(parseFloat(price) * 1e8) / 1e8).toFixed(8),
+        'size': (Math.floor(parseFloat(amount) * 1e8) / 1e8).toFixed(8),
         'product_id': this.pair,
         'post_only': this.post_only
     };
@@ -132,8 +132,8 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var sellParams = {
-        'price': Math.floor(parseFloat(price) * 1e8) / 1e8,
-        'size': Math.floor(parseFloat(amount) * 1e8) / 1e8,
+        'price': (Math.floor(parseFloat(price) * 1e8) / 1e8).toFixed(8),
+        'size': (Math.floor(parseFloat(amount) * 1e8) / 1e8).toFixed(8),
         'product_id': this.pair,
         'post_only': this.post_only
     };
