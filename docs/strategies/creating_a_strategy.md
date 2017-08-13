@@ -45,7 +45,7 @@ In the boilerplate we define four functions you have to write yourself. The func
 
 ### init function
 
-This function is exectuted when Gekko prepares your method, here you can initilalize some stuff you need later on. For example if you need to keep state between new candles.
+This function is executed when Gekko prepares your method, here you can initialize some stuff you need later on. For example if you need to keep state between new candles.
 
 ### update function
 
