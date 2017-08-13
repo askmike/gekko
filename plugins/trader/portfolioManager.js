@@ -45,7 +45,12 @@ var Manager = function(conf) {
 
   this.currency = conf.currency;
   this.asset = conf.asset;
+  this.keepAsset = 0;
 
+  if(_.isNumber(conf.keepAsset)) {
+    log.debug('Keep asset is active. Will try to keep at least ' + conf.keepAsset + ' ' + conf.asset);
+    this.keepAsset = conf.keepAsset;
+  }
 
   // resets after every order
   this.orders = [];
@@ -168,7 +173,8 @@ Manager.prototype.trade = function(what, retry) {
       price = Math.ceil(price);
       price /= 1e8;
 
-      amount = this.getBalance(this.asset);
+      amount = this.getBalance(this.asset) - this.keepAsset;
+      if(amount < 0) amount = 0;
       price = this.ticker.ask;
       this.sell(amount, price);
     }
