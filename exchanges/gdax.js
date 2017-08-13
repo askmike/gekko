@@ -24,7 +24,7 @@ var Trader = function(config) {
         this.passphrase = config.passphrase;
 
         this.pair = [config.asset, config.currency].join('-').toUpperCase();
-        this.post_only = config.post_only ? config.post_only : true;
+        this.post_only = (typeof config.post_only !== 'undefined') ? config.post_only : true;
     }
 
     this.gdax_public = new Gdax.PublicClient(this.pair, this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined);
