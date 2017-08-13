@@ -187,6 +187,9 @@ Trader.prototype.buy = function(amount, price, callback) {
       if(err && err.message === 'INSUFFICIENT_FUNDS') {
         // retry with the already reduced amount, will be reduced again in the recursive call
          return this.retry(this.buy, [amount, price, callback]);
+      } else if (err && err.message === 'DUST_TRADE_DISALLOWED_MIN_VALUE_50K_SAT') {
+        callback(null, 'dummyOrderId');
+        return;
       }
       log.error('unable to buy:', {err: err, result: result});
       return this.retry(this.buy, args);
