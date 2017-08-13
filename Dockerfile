@@ -9,6 +9,7 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app/
+RUN npm install -g node-gyp
 RUN npm install --production
 RUN npm install redis@0.10.0 talib@1.0.2 pg
 
