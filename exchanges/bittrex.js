@@ -271,9 +271,13 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(result, err) {
     log.debug('cancelOrder', 'called', order);
 
-    if(err || !result.success) {
+    if(err) {
       log.error('unable to cancel order', order, '(', err, result, '), retrying');
       return this.retry(this.cancelOrder, args);
+    }
+
+    if(!result.success && result.message === 'ORDER_NOT_OPEN') {
+      log.debug('getOrder', 'ORDER_NOT_OPEN: assuming already closed or executed');
     }
 
     log.debug('getOrder', 'result', result);
