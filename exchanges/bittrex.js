@@ -210,6 +210,12 @@ Trader.prototype.sell = function(amount, price, callback) {
   var set = function(result, err) {
     if(err || result.error) {
        log.error('unable to sell:',  {err: err, result: result});
+
+       if(err && err.message === 'DUST_TRADE_DISALLOWED_MIN_VALUE_50K_SAT') {
+         callback(null, 'dummyOrderId');
+         return;
+       }
+
       return this.retry(this.sell, args);
     }
 

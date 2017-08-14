@@ -297,7 +297,17 @@ Manager.prototype.checkOrder = function() {
   var handleCancelResult = function(alreadyFilled) {
     if(alreadyFilled)
       return;
-    this.trade(this.action, true);
+    
+    //We need to wait in case a canceled order has already reduced the amount
+    var wait = +moment.duration(10, 'seconds');
+    log.debug('Waiting ' + wait + ' seconds before starting a new trade!');
+
+    setTimeout(
+        function() { this.trade(this.action, true); }.bind(this),
+        wait
+    );
+
+
   }
 
   this.exchange.checkOrder(_.last(this.orders), _.bind(handleCheckResult, this));
