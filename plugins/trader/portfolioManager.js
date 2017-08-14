@@ -323,7 +323,7 @@ Manager.prototype.relayOrder = function(done) {
     var amount = 0;
     var date = moment(0);
 
-    _.each(res.filter(o => o.amount), order => {
+    _.each(res.filter(o => !_.isUndefined(o) && o.amount), order => {
       date = _.max([moment(order.date), date]);
       price = ((price * amount) + (order.price * order.amount)) / (order.amount + amount);
       amount += +order.amount;
