@@ -178,15 +178,15 @@ Trader.prototype.buy = function(amount, price, callback) {
   var args = _.toArray(arguments);
 
   log.debug('buy', 'called', {amount: amount, price: price});
-  // correct the amount to avoid an INSUFFICIENT_FUNDS exception
-  amount = amount - (0.00255*amount);
-  log.debug('buy', 'corrected amount', {amount: amount, price: price});
-
   var set = function(result, err) {
     if(err || result.error) {
       if(err && err.message === 'INSUFFICIENT_FUNDS') {
-        // retry with the already reduced amount, will be reduced again in the recursive call
-         return this.retry(this.buy, [amount, price, callback]);
+          // retry with the already reduced amount, will be reduced again in the recursive call
+          log.error('Error buy ' , 'INSUFFICIENT_FUNDS', err );
+          // correct the amount to avoid an INSUFFICIENT_FUNDS exception
+          var correctedAmount = amount - (0.00255*amount);
+          log.debug('buy', 'corrected amount', {amount: correctedAmount, price: price});
+         return this.retry(this.buy, [correctedAmount, price, callback]);
       } else if (err && err.message === 'DUST_TRADE_DISALLOWED_MIN_VALUE_50K_SAT') {
         callback(null, 'dummyOrderId');
         return;
@@ -196,7 +196,6 @@ Trader.prototype.buy = function(amount, price, callback) {
     }
 
     log.debug('buy', 'result', result);
-
     callback(null, result.result.uuid);
   }.bind(this);
 
@@ -350,23 +349,23 @@ Trader.getCapabilities = function () {
     ],
     markets: [
       // *** BTC <-> XXX
-      { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'PAY'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['BTC', 'PAY'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
       
       // *** USDT <-> XXX
-      { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['USDT', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['USDT', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['USDT', 'BCC'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['USDT', 'NEO'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
      
 
       // *** ETH <-> XXX
-      { pair: ['ETH', 'BCC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'PAY'], minimalOrder: { amount: 0.0001, unit: 'asset' } }
+      { pair: ['ETH', 'BCC'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.00000001, unit: 'asset' } },
+      { pair: ['ETH', 'PAY'], minimalOrder: { amount: 0.00000001, unit: 'asset' } }
      
 
     ],
