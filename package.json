@@ -40,6 +40,7 @@
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",
     "moment": "2.4.x",
+    "node.bittrex.api": "^0.4.3",
     "okcoin-china": "0.0.7",
     "opn": "^4.0.2",
     "poloniex.js": "0.0.7",
