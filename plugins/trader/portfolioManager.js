@@ -297,17 +297,20 @@ Manager.prototype.checkOrder = function() {
   var handleCancelResult = function(alreadyFilled) {
     if(alreadyFilled)
       return;
-    
-    //We need to wait in case a canceled order has already reduced the amount
-    var wait = +moment.duration(10, 'seconds');
-    log.debug('Waiting ' + wait + ' seconds before starting a new trade!');
 
-    setTimeout(
-        function() { this.trade(this.action, true); }.bind(this),
-        wait
-    );
+    if(this.exchange.name === 'Bittrex') {
+        //We need to wait in case a canceled order has already reduced the amount
+        var wait = +moment.duration(10, 'seconds');
+        log.debug('Waiting ' + wait + ' seconds before starting a new trade on Bittrex!');
 
+        setTimeout(
+            function() { this.trade(this.action, true); }.bind(this),
+            wait
+        );
+        return;
+    }
 
+    this.trade(this.action, true);
   }
 
   this.exchange.checkOrder(_.last(this.orders), _.bind(handleCheckResult, this));

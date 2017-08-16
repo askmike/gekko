@@ -662,7 +662,7 @@ Trader.getCapabilities = function() {
     requires: ['key', 'secret'],
     tid: 'tid',
     providesHistory: 'date',
-    providesFullHistory: true,
+    providesFullHistory: false,
     tradable: true
   };
 };
