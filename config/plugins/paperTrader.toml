@@ -1,4 +1,5 @@
-fee = 0.25
+feeMaker = 0.25
+feeTaker = 0.25
 slippage = 0.05
 
 [simulationBalance]

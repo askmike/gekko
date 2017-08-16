@@ -24,7 +24,7 @@ Documentation about trading methods in Gekko can be found [here](./Trading_metho
 
 ### Trader
 
-This plugin automatically creates orders based on the advice on the market it is watching. This turns Gekko into an automated trading bot. 
+This plugin automatically creates orders based on the advice on the market it is watching. This turns Gekko into an automated trading bot.
 
 Before Gekko can automatically trade you need to create API keys so that Gekko has the rights to create orders on your behalf, the rights Gekko needs are (naming differs per exchange): get info, get balance/portfolio, get open orders, get fee, buy, sell and cancel order. For all exchanges you need the API key and the API secret, for both Bitstamp and CEX.io you also need your username (which is a number at Bitstamp).
 
@@ -79,7 +79,8 @@ Go to the config and configure it like this:
       // only want report after a sell? set to `false`.
       verbose: false,
       // how much fee in % does each trade cost?
-      fee: 0.6,
+      feeMaker: 0.5,
+      feeTaker: 0.6,
       // how much slippage should Gekko assume per trade?
       slippage: 0.1
     }
@@ -196,7 +197,7 @@ This is an advanced plugin only for programmers! If you are interested in this r
         // the name of the event, set
         // an optional prefix to the
         // channel name.
-      channelPrefix: '', 
+      channelPrefix: '',
       broadcast: [
         'small candle'
       ]

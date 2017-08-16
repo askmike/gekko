@@ -21,7 +21,8 @@
       "asset": 1,
       "currency": 100
     },
-    "fee": 0.25,
+    "feeMaker": 0.15,
+    "feeTaker": 0.25,
     "slippage": 0.05
   },
   "pushover": {
