@@ -99,7 +99,9 @@ var Base = function() {
     high: [],
     low: [],
     close: [],
-    volume: []
+    volume: [],
+    vwp: [],
+    trades: []
   };
 
   // make sure we have all methods
@@ -153,6 +155,8 @@ Base.prototype.tick = function(candle) {
     this.candleProps.low.push(candle.low);
     this.candleProps.close.push(candle.close);
     this.candleProps.volume.push(candle.volume);
+    this.candleProps.vwp.push(candle.vwp);
+    this.candleProps.trades.push(candle.trades);
 
     if(this.age > this.candlePropsCacheSize) {
       this.candleProps.open.shift();
@@ -160,6 +164,8 @@ Base.prototype.tick = function(candle) {
       this.candleProps.low.shift();
       this.candleProps.close.shift();
       this.candleProps.volume.shift();
+      this.candleProps.vwp.shift();
+      this.candleProps.trades.shift();
     }
   }
 
