@@ -23,6 +23,7 @@
     },
     "feeMaker": 0.15,
     "feeTaker": 0.25,
+    "feeUsing": "maker",
     "slippage": 0.05
   },
   "pushover": {

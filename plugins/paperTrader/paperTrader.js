@@ -11,8 +11,7 @@ const watchConfig = config.watch;
 const PaperTrader = function() {
   _.bindAll(this);
 
-  this.feeMaker = 1 - (calcConfig.feeMaker + calcConfig.slippage) / 100;
-  this.feeTaker = 1 - (calcConfig.feeTaker + calcConfig.slippage) / 100;
+  this.fee = 1 - (calcConfig['fee' + calcConfig.feeUsing.charAt(0).toUpperCase() + calcConfig.feeUsing.slice(1)] + calcConfig.slippage) / 100;
 
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
@@ -53,9 +52,9 @@ PaperTrader.prototype.relayPortfolio = function() {
   this.emit('portfolioUpdate', _.clone(this.portfolio));
 }
 
-PaperTrader.prototype.extractFee = function(amount, type) {
+PaperTrader.prototype.extractFee = function(amount) {
   amount *= 1e8;
-  amount *= type === 'maker' ? this.feeMaker : this.feeTaker;
+  amount *= this.fee;
   amount = Math.floor(amount);
   amount /= 1e8;
   return amount;
@@ -76,7 +75,7 @@ PaperTrader.prototype.updatePosition = function(advice) {
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   if(what === 'long') {
-    this.portfolio.asset += this.extractFee(this.portfolio.currency / price, 'taker');
+    this.portfolio.asset += this.extractFee(this.portfolio.currency / price);
     this.portfolio.currency = 0;
     this.trades++;
   }
@@ -84,7 +83,7 @@ PaperTrader.prototype.updatePosition = function(advice) {
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   else if(what === 'short') {
-    this.portfolio.currency += this.extractFee(this.portfolio.asset * price, 'maker');
+    this.portfolio.currency += this.extractFee(this.portfolio.asset * price);
     this.portfolio.asset = 0;
     this.trades++;
   }

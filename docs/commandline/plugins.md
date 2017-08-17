@@ -81,6 +81,8 @@ Go to the config and configure it like this:
       // how much fee in % does each trade cost?
       feeMaker: 0.5,
       feeTaker: 0.6,
+      // Using taker or maker fee?
+      feeUsing: 'maker',
       // how much slippage should Gekko assume per trade?
       slippage: 0.1
     }
