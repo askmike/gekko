@@ -16,6 +16,8 @@ var end = false;
 var done = false;
 var from = false;
 
+var prevLast = false;
+
 var fetcher = new Fetcher(config.watch);
 
 var fetch = () => {
@@ -31,7 +33,7 @@ var handleFetch = (unk, trades) => {
         return fetch();
     }
 
-    if  (last > end) {
+    if  (last > end || last.unix() === prevLast) {
         fetcher.emit('done');
 
         var endUnix = end.unix();
@@ -41,6 +43,7 @@ var handleFetch = (unk, trades) => {
         )
     }
 
+    prevLast = last.unix();
     fetcher.emit('trades', trades);
 }
 
