@@ -1,6 +1,7 @@
 # Installing Gekko on Windows with bash on Windows 10
 
-### Note:
+### Note: 
+#### This guide is for advance users only! This is a temporary solution until [#708](https://github.com/askmike/gekko/issues/708) is implemented
 #### You must be running a 64-bit version of Windows 10 to use Bash on Windows 10
 #### TA-lib does not support Windows 10, but it can be used on Bash on Windows 10 by following these instructions 
 
