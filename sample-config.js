@@ -1,5 +1,5 @@
 // Everything is explained here:
-// @link https://github.com/askmike/gekko/blob/stable/docs/advanced_usage/plugins.md
+// @link https://gekko.wizb.it/docs/commandline/plugins.html
 
 var config = {};
 
