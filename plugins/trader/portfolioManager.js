@@ -26,11 +26,10 @@ var Manager = function(conf) {
   if(error)
     util.die(error);
 
-  var exchangeMeta = checker.settings(conf);
-  this.exchangeSlug = exchangeMeta.slug;
+  this.exchangeMeta = checker.settings(conf);
 
   // create an exchange
-  var Exchange = require(dirs.exchanges + this.exchangeSlug);
+  var Exchange = require(dirs.exchanges + this.exchangeMeta.slug);
   this.exchange = new Exchange(conf);
 
   this.conf = conf;
@@ -38,7 +37,7 @@ var Manager = function(conf) {
   this.fee;
   this.action;
 
-  this.marketConfig = _.find(exchangeMeta.markets, function(p) {
+  this.marketConfig = _.find(this.exchangeMeta.markets, function(p) {
     return p.pair[0] === conf.currency && p.pair[1] === conf.asset;
   });
   this.minimalOrder = this.marketConfig.minimalOrder;
@@ -298,14 +297,14 @@ Manager.prototype.checkOrder = function() {
     if(alreadyFilled)
       return;
 
-    if(this.exchange.name === 'Bittrex') {
+    if(this.exchangeMeta.forceReorderDelay) {
         //We need to wait in case a canceled order has already reduced the amount
-        var wait = +moment.duration(10, 'seconds');
-        log.debug('Waiting ' + wait + ' seconds before starting a new trade on Bittrex!');
+        var wait = 10;
+        log.debug(`Waiting ${wait} seconds before starting a new trade on ${this.exchangeMeta.name}!`);
 
         setTimeout(
-            function() { this.trade(this.action, true); }.bind(this),
-            wait
+            () => this.trade(this.action, true),
+            +moment.duration(wait, 'seconds')
         );
         return;
     }

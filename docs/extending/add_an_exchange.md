@@ -108,6 +108,7 @@ Each exchange *must* provide a `getCapabilities()` static method that returns an
 - `fetchTimespan`: if the timespan between first and last trade per fetch is fixed, set it here in minutes.
 - `tradable`: if gekko supports automatic trading on this exchange.
 - `requires`: if gekko supports automatic trading, this is an array of required api credentials gekko needs to pass into the constructor.
+- `forceReorderDelay`: if after canceling an order a new one can't be created straight away since the balance is not updated fast enough, set this to true (only required for exchanges where Gekko can trade).
 
 Below is a real-case example how `bistamp` exchange provides its `getCapabilities()` method:
 

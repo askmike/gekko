@@ -662,7 +662,8 @@ Trader.getCapabilities = function() {
     tid: 'tid',
     providesHistory: 'date',
     providesFullHistory: false,
-    tradable: true
+    tradable: true,
+    forceReorderDelay: true
   };
 };
 
