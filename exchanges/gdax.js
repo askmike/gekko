@@ -183,6 +183,15 @@ Trader.prototype.getOrder = function(order, callback) {
 
     var result = function(err, data) {
         if(err) {
+            if(err.message === 'NotFound') {
+                log.debug('GDAX NotFound error, spoofing order');
+                return callback(undefined, {
+                  price: 0,
+                  amount: 0,
+                  date: moment.unix(0)
+                });
+            }
+
             log.error('GDAX ERROR:', err);
             return this.retry(this.checkOrder, args);
         }
