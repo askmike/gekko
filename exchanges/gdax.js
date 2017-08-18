@@ -17,6 +17,7 @@ var Trader = function(config) {
     this.scanbackTid = 0;
     this.scanbackResults = [];
     this.asset = config.asset;
+    this.currency = config.currency;
 
     if(_.isObject(config)) {
         this.key = config.key;
@@ -112,7 +113,7 @@ Trader.prototype.normalizeResult = callback => {
 Trader.prototype.buy = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var buyParams = {
-        'price': this.getMaxDecimalsNumber(price),
+        'price': this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 8 : 2),
         'size': this.getMaxDecimalsNumber(amount),
         'product_id': this.pair,
         'post_only': this.post_only
@@ -132,7 +133,7 @@ Trader.prototype.buy = function(amount, price, callback) {
 Trader.prototype.sell = function(amount, price, callback) {
     var args = _.toArray(arguments);
     var sellParams = {
-        'price': this.getMaxDecimalsNumber(price),
+        'price': this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 8 : 2),
         'size': this.getMaxDecimalsNumber(amount),
         'product_id': this.pair,
         'post_only': this.post_only
