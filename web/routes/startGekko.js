@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
 const cache = require('../state/cache');
+const Logger = require('../state/logger');
 const broadcast = cache.get('broadcast');
 const apiKeyManager= cache.get('apiKeyManager');
 const gekkoManager = cache.get('gekkos');
@@ -48,6 +49,15 @@ module.exports = function *() {
   const id = (Math.random() + '').slice(3);
 
   let errored = false;
+
+  var logType = type;
+  if(logType === 'leech') {
+    if(config.trader && config.trader.enabled)
+      logType = 'tradebot';
+    else
+      logType = 'papertrader';
+  }
+  const logger = new Logger(logType);
 
   console.log('Gekko', id, 'started');
 
@@ -102,6 +112,8 @@ module.exports = function *() {
       }
       broadcast(wsEvent);
       return;
+    } else if(event.log) {
+      logger.write(event.log);
     }
 
     let updates = {};
