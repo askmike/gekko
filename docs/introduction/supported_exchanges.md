@@ -17,7 +17,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [Bittrex](https://bittrex.com/)      | V | V | X | |
 | [BTC-e](https://btc-e.com/)      | V | V | X | |
 | [Okcoin.cn](https://www.okcoin.cn/)      | V | V | X | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
-| [Cex.io](https://cex.io/)      | V | V | X | |
+| [Cex.io](https://cex.io/)      | V | X | X | |
 | [BTC Markets](https://btcmarkets.net)      | V | V | X | |
 | [bitX](https://www.bitx.co/)      | V | X | X | |
 | [lakeBTC](https://lakebtc.com/)      | V | X | X | |
