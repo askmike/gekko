@@ -306,7 +306,7 @@ Trader.getCapabilities = function () {
     name: 'Kraken',
     slug: 'kraken',
     currencies: ['CAD', 'EUR', 'GBP', 'JPY', 'USD', 'XBT'],
-    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC' 'ETH', 'BCH', 'DASH', 'EOS', 'ETC']
+    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC', 'ETH', 'BCH', 'DASH', 'EOS', 'ETC'],
     markets: [
       //Tradeable againt ETH
       { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -407,7 +407,7 @@ Trader.getCapabilities = function () {
       { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } }
+      { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['DASH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['EOS', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['ETC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
