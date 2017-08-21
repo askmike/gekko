@@ -52,7 +52,7 @@ Trader.prototype.getPortfolio = function(callback) {
       e += 'Double check whether your API key is correct.';
       util.die(e);
     }
-    
+
     if(err || !data)
       return this.retry(this.getPortfolio, args);
 
@@ -211,14 +211,45 @@ Trader.getCapabilities = function () {
   return {
     name: 'Bitfinex',
     slug: 'bitfinex',
-    currencies: ['USD', 'BTC'],
-    assets: ['BTC', 'LTC', 'ETH'],
+    currencies: ['USD', 'BTC', 'ETH'],
+    assets: ['BTC', 'LTC', 'ETH', 'SAN', 'IOT', 'BCH', 'OMG', 'XMR', 'DASH', 'ZEC', 'EOS', 'ETC', 'XRP'],
     markets: [
-        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      
+        //Tradeable Pairs to USD
+        { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+
+        //Tradeable Pairs to BTC
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+
+        //Tradeable Pairs to ETH
+        { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
