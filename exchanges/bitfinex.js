@@ -216,6 +216,7 @@ Trader.getCapabilities = function () {
     markets: [
       
         //Tradeable Pairs to USD
+        { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
