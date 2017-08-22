@@ -6,7 +6,6 @@ var log = require('../core/log');
 
 var crypto_currencies = [
   "XBT",
-  "BCH",
   "DASH",
   "EOS",
   "ETC",
@@ -22,7 +21,6 @@ var crypto_currencies = [
   "XMR",
   "XRP",
   "ZEC"
-
 ];
 
 var fiat_currencies = [
@@ -51,8 +49,10 @@ var addPrefix = function(value) {
 
   if(isFiat(value))
     return fiatPrefix + value;
-  else
+  else if(isCrypto(value))
     return cryptoPrefix + value;
+  else
+    return value;
 }
 
 var Trader = function(config) {
@@ -65,7 +65,13 @@ var Trader = function(config) {
     this.asset = config.asset.toUpperCase();
   }
 
-  this.pair = addPrefix(this.asset) + addPrefix(this.currency);
+  // We need to prefix the asset and currency
+  // with either Z or X on all markets.
+  // EXCEPT for BCH markets..
+  if(this.asset === 'BCH')
+    this.pair = this.asset + this.currency;
+  else
+    this.pair = addPrefix(this.asset) + addPrefix(this.currency);
   this.name = 'kraken';
   this.since = null;
 
@@ -168,6 +174,7 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var set = function(err, data) {
+
     if(!err && _.isEmpty(data))
       err = 'no data';
 
