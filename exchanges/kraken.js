@@ -78,9 +78,9 @@ var Trader = function(config) {
   this.kraken = new Kraken(this.key, this.secret);
 }
 
-Trader.prototype.retry = function(method, args, err) {
+Trader.prototype.retry = function(method, args) {
   var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..', err);
+  log.debug(this.name, 'returned an error, retrying..');
 
   var self = this;
 
@@ -102,8 +102,10 @@ Trader.prototype.retry = function(method, args, err) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
   var process = function(err, trades) {
-    if (err || !trades || trades.length === 0)
-      return this.retry(this.getTrades, args, err);
+    if (err || !trades || trades.length === 0) {
+      log.error('error getting trades', err);
+      return this.retry(this.getTrades, args);
+    }
 
     var parsedTrades = [];
     _.each(trades.result[this.pair], function(trade) {
@@ -142,8 +144,10 @@ Trader.prototype.getPortfolio = function(callback) {
     else if(!_.isEmpty(data.error))
       err = data.error;
 
-    if (err || !data.result)
-      return this.retry(this.getPortfolio, args, JSON.stringify(err));
+    if (err || !data.result) {
+      log.error(err);
+      return this.retry(this.getPortfolio, args);
+    }
 
     var assetAmount = parseFloat( data.result[addPrefix(this.asset)] );
     var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
@@ -212,17 +216,18 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
+
+    // console.log('blap', err, data);
+
     if(!err && _.isEmpty(data))
       err = 'no data';
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
 
-    if(err)
-      return this.retry(
-        this.addOrder,
-        args,
-        'unable to ' + tradeType.toLowerCase() + ': ' + JSON.stringify(err)
-      );
+    if(err) {
+      log.error('unable to ' + tradeType.toLowerCase(), err);
+      return this.retry(this.addOrder, args);
+    }
 
     var txid = data.result.txid[0];
     log.debug('added order with txid:', txid);
