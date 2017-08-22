@@ -116,14 +116,7 @@ Trader.prototype.checkOrder = function(order_id, callback) {
       log.error('Perhaps the order already got filled?', '(', result, ')');
       callback(err, !result.result);
     } else {
-      // output successful trade
-      var color = {
-        sell: '\x1b[31mSOLD\x1b[0m ',
-        buy: '\x1b[32mBOUGHT\x1b[0m ',
-      }
-
-      log.info(color[result.orders[0].type],
-        result.orders[0].amount, ' @ ', result.orders[0].price);
+      callback(err, true);
     }
   }
 
@@ -133,11 +126,28 @@ Trader.prototype.checkOrder = function(order_id, callback) {
 Trader.prototype.cancelOrder = function(order_id, callback) {
   var cancel = function(err, result) {
     if(err || !result.result) {
-      log.error('unable to cancel order ', order_id, '(', result, ')');
+      return log.error('unable to cancel order ', order_id, '(', result, ')');
     }
+
+    callback();
   }.bind(this);
 
   this.okcoin.cancelOrder(cancel, this.pair, order_id);
+}
+
+Trader.prototype.getOrder = function(order_id, callback) {
+
+  var handle = (err, resp) => {
+    var order = _.first(resp.orders);
+
+    var amount = order.deal_amount;
+    var price = order.price;
+    var date = moment(order.date).utc();
+
+    callback(undefined, {amount, price, date});
+  }
+
+  this.okcoin.getOrderInfo(handle, this.pair, order_id)
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -177,6 +187,7 @@ Trader.getCapabilities = function () {
     providesHistory: false,
     fetchTimespan: 60,
     tid: 'date',
+    tradable: true
   };
 }
 
