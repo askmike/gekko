@@ -359,7 +359,7 @@ Trader.getCapabilities = function() {
     assets: [
       '1ST', '2GIVE', '8BIT', 'ABY', 'ADC', 'ADT', 'ADX', 'AEON', 'AGRS', 'AM',
       'AMP', 'AMS', 'ANS', 'ANT', 'APEX', 'APX', 'ARB', 'ARCH', 'ARDR', 'ARK',
-      'AUR', 'BAT', 'BAY', 'BCY', 'BITB', 'BITCNY', 'BITS', 'BITZ', 'BLC',
+      'AUR', 'BAT', 'BAY', 'BCC', 'BCY', 'BITB', 'BITCNY', 'BITS', 'BITZ', 'BLC',
       'BLITZ', 'BLK', 'BLOCK', 'BNT', 'BOB', 'BRK', 'BRX', 'BSD', 'BSTY', 'BTA',
       'BTC', 'BTCD', 'BTS', 'BURST', 'BYC', 'CANN', 'CCN', 'CFI', 'CLAM',
       'CLOAK', 'CLUB', 'COVAL', 'CPC', 'CRB', 'CRBIT', 'CRW', 'CRYPT', 'CURE',
