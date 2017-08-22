@@ -75,11 +75,15 @@ var Trader = function(config) {
   this.name = 'kraken';
   this.since = null;
 
-  this.kraken = new Kraken(this.key, this.secret);
+  this.kraken = new Kraken(
+    this.key,
+    this.secret,
+    {timeout: +moment.duration(60, 'seconds')}
+  );
 }
 
 Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(10, 'seconds');
+  var wait = +moment.duration(5, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
 
   var self = this;
