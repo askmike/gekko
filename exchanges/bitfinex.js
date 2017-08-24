@@ -212,16 +212,16 @@ Trader.getCapabilities = function () {
     name: 'Bitfinex',
     slug: 'bitfinex',
     currencies: ['USD', 'BTC', 'ETH'],
-    assets: ['BTC', 'LTC', 'ETH', 'SAN', 'IOT', 'BCH', 'OMG', 'XMR', 'DASH', 'ZEC', 'EOS', 'ETC', 'XRP'],
+    assets: ['BTC', 'LTC', 'ETH', 'SAN', 'IOT', 'BCH', 'OMG', 'XMR', 'DSH', 'ZEC', 'EOS', 'ETC', 'XRP'],
     markets: [
       
         //Tradeable Pairs to USD
         { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'IOT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['USD', 'DSH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -233,9 +233,9 @@ Trader.getCapabilities = function () {
         //Tradeable Pairs to BTC
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['BTC', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'IOT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'DSH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -246,7 +246,7 @@ Trader.getCapabilities = function () {
 
         //Tradeable Pairs to ETH
         { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['ETH', 'IOTA'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'IOT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
