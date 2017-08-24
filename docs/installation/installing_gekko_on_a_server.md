@@ -111,7 +111,7 @@ Once NGINX is installed you will need to modify the configuration file. For Debi
 
 ## Obtaining a SSL certificate
 
-Your OS may or may not ship with openssl preinstalled. In the case it doesn't, simply install openssl using your package manager of choice. eg: sudo apt-get openssl
+Your OS may or may not ship with openssl preinstalled. In the case it doesn't, simply install openssl using your package manager of choice. eg: `sudo apt-get install openssl`.
 
 Below you can choose between creating a self signed certificate useful if you do not have a fqdn (fully qualified domain name), or if you by chance do have a fqdn you can use certbot to obtain a Let's Encrypt CA signed certificate.
 
