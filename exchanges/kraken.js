@@ -1,4 +1,4 @@
-var Kraken = require('kraken-api');
+var Kraken = require('kraken-api-es5');
 var moment = require('moment');
 var util = require('../core/util');
 var _ = require('lodash');
