@@ -6,35 +6,33 @@ Gekko is a **free and open source** Bitcoin TA trading and backtesting platform 
 
 ![screen shot of gekko backtesting](https://cloud.githubusercontent.com/assets/969743/24838718/8c790a86-1d45-11e7-99ae-e7e551cb40cb.png)
 
-## Main features
+## The gist
 
-* Automated trading (trade bot)
-* Paper trading (for TA strategies)
-* [Backtester](../features/backtesting.md) (for TA strategies)
-* Tool for systematic trading
-* Low level market library
- * Monitor the live market
- * Import historical market data
- * Broadcast market data over pubsub messaging systems
-* Web interface as well as a commandline interface
+Gekko is a tool that makes it very easy to automate your own trading stragies.
 
-## TA strategies
+![gist of gekko](https://gekko.wizb.it/_static/gekko-gist.png)
+
+You can either create your own trading strategy or start with the build in example strategies. Once you have a strategy you can use Gekko to automatically run it in a few different ways:
+
+- **Backtest**: You can start a simulation of the strategy over a historical data period and Gekko will tell you what would have happened (which trades would have been performed as well as overall performance and risk metrics).
+- **Paper trader**: You can run the strategy in realtime simulate trading (trade with fake money) to see in realtime how profitable your strategy would have been.
+- **Tradebot**: You can run the strategy in realtime and automatically execute orders based on the signals.
+
+All the above modes can be run from the user interface, this interface will show charts and performance/risk statistics.
+
+## Strategies
 
 Gekko comes with some [example strategies](../strategies/example_strategies.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](../strategies/creating_a_strategy.md). You can use over 130 indicators to create your perfect prediction model ([full list](../strategies/talib_indicators.md) of supported indicators). *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
 
 ## Automated Trading platform
 
-Gekko can watch the realtime markets, you can TA strategies to do live or simulated trading. Gekko stores all market data it sees, this makes it possible to simulate trading strategies against historical data to see whether they would have been profitable (backtesting).
+Gekko can watch the realtime markets, automatically excecuting and evaluating your strategies in the process. Whilst doing this Gekko will store all market data it sees, this makes it possible to later simulate trading strategies against historical data to see whether they would have been profitable (backtesting).
 
-Gekko is not built for HFT or anything related to being the fastest (like arbitrage). The trading methods Gekko can do are based on TA indicators used by human day traders. This means that Gekko does not look at data below the one minute timescale and will not trade more than a couple of times per week (depending on configuration).
+## Limitations
 
-## Gekko is not
+Gekko is not built for HFT or anything related to being the fastest (like arbitrage) as well as some other things. Please see the [scope page](./scope.md) to read more about what you can and cannot do with Gekko.
 
-- A trading platform for human day traders (although it can be used to support human traders)
-- A High frequency trading bot designed to operate on < minute resolution
-- A fully automated trading bot that you turn on and will generate profit without you having to do anything
-- An exchange
-- An arbitrage bot
+The trading methods Gekko can do are based on TA indicators used by human day traders. This means that Gekko does not look at data below the one minute timescale and will not trade more than a couple of times per day (depending on configuration).
 
 ## How does Gekko work?
 
