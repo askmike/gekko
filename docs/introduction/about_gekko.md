@@ -32,8 +32,6 @@ Gekko can watch the realtime markets, automatically excecuting and evaluating yo
 
 Gekko is not built for HFT or anything related to being the fastest (like arbitrage) as well as some other things. Please see the [scope page](./scope.md) to read more about what you can and cannot do with Gekko.
 
-The trading methods Gekko can do are based on TA indicators used by human day traders. This means that Gekko does not look at data below the one minute timescale and will not trade more than a couple of times per day (depending on configuration).
-
 ## How does Gekko work?
 
 ![Gekko architecture](https://wizb.it/gekko/static/architecture.jpg)
