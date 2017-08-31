@@ -2,6 +2,11 @@
 
 ![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
 
+### Discord community for crypto bots
+<a href="https://discord.gg/qZHhdju"><img src="https://discordapp.com/assets/fc0b01fe10a0b8c602fb0106d8189d9b.png" height="70" ></a>
+<br>
+
+
 *The most valuable commodity I know of is information.*
 
 -Gordon Gekko
