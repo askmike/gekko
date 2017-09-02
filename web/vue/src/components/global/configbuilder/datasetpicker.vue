@@ -6,41 +6,47 @@ div
   .txt--center.my2(v-if='datasetScanstate === "scanning"')
     spinner
   .my2(v-if='datasetScanstate === "scanned"')
-    table.full
-      thead
-        tr
-          th 
-          th exchange
-          th currency
-          th asset
-          th from
-          th to
-          th duration
-      tbody
-        tr(v-for='(set, i) in datasets')
-          td.radio
-            input(type='radio', name='dataset', :value='i', v-model='setIndex', v-bind:id='set.id')
-          td 
-            label(v-bind:for='set.id') {{ set.exchange }}
-          td 
-            label(v-bind:for='set.id') {{ set.currency }}
-          td
-            label(v-bind:for='set.id') {{ set.asset }}
-          td 
-            label(v-bind:for='set.id') {{ fmt(set.from) }}
-          td 
-            label(v-bind:for='set.id') {{ fmt(set.to) }}
-          td
-            label(v-bind:for='set.id') {{ humanizeDuration(set.to.diff(set.from)) }}
-    em
-      a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
-    template(v-if='rangeVisible')
-      div
-        label(for='customFrom') From:
-        input(v-model='customFrom')
-      div
-        label(for='customTo') To:
-        input(v-model='customTo')
+
+    div(v-if='datasets.length != 0')
+      table.full
+        thead
+          tr
+            th 
+            th exchange
+            th currency
+            th asset
+            th from
+            th to
+            th duration
+        tbody
+          tr(v-for='(set, i) in datasets')
+            td.radio
+              input(type='radio', name='dataset', :value='i', v-model='setIndex', v-bind:id='set.id')
+            td 
+              label(v-bind:for='set.id') {{ set.exchange }}
+            td 
+              label(v-bind:for='set.id') {{ set.currency }}
+            td
+              label(v-bind:for='set.id') {{ set.asset }}
+            td 
+              label(v-bind:for='set.id') {{ fmt(set.from) }}
+            td 
+              label(v-bind:for='set.id') {{ fmt(set.to) }}
+            td
+              label(v-bind:for='set.id') {{ humanizeDuration(set.to.diff(set.from)) }}
+      
+      em
+        a(href='#', v-on:click.prevent='openRange', v-if='!rangeVisible') Adjust range
+      template(v-if='rangeVisible')
+        div
+          label(for='customFrom') From:
+          input(v-model='customFrom')
+        div
+          label(for='customTo') To:
+          input(v-model='customTo')
+
+    em(v-else) No Data found 
+      a(href='#/data/importer') Lets add some
 
 </template>
 
