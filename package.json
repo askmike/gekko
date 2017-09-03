@@ -28,7 +28,7 @@
     "commander": "^2.9.0",
     "gdax": "^0.4.2",
     "gekko": "0.0.9",
-    "gemini-exchange-coffee-api": "1.0.12",
+    "gemini-exchange-coffee-api": "1.0.13",
     "humanize-duration": "^3.10.0",
     "koa": "^1.2.0",
     "koa-bodyparser": "^2.2.0",
