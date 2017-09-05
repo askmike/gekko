@@ -2,11 +2,6 @@
 var _ = require('lodash');
 var log = require('../core/log.js');
 
-// configuration
-var config = require('../core/util.js').getConfig();
-var settings = config.CCI;
-var pposettings = config.PPO;
-
 // let's create our own method
 var method = {};
 
@@ -22,15 +17,15 @@ method.init = function() {
     persisted: false,
     adviced: false
   };
-  this.historySize = config.tradingAdvisor.historySize;
+  this.historySize = this.tradingAdvisor.historySize;
   this.ppoadv = 'none';
-  this.uplevel = settings.thresholds.up;
-  this.downlevel = settings.thresholds.down;
-  this.persisted = settings.thresholds.persistence;
+  this.uplevel = this.settings.thresholds.up;
+  this.downlevel = this.settings.thresholds.down;
+  this.persisted = this.settings.thresholds.persistence;
 
   // log.debug("CCI started with:\nup:\t", this.uplevel, "\ndown:\t", this.downlevel, "\npersistence:\t", this.persisted);
   // define the indicators we need
-  this.addIndicator('cci', 'CCI', settings);
+  this.addIndicator('cci', 'CCI', this.settings);
 }
 
 // what happens on every new candle?
@@ -59,7 +54,7 @@ method.log = function() {
 }
 
 /*
- * 
+ *
  */
 method.check = function(candle) {
 
@@ -120,7 +115,7 @@ method.check = function(candle) {
             }
             this.advice();
         }
-                
+
     } else {
         this.advice();
     }

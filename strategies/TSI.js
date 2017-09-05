@@ -2,9 +2,6 @@
 var _ = require('lodash');
 var log = require('../core/log.js');
 
-var config = require('../core/util.js').getConfig();
-var settings = config.TSI;
-
 var TSI = require('./indicators/TSI.js');
 
 // let's create our own method
@@ -21,13 +18,13 @@ method.init = function() {
     adviced: false
   };
 
-  this.requiredHistory = config.tradingAdvisor.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.addIndicator('tsi', 'TSI', settings);
+  this.addIndicator('tsi', 'TSI', this.settings);
 }
 
-// for debugging purposes log the last 
+// for debugging purposes log the last
 // calculated parameters.
 method.log = function(candle) {
   var digits = 8;
@@ -42,7 +39,7 @@ method.check = function() {
   var tsi = this.indicators.tsi;
   var tsiVal = tsi.tsi;
 
-  if(tsiVal > settings.thresholds.high) {
+  if(tsiVal > this.settings.thresholds.high) {
 
     // new trend detected
     if(this.trend.direction !== 'high')
@@ -57,7 +54,7 @@ method.check = function() {
 
     log.debug('In high since', this.trend.duration, 'candle(s)');
 
-    if(this.trend.duration >= settings.thresholds.persistence)
+    if(this.trend.duration >= this.settings.thresholds.persistence)
       this.trend.persisted = true;
 
     if(this.trend.persisted && !this.trend.adviced) {
@@ -65,8 +62,8 @@ method.check = function() {
       this.advice('short');
     } else
       this.advice();
-    
-  } else if(tsiVal < settings.thresholds.low) {
+
+  } else if(tsiVal < this.settings.thresholds.low) {
 
     // new trend detected
     if(this.trend.direction !== 'low')
@@ -81,7 +78,7 @@ method.check = function() {
 
     log.debug('In low since', this.trend.duration, 'candle(s)');
 
-    if(this.trend.duration >= settings.thresholds.persistence)
+    if(this.trend.duration >= this.settings.thresholds.persistence)
       this.trend.persisted = true;
 
     if(this.trend.persisted && !this.trend.adviced) {

@@ -1,5 +1,5 @@
 /*
-  
+
   StochRSI - SamThomp 11/06/2014
 
   (updated by askmike) @ 30/07/2016
@@ -9,9 +9,6 @@
 var _ = require('lodash');
 var log = require('../core/log.js');
 
-var config = require('../core/util.js').getConfig();
-var settings = config.StochRSI;
-
 var RSI = require('./indicators/RSI.js');
 
 // let's create our own method
@@ -19,7 +16,7 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
-	this.interval = settings.interval;
+	this.interval = this.settings.interval;
 
   this.trend = {
     direction: 'none',
@@ -51,7 +48,7 @@ method.update = function(candle) {
 	this.stochRSI = ((this.rsi - this.lowestRSI) / (this.highestRSI - this.lowestRSI)) * 100;
 }
 
-// for debugging purposes log the last 
+// for debugging purposes log the last
 // calculated parameters.
 method.log = function() {
   var digits = 8;
@@ -64,7 +61,7 @@ method.log = function() {
 }
 
 method.check = function() {
-	if(this.stochRSI > settings.thresholds.high) {
+	if(this.stochRSI > this.settings.thresholds.high) {
 		// new trend detected
 		if(this.trend.direction !== 'high')
 			this.trend = {
@@ -78,7 +75,7 @@ method.check = function() {
 
 		log.debug('In high since', this.trend.duration, 'candle(s)');
 
-		if(this.trend.duration >= settings.thresholds.persistence)
+		if(this.trend.duration >= this.settings.thresholds.persistence)
 			this.trend.persisted = true;
 
 		if(this.trend.persisted && !this.trend.adviced) {
@@ -86,8 +83,8 @@ method.check = function() {
 			this.advice('short');
 		} else
 			this.advice();
-		
-	} else if(this.stochRSI < settings.thresholds.low) {
+
+	} else if(this.stochRSI < this.settings.thresholds.low) {
 
 		// new trend detected
 		if(this.trend.direction !== 'low')
@@ -102,7 +99,7 @@ method.check = function() {
 
 		log.debug('In low since', this.trend.duration, 'candle(s)');
 
-		if(this.trend.duration >= settings.thresholds.persistence)
+		if(this.trend.duration >= this.settings.thresholds.persistence)
 			this.trend.persisted = true;
 
 		if(this.trend.persisted && !this.trend.adviced) {
