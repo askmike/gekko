@@ -21,7 +21,7 @@ method.init = function() {
    adviced: false
   };
 
-  this.requiredHistory = config.tradingAdvisor.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
 
   // define the indicators we need
   this.addIndicator('ppo', 'PPO', config.PPO);
@@ -33,7 +33,7 @@ method.update = function(candle) {
   // nothing!
 }
 
-// for debugging purposes log the last 
+// for debugging purposes log the last
 // calculated parameters.
 method.log = function(candle) {
   var digits = 8;
@@ -86,7 +86,7 @@ method.check = function() {
       this.advice('long');
     } else
       this.advice();
-    
+
   } else if(value > thresholds.high) {
 
     // new trend detected
@@ -118,9 +118,9 @@ method.check = function() {
 
     // we're not in an up nor in a downtrend
     // but for now we ignore sideways trends
-    // 
+    //
     // read more @link:
-    // 
+    //
     // https://github.com/askmike/gekko/issues/171
 
     // this.trend = {

@@ -2,10 +2,6 @@
 var _ = require('lodash');
 var log = require('../core/log.js');
 
-// configuration
-var config = require('../core/util.js').getConfig();
-var settings = config.DEMA;
-
 // let's create our own method
 var method = {};
 
@@ -14,10 +10,10 @@ method.init = function() {
   this.name = 'DEMA';
 
   this.currentTrend;
-  this.requiredHistory = config.tradingAdvisor.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
 
   // define the indicators we need
-  this.addIndicator('dema', 'DEMA', settings);
+  this.addIndicator('dema', 'DEMA', this.settings);
 }
 
 // what happens on every new candle?
@@ -44,7 +40,7 @@ method.check = function(candle) {
 
   var message = '@ ' + price.toFixed(8) + ' (' + diff.toFixed(5) + ')';
 
-  if(diff > settings.thresholds.up) {
+  if(diff > this.settings.thresholds.up) {
     log.debug('we are currently in uptrend', message);
 
     if(this.currentTrend !== 'up') {
@@ -53,7 +49,7 @@ method.check = function(candle) {
     } else
       this.advice();
 
-  } else if(diff < settings.thresholds.down) {
+  } else if(diff < this.settings.thresholds.down) {
     log.debug('we are currently in a downtrend', message);
 
     if(this.currentTrend !== 'down') {

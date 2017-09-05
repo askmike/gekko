@@ -1,11 +1,8 @@
 // If you want to use your own trading methods you can
 // write them here. For more information on everything you
 // can use please refer to this document:
-// 
+//
 // https://github.com/askmike/gekko/blob/stable/docs/trading_methods.md
-
-var config = require('../core/util.js').getConfig();
-var settings = config['talib-macd'];
 
 // Let's create our own method
 var method = {};
@@ -21,9 +18,9 @@ method.init = function() {
 
   // how many candles do we need as a base
   // before we can start giving advice?
-  this.requiredHistory = config.tradingAdvisor.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
 
-  var customMACDSettings = settings.parameters;
+  var customMACDSettings = this.settings.parameters;
 
   // define the indicators we need
   this.addTalibIndicator('mymacd', 'macd', customMACDSettings);
@@ -47,11 +44,11 @@ method.check = function(candle) {
   var result = this.talibIndicators.mymacd.result;
   var macddiff = result['outMACD'] - result['outMACDSignal'];
 
-  if(settings.thresholds.down > macddiff && this.trend !== 'short') {
+  if(this.settings.thresholds.down > macddiff && this.trend !== 'short') {
     this.trend = 'short';
     this.advice('short');
 
-  } else if(settings.thresholds.up < macddiff && this.trend !== 'long'){
+  } else if(this.settings.thresholds.up < macddiff && this.trend !== 'long'){
     this.trend = 'long';
     this.advice('long');
 
