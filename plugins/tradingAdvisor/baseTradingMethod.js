@@ -75,14 +75,15 @@ var Indicators = {
 var allowedIndicators = _.keys(Indicators);
 var allowedTalibIndicators = _.keys(talib);
 
-var Base = function() {
+var Base = function(settings) {
   _.bindAll(this);
 
   // properties
   this.age = 0;
   this.processedTicks = 0;
   this.setup = false;
-
+  this.settings = settings;
+  this.tradingAdvisor = config.tradingAdvisor;
   // defaults
   this.requiredHistory = 0;
   this.priceValue = 'close';

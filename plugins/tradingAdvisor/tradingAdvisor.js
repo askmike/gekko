@@ -55,12 +55,16 @@ Actor.prototype.setupTradingMethod = function() {
     Consultant.prototype[name] = fn;
   });
 
-  this.method = new Consultant;
+  if(config[this.methodName]) {
+    var tradingSettings = config[this.methodName];
+  }
+
+  this.method = new Consultant(tradingSettings);
   this.method
     .on('advice', this.relayAdvice);
 
   this.batcher
-    .on('candle', this.processCustomCandle)
+    .on('candle', this.processCustomCandle);
 }
 
 // HANDLERS
