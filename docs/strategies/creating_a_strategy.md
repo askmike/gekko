@@ -187,12 +187,10 @@ You can create configurable parameters for your method which allows you to adjus
 
 And in your method you can use them again (for example to pass to an indicator):
 
-    // in the init:
-    var config = require('../core/util.js').getConfig();
-    this.settings = config.custom;
-
     // anywhere in your code:
     this.settings.my_custom_setting; // is now 10
+
+___The name of your configuration must be the same as the name of the strategy___
 
 ### Tool libraries
 
