@@ -17,8 +17,12 @@
           td {{ diff(rt.duration) }}
           td {{ round(rt.entryBalance) }}
           td {{ round(rt.exitBalance) }}
-          td {{ round(rt.pnl) }}
-          td {{ round(rt.profit) }}
+          template(v-if="Math.sign(rt.pnl)===-1")
+            td.loss {{ Math.sign(rt.pnl)*rt.pnl.toFixed(2) }}
+            td.loss {{ rt.profit.toFixed(2) }}%
+          template(v-else)
+            td.profit {{ rt.pnl.toFixed(2) }}
+            td.profit {{ rt.profit.toFixed(2) }}%
     div(v-if='!roundtrips.length')
       p Not enough data to display
 </template>
@@ -53,6 +57,15 @@ export default {
 .roundtrips table td {
   border: 1px solid #c6cbd1;
   padding: 8px 12px;
+}
+
+.roundtrips table td.loss {
+  color: red;
+  text-align: right;
+}
+.roundtrips table td.profit {
+  color: green;
+  text-align: right;
 }
 
 .roundtrips table tr:nth-child(2n) {
