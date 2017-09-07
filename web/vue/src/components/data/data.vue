@@ -9,7 +9,7 @@
       spinner
     .my2(v-if='datasetScanstate === "scanned"')
       .bg--orange.p1.warning.my1(v-if='unscannableMakets.length')
-        p.clickable(v-if='!viewUnscannable', v-on:click.prevent='toggleUnscannable') Some markets where unscannable, click here for details.
+        p.clickable(v-if='!viewUnscannable', v-on:click.prevent='toggleUnscannable') Some markets were unscannable, click here for details.
         template(v-if='viewUnscannable')
           p Unable to find datasets in the following markets:
           .mx2(v-for='market in unscannableMakets')
