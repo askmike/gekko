@@ -588,7 +588,7 @@ methods.macdext = {
 }
 
 methods.macdfix = {
-    requires: ['SignalPeriod'],
+    requires: ['optInSignalPeriod'],
     create: (params) => {
         verifyParams('macdfix', params);
 
