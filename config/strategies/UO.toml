@@ -12,5 +12,5 @@ period = 28
 
 [thresholds]
 low = 30
-hight = 70
+high = 70
 persistence = 1
