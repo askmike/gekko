@@ -1273,7 +1273,7 @@ methods.typprice = {
 }
 
 methods.ultosc = {
-    requires: ['optInTimePeriod'],
+    requires: ['optInTimePeriod1', 'optInTimePeriod2', 'optInTimePeriod3'],
     create: (params) => {
         verifyParams('ultosc', params);
 
@@ -1285,7 +1285,7 @@ methods.ultosc = {
             startIdx: 0,
             endIdx: data.high.length - 1,
             optInTimePeriod1: params.optInTimePeriod1,
-            optInTimePeriod2: params.params.optInTimePeriod1,
+            optInTimePeriod2: params.optInTimePeriod2,
             optInTimePeriod3: params.optInTimePeriod3
         });
     }
