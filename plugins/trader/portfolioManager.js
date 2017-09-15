@@ -38,7 +38,7 @@ var Manager = function(conf) {
   this.action;
 
   this.marketConfig = _.find(this.exchangeMeta.markets, function(p) {
-    return p.pair[0] === conf.currency && p.pair[1] === conf.asset;
+    return _.first(p.pair) === conf.currency.toUpperCase() && _.last(p.pair) === conf.asset.toUpperCase();
   });
   this.minimalOrder = this.marketConfig.minimalOrder;
 
