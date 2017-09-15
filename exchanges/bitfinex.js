@@ -45,7 +45,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
-  this.bitfinex.wallet_balances(function (err, data, body) {
+  this.bitfinex.wallet_balances((err, data, body) => {
 
     if(err && err.message === '401') {
       let e = 'Bitfinex replied with an unauthorized error. ';
@@ -84,13 +84,13 @@ Trader.prototype.getPortfolio = function(callback) {
     ];
 
     callback(err, portfolio);
-  }.bind(this));
+  });
 }
 
 Trader.prototype.getTicker = function(callback) {
   var args = _.toArray(arguments);
   // the function that will handle the API callback
-  var process = function(err, data, body) {
+  var process = (err, data, body) => {
     if (err)
         return this.retry(this.getTicker(args));
 
@@ -98,7 +98,7 @@ Trader.prototype.getTicker = function(callback) {
     // data, the callback is still the same since
     // we are inside the same javascript scope.
     callback(err, {bid: +data.bid, ask: +data.ask})
-  }.bind(this);
+  };
   this.bitfinex.ticker(this.pair, process);
 }
 
@@ -120,7 +120,7 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
     this.name.toLowerCase(),
     type,
     'exchange limit',
-    function (err, data, body) {
+    (err, data, body) => {
       if (err) {
         log.error('unable to ' + type, err, body);
         return this.retry(this.submit_order, args);
@@ -152,7 +152,7 @@ Trader.prototype.checkOrder = function(order_id, callback) {
 
 Trader.prototype.getOrder = function(order, callback) {
   var args = _.toArray(arguments);
-  var get = function(err, data) {
+  var get = (err, data) => {
     if(err || !data)
       return this.retry(this.getOrder, arguments);
 
@@ -161,7 +161,7 @@ Trader.prototype.getOrder = function(order, callback) {
     var date = moment.unix(data.timestamp);
 
     callback(undefined, {price, amount, date});
-  }.bind(this);
+  };
 
   this.bitfinex.order_status(order, get);
 }
@@ -169,7 +169,7 @@ Trader.prototype.getOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
   var args = _.toArray(arguments);
-  this.bitfinex.cancel_order(order_id, function (err, data, body) {
+  this.bitfinex.cancel_order(order_id, (err, data, body) => {
       if (err || !data) {
         // bitfinex way of telling it was already cancelled..
         if(err.message === 'Order could not be cancelled.')
@@ -180,7 +180,7 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
       }
 
       return callback();
-  }.bind(this));
+  });
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -190,7 +190,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   if(since)
     path += '?limit_trades=2000';
 
-  this.bitfinex.trades(path, function(err, data) {
+  this.bitfinex.trades(path, (err, data) => {
     if (err)
       return this.retry(this.getTrades, args);
 
@@ -204,7 +204,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     });
 
     callback(null, descending ? trades : trades.reverse());
-  }.bind(this));
+  });
 }
 
 Trader.getCapabilities = function () {
