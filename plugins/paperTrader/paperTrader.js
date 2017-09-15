@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const moment = require('moment');
 
 const util = require('../../core/util');
 const ENV = util.gekkoEnv();
