@@ -71,8 +71,6 @@ export default {
         { performanceAnalyzer: this.performanceAnalyzer }
       );
 
-      console.log(config);
-
       config.valid = this.validConfig(config);
 
       return config;
