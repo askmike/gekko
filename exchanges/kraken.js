@@ -67,8 +67,9 @@ var Trader = function(config) {
 
   // We need to prefix the asset and currency
   // with either Z or X on all markets.
-  // EXCEPT for BCH markets..
-  if(this.asset === 'BCH')
+  // EXCEPT for certain markets
+  var assetsNoPrefix = ['BCH', 'DASH', 'EOS', 'GNO']
+  if(assetsNoPrefix.indexOf(this.asset) >= 0)
     this.pair = this.asset + this.currency;
   else
     this.pair = addPrefix(this.asset) + addPrefix(this.currency);
@@ -111,13 +112,17 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args);
     }
 
+    var startTs = this.since;
     var parsedTrades = [];
     _.each(trades.result[this.pair], function(trade) {
-      parsedTrades.push({
-        date: parseInt(Math.round(trade[2]), 10),
-        price: parseFloat(trade[0]),
-        amount: parseFloat(trade[1])
-      });
+      // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
+      if (_.isNull(startTs) || startTs < moment.unix((trade[2]).valueOf())) {
+        parsedTrades.push({
+          date: parseInt(Math.round(trade[2]), 10),
+          price: parseFloat(trade[0]),
+          amount: parseFloat(trade[1])
+        });
+      }
     }, this);
 
     if(descending)
@@ -129,12 +134,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var reqData = {
     pair: this.pair
   };
-  // This appears to not work correctly
-  // skipping for now so we have the same
-  // behaviour cross exchange.
-  //
-  // if(!_.isNull(this.since))
-  //   reqData.since = this.since;
+
+  if(!_.isNull(this.since))
+    reqData.since = this.since; // Validate the TS is in MS or this won't work properly
+
   this.kraken.api('Trades', reqData, _.bind(process, this));
 };
 
