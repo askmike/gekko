@@ -12,7 +12,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [GDAX](https://gdax.com/)      | V | V | V | |
 | [BTCC](https://btcc.com/)      | V | V | V | (=BTCChina) |
 | [Bitstamp](https://bitstamp.com/)      | V | V | X | |
-| [Kraken](https://kraken.com/)      | V | V | X | |
+| [Kraken](https://kraken.com/)      | V | V | V | |
 | [Bitfinex](https://bitfinex.com/)      | V | V | X | |
 | [Bittrex](https://bittrex.com/)      | V | V | X | |
 | [BTC-e](https://btc-e.com/)      | V | V | X | |
