@@ -106,18 +106,21 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
+  var startTs = !_.isNull(since) ? since.valueOf() : null;
+
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
       log.error('error getting trades', err);
       return this.retry(this.getTrades, args);
     }
 
-    var startTs = this.since;
+    
     var parsedTrades = [];
     _.each(trades.result[this.pair], function(trade) {
       // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
-      if (_.isNull(startTs) || startTs < moment.unix((trade[2]).valueOf())) {
+      if (_.isNull(startTs) || startTs < moment.unix(trade[2]).valueOf()) {
         parsedTrades.push({
+          tid: moment.unix(trade[2]).valueOf() * 1000000,
           date: parseInt(Math.round(trade[2]), 10),
           price: parseFloat(trade[0]),
           amount: parseFloat(trade[1])
@@ -135,8 +138,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     pair: this.pair
   };
 
-  if(!_.isNull(this.since))
-    reqData.since = this.since; // Validate the TS is in MS or this won't work properly
+  if(!_.isNull(since)) {
+    // Kraken wants a tid, which is found to be timestamp_ms * 1000000 in practice. No clear documentation on this though
+    reqData.since = startTs * 1000000;
+  }
 
   this.kraken.api('Trades', reqData, _.bind(process, this));
 };
@@ -450,7 +455,8 @@ Trader.getCapabilities = function () {
 
     ],
     requires: ['key', 'secret'],
-    providesHistory: false,
+    providesHistory: 'date',
+    providesFullHistory: false,
     tid: 'date',
     tradable: true
   };
