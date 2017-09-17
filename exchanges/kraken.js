@@ -33,6 +33,13 @@ var fiat_currencies = [
 
 ];
 
+var asset_without_prefix = [
+  'BCH',
+  'DASH',
+  'EOS',
+  'GNO'
+]
+
 // Method to check if asset/currency is a crypto currency
 var isCrypto = function(value) {
   return _.contains(crypto_currencies, value);
@@ -69,8 +76,7 @@ var Trader = function(config) {
   // We need to prefix the asset and currency
   // with either Z or X on all markets.
   // EXCEPT for certain markets
-  var assetsNoPrefix = ['BCH', 'DASH', 'EOS', 'GNO']
-  if(assetsNoPrefix.indexOf(this.asset) >= 0)
+  if(asset_without_prefix.indexOf(this.asset) >= 0)
     this.pair = this.asset + this.currency;
   else
     this.pair = addPrefix(this.asset) + addPrefix(this.currency);
@@ -162,8 +168,16 @@ Trader.prototype.getPortfolio = function(callback) {
       return this.retry(this.getPortfolio, args);
     }
 
-    var assetAmount = parseFloat( data.result[addPrefix(this.asset)] );
-    var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
+    var asset = this.asset;
+    var currency = this.currency;
+
+    if(assets_without_prefix.indexOf(this.asset) < 0) {
+      asset = addPrefix(this.asset);
+      currency = addPrefix(this.currency);
+    }
+
+    var assetAmount = parseFloat( data.result[asset] );
+    var currencyAmount = parseFloat( data.result[currency] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       log.error(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
