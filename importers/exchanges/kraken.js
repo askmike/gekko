@@ -33,7 +33,6 @@ var fetch = () => {
 }
 
 var handleFetch = (unk, trades) => {
-    // Validate: We want earliest to latest results here
     var last = moment.unix(_.last(trades).date);
     lastId = _.last(trades).tid
 
