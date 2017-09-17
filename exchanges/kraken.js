@@ -20,7 +20,8 @@ var crypto_currencies = [
   "XLM",
   "XMR",
   "XRP",
-  "ZEC"
+  "ZEC",
+  "BCH"
 ];
 
 var fiat_currencies = [
