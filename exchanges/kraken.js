@@ -21,7 +21,7 @@ var crypto_currencies = [
   "XMR",
   "XRP",
   "ZEC",
-  "BCH"
+  "BCH",
 ];
 
 var fiat_currencies = [
@@ -30,14 +30,13 @@ var fiat_currencies = [
   "USD",
   "JPY",
   "CAD",
-
 ];
 
 var asset_without_prefix = [
   'BCH',
   'DASH',
   'EOS',
-  'GNO'
+  'GNO',
 ]
 
 // Method to check if asset/currency is a crypto currency
