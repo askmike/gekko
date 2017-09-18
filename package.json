@@ -18,7 +18,7 @@
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
     "bitexthai": "^0.1.0",
-    "bitfinex-api-node": "0.2.9",
+    "bitfinex-api-node": "^1.2.0",
     "bitstamp": "^1.0.3",
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",

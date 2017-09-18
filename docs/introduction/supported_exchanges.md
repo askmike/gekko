@@ -13,7 +13,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [BTCC](https://btcc.com/)      | V | V | V | (=BTCChina) |
 | [Bitstamp](https://bitstamp.com/)      | V | V | X | |
 | [Kraken](https://kraken.com/)      | V | V | V | |
-| [Bitfinex](https://bitfinex.com/)      | V | V | X | |
+| [Bitfinex](https://bitfinex.com/)      | V | V | V | |
 | [Bittrex](https://bittrex.com/)      | V | V | X | |
 | [wex.nz](https://wex.nz/)      | V | V | X | |
 | [Okcoin.cn](https://www.okcoin.cn/)      | V | V | X | (China, see [#352](https://github.com/askmike/gekko/pull/352)) |
