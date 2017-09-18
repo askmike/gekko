@@ -112,7 +112,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var startTs = !_.isNull(since) ? since.valueOf() : null;
+  var startTs = !_.isNull(since) ? moment(since).valueOf() : null;
 
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
