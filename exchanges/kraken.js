@@ -32,7 +32,7 @@ var fiat_currencies = [
   "CAD",
 ];
 
-var asset_without_prefix = [
+var assets_without_prefix = [
   'BCH',
   'DASH',
   'EOS',
@@ -50,7 +50,6 @@ var isFiat = function(value) {
 };
 
 var addPrefix = function(value) {
-
   var fiatPrefix = "Z";
   var cryptoPrefix = "X";
 
@@ -60,6 +59,14 @@ var addPrefix = function(value) {
     return cryptoPrefix + value;
   else
     return value;
+}
+
+// Some currencies in Kraken don't use the prefix, not clearly documented
+var getAssetPair = function(asset, currency) {
+  if (_.contains(assets_without_prefix, asset))
+    return asset + currency;
+  else
+    return addPrefix(asset) + addPrefix(currency);
 }
 
 var Trader = function(config) {
@@ -72,13 +79,7 @@ var Trader = function(config) {
     this.asset = config.asset.toUpperCase();
   }
 
-  // We need to prefix the asset and currency
-  // with either Z or X on all markets.
-  // EXCEPT for certain markets
-  if(asset_without_prefix.indexOf(this.asset) >= 0)
-    this.pair = this.asset + this.currency;
-  else
-    this.pair = addPrefix(this.asset) + addPrefix(this.currency);
+  this.pair = getAssetPair(this.asset, this.currency);
   this.name = 'kraken';
   this.since = null;
 
@@ -167,7 +168,10 @@ Trader.prototype.getPortfolio = function(callback) {
       return this.retry(this.getPortfolio, args);
     }
 
-    var assetAmount = parseFloat( data.result[addPrefix(this.asset)] );
+    // When using the prefix-less assets, you remove the prefix from the assset but leave
+    // it on the curreny in this case. An undocumented Kraken quirk.
+    var assetId = _.contains(assets_without_prefix, this.asset) ? this.asset : addPrefix(this.asset);
+    var assetAmount = parseFloat( data.result[addPrefix(assetId)] );
     var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
@@ -437,28 +441,11 @@ Trader.getCapabilities = function () {
       //Tradeable against XBT
       { pair: ['BCH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
       { pair: ['LTC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['XDG', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['XLM', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['XRP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'XBT'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
       { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
-      { pair: ['DASH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['EOS', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 7 },
-      { pair: ['ETC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['ETH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['GNO', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['ICN', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 7 },
-      { pair: ['MLN', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['REP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['XDG', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['XLM', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
-      { pair: ['XMR', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['XRP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
-      { pair: ['ZEC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
     ],
     requires: ['key', 'secret'],
     providesHistory: 'date',
