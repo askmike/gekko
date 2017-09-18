@@ -167,16 +167,8 @@ Trader.prototype.getPortfolio = function(callback) {
       return this.retry(this.getPortfolio, args);
     }
 
-    var asset = this.asset;
-    var currency = this.currency;
-
-    if(assets_without_prefix.indexOf(this.asset) < 0) {
-      asset = addPrefix(this.asset);
-      currency = addPrefix(this.currency);
-    }
-
-    var assetAmount = parseFloat( data.result[asset] );
-    var currencyAmount = parseFloat( data.result[currency] );
+    var assetAmount = parseFloat( data.result[addPrefix(this.asset)] );
+    var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       log.error(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
