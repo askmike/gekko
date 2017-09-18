@@ -356,18 +356,11 @@ Trader.getCapabilities = function () {
       { pair: ['GBP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'ETH'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
       { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['EOS', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['ETC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['GNO', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 4 },
-      { pair: ['ICN', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['MLN', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['REP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against LTC
       { pair: ['XBT', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
       { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
       { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-
 
       //Tradeable against BCH
       { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
@@ -411,7 +404,6 @@ Trader.getCapabilities = function () {
       { pair: ['XBT', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
       { pair: ['ETH', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
-
       //Tradeable against XDG
       { pair: ['XBT', 'XDG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
 
@@ -424,7 +416,6 @@ Trader.getCapabilities = function () {
       { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
       { pair: ['EUR', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
       { pair: ['XBT', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-
 
       //Tradeable against XRP
       { pair: ['USD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
@@ -440,7 +431,6 @@ Trader.getCapabilities = function () {
 
       //Tradeable against XBT
       { pair: ['BCH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['LTC', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
       { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
