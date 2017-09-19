@@ -212,7 +212,7 @@ Trader.getCapabilities = function () {
     name: 'Bitfinex',
     slug: 'bitfinex',
     currencies: ['USD', 'BTC', 'ETH'],
-    assets: ['BTC', 'LTC', 'ETH', 'SAN', 'IOT', 'BCH', 'OMG', 'XMR', 'DSH', 'ZEC', 'EOS', 'ETC', 'XRP'],
+    assets: ['BTC', 'LTC', 'ETH', 'SAN', 'IOT', 'BCH', 'OMG', 'XMR', 'DSH', 'ZEC', 'EOS', 'ETC', 'XRP', 'NEO'],
     markets: [
       
         //Tradeable Pairs to USD
@@ -229,7 +229,8 @@ Trader.getCapabilities = function () {
         { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['USD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-
+        { pair: ['USD', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      
         //Tradeable Pairs to BTC
         { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -243,14 +244,16 @@ Trader.getCapabilities = function () {
         { pair: ['BTC', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-
+        { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      
         //Tradeable Pairs to ETH
         { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'IOT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-
+        { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
