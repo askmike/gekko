@@ -17,11 +17,7 @@ var Trader = function(config) {
   this.asset = config.asset;
   this.currency = config.currency;
   this.pair = this.asset + this.currency;
-
-  // The NPM module isn't complete for the v2 API but it is needed to get historical trade data
-  // mixing won't cause a problem, we should fully convert once ready
   this.bitfinex = new Bitfinex(this.key, this.secret, { version: 1 }).rest;
-  this.bitfinex2 = new Bitfinex(this.key, this.secret, { version: 2, transform: true }).rest;
 }
 
 // if the exchange errors we try the same call again after
@@ -190,29 +186,20 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
 
-  var path = 'trades/t' + this.pair + '/hist';
-  if (since) {
-    path += '?limit=1000';
-    path += '&start=' + moment(since).valueOf();
+  var path = this.pair; 
+  if(since) 
+    path += '?limit_trades=2000'; 
 
-    // The Bitfinex API will ignore the "start" option if you do not also supply and "end"
-    var end = moment(since).add(1, 'd');
-    if (end > moment())
-      end = moment();
-
-    path += '&end=' + end.valueOf();
-  }
-
-  this.bitfinex2.makePublicRequest(path, (err, data) => {
+  this.bitfinex.trades(path, (err, data) => {  
     if (err)
       return this.retry(this.getTrades, args);
 
     var trades = _.map(data, function(trade) {
       return {
-        tid: trade.ID,
-        date: moment(trade.MTS).format('X'),
-        price: +trade.PRICE,
-        amount: +trade.AMOUNT
+        tid: trade.tid, 
+        date:  trade.timestamp, 
+        price: +trade.price, 
+        amount: +trade.amount
       }
     });
 
@@ -273,7 +260,6 @@ Trader.getCapabilities = function () {
     ],
     requires: ['key', 'secret'],
     tid: 'tid',
-    providesHistory: 'date',
     providesFullHistory: true,
     tradable: true
   };

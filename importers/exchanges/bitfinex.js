@@ -10,6 +10,34 @@ var dirs = util.dirs();
 
 var Fetcher = require(dirs.exchanges + 'bitfinex');
 
+Fetcher.prototype.getTrades = function(upto, callback, descending) {
+    var args = _.toArray(arguments);
+  
+    var path = 'trades/t' + this.pair + '/hist';
+    if (upto) {
+        path += '?limit=1000';
+        path += '&start=' + moment(upto).subtract(1, 'd').valueOf();
+        path += '&end=' + moment(upto).valueOf();
+    }
+  
+    log.debug('Querying trades with: ' + path);
+    this.bitfinex.makePublicRequest(path, (err, data) => {
+        if (err)
+            return this.retry(this.getTrades, args);
+  
+        var trades = _.map(data, function(trade) {
+            return {
+                tid: trade.ID,
+                date: moment(trade.MTS).format('X'),
+                price: +trade.PRICE,
+                amount: +trade.AMOUNT
+            }
+        });
+    
+        callback(null, descending ? trades : trades.reverse());
+    });
+}
+
 util.makeEventEmitter(Fetcher);
 
 var end = false;
@@ -21,6 +49,7 @@ var lastId = false;
 var prevLastId = false;
 
 var fetcher = new Fetcher(config.watch);
+fetcher.bitfinex = new Bitfinex(null, null, { version: 2, transform: true }).rest;
 
 var fetch = () => {
     fetcher.import = true;
@@ -33,37 +62,32 @@ var fetch = () => {
     }
     else {
         lastTimestamp = from.valueOf();
-        fetcher.getTrades(from, handleFetch);   
+        fetcher.getTrades(end, handleFetch);   
     }
 }
 
 var handleFetch = (unk, trades) => {
     trades = _.filter(
         trades,
-        t => t.tid > lastId
+        t => !lastId || (t.tid < lastId)
     );
 
     if (trades.length) {
-        var last = moment.unix(_.last(trades).date);
+        var last = moment.unix(_.first(trades).date);
         lastTimestamp = last.valueOf();
-        lastId = _.last(trades).tid; 
-
-        if(last < from) {
-            log.debug('Skipping data, they are before from date', last.format());
-            return fetch();
-        }
+        lastId = _.first(trades).tid; 
     }
     else {
-        lastTimestamp = moment(lastTimestamp).add(1, 'd').valueOf();
+        lastTimestamp = moment(lastTimestamp).subtract(1, 'd').valueOf();
     }
 
-    if  (moment(lastTimestamp) > end) {
+    if  (moment(lastTimestamp) < from) {
         fetcher.emit('done');
 
-        var endUnix = end.unix();
+        var fromUnix = from.unix();
         trades = _.filter(
             trades,
-            t => t.date <= endUnix
+            t => t.date >= fromUnix
         );
     }
 
