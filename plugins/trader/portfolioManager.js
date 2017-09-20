@@ -158,24 +158,17 @@ Manager.prototype.trade = function(what, retry) {
     if(what === 'BUY') {
 
       amount = this.getBalance(this.currency) / this.ticker.ask;
-
-      price = this.ticker.bid;
-      price *= 1e8;
-      price = Math.floor(price);
-      price /= 1e8;
-
-      this.buy(amount, price);
-
+      if(amount > 0){
+          price = this.ticker.bid;
+          this.buy(amount, price);
+      }
     } else if(what === 'SELL') {
 
-      price *= 1e8;
-      price = Math.ceil(price);
-      price /= 1e8;
-
       amount = this.getBalance(this.asset) - this.keepAsset;
-      if(amount < 0) amount = 0;
-      price = this.ticker.ask;
-      this.sell(amount, price);
+      if(amount > 0){
+          price = this.ticker.ask;
+          this.sell(amount, price);
+      }
     }
   };
   async.series([
