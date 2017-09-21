@@ -46,7 +46,11 @@ var from = false;
 
 var lastTimestamp = false;
 var lastId = false;
-var prevLastId = false;
+
+var batch = [];
+var batch_start = false;
+var batch_end = false;
+var batch_last = false;
 
 var fetcher = new Fetcher(config.watch);
 fetcher.bitfinex = new Bitfinex(null, null, { version: 2, transform: true }).rest;
@@ -58,11 +62,13 @@ var fetch = () => {
         // We need to slow this down to prevent hitting the rate limits
         setTimeout(() => {
             fetcher.getTrades(lastTimestamp, handleFetch);
-        }, 2000);
+        }, 2500);
     }
     else {
         lastTimestamp = from.valueOf();
-        fetcher.getTrades(end, handleFetch);   
+        batch_start = moment(from);
+        batch_end = moment(from).add(2, 'h');
+        fetcher.getTrades(batch_end, handleFetch);   
     }
 }
 
@@ -73,6 +79,7 @@ var handleFetch = (unk, trades) => {
     );
 
     if (trades.length) {
+        batch = trades.concat(batch);
         var last = moment.unix(_.first(trades).date);
         lastTimestamp = last.valueOf();
         lastId = _.first(trades).tid; 
@@ -81,18 +88,31 @@ var handleFetch = (unk, trades) => {
         lastTimestamp = moment(lastTimestamp).subtract(1, 'd').valueOf();
     }
 
-    if  (moment(lastTimestamp) < from) {
-        fetcher.emit('done');
-
-        var fromUnix = from.unix();
-        trades = _.filter(
-            trades,
-            t => t.date >= fromUnix
-        );
+    // if we're not done the batch we need to refetch
+    if (moment(lastTimestamp) >= batch_start) {
+        return fetch();
     }
 
-    prevLastId = lastId
-    fetcher.emit('trades', trades);
+    var lastBatch = batch;
+
+    // in this case we've finished the last batch and are complete
+    if (batch_end == end) {
+        fetcher.emit('done');
+    }
+    // the batch if complete, lets advance to the next set
+    else {
+        lastId = false;
+        batch = [];
+        batch_start = moment(batch_end);
+        batch_end = moment(batch_end).add(2, 'h');
+    
+        if (batch_end > end)
+            batch_end = moment(end);
+
+        lastTimestamp = batch_end.valueOf();
+    }
+    
+    fetcher.emit('trades', lastBatch);
 }
 
 module.exports = function (daterange) {
