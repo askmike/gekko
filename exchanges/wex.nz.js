@@ -241,9 +241,10 @@ Trader.getCapabilities = function () {
   return {
     name: 'wex.nz',
     slug: 'wex.nz',
-    currencies: ['USD', 'RUR', 'EUR', 'BTC'],
+    currencies: ['USD', 'RUR', 'EUR', 'BTC', 'LTC', 'ETH', 'NMC', 'NMC', 'NVC', 'PPC', 'DSH', 'BCH'],
     assets: [
-      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH'
+      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH',
+      'USDET', 'RURET', 'EURET', 'BTCET', 'LTCET', 'ETHET', 'NMCET', 'NVCET', 'PPCET', 'DSHET', 'BCHET' // Token
     ],
     markets: [
       { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
