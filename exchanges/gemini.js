@@ -9,7 +9,6 @@ var Trader = function(config) {
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
-    this.sandbox = false;
   }
   this.name = 'Gemini';
   this.balance;
