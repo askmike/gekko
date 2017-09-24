@@ -96,7 +96,7 @@ var handleFetch = (unk, trades) => {
     var lastBatch = batch;
 
     // in this case we've finished the last batch and are complete
-    if (batch_end.utc().seconds() === end.utc().seconds()) {
+    if (batch_end.isSame(end)) {
         fetcher.emit('done');
     }
     // the batch if complete, lets advance to the next set
