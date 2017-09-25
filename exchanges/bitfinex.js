@@ -246,7 +246,7 @@ Trader.getCapabilities = function () {
         { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'ETP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['BTC', 'ETP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       
         //Tradeable Pairs to ETH
         { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -255,7 +255,7 @@ Trader.getCapabilities = function () {
         { pair: ['ETH', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['USD', 'ETP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'ETP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       
     ],
     requires: ['key', 'secret'],
