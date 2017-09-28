@@ -22,17 +22,21 @@ Fetcher.prototype.getTrades = function(upto, callback, descending) {
   
     log.debug('Querying trades with: ' + path);
     this.bitfinex.makePublicRequest(path, (err, data) => {
-        if (err)
+        if (err) {
             return this.retry(this.getTrades, args);
-  
-        var trades = _.map(data, function(trade) {
-            return {
-                tid: trade.ID,
-                date: moment(trade.MTS).format('X'),
-                price: +trade.PRICE,
-                amount: +trade.AMOUNT
-            }
-        });
+        }
+
+        var trades = [];
+        if (_.isArray(data)) {
+            trades = _.map(data, function(trade) {
+                return {
+                    tid: trade.ID,
+                    date: moment(trade.MTS).format('X'),
+                    price: +trade.PRICE,
+                    amount: +trade.AMOUNT
+                }
+            });
+        }
     
         callback(null, descending ? trades : trades.reverse());
     });
