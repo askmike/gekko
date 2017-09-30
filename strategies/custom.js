@@ -59,4 +59,9 @@ strat.check = function() {
   }
 }
 
+// This function is called at the end of a backtest
+strat.end = function() {
+  log.debug('better luck next time!')
+}
+
 module.exports = strat;
