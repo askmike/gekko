@@ -66,7 +66,7 @@ var fetch = () => {
         // We need to slow this down to prevent hitting the rate limits
         setTimeout(() => {
             fetcher.getTrades(lastTimestamp, handleFetch);
-        }, 2500);
+        }, 3500);
     }
     else {
         lastTimestamp = from.valueOf();
