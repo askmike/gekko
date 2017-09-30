@@ -35,6 +35,15 @@ A strategy is a combination of functions that get market data in the form of can
       // your code!
     }
 
+    // Optional for executing code
+    // after completion of a backtest.
+    // This block will not execute in
+    // live use as a live gekko is
+    // never ending.
+    strat.end = function() {
+      // your code!
+    }
+
     module.exports = strat;
 
 In the boilerplate we define four functions you have to write yourself. The functions are executed like so:
