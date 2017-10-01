@@ -35,7 +35,7 @@ method.init = function() {
 
 // what happens on every new candle?
 method.update = function(candle) {
-	this.rsi = this.indicators.rsi.rsi;
+	this.rsi = this.indicators.rsi.result;
 
 	this.RSIhistory.push(this.rsi);
 
