@@ -31,7 +31,7 @@ describe('indicators/RSI', function() {
     var rsi = new RSI({ interval: 2 });
     _.each(prices, function(p, i) {
       rsi.update({ close: p });
-      expect(rsi.rsi).to.equal(verified_rsi2results[i]);
+      expect(rsi.result).to.equal(verified_rsi2results[i]);
     });
   });
 
@@ -39,7 +39,7 @@ describe('indicators/RSI', function() {
     var rsi = new RSI({ interval: 12 });
     _.each(prices, function(p, i) {
       rsi.update({ close: p });
-      expect(rsi.rsi).to.equal(verified_rsi12results[i]);
+      expect(rsi.result).to.equal(verified_rsi12results[i]);
     });
   });
 
@@ -47,7 +47,7 @@ describe('indicators/RSI', function() {
     var rsi = new RSI({ interval: 26 });
     _.each(prices, function(p, i) {
       rsi.update({ close: p });
-      expect(rsi.rsi).to.equal(verified_rsi26results[i]);
+      expect(rsi.result).to.equal(verified_rsi26results[i]);
     });
   });
 });

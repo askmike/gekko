@@ -18,13 +18,13 @@ To configure a plugin, open up your `config.js` file with a text editor and conf
 
 ## Trading Advisor
 
-If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is unrelated to automatic trading which is a plugin that creates order based on this advice. (So if you want automated trading you need both this advice as well as the auto trader.)
+If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is a different plugin than the  "trader" which is a responsible for actually creating orders based on this advice. (So if you want automated trading you need both this advice as well as the auto trader).
 
-Documentation about trading methods in Gekko can be found [here](./Trading_methods.md).
+Documentation about strategies in Gekko can be found [here](../strategies/example_strategies.md).
 
 ### Trader
 
-This plugin automatically creates orders based on the advice on the market it is watching. This turns Gekko into an automated trading bot.
+This plugin automatically creates orders based on the advice from the "Trading Advisor" from the market Gekko is watching. This turns Gekko into an automated trading bot.
 
 Before Gekko can automatically trade you need to create API keys so that Gekko has the rights to create orders on your behalf, the rights Gekko needs are (naming differs per exchange): get info, get balance/portfolio, get open orders, get fee, buy, sell and cancel order. For all exchanges you need the API key and the API secret, for both Bitstamp and CEX.io you also need your username (which is a number at Bitstamp).
 

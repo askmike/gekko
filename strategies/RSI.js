@@ -38,13 +38,13 @@ method.log = function(candle) {
   var rsi = this.indicators.rsi;
 
   log.debug('calculated RSI properties for candle:');
-  log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
+  log.debug('\t', 'rsi:', rsi.result.toFixed(digits));
   log.debug('\t', 'price:', candle.close.toFixed(digits));
 }
 
 method.check = function() {
   var rsi = this.indicators.rsi;
-  var rsiVal = rsi.rsi;
+  var rsiVal = rsi.result;
 
   if(rsiVal > this.settings.thresholds.high) {
 

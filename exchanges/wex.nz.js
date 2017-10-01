@@ -1,4 +1,4 @@
-var BTCE = require('btc-e');
+var WEX = require('node-wex');
 
 var moment = require('moment');
 var util = require('../core/util');
@@ -11,16 +11,16 @@ var Trader = function(config) {
   this.asset = config.asset;
   this.currency = config.currency;
   this.pair = [config.asset, config.currency].join('_').toLowerCase();
-  this.name = 'BTC-E';
+  this.name = 'wex.nz';
 
   _.bindAll(this);
 
-  this.btce = new BTCE(this.key, this.secret);
-  _.bindAll(this.btce, ['trade', 'trades', 'getInfo', 'ticker', 'orderList']);
+  this.wex = new WEX(this.key, this.secret);
+  _.bindAll(this.wex, ['trade', 'trades', 'getInfo', 'ticker', 'orderList']);
 
   // see @link https://github.com/askmike/gekko/issues/302
-  this.btceHistorocial = new BTCE(false, false, {public_url: 'https://btc-e.com/api/3/'});
-  _.bindAll(this.btceHistorocial, 'trades');
+  this.wexHistorocial = new WEX(false, false, {public_url: 'https://wex.nz/api/3/'});
+  _.bindAll(this.wexHistorocial, 'trades');
 }
 
 Trader.prototype.round = function(amount) {
@@ -45,7 +45,7 @@ Trader.prototype.buy = function(amount, price, callback) {
 
   // workaround for nonce error
   setTimeout(function() {
-    this.btce.trade(this.pair, 'buy', price, amount, _.bind(set, this));
+    this.wex.trade(this.pair, 'buy', price, amount, _.bind(set, this));
   }.bind(this), 1000);
 }
 
@@ -61,7 +61,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 
   // workaround for nonce error
   setTimeout(function() {
-    this.btce.trade(this.pair, 'sell', price, amount, _.bind(set, this));
+    this.wex.trade(this.pair, 'sell', price, amount, _.bind(set, this));
   }.bind(this), 1000);
 }
 
@@ -102,12 +102,12 @@ Trader.prototype.getPortfolio = function(callback) {
     var currencyAmount = parseFloat( data.return.funds[this.currency.toLowerCase()] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
-      log.error(`BTC-e did not return portfolio for ${this.asset}, assuming 0.`);
+      log.error(`wex.nz did not return portfolio for ${this.asset}, assuming 0.`);
       assetAmount = 0;
     }
 
     if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
-      log.error(`BTC-e did not return portfolio for ${this.currency}, assuming 0.`);
+      log.error(`wex.nz did not return portfolio for ${this.currency}, assuming 0.`);
       currencyAmount = 0;
     }
 
@@ -119,16 +119,16 @@ Trader.prototype.getPortfolio = function(callback) {
     callback(err, portfolio);
   }.bind(this);
 
-  this.btce.getInfo(calculate);
+  this.wex.getInfo(calculate);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  // BTCE-e doesn't state asks and bids in its
+  // wex.nz doesn't state asks and bids in its
   // ticker
   var set = function(err, data) {
 
     if(err)
-      return this.retry(this.btce.ticker, [this.pair, set]);
+      return this.retry(this.wex.ticker, [this.pair, set]);
 
     var ticker = {
       ask: data.ticker.buy,
@@ -138,18 +138,18 @@ Trader.prototype.getTicker = function(callback) {
     callback(err, ticker);
   }.bind(this);
 
-  this.btce.ticker(this.pair, set);
+  this.wex.ticker(this.pair, set);
 }
 
 Trader.prototype.getFee = function(callback) {
-  // BTCE-e doesn't have different fees based on orders
+  // wex.nz doesn't have different fees based on orders
   // at this moment it is always 0.2%
   callback(false, 0.002);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, result) {
-    // btce returns an error when you have no open trades
+    // wex returns an error when you have no open trades
     // right now we assume on every error that the order
     // was filled.
     //
@@ -161,7 +161,7 @@ Trader.prototype.checkOrder = function(order, callback) {
       callback(err, !result[order]);
   }.bind(this);
 
-  this.btce.orderList({}, check);
+  this.wex.orderList({}, check);
 }
 
 Trader.prototype.getOrder = function(orderId, callback) {
@@ -181,7 +181,7 @@ Trader.prototype.getOrder = function(orderId, callback) {
     });
 
     if(!order)
-      return log.error('BTC-e did not provide the order');
+      return log.error('wex.nz did not provide the order');
 
     var price = parseFloat(order.rate);
     var amount = parseFloat(order.amount);
@@ -190,12 +190,12 @@ Trader.prototype.getOrder = function(orderId, callback) {
     callback(undefined, {price, amount, date});
   }.bind(this);
 
-  this.btce.tradeHistory({pair: this.pair}, check);
+  this.wex.tradeHistory({pair: this.pair}, check);
 }
 
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  this.btce.cancelOrder(order, (err, result) => {
+  this.wex.cancelOrder(order, (err, result) => {
     callback();
   });
 }
@@ -214,13 +214,13 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   // see @link https://github.com/askmike/gekko/issues/302
   if(since) {
-    this.btceHistorocial.makePublicApiRequest(
+    this.wexHistorocial.makePublicApiRequest(
       'trades',
       this.pair + '?limit=2000',
       this.processAPIv3Trades(process)
     )
   } else
-    this.btce.trades(this.pair, process);
+    this.wex.trades(this.pair, process);
 }
 
 Trader.prototype.processAPIv3Trades = function(cb) {
@@ -239,11 +239,12 @@ Trader.prototype.processAPIv3Trades = function(cb) {
 
 Trader.getCapabilities = function () {
   return {
-    name: 'BTC-e',
-    slug: 'btce',
-    currencies: ['USD', 'RUR', 'EUR', 'BTC'],
+    name: 'wex.nz',
+    slug: 'wex.nz',
+    currencies: ['USD', 'RUR', 'EUR', 'BTC', 'LTC', 'ETH', 'NMC', 'NMC', 'NVC', 'PPC', 'DSH', 'BCH'],
     assets: [
-      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH'
+      'BTC', 'LTC', 'NMC', 'NVC', 'USD', 'EUR', 'PPC', 'DSH', 'ETH',
+      'USDET', 'RURET', 'EURET', 'BTCET', 'LTCET', 'ETHET', 'NMCET', 'NVCET', 'PPCET', 'DSHET', 'BCHET' // Token
     ],
     markets: [
       { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
@@ -259,13 +260,35 @@ Trader.getCapabilities = function () {
       { pair: ['USD', 'NVC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['RUR', 'USD'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['USD', 'EUR'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'EUR'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['BTC', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['USD', 'PPC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['BTC', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['EUR', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['LTC', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['ETH', 'DSH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
       { pair: ['LTC', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['RUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } }
+      { pair: ['RUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      
+      // Token pairs
+      { pair: ['USD', 'USDET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['RUR', 'RURET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['EUR', 'EURET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BTC', 'BTCET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['LTC', 'LTCET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['ETH', 'ETHET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['NMC', 'NMCET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['NVC', 'NVCET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['PPC', 'PPCET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['DSH', 'DSHET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['BCH', 'BCHET'], minimalOrder: { amount: 0.1, unit: 'asset' } },
 
     ],
     requires: ['key', 'secret'],

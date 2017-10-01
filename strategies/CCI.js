@@ -8,7 +8,7 @@ var method = {};
 // prepare everything our method needs
 method.init = function() {
   this.currentTrend;
-  this.requiredHistory = config.tradingAdvisor.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
 
   this.age = 0;
   this.trend = {

@@ -114,6 +114,9 @@ var Base = function(settings) {
   if(!this.update)
     this.update = function() {};
 
+  if(!this.end)
+    this.end = function() {};
+
   // let's run the implemented starting point
   this.init();
 
@@ -325,11 +328,15 @@ Base.prototype.advice = function(newPosition, _candle) {
 // to be sure we only stop after all candles are
 // processed.
 Base.prototype.finish = function(done) {
-  if(!this.asyncTick)
+  if(!this.asyncTick) {
+    this.end();
     return done();
+  }
 
-  if(this.age === this.processedTicks)
+  if(this.age === this.processedTicks) {
+    this.end();
     return done();
+  }
 
   // we are not done, register cb
   // and call after we are..
