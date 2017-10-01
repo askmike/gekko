@@ -8,7 +8,7 @@
 
 // helpers
 var _ = require('lodash');
-var log = require('../core/log.js');
+var log = require('../core/log');
 
 // let's create our own method
 var method = {};
