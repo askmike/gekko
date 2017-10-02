@@ -177,10 +177,14 @@ Stitcher.prototype.checkExchangeTrades = function(since, next) {
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
-  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
-  var exchangeSettings = exchangeChecker.settings(config.watch)
+  var exchangeConfig = config.watch;
+  
+  // include trader config if trading is enabled
+  if (_.isObject(config.trader) && config.trader.enabled) {
+    exchangeConfig = _.extend(config.watch, config.trader);
+  }
 
-  var watcher = new DataProvider(config.watch);
+  var watcher = new DataProvider(exchangeConfig);
 
   watcher.getTrades(since, function(e, d) {
     if(_.isEmpty(d))
