@@ -113,7 +113,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var startTs = !_.isNull(since) ? moment(since).valueOf() : null;
+  var startTs = (since) ? moment(since).valueOf() : null;
 
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
@@ -145,7 +145,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     pair: this.pair
   };
 
-  if(!_.isNull(since)) {
+  if(since) {
     // Kraken wants a tid, which is found to be timestamp_ms * 1000000 in practice. No clear documentation on this though
     reqData.since = startTs * 1000000;
   }
@@ -254,7 +254,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
       err = data.error;
 
     if(err) {
-      log.error('unable to ' + tradeType.toLowerCase(), err);
+      log.error('unable to ' + _.lowerCase(tradeType), err);
       return this.retry(this.addOrder, args);
     }
 
@@ -266,7 +266,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
   this.kraken.api('AddOrder', {
     pair: this.pair,
-    type: tradeType.toLowerCase(),
+    type: _.lowerCase(tradeType),
     ordertype: 'limit',
     price: price,
     volume: amount.toString()
