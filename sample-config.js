@@ -418,7 +418,7 @@ config.mongodb = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Note that these settings are only used in backtesting mode, see here:
-// @link: https://github.com/askmike/gekko/blob/stable/docs/commandline/backtesting.md
+// @link: https://gekko.wizb.it/docs/commandline/backtesting.html
 
 config.backtest = {
   daterange: 'scan',
