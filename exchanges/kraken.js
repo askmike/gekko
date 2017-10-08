@@ -91,7 +91,8 @@ var Trader = function(config) {
 }
 
 Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(5, 'seconds');
+  // 5 -> 10s to avoid more rejection
+  var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
 
   var self = this;
@@ -158,7 +159,7 @@ Trader.prototype.getPortfolio = function(callback) {
   var set = function(err, data) {
 
     if(_.isEmpty(data))
-      err = 'no data';
+      err = 'no data (getPorfolio)';
 
     else if(!_.isEmpty(data.error))
       err = data.error;
@@ -202,7 +203,7 @@ Trader.prototype.getTicker = function(callback) {
   var set = function(err, data) {
 
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (getTicker)';
 
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
@@ -230,7 +231,7 @@ Trader.prototype.roundAmount = function(amount) {
   var market = this.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
 
   if(Number.isInteger(market.precision))
-    precision = 10 * market.precision;
+    precision = Math.pow(10, market.precision);
 
   amount *= precision;
   amount = Math.floor(amount);
@@ -242,6 +243,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var args = _.toArray(arguments);
 
   amount = this.roundAmount(amount);
+  price = this.roundAmount(price); // but the link talks about rounding price... And I had the bug
   log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 
   var set = function(err, data) {
@@ -249,7 +251,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     // console.log('blap', err, data);
 
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (addOrder)';
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
 
@@ -278,7 +280,7 @@ Trader.prototype.getOrder = function(order, callback) {
 
   var get = function(err, data) {
     if(!err && _.isEmpty(data) && _.isEmpty(data.result))
-      err = 'no data';
+      err = 'no data (getOrder)';
 
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
@@ -307,7 +309,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
     if(_.isEmpty(data))
-      err = 'no data';
+      err = 'no data (checkOrder)';
 
     if(!_.isEmpty(data.error))
       err = data.error;
@@ -327,7 +329,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, data) {
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (cancelOrder)';
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
 
