@@ -3,6 +3,7 @@ var util = require('../../core/util');
 var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
+var tulind = require(dirs.core + 'tulind');
 
 var ENV = util.gekkoEnv();
 var mode = util.gekkoMode();
@@ -74,6 +75,7 @@ var Indicators = {
 
 var allowedIndicators = _.keys(Indicators);
 var allowedTalibIndicators = _.keys(talib);
+var allowedTulipIndicators = _.keys(tulind);
 
 var Base = function(settings) {
   _.bindAll(this);
@@ -89,6 +91,7 @@ var Base = function(settings) {
   this.priceValue = 'close';
   this.indicators = {};
   this.talibIndicators = {};
+  this.tulipIndicators = {};
   this.asyncTick = false;
   this.candlePropsCacheSize = 1000;
   this.deferredTicks = [];
@@ -125,7 +128,7 @@ var Base = function(settings) {
 
   this.setup = true;
 
-  if(_.size(this.talibIndicators))
+  if(_.size(this.talibIndicators) || _.size(this.tulipIndicators))
     this.asyncTick = true;
 
   if(_.size(this.indicators))
@@ -188,7 +191,7 @@ Base.prototype.tick = function(candle) {
   } else {
 
     var next = _.after(
-      _.size(this.talibIndicators),
+      _.size(this.talibIndicators) + _.size(this.tulipIndicators),
       () => this.propogateTick(candle)
     );
 
@@ -210,6 +213,25 @@ Base.prototype.tick = function(candle) {
       indicator => indicator.run(
         basectx.candleProps,
         talibResultHander.bind(indicator)
+      )
+    );
+
+    // handle result from tulip
+    var tulindResultHander = function(err, result) {
+      if(err)
+        util.die('TULIP ERROR:', err);
+
+      // fn is bound to indicator
+      this.result = _.mapValues(result, v => _.last(v));
+      next(candle);
+    }
+
+    // handle result from tulip indicators
+    _.each(
+      this.tulipIndicators,
+      indicator => indicator.run(
+        basectx.candleProps,
+        tulindResultHander.bind(indicator)
       )
     );
   }
@@ -280,6 +302,21 @@ Base.prototype.addTalibIndicator = function(name, type, parameters) {
 
   this.talibIndicators[name] = {
     run: talib[type].create(parameters),
+    result: NaN
+  }
+}
+
+Base.prototype.addTulipIndicator = function(name, type, parameters) {
+  if(!_.contains(allowedTulipIndicators, type))
+    util.die('I do not know the tulip indicator ' + type);
+
+  if(this.setup)
+    util.die('Can only add tulip indicators in the init method!');
+
+  var basectx = this;
+
+  this.tulipIndicators[name] = {
+    run: tulip[type].create(parameters),
     result: NaN
   }
 }
