@@ -316,7 +316,7 @@ Base.prototype.addTulipIndicator = function(name, type, parameters) {
   var basectx = this;
 
   this.tulipIndicators[name] = {
-    run: tulip[type].create(parameters),
+    run: tulind[type].create(parameters),
     result: NaN
   }
 }

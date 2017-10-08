@@ -9,7 +9,7 @@ var execute = function(callback, params) {
     var tulindCallback = function(err, result) {
         if (err) return callback(err);
         var table = {}
-        for (var i = 0; i < param.results.length; ++i) {
+        for (var i = 0; i < params.results.length; ++i) {
             table[params.results[i]] = result[i];
         }
         callback(null, table);
