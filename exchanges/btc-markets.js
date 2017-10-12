@@ -89,7 +89,7 @@ Trader.prototype.getFee = function(callback) {
     callback(false, data.tradingFeeRate);
   }.bind(this);
   this.btcmakets.getTradingFee(this.asset, this.currency, set);
-};
+}
 
 Trader.prototype.buy = function(amount, price, callback) {
 
@@ -143,24 +143,33 @@ Trader.prototype.sell = function(amount, price, callback) {
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
+  var args = _.toArray(arguments);
+
+  if (order == null) {
+    return callback(null, true);
+  }
+
   var check = function(err, data) {
-    if(!err && _.isEmpty(data))
+    if(!err && _.isEmpty(data.orders))
       err = 'no data';
     else if(!err && !_.isEmpty(data.errorMessage))
       err = data.errorMessage;
-    if(err)
+    if(err){
       return log.error('unable to check order: ', order, '(', err ,'), retrying...');
-      var placed = data.orders[0].status === 'placed';
-      callback(err, placed);
-  };
+       this.retry(this.checkOrder, args);
+    }
+    var placed = !_.isEmpty(data.orders)
+    callback(err, !placed);
+  }.bind(this);
+
   this.btcmakets.getOpenOrders(this.asset, this.currency, 10, null, check);
-};
+}
 
 Trader.prototype.getOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var get = function(err, data) {
 
-    if(!err && _.isEmpty(data))
+    if(!err && _.isEmpty(data.orders))
       err = 'no data';
     else if(!err && !_.isEmpty(data.errorMessage))
       err = data.errorMessage;
@@ -171,8 +180,10 @@ Trader.prototype.getOrder = function(order, callback) {
     var price = parseFloat(data.orders[0].price);
     var amount = parseFloat(data.orders[0].volumn);
     var date = moment.unix(data.orders[0].creationDate);
+
     callback(undefined, {price, amount, date});
   }.bind(this);
+
   this.btcmakets.getOrderDetail([order], callback);
 }
 
@@ -191,7 +202,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
     callback();
   };
   this.btcmakets.cancelOrders([order], callback);
-};
+}
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
