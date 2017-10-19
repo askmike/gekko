@@ -53,7 +53,7 @@
             template(v-if='gekko.report') {{ round(gekko.report.profit) }} {{ gekko.watch.currency }}
     .hr
     h2 Start a new live Gekko
-    router-link(to='/live-gekkos/new') start a new live Gekko!
+    router-link.btn--primary(to='/live-gekkos/new') Start a new live Gekko!
 </template>
 
 <script>

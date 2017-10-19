@@ -9,7 +9,7 @@ div.contain
     li(v-for='exchange in apiKeySets') {{ exchange }} (
       a(href='#', v-on:click.prevent='removeApiKey(exchange)') remove
       | )
-  a(href='#', v-if='!addApiToggle', v-on:click.prevent='openAddApi') add an API key
+  a.btn--primary(href='#', v-if='!addApiToggle', v-on:click.prevent='openAddApi') Add an API key
   template(v-if='addApiToggle')
     .hr
     apiConfigBuilder
