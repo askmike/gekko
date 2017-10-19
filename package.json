@@ -22,7 +22,6 @@
     "bitstamp": "^1.0.3",
     "bitx": "^1.5.0",
     "btc-china-fork": "0.0.6",
-    "node-wex": "^1.0.3",
     "btc-markets": "0.0.10",
     "cexio": "0.0.x",
     "co-fs": "^1.2.0",
@@ -55,7 +54,6 @@
     "stats-lite": "^2.0.4",
     "tiny-promisify": "^0.1.1",
     "toml": "^2.3.0",
-    "tulind": "^0.8.7",
     "twitter": "^1.7.1",
     "zaif.jp": "^0.1.4"
   },

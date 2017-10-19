@@ -3,7 +3,6 @@ var util = require('../../core/util');
 var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
-var tulind = require(dirs.core + 'tulind');
 
 var ENV = util.gekkoEnv();
 var mode = util.gekkoMode();
@@ -25,6 +24,24 @@ if(config.tradingAdvisor.talib.enabled) {
     util.die(cannotLoad);
 
   var talib = require(dirs.core + 'talib');
+}
+
+if(config.tradingAdvisor.tulind.enabled) {
+  // verify talib is installed properly
+  var pluginHelper = require(dirs.core + 'pluginUtil');
+  var pluginMock = {
+    slug: 'tradingAdvisor',
+    dependencies: [{
+      module: 'tulind',
+      version: config.tradingAdvisor.tulind.version
+    }]
+  };
+
+  var cannotLoad = pluginHelper.cannotLoad(pluginMock);
+  if(cannotLoad)
+    util.die(cannotLoad);
+
+  var tulind = require(dirs.core + 'tulind');
 }
 
 var indicatorsPath = dirs.methods + 'indicators/';
@@ -307,6 +324,9 @@ Base.prototype.addTalibIndicator = function(name, type, parameters) {
 }
 
 Base.prototype.addTulipIndicator = function(name, type, parameters) {
+  if(!tulind)
+  util.die('Tulip indicators is not enabled');
+
   if(!_.contains(allowedTulipIndicators, type))
     util.die('I do not know the tulip indicator ' + type);
 

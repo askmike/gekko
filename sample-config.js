@@ -39,6 +39,10 @@ config.tradingAdvisor = {
   talib: {
     enabled: false,
     version: '1.0.2'
+  },
+  tulind: {
+    enabled: false,
+    version: '0.8.7'
   }
 }
 
