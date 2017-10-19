@@ -12,7 +12,7 @@
         label {{ cred }}
         input(v-model='credentials[cred]')
   .txt--center
-    a.w100--s.my1.btn--blue(href='#', v-on:click.prevent='upload') Add
+    a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='upload') Add
 </template>
 
 <script>
