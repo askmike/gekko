@@ -78,7 +78,7 @@ export default {
     fmt: mom => mom.utc().format('YYYY-MM-DD HH:mm'),
     openRange: function() {
       if(this.setIndex === -1)
-        return alert('select a range first');
+        return alert('Select a dataset to adjust range');
 
       this.updateCustomRange();
 
