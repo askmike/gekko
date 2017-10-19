@@ -57,6 +57,9 @@ input {
 }
 
 .btn--primary {
+  display: inline-block;
+  margin-right: 12px;
+  margin-bottom: 12px;
   height: 40px;
   padding: 0 18px;
   border-radius: 4px;
