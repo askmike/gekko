@@ -43,40 +43,43 @@ checkClient.connect(function(err){
     util.die(err);
   }
   log.debug("Check database exists: "+dbName);
-  var query = checkClient.query("select count(*) from pg_catalog.pg_database where datname = $1",[dbName]);
-  query.on('row', function(row) {
-    if(row.count == 0){ //database does not exist
-      log.debug("Database "+dbName+" does not exist");
-      if(mode === 'realtime') { //create database if not found
-        log.debug("Creating database "+dbName);
-        checkClient.query("CREATE DATABASE "+dbName,function(err){
+  query = checkClient.query("select count(*) from pg_catalog.pg_database where datname = $1",[dbName], 
+    (err, res) => {
+      if(err) {
+        util.die(err);
+      }
+      if(res.rowCount == 0){ //database does not exist
+        log.debug("Database "+dbName+" does not exist");
+        if(mode === 'realtime') { //create database if not found
+          log.debug("Creating database "+dbName);
+          checkClient.query("CREATE DATABASE "+dbName,function(err){
+            if(err){
+              util.die(err);
+            }else{
+              client.connect(function(err){
+                if(err){
+                  util.die(err);
+                }
+                log.debug("Postgres connected to "+dbName);
+              });
+            }
+          });
+        }else if(mode === 'backtest') {
+          util.die(`History does not exist for exchange ${config.watch.exchange}.`);
+        }else{
+          util.die(`Start gekko first in realtime mode to create tables. You are currently in the '${mode}' mode.`);
+        }
+      }else{ //database exists
+        log.debug("Database exists: "+dbName);
+        client.connect(function(err){
+          checkClient.end();
           if(err){
             util.die(err);
-          }else{
-            client.connect(function(err){
-              if(err){
-                util.die(err);
-              }
-              log.debug("Postgres connected to "+dbName);
-            });
           }
+          log.debug("Postgres connected to "+dbName);
         });
-      }else if(mode === 'backtest') {
-        util.die(`History does not exist for exchange ${config.watch.exchange}.`);
-      }else{
-        util.die(`Start gekko first in realtime mode to create tables. You are currently in the '${mode}' mode.`);
-      }
-    }else{ //database exists
-      log.debug("Database exists: "+dbName);
-      client.connect(function(err){
-        checkClient.end();
-        if(err){
-          util.die(err);
-        }
-        log.debug("Postgres connected to "+dbName);
-      });
-    }
-  });
+      }  
+    });
 });
 
 module.exports = client;
