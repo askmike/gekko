@@ -3,6 +3,8 @@ var config = require('../../core/util.js').getConfig();
 
 var handle = require('./handle');
 var sqliteUtil = require('./util');
+var util = require('../../core/util');
+var log = require('../../core/log');
 
 var Store = function(done, pluginMeta) {
   _.bindAll(this);
@@ -52,7 +54,12 @@ Store.prototype.writeCandles = function() {
   var stmt = this.db.prepare(`
     INSERT OR IGNORE INTO ${sqliteUtil.table('candles')}
     VALUES (?,?,?,?,?,?,?,?,?)
-  `);
+  `, function(err, rows) {
+      if(err) {
+        log.error(err);
+        return util.die('DB error at INSERT: '+ err);
+      }
+    });
 
   _.each(this.cache, candle => {
     stmt.run(
