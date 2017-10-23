@@ -386,6 +386,8 @@ config.sqlite = {
   dataDirectory: 'history',
   version: 0.1,
 
+  journalMode: 'WAL', // setting this to 'DEL' may prevent db locking on windows
+
   dependencies: []
 }
 
@@ -418,7 +420,7 @@ config.mongodb = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Note that these settings are only used in backtesting mode, see here:
-// @link: https://github.com/askmike/gekko/blob/stable/docs/Backtesting.md
+// @link: https://gekko.wizb.it/docs/commandline/backtesting.html
 
 config.backtest = {
   daterange: 'scan',

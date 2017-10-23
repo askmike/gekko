@@ -91,8 +91,9 @@ var Trader = function(config) {
 }
 
 Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(5, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..');
+  // 5 -> 10s to avoid more rejection
+  var wait = +moment.duration(10, 'seconds');
+  log.debug('[kraken.js] (retry) ', this.name, 'returned an error, retrying..');
 
   var self = this;
 
@@ -113,7 +114,7 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var startTs = !_.isNull(since) ? moment(since).valueOf() : null;
+  var startTs = since ? moment(since).valueOf() : null;
 
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
@@ -121,7 +122,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args);
     }
 
-    
+
     var parsedTrades = [];
     _.each(trades.result[this.pair], function(trade) {
       // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
@@ -145,26 +146,29 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     pair: this.pair
   };
 
-  if(!_.isNull(since)) {
+  if(since) {
     // Kraken wants a tid, which is found to be timestamp_ms * 1000000 in practice. No clear documentation on this though
     reqData.since = startTs * 1000000;
   }
 
   this.kraken.api('Trades', reqData, _.bind(process, this));
+
+
 };
 
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
-  var set = function(err, data) {
+  var setBalance = function(err, data) {
+    log.debug('[kraken.js] entering "setBalance" callback after kraken-api call, err:', err, ' data:' , data);
 
     if(_.isEmpty(data))
-      err = 'no data';
+      err = 'no data (getPortfolio)';
 
     else if(!_.isEmpty(data.error))
       err = data.error;
 
     if (err || !data.result) {
-      log.error(err);
+      log.error('[kraken.js] ' , err);
       return this.retry(this.getPortfolio, args);
     }
 
@@ -188,10 +192,11 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.asset, amount: assetAmount },
       { name: this.currency, amount: currencyAmount }
     ];
-    callback(err, portfolio);
+
+    return callback(err, portfolio);
   };
 
-  this.kraken.api('Balance', {}, _.bind(set, this));
+  this.kraken.api('Balance', {}, _.bind(setBalance, this));
 };
 
 Trader.prototype.getFee = function(callback) {
@@ -199,10 +204,10 @@ Trader.prototype.getFee = function(callback) {
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var set = function(err, data) {
+  var setTicker = function(err, data) {
 
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (getTicker)';
 
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
@@ -218,7 +223,7 @@ Trader.prototype.getTicker = function(callback) {
     callback(err, ticker);
   };
 
-  this.kraken.api('Ticker', {pair: this.pair}, _.bind(set, this));
+  this.kraken.api('Ticker', {pair: this.pair}, _.bind(setTicker, this));
 };
 
 Trader.prototype.roundAmount = function(amount) {
@@ -227,10 +232,11 @@ Trader.prototype.roundAmount = function(amount) {
   // Specific precision by pair https://blog.kraken.com/post/1278/announcement-reducing-price-precision-round-2
 
   var precision = 100000000;
-  var market = this.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
+  var parent = this;
+  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
 
   if(Number.isInteger(market.precision))
-    precision = 10 * market.precision;
+    precision = Math.pow(10, market.precision);
 
   amount *= precision;
   amount = Math.floor(amount);
@@ -242,14 +248,16 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var args = _.toArray(arguments);
 
   amount = this.roundAmount(amount);
-  log.debug(tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
+  price = this.roundAmount(price); // but the link talks about rounding price... And I had the bug
 
-  var set = function(err, data) {
+  log.debug('[kraken.js] (addOrder)', tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
+
+  var setOrder = function(err, data) {
 
     // console.log('blap', err, data);
 
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (addOrder)';
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
 
@@ -270,7 +278,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     ordertype: 'limit',
     price: price,
     volume: amount.toString()
-  }, _.bind(set, this));
+  }, _.bind(setOrder, this));
 };
 
 
@@ -278,7 +286,7 @@ Trader.prototype.getOrder = function(order, callback) {
 
   var get = function(err, data) {
     if(!err && _.isEmpty(data) && _.isEmpty(data.result))
-      err = 'no data';
+      err = 'no data (getOrder)';
 
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
@@ -307,7 +315,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
     if(_.isEmpty(data))
-      err = 'no data';
+      err = 'no data (checkOrder)';
 
     if(!_.isEmpty(data.error))
       err = data.error;
@@ -327,7 +335,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, data) {
     if(!err && _.isEmpty(data))
-      err = 'no data';
+      err = 'no data (cancelOrder)';
     else if(!err && !_.isEmpty(data.error))
       err = data.error;
 
