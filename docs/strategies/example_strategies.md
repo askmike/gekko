@@ -15,6 +15,7 @@ Gekko currently comes with the following example strategies:
  - [StochRSI](#StochRSI)
  - [CCI](#CCI)
  - [talib-macd](#talib-macd)
+ - [tulip-macd](#tulip-macd)
 
 ### DEMA
 
@@ -142,6 +143,19 @@ You can configure the following parameters:
 [TODO!]
 
 ### talib-macd
+
+You can configure the following parameters:
+
+    [parameters]
+    optInFastPeriod = 10
+    optInSlowPeriod = 21
+    optInSignalPeriod = 9
+
+    [thresholds]
+    down = -0.025
+    up = 0.025
+
+### tulip-macd
 
 You can configure the following parameters:
 

@@ -41,6 +41,16 @@ First navigate to Gekko:
 Install Gekko's dependencies:
 
     npm install --only=production
+
+### Install Tulip Indicators
+
+If you are using Windows you will need to install python and the VC++ 2015 build tool, the easiest way to do this is through node as an administrator:
+
+    npm install windows-build-tools --global --production
+
+Once your build tools are installed, or for other operating systems
+
+    npm install tulind --only=production
     
 ### Starting Gekko
 
