@@ -1,6 +1,6 @@
 # TA-lib indicators
 
-When writing [your own strategy](./creating_a_trading_method.md) you can use all indicators offered by [the TA-lib library](http://ta-lib.org/function.html). Gekko will pass the correct market data to TA-lib and you only have to provide the `optIn` configurable parameters.
+When writing [your own strategy](./creating_a_strategy.md) you can use all indicators offered by [the TA-lib library](http://ta-lib.org/function.html). Gekko will pass the correct market data to TA-lib and you only have to provide the `optIn` configurable parameters.
 
 ## Example
 
