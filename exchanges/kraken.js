@@ -93,27 +93,30 @@ var Trader = function(config) {
 var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|between Cloudflare and the origin web server)/)
 
 Trader.prototype.retry = function(method, args, error) {
-  if (error && error.message.match(recoverableErrors)) {
-    // 5 -> 10s to avoid more rejection
-    var wait = +moment.duration(10, 'seconds');
-    log.debug('[kraken.js] (retry) ', this.name, 'returned an error, retrying..');
-
-    var self = this;
-
-    // make sure the callback (and any other fn)
-    // is bound to Trader
-    _.each(args, function(arg, i) {
-      if(_.isFunction(arg))
-        args[i] = _.bind(arg, self);
-    });
-
-    // run the failed method again with the same
-    // arguments after wait
-    setTimeout(
-      function() { method.apply(self, args) },
-      wait
-    );
+  if (!error || !error.message.match(recoverableErrors)) {
+    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error');
+    return;
   }
+
+  // 5 -> 10s to avoid more rejection
+  var wait = +moment.duration(10, 'seconds');
+  log.debug('[kraken.js] (retry) ', this.name, 'returned an error, retrying..');
+
+  var self = this;
+
+  // make sure the callback (and any other fn)
+  // is bound to Trader
+  _.each(args, function(arg, i) {
+    if(_.isFunction(arg))
+      args[i] = _.bind(arg, self);
+  });
+
+  // run the failed method again with the same
+  // arguments after wait
+  setTimeout(
+    function() { method.apply(self, args) },
+    wait
+  );
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
