@@ -44,13 +44,13 @@ Logger.prototype.logReport = function(trade, report) {
 }
 
 Logger.prototype.logRoundtripHeading = function() {
-  log.info('(ROUNDTRIP)', 'entry date      \texit date       \texposed duration\tP&L \tprofit');
+  log.info('(ROUNDTRIP)', 'entry date (UTC)  \texit date (UTC)  \texposed duration\tP&L \tprofit');
 }
 
 Logger.prototype.logRoundtrip = function(rt) {
   const display = [
-    rt.entryAt.format('YYYY-MM-DD HH:mm'),
-    rt.exitAt.format('YYYY-MM-DD HH:mm'),
+    rt.entryAt.utc().format('YYYY-MM-DD HH:mm'),
+    rt.exitAt.utc().format('YYYY-MM-DD HH:mm'),
     (moment.duration(rt.duration).humanize() + "           ").slice(0,16),
     rt.pnl.toFixed(2),
     rt.profit.toFixed(2)
