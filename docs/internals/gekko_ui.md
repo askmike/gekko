@@ -27,7 +27,7 @@ The vue app itself uses the following libraries:
 - [marked](https://github.com/chjj/marked)
 - [jade](https://github.com/pugjs) (all html is either written in jade of markdown)
 - [vue-router](https://github.com/vuejs/vue-router)
-- [superagent](https://github.com/visionmedia/superagent) (cross browser ajaz)
+- [superagent](https://github.com/visionmedia/superagent) (cross browser ajax)
 
 ### Developing for the Gekko UI frontend
 
