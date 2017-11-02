@@ -90,7 +90,14 @@ var Trader = function(config) {
   );
 }
 
-Trader.prototype.retry = function(method, args) {
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|between Cloudflare and the origin web server)/)
+
+Trader.prototype.retry = function(method, args, error) {
+  if (!error || !error.message.match(recoverableErrors)) {
+    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error');
+    return;
+  }
+
   // 5 -> 10s to avoid more rejection
   var wait = +moment.duration(10, 'seconds');
   log.debug('[kraken.js] (retry) ', this.name, 'returned an error, retrying..');
@@ -119,9 +126,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
       log.error('error getting trades', err);
-      return this.retry(this.getTrades, args);
+      return this.retry(this.getTrades, args, err);
     }
-
 
     var parsedTrades = [];
     _.each(trades.result[this.pair], function(trade) {
@@ -152,8 +158,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   }
 
   this.kraken.api('Trades', reqData, _.bind(process, this));
-
-
 };
 
 Trader.prototype.getPortfolio = function(callback) {
@@ -162,14 +166,14 @@ Trader.prototype.getPortfolio = function(callback) {
     log.debug('[kraken.js] entering "setBalance" callback after kraken-api call, err:', err, ' data:' , data);
 
     if(_.isEmpty(data))
-      err = 'no data (getPortfolio)';
+      err = new Error('no data (getPortfolio)');
 
     else if(!_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if (err || !data.result) {
       log.error('[kraken.js] ' , err);
-      return this.retry(this.getPortfolio, args);
+      return this.retry(this.getPortfolio, args, err);
     }
 
     // When using the prefix-less assets, you remove the prefix from the assset but leave
@@ -193,7 +197,7 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount }
     ];
 
-    return callback(err, portfolio);
+    return callback(err.message, portfolio);
   };
 
   this.kraken.api('Balance', {}, _.bind(setBalance, this));
@@ -207,10 +211,10 @@ Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
 
     if(!err && _.isEmpty(data))
-      err = 'no data (getTicker)';
+      err = new Error('no data (getTicker)');
 
     else if(!err && !_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if (err)
       return log.error('unable to get ticker', JSON.stringify(err));
@@ -220,7 +224,7 @@ Trader.prototype.getTicker = function(callback) {
       ask: result.a[0],
       bid: result.b[0]
     };
-    callback(err, ticker);
+    callback(err.message, ticker);
   };
 
   this.kraken.api('Ticker', {pair: this.pair}, _.bind(setTicker, this));
@@ -257,13 +261,13 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     // console.log('blap', err, data);
 
     if(!err && _.isEmpty(data))
-      err = 'no data (addOrder)';
+      err = new Error('no data (addOrder)');
     else if(!err && !_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if(err) {
       log.error('unable to ' + tradeType.toLowerCase(), err);
-      return this.retry(this.addOrder, args);
+      return this.retry(this.addOrder, args, err);
     }
 
     var txid = data.result.txid[0];
@@ -286,10 +290,10 @@ Trader.prototype.getOrder = function(order, callback) {
 
   var get = function(err, data) {
     if(!err && _.isEmpty(data) && _.isEmpty(data.result))
-      err = 'no data (getOrder)';
+      err = new Error('no data (getOrder)');
 
     else if(!err && !_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if(err)
       return log.error('Unable to get order', order, JSON.stringify(err));
@@ -315,17 +319,17 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
     if(_.isEmpty(data))
-      err = 'no data (checkOrder)';
+      err = new Error('no data (checkOrder)');
 
     if(!_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if(err)
       return log.error('Unable to check order', order, JSON.stringify(err));
 
     var result = data.result[order];
     var stillThere = result.status === 'open' || result.status === 'pending';
-    callback(err, !stillThere);
+    callback(err.message, !stillThere);
   };
 
   this.kraken.api('QueryOrders', {txid: order}, _.bind(check, this));
@@ -335,13 +339,13 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, data) {
     if(!err && _.isEmpty(data))
-      err = 'no data (cancelOrder)';
+      err = new Error('no data (cancelOrder)');
     else if(!err && !_.isEmpty(data.error))
-      err = data.error;
+      err = new Error(data.error);
 
     if(err) {
       log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
-      return this.retry(this.cancelOrder, args);
+      return this.retry(this.cancelOrder, args, err);
     }
 
     callback();

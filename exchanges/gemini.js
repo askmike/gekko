@@ -126,7 +126,7 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
       }
 
       callback(err, data.order_id);
-    });
+    }.bind(this));
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
