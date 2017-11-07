@@ -41,10 +41,9 @@ config.adapter = UIconfig.adapter;
 
 config.sqlite = {
   path: 'plugins/sqlite',
-
-  dataDirectory: 'history',
   version: 0.1,
-
+  dataDirectory: 'history',
+  journalMode: 'WAL', // setting this to 'DEL' may prevent db locking on windows
   dependencies: [{
     module: 'sqlite3',
     version: '3.1.4'
