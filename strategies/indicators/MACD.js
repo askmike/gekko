@@ -2,6 +2,7 @@
 var EMA = require('./EMA.js');
 
 var Indicator = function(config) {
+  this.input = 'price';
   this.diff = false;
   this.short = new EMA(config.short);
   this.long = new EMA(config.long);

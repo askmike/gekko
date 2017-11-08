@@ -2,6 +2,7 @@
 var SMMA = require('./SMMA.js');
 
 var Indicator = function (settings) {
+  this.input = 'candle';
   this.lastClose = null;
   this.weight = settings.interval;
   this.avgU = new SMMA(this.weight);

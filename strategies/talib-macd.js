@@ -10,6 +10,7 @@ var method = {};
 // Prepare everything our method needs
 method.init = function() {
   this.name = 'talib-macd'
+  this.input = 'candle';
   // keep state about the current trend
   // here, on every new candle we use this
   // state object to check if we need to

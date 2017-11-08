@@ -15,6 +15,8 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
+  this.name = 'PPO';
+
   this.trend = {
    direction: 'none',
    duration: 0,

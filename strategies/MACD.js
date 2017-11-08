@@ -15,7 +15,6 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
-
   // keep state about the current trend
   // here, on every new candle we use this
   // state object to check if we need to

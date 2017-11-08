@@ -2,6 +2,7 @@
 // Simple Moving Average - O(1) implementation 
 
 var Indicator = function(windowLength) {
+  this.input = 'price';
   this.windowLength = windowLength;
   this.prices = [];
   this.result = 0;

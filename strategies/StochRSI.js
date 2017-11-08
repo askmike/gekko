@@ -16,7 +16,7 @@ var method = {};
 
 // prepare everything our method needs
 method.init = function() {
-	this.interval = this.settings.interval;
+  this.interval = this.settings.interval;
 
   this.trend = {
     direction: 'none',

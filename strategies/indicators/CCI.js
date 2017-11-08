@@ -5,6 +5,7 @@ var log = require('../../core/log');
 var LRC = require('./LRC');
 
 var Indicator = function(settings) {
+  this.input = 'candle';
   this.tp = 0.0;
   this.TP = new LRC(settings.history);
   this.result = false;
