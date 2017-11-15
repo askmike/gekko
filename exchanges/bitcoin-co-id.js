@@ -114,9 +114,19 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 }
 
 // bitcoin.co.id: Maker 0% - Taker 0.3%
-//TODO: no API pull? waiting for support to response
+// Note: trading fee: 0.3% for IDR pairs and 0% for BTC pairs
 Trader.prototype.getFee = function(callback) {
-  callback(false, 0.000);
+
+  if (this.currency.toUpperCase() === 'IDR')
+    {
+       var fee = 0.003;
+    }
+    else if (this.currency.toUpperCase() === 'BTC')
+    {
+       var fee = 0.000;;
+    }
+
+  callback(false, fee);
 };
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -183,9 +193,9 @@ Trader.prototype.checkOrder = function(order, callback) {
       return this.retry(this.checkOrder, arguments);
     }
     var status = data.return.order.status;
-      if (status == 'filled') {
+      if (status === 'filled') {
         return callback(err, true);
-      } else if (status == 'open') {
+      } else if (status === 'open') {
         return callback(err, false);
       }
     callback(err, false);
