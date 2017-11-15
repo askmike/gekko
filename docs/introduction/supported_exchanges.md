@@ -26,3 +26,4 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [zaif](https://zaif.jp/trade_btc_jpy)      | V | X | X | |
 | [lakeBTC](https://lakebtc.com/)      | V | X | X | |
 | [bx.in.th](https://bx.in.th/)      | V | X | X | |
+| [bitcoin.co.id](https://vip.bitcoin.co.id/)      | V | V | X | |
