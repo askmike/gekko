@@ -25,12 +25,12 @@ var verifyParams = (methodName, params) => {
 
     _.each(requiredParams, paramName => {
         if(!_.has(params, paramName))
-            throw talibError + methodName + ' requires ' + paramName + '.';
+            throw tulindError + methodName + ' requires ' + paramName + '.';
 
         var val = params[paramName];
 
         if(!_.isNumber(val))
-            throw talibError + paramName + ' needs to be a number';
+            throw tulindError + paramName + ' needs to be a number';
     });
 }
 
@@ -72,7 +72,7 @@ methods.adx = {
         return (data, callback) => execute(callback, {
             indicator: tulind.indicators.adx,
             inputs: [data.high, data.low, data.close],
-            options: [params.optInTimPeriod],
+            options: [params.optInTimePeriod],
             results: ['result'],
         });
     }
