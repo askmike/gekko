@@ -54,7 +54,6 @@
     "semver": "2.2.1",
     "sqlite3": "^3.1.8",
     "stats-lite": "^2.0.4",
-    "talib": "^1.0.3",
     "tiny-promisify": "^0.1.1",
     "toml": "^2.3.0",
     "tulind": "^0.8.7",
