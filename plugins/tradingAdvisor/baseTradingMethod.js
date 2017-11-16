@@ -54,7 +54,12 @@ _.each(indicatorFiles, function(indicator){
 
     var indicatorName = indicator.split('.')[0];
     if (indicatorName[0] != '_')
-        Indicators[indicatorName] = require(indicatorsPath + indicator);
+	try { 
+	    Indicators[indicatorName] = require(indicatorsPath + indicator);
+        } 
+        catch(e) {
+        log.error('Failed to load indicator', indicatorName);
+        }
 });
 
 var allowedIndicators = _.keys(Indicators);
