@@ -50,16 +50,14 @@ var indicatorsPath = dirs.methods + 'indicators/';
 var indicatorFiles = fs.readdirSync(indicatorsPath);
 var Indicators = {};
 
-_.each(indicatorFiles, function(indicator){
-
-    var indicatorName = indicator.split('.')[0];
-    if (indicatorName[0] != '_')
-	try { 
-	    Indicators[indicatorName] = require(indicatorsPath + indicator);
-        } 
-        catch(e) {
-        log.error('Failed to load indicator', indicatorName);
-        }
+_.each(indicatorFiles, function(indicator) {
+  const indicatorName = indicator.split(".")[0];
+  if (indicatorName[0] != "_")
+    try {
+      Indicators[indicatorName] = require(indicatorsPath + indicator);
+    } catch (e) {
+      log.error("Failed to load indicator", indicatorName);
+    }
 });
 
 var allowedIndicators = _.keys(Indicators);
