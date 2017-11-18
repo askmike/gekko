@@ -179,7 +179,7 @@ Trader.prototype.getPortfolio = function(callback) {
     // When using the prefix-less assets, you remove the prefix from the assset but leave
     // it on the curreny in this case. An undocumented Kraken quirk.
     var assetId = _.contains(assets_without_prefix, this.asset) ? this.asset : addPrefix(this.asset);
-    var assetAmount = parseFloat( data.result[addPrefix(assetId)] );
+    var assetAmount = parseFloat( data.result[assetId] );
     var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
