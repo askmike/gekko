@@ -177,6 +177,13 @@ var plugins = [
     async: false,
     modes: ['realtime']
   },
+  {
+    name: 'IFTTT',
+    description: 'Sends trades to IFTTTT webhook.',
+    slug: 'ifttt',
+    async: false,
+    modes: ['realtime']
+  }
 ];
 
 module.exports = plugins;

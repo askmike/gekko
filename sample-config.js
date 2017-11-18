@@ -369,6 +369,14 @@ config.slack = {
   channel: '' // #tradebot
 }
 
+config.ifttt = {
+  enabled: false,
+  eventName: 'gekko',
+  makerKey: '',
+  muteSoft: true,
+  sendMessageOnStart: true
+}
+
 config.candleWriter = {
   enabled: false
 }
