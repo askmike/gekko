@@ -203,8 +203,12 @@ Trader.prototype.getPortfolio = function(callback) {
   this.kraken.api('Balance', {}, _.bind(setBalance, this));
 };
 
+// This assumes that only limit orders are being placed with standard assets pairs
+// It does not take into account volume discounts.
+// Base maker fee is 0.16%, taker fee is 0.26%.
 Trader.prototype.getFee = function(callback) {
-  callback(false, 0.002);
+  var makerFee = 0.16;
+  callback(false, makerFee / 100);
 };
 
 Trader.prototype.getTicker = function(callback) {
