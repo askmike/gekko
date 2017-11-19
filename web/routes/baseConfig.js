@@ -14,14 +14,6 @@ config.debug = true;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 config.tradingAdvisor = {
-  talib: {
-    enabled: require('../supportsTalib'),
-    version: '1.0.2'
-  },
-  tulind: {
-    enabled: require('../supportsTulip'),
-    version: '0.8.7'
-  }
 }
 
 config.candleWriter = {

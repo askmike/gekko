@@ -35,15 +35,7 @@ config.tradingAdvisor = {
   method: 'MACD',
   candleSize: 1,
   historySize: 3,
-  adapter: 'sqlite',
-  talib: {
-    enabled: false,
-    version: '1.0.2'
-  },
-  tulind: {
-    enabled: false,
-    version: '0.8.7'
-  }
+  adapter: 'sqlite'
 }
 
 // Exponential Moving Averages settings:
