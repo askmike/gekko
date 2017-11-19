@@ -2,6 +2,7 @@
 var SMA = require('./SMA');
 
 var Indicator = function (weight) {
+  this.input = 'price';
   this.sma = new SMA(weight);
   this.weight = weight;
   this.prices = [];

@@ -167,6 +167,11 @@ or
     // add a TA-lib indicator
     this.addTalibIndicator('name', 'type', parameters);
 
+or
+
+    // add a Tulip indicator
+    this.addTulipIndicator('name', 'type', parameters);
+
 The first parameter is the name, the second is the indicator type you want and the third is an object with all indicator parameters. If you want an MACD indicator you can do it like so:
 
 In your init method:
@@ -177,13 +182,19 @@ In your init method:
 
     // add a TA-lib indicator
     var parameters = {optInFastPeriod: 10, optInSlowPeriod: 21, optInSignalPeriod: 9};
-    this.addIndicator('mytalibmacd', 'MACD', parameters);
+    this.addTalibIndicator('mytalibmacd', 'macd', parameters);
+
+    // add a Tulip indicator
+    var parameters = {optInFastPeriod: 10, optInSlowPeriod: 21, optInSignalPeriod: 9};
+    this.addTulipIndicator('mytulipmacd', 'macd', parameters);
 
 In your check or update method:
 
     var result = this.indicators.mytalibmacd.result;
 
-See the [TA-lib indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) document for a list of all suppported TA-lib indicators and there required parameters.
+See the [TA-lib indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) document for a list of all suppported TA-lib indicators and their required parameters.
+
+See the [Tulip indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/tulip_indicators.md) document for a list of all supported Tulip indicators and their required parameters.
 
 ### Configurables
 

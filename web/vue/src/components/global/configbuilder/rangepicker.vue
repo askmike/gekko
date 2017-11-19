@@ -3,7 +3,7 @@ div
   h3 Daterange
   template(v-if='tab === "scan"')
     .txt--center(v-if='!scanned')
-      a.w100--s.btn--blue.scan-btn(href='#', v-on:click.prevent='scan') scan available data
+      a.w100--s.btn--primary.scan-btn(href='#', v-on:click.prevent='scan') Scan available data
     .txt--center(v-if='scanned == "fetching"')
       p.scan-btn Scanning..
     template(v-if='scanned == true')

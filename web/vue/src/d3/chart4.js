@@ -6,7 +6,7 @@ export default function(_data, _trades, _height) {
   const trades = _trades.map(t => {
     return {
       price: t.price,
-      date: new Date(t.date),
+      date: moment.utc(t.date).toDate(),
       action: t.action
     }
   });
@@ -14,7 +14,7 @@ export default function(_data, _trades, _height) {
   const data = _data.map(c => {
     return {
       price: c.close,
-      date: new Date(c.start)
+      date: moment.utc(c.start).toDate()
     }
   });
 
@@ -31,8 +31,8 @@ export default function(_data, _trades, _height) {
   var width = +svg.attr("width") - margin.left - margin.right;
   var height2 = _height - margin2.top - margin2.bottom;
 
-  var x = d3.scaleTime().range([0, width]),
-      x2 = d3.scaleTime().range([0, width]),
+  var x = d3.scaleUtc().range([0, width]),
+      x2 = d3.scaleUtc().range([0, width]),
       y = d3.scaleLinear().range([height, 0]),
       y2 = d3.scaleLinear().range([height2, 0]);
 

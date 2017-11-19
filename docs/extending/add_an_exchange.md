@@ -78,7 +78,7 @@ The trading method analyzes exchange data to determine what to do. The trading m
     this.watcher.getTrades(since, callback, descending);
 
 
-If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, if the exchange supports more you can [create an importer](https://github.com/askmike/gekko/blob/stable/docs/Importing.md)).
+If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, if the exchange supports more you can [create an importer](../features/importing.md)).
 
 The callback expects an error and a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have:
 

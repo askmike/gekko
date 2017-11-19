@@ -2,6 +2,7 @@
 var EMA = require('./EMA.js');
 
 var Indicator = function(settings) {
+  this.input = 'candle';
   this.lastClose = 0;
   this.tsi = 0;
   this.inner = new EMA(settings.long);

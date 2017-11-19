@@ -15,6 +15,7 @@ Gekko currently comes with the following example strategies:
  - [StochRSI](#StochRSI)
  - [CCI](#CCI)
  - [talib-macd](#talib-macd)
+ - [tulip-macd](#tulip-macd)
 
 ### DEMA
 
@@ -23,7 +24,7 @@ market is in. Using this information it will suggest to ride the trend. Note tha
 not MACD because it just checks whether the longEMA and shortEMA are [threshold]% removed
 from eachother.
 
-This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this method in [his topic](https://bitcointalk.org/index.php?topic=60501.0)
+This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this method in [his topic](https://bitcointalk.org/index.php?topic=60501.0) or [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages).
 
 You can configure the following parameters:
 
@@ -42,7 +43,7 @@ You can configure the following parameters:
 
 ### MACD
 
-This method is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_conve).
+This method is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_convergence_divergence_macd).
 
 You can configure the following parameters:
 
@@ -94,7 +95,7 @@ You can configure the following parameters:
 
 ### RSI
 
-The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/help/doku.php?id=chart_school:technical_indicators:relative_strength_in).
+The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:relative_strength_index_rsi).
 
 You can configure the following parameters:
 
@@ -142,6 +143,19 @@ You can configure the following parameters:
 [TODO!]
 
 ### talib-macd
+
+You can configure the following parameters:
+
+    [parameters]
+    optInFastPeriod = 10
+    optInSlowPeriod = 21
+    optInSignalPeriod = 9
+
+    [thresholds]
+    down = -0.025
+    up = 0.025
+
+### tulip-macd
 
 You can configure the following parameters:
 

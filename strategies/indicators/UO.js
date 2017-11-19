@@ -2,6 +2,7 @@
 var SMA = require('./SMA.js');
 
 var Indicator = function(settings) {
+  this.input = 'candle';
   this.lastClose = 0;
   this.uo = 0;
   this.firstWeight = settings.first.weight;

@@ -13,7 +13,7 @@
     import-config-builder(v-on:config='updateConfig')
     .hr
     .txt--center
-      a.w100--s.my1.btn--blue(href='#', v-on:click.prevent='run') Import
+      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='run') Import
 </template>
 
 <script>

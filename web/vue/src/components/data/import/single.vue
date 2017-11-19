@@ -2,19 +2,26 @@
   div.contain.my2
     div(v-if='data && !data.done')
       h2 Importing data..
-      p Market: {{ data.watch.exchange }}:{{ data.watch.currency }}/{{ data.watch.asset }}
       .grd
         .grd-row
-          .grd-row-col-2-6 From:
+          .grd-row-col-2-6 <strong>Market:</strong>
+          .grd-row-col-4-6 {{ data.watch.exchange }}
+        .grd-row
+          .grd-row-col-2-6 <strong>Currency/Asset:</strong>
+          .grd-row-col-4-6 {{ data.watch.currency }}/{{ data.watch.asset }}
+
+      .grd
+        .grd-row
+          .grd-row-col-2-6 <strong>From:</strong>
           .grd-row-col-4-6 {{ fmt(from) }}
         .grd-row
-          .grd-row-col-2-6 To:
+          .grd-row-col-2-6 <strong>To:</strong>
           .grd-row-col-4-6 {{ fmt(to) }}
         .grd-row(v-if='initialized')
-          .grd-row-col-2-6 Imported data until:
+          .grd-row-col-2-6 <strong>Imported data until:</strong>
           .grd-row-col-4-6 {{ fmt(latest) }}
         .grd-row(v-if='initialized')
-          .grd-row-col-2-6 To go:
+          .grd-row-col-2-6 <strong>Remaining:</strong>
           .grd-row-col-4-6 {{ fromEnd }}
       spinner(v-if='!initialized')
       .contain(v-if='initialized')

@@ -4,7 +4,7 @@
     gekko-config-builder(v-on:config='updateConfig')
     .hr
     .txt--center(v-if='config.valid')
-      a.w100--s.my1.btn--blue(href='#', v-on:click.prevent='start') Start
+      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='start') Start
 </template>
 
 <script>

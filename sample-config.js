@@ -39,6 +39,10 @@ config.tradingAdvisor = {
   talib: {
     enabled: false,
     version: '1.0.2'
+  },
+  tulind: {
+    enabled: false,
+    version: '0.8.7'
   }
 }
 
@@ -363,6 +367,14 @@ config.slack = {
   sendMessageOnStart: true,
   muteSoft: true,
   channel: '' // #tradebot
+}
+
+config.ifttt = {
+  enabled: false,
+  eventName: 'gekko',
+  makerKey: '',
+  muteSoft: true,
+  sendMessageOnStart: true
 }
 
 config.candleWriter = {

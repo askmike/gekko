@@ -6,9 +6,9 @@ Gekko supports backtesting strategies over historical data. This means that Gekk
 
 ## Simplified simulation
 
-Gekko backtests using a very limited datasource (only OHCL candles). This means that Gekko estimates trades (and thus profits), which depending on the liquidity and market depth might be estimated very wrong. By configuring the paper trader's fee and slippage you can control you can better mimic trading at the real market.
+Gekko backtests using a very limited datasource (only OHCL candles). This means that Gekko estimates trades (and thus profits), which depending on the liquidity and market depth might be estimated very wrong. By configuring the paper trader's fee and slippage you can better mimic trading at the real market.
 
-In order to backtest with 100% accuracy one would need the exact state of the orderbook (spread and depth) as well as information about orders happening around the time of each advice. With Gekko we made the decision to not store all this information (to simplify importing and storing market data). In volumeus and liquid markets this shouldn't be too much of a problem, but if you are backtesting over a small market (like some altcoins or smaller markets) the estimation will be of poor accuracy.
+In order to backtest with 100% accuracy one would need the exact state of the orderbook (spread and depth) as well as information about orders happening around the time of each advice. With Gekko we made the decision to not store all this information (to simplify importing and storing market data). In voluminous and liquid markets this shouldn't be too much of a problem, but if you are backtesting over a small market (like some altcoins) the estimation will be of poor accuracy.
 
 If you look at the following backtest result:
 

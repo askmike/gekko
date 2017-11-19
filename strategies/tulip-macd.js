@@ -9,8 +9,7 @@ var method = {};
 
 // Prepare everything our method needs
 method.init = function() {
-  this.name = 'talib-macd'
-  this.input = 'candle';
+  this.name = 'tulip-macd'
   // keep state about the current trend
   // here, on every new candle we use this
   // state object to check if we need to
@@ -24,7 +23,7 @@ method.init = function() {
   var customMACDSettings = this.settings.parameters;
 
   // define the indicators we need
-  this.addTalibIndicator('mymacd', 'macd', customMACDSettings);
+  this.addTulipIndicator('mymacd', 'macd', customMACDSettings);
 }
 
 // What happens on every new candle?
@@ -42,8 +41,8 @@ method.log = function() {
 // update or not.
 method.check = function(candle) {
   var price = candle.close;
-  var result = this.talibIndicators.mymacd.result;
-  var macddiff = result['outMACD'] - result['outMACDSignal'];
+  var result = this.tulipIndicators.mymacd.result;
+  var macddiff = result['macd'] - result['macdSignal'];
 
   if(this.settings.thresholds.down > macddiff && this.trend !== 'short') {
     this.trend = 'short';
