@@ -1,0 +1,13 @@
+
+optInTimePeriod = 2
+optInFastPeriod = 1
+optInSlowPeriod = 6
+optInSignalPeriod = 70
+
+candleSize = 6
+historySize = 6
+
+up = 20
+down = 5
+macd_up = 60
+macd_down = -75
