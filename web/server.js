@@ -18,8 +18,6 @@ const wss = new WebSocketServer({ server: server });
 const cache = require('./state/cache');
 const ListManager = require('./state/listManager');
 
-require('./supportsTalib');
-
 // broadcast function
 const broadcast = data => {
   if(_.isEmpty(data))
