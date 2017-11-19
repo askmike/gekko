@@ -43,7 +43,7 @@ config.sqlite = {
   path: 'plugins/sqlite',
   version: 0.1,
   dataDirectory: 'history',
-  journalMode: 'WAL', // setting this to 'DEL' may prevent db locking on windows
+  journalMode: require('../isWindows') ? 'DELETE' : 'WAL',
   dependencies: [{
     module: 'sqlite3',
     version: '3.1.4'
