@@ -27,7 +27,8 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [zaif][17]           | ✓          | ✕            | ✕         |                          |
 | [lakeBTC][18]        | ✓          | ✕            | ✕         |                          |
 | [bx.in.th][19]       | ✓          | ✕            | ✕         |                          |
-| [bitcoin.co.id][22]  | ✓          | ✓            | ✕         |                          | |
+| [bitcoin.co.id][22]  | ✓          | ✓            | ✕         |                          |
+| [quadrigacx.com][23] | ✓          | ✓            | ✕         |                          | |
 
 [1]: ../features/backtesting.md
 [2]: https://poloniex.com
@@ -51,4 +52,5 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [20]: https://github.com/askmike/gekko/pull/352
 [21]: https://github.com/askmike/gekko/issues/288#issuecomment-223810974
 [22]: https://vip.bitcoin.co.id/
+[23]: https://quadrigacx.com/
 
