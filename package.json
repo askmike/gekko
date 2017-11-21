@@ -17,6 +17,7 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
+    "binance": "^1.0.2",
     "bitcoin-co-id": "0.0.1",
     "bitexthai": "^0.1.0",
     "bitfinex-api-node": "^1.2.0",
@@ -41,7 +42,6 @@
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",
     "moment": "2.4.x",
-    "node-binance-api": "^0.2.6",
     "node-wex": "^1.0.3",
     "node.bittrex.api": "^0.4.3",
     "okcoin-china": "0.0.7",

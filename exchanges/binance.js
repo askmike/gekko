@@ -1,8 +1,9 @@
-const binance = require('node-binance-api');
 const moment = require('moment');
 const util = require('../core/util');
 const _ = require('lodash');
 const log = require('../core/log');
+
+const Binance = require('binance');
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -17,24 +18,25 @@ var Trader = function(config) {
   this.pair = this.asset + this.currency;
   this.name = 'binance';
 
-  binance.options({
-    'APIKEY': this.key,
-    'APISECRET': this.secret,
-    'recvWindow': 60000
-  });
+  this.binance = new Binance.BinanceRest({
+    key: this.key,
+    secret: this.secret,
+    timeout: 15000,
+    recvWindow: 60000, // suggested by binance
+    disableBeautification: false // better field names
+  })
 }
 
 var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|between Cloudflare and the origin web server)/)
 
 Trader.prototype.retry = function(method, args, error) {
   if (!error || !error.message.match(recoverableErrors)) {
-    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error');
+    log.error('[binance.js] ', this.name, 'returned an irrecoverable error');
     return;
   }
 
-  // 5 -> 10s to avoid more rejection
-  var wait = +moment.duration(10, 'seconds');
-  log.debug('[kraken.js] (retry) ', this.name, 'returned an error, retrying..');
+  var wait = +moment.duration(5, 'seconds');
+  log.debug('[binance.js] (retry) ', this.name, 'returned an error, retrying..');
 
   var self = this;
 
@@ -55,25 +57,24 @@ Trader.prototype.retry = function(method, args, error) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
-  var startTs = since ? moment(since).valueOf() : null;
 
-  var process = function(err, trades) {
-    if (err || !trades || trades.length === 0) {
-      log.error('error getting trades', err);
+  var process = function(err, data) {
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
+
+    if (err) {
+      log.error('[binance.js] error getting trades', err);
       return this.retry(this.getTrades, args, err);
     }
 
     var parsedTrades = [];
-    _.each(trades.result[this.pair], function(trade) {
-      // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
-      if (_.isNull(startTs) || startTs < moment.unix(trade[2]).valueOf()) {
-        parsedTrades.push({
-          tid: moment.unix(trade[2]).valueOf() * 1000000,
-          date: parseInt(Math.round(trade[2]), 10),
-          price: parseFloat(trade[0]),
-          amount: parseFloat(trade[1])
-        });
-      }
+    _.each(data, function(trade) {
+      parsedTrades.push({
+        tid: trade.aggTradeId,
+        date: trade.timestamp,
+        price: trade.price,
+        amount: trade.quantity
+      });
     }, this);
 
     if(descending)
@@ -83,46 +84,48 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   };
 
   var reqData = {
-    pair: this.pair
+    symbol: this.pair
   };
 
   if(since) {
-    // Kraken wants a tid, which is found to be timestamp_ms * 1000000 in practice. No clear documentation on this though
-    reqData.since = startTs * 1000000;
+    var endTs = moment(since).add(1, 'd').valueOf();
+    var nowTs = moment().valueOf();
+    
+    reqData.startTime = moment(since).valueOf();
+    reqData.endTime = endTs > nowTs ? nowTs : endTs;
   }
 
-  this.kraken.api('Trades', reqData, _.bind(process, this));
+  this.binance.aggTrades(reqData, _.bind(process, this));
 };
 
 Trader.prototype.getPortfolio = function(callback) {
   var args = _.toArray(arguments);
   var setBalance = function(err, data) {
-    log.debug('[kraken.js] entering "setBalance" callback after kraken-api call, err:', err, ' data:' , data);
+    log.debug('[binance.js] entering "setBalance" callback after api call, err:', err, ' data:' , data);
 
-    if(_.isEmpty(data))
-      err = new Error('no data (getPortfolio)');
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
-    else if(!_.isEmpty(data.error))
-      err = new Error(data.error);
-
-    if (err || !data.result) {
-      log.error('[kraken.js] ' , err);
+    if (err) {
+      log.error('[binance.js] ' , err);
       return this.retry(this.getPortfolio, args, err);
     }
 
-    // When using the prefix-less assets, you remove the prefix from the assset but leave
-    // it on the curreny in this case. An undocumented Kraken quirk.
-    var assetId = _.contains(assets_without_prefix, this.asset) ? this.asset : addPrefix(this.asset);
-    var assetAmount = parseFloat( data.result[assetId] );
-    var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
+    var assetAmount = _.first(data.balances, function(item){
+      return item.asset === this.asset;
+    });
+
+    var currencyAmount = _.first(data.balances, function(item){
+      return item.asset === this.currency;
+    });
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
-      log.error(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
+      log.error(`Binance did not return portfolio for ${this.asset}, assuming 0.`);
       assetAmount = 0;
     }
 
     if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
-      log.error(`Kraken did not return portfolio for ${this.currency}, assuming 0.`);
+      log.error(`Binance did not return portfolio for ${this.currency}, assuming 0.`);
       currencyAmount = 0;
     }
 
@@ -134,116 +137,98 @@ Trader.prototype.getPortfolio = function(callback) {
     return callback(err.message, portfolio);
   };
 
-  this.kraken.api('Balance', {}, _.bind(setBalance, this));
+  this.binance.account({}, _.bind(setBalance, this));
 };
 
-// This assumes that only limit orders are being placed with standard assets pairs
-// It does not take into account volume discounts.
-// Base maker fee is 0.16%, taker fee is 0.26%.
+// This uses the base maker fee (0.1%), and does not account for BNB discounts
 Trader.prototype.getFee = function(callback) {
-  var makerFee = 0.16;
+  var makerFee = 0.1;
   callback(false, makerFee / 100);
 };
 
 Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
-
-    if(!err && _.isEmpty(data))
-      err = new Error('no data (getTicker)');
-
-    else if(!err && !_.isEmpty(data.error))
-      err = new Error(data.error);
+    log.debug('[binance.js] entering "getTicker" callback after api call, err:', err, ' data:' , data);
+    
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
     if (err)
-      return log.error('unable to get ticker', JSON.stringify(err));
+      return log.error('[binance.js] unable to get ticker', JSON.stringify(err));
 
-    var result = data.result[this.pair];
+    var result = _first(data, function(ticker){
+      return ticker.symbol === this.pair;
+    });
+
     var ticker = {
-      ask: result.a[0],
-      bid: result.b[0]
+      ask: result.askPrice,
+      bid: result.bidPrice
     };
+    
     callback(err.message, ticker);
   };
 
-  this.kraken.api('Ticker', {pair: this.pair}, _.bind(setTicker, this));
+  // Not exposed by the API yet, have to do it the hard way
+  this.binance._makeRequest({}, _.bind(setTicker, this), 'ticker/allBookTickers');
 };
 
-Trader.prototype.roundAmount = function(amount) {
-  // Prevent "You incorrectly entered one of fields."
-  // because of more than 8 decimals.
-  // Specific precision by pair https://blog.kraken.com/post/1278/announcement-reducing-price-precision-round-2
-
-  var precision = 100000000;
-  var parent = this;
-  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
-
-  if(Number.isInteger(market.precision))
-    precision = Math.pow(10, market.precision);
-
-  amount *= precision;
-  amount = Math.floor(amount);
-  amount /= precision;
-  return amount;
-};
+// ---------
+// YOU LEFT OFF HERE
+// ---------
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var args = _.toArray(arguments);
-
-  amount = this.roundAmount(amount);
-  price = this.roundAmount(price); // but the link talks about rounding price... And I had the bug
-
-  log.debug('[kraken.js] (addOrder)', tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
+  log.debug('[binance.js] (addOrder)', tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 
   var setOrder = function(err, data) {
-
-    // console.log('blap', err, data);
-
-    if(!err && _.isEmpty(data))
-      err = new Error('no data (addOrder)');
-    else if(!err && !_.isEmpty(data.error))
-      err = new Error(data.error);
+    log.debug('[binance.js] entering "getTicker" callback after api call, err:', err, ' data:' , data);
+    
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
     if(err) {
-      log.error('unable to ' + tradeType.toLowerCase(), err);
+      log.error('[binance.js] unable to ' + tradeType.toLowerCase(), err);
       return this.retry(this.addOrder, args, err);
     }
 
-    var txid = data.result.txid[0];
+    var txid = data.orderId;
     log.debug('added order with txid:', txid);
 
     callback(undefined, txid);
   };
 
-  this.kraken.api('AddOrder', {
-    pair: this.pair,
-    type: tradeType.toLowerCase(),
-    ordertype: 'limit',
-    price: price,
-    volume: amount.toString()
+  this.binance.newOrder({
+    symbol: this.pair,
+    side: tradeType.toUpperCase(),
+    type: 'LIMIT',
+    timeInForce: 'GTC', // Good to cancel (I think, not really covered in docs, but is default)
+    quantity: amount,
+    price: price
   }, _.bind(setOrder, this));
 };
 
 
 Trader.prototype.getOrder = function(order, callback) {
-
   var get = function(err, data) {
-    if(!err && _.isEmpty(data) && _.isEmpty(data.result))
-      err = new Error('no data (getOrder)');
+    log.debug('[binance.js] entering "getOrder" callback after api call, err:', err, ' data:' , data);
+    
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
-    else if(!err && !_.isEmpty(data.error))
-      err = new Error(data.error);
+    if (err)
+      return log.error('[binance.js] unable to get order', order, JSON.stringify(err));
 
-    if(err)
-      return log.error('Unable to get order', order, JSON.stringify(err));
-
-    var price = parseFloat( data.result[ order ].price );
-    var amount = parseFloat( data.result[ order ].vol_exec );
-    var date = moment.unix( data.result[ order ].closetm );
+    var price = parseFloat(data.price);
+    var amount = parseFloat(data.executedQty);
+    var date = moment.unix(data.time);
 
     callback(undefined, {price, amount, date});
   }.bind(this);
 
-  this.kraken.api('QueryOrders', {txid: order}, get);
+  this.binance.queryOrder({
+    symbol: this.pair,
+    orderId: order
+  }, get);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -256,56 +241,99 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var check = function(err, data) {
-    if(_.isEmpty(data))
-      err = new Error('no data (checkOrder)');
-
-    if(!_.isEmpty(data.error))
-      err = new Error(data.error);
+    log.debug('[binance.js] entering "checkOrder" callback after api call, err:', err, ' data:' , data);
+    
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
     if(err)
-      return log.error('Unable to check order', order, JSON.stringify(err));
+      return log.error('[binance.js] Unable to check order', order, JSON.stringify(err));
 
-    var result = data.result[order];
-    var stillThere = result.status === 'open' || result.status === 'pending';
+    var stillThere = data.status === 'NEW' || data.status === 'PARTIALLY_FILLED';
     callback(err.message, !stillThere);
   };
 
-  this.kraken.api('QueryOrders', {txid: order}, _.bind(check, this));
+  this.binance.queryOrder({
+    symbol: this.pair,
+    orderId: order
+  }, _.bind(check, this));
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, data) {
-    if(!err && _.isEmpty(data))
-      err = new Error('no data (cancelOrder)');
-    else if(!err && !_.isEmpty(data.error))
-      err = new Error(data.error);
+    log.debug('[binance.js] entering "cancelOrder" callback after api call, err:', err, ' data:' , data);
+    
+    if (!err && !_.isEmpty(data.msg))
+      err = new Error(data.msg);
 
     if(err) {
-      log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
+      log.error('[binance.js] unable to cancel order', order, '(', err, JSON.stringify(err), ')');
       return this.retry(this.cancelOrder, args, err);
     }
 
     callback();
   };
 
-  this.kraken.api('CancelOrder', {txid: order}, _.bind(cancel, this));
+  this.binance.cancelOrder({
+    symbol: this.pair,
+    orderId: order
+  }, _.bind(cancel, this));
 };
 
 Trader.getCapabilities = function () {
   return {
     name: 'Binance',
     slug: 'binance',
-    currencies: ['USD', 'BTC', 'ETH', 'BNB'],
-    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC', 'ETH', 'BCH', 'DASH', 'EOS', 'ETC'],
+    currencies: ['BTC', 'BNB', 'ETH', 'USDT'],
+    assets: ['BTC', 'BCC', 'BCG', 'BNB', 'DASH', 'ETH', 'ETC', 'EOS', 'NEO', 'OMG', 'POWR', 'QTUM', 'ZEC'],
     markets: [
+      //Tradeable againt BTC
+      { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'BCG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'BNB'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'POWR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'QTUM'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+
+      //Tradeable againt BNB
+      { pair: ['BTC', 'BCC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['BTC', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+
       //Tradeable againt ETH
-      { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['GBP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['JPY', 'ETH'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
-      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['ETH', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'BCC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'BCG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'BNB'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'POWR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'QTUM'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['ETH', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+
+      //Tradeable againt USDT
+      { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'BCC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'BCG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'BNB'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'NEO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'POWR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'QTUM'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
+      { pair: ['USDT', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
     ],
     requires: ['key', 'secret'],
     providesHistory: 'date',
