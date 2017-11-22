@@ -398,7 +398,7 @@ config.sqlite = {
   dataDirectory: 'history',
   version: 0.1,
 
-  journalMode: 'WAL', // setting this to 'DEL' may prevent db locking on windows
+  journalMode: require('./web/isWindows.js') ? 'DELETE' : 'WAL',
 
   dependencies: []
 }
@@ -446,7 +446,7 @@ config.backtest = {
 config.importer = {
   daterange: {
     // NOTE: these dates are in UTC
-    from: "2016-01-01 00:00:00"
+    from: "2017-11-01 00:00:00"
   }
 }
 
