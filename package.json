@@ -17,6 +17,7 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
+    "binance": "^1.0.2",
     "bitcoin-co-id": "0.0.1",
     "bitexthai": "^0.1.0",
     "bitfinex-api-node": "^1.2.0",
@@ -57,7 +58,6 @@
     "stats-lite": "^2.0.4",
     "tiny-promisify": "^0.1.1",
     "toml": "^2.3.0",
-    "tulind": "^0.8.7",
     "twitter": "^1.7.1",
     "zaif.jp": "^0.1.4"
   },
