@@ -21,7 +21,7 @@ var crypto_currencies = [
   "XMR",
   "XRP",
   "ZEC",
-  "BCH",
+  "BCH"
 ];
 
 var fiat_currencies = [
@@ -37,6 +37,7 @@ var assets_without_prefix = [
   'DASH',
   'EOS',
   'GNO',
+  'USDT'
 ]
 
 // Method to check if asset/currency is a crypto currency
@@ -129,8 +130,12 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args, err);
     }
 
+    var pair = this.pair;
+    if (this.asset === 'USDT')
+      pair = 'USDTZUSD'; // Yet another kraken inconsistency
+
     var parsedTrades = [];
-    _.each(trades.result[this.pair], function(trade) {
+    _.each(trades.result[pair], function(trade) {
       // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
       if (_.isNull(startTs) || startTs < moment.unix(trade[2]).valueOf()) {
         parsedTrades.push({
@@ -363,7 +368,7 @@ Trader.getCapabilities = function () {
     name: 'Kraken',
     slug: 'kraken',
     currencies: ['CAD', 'EUR', 'GBP', 'JPY', 'USD', 'XBT', 'ETH'],
-    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC', 'ETH', 'BCH', 'DASH', 'EOS', 'ETC'],
+    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC', 'ETH', 'BCH', 'DASH', 'EOS', 'ETC', 'USDT'],
     markets: [
       //Tradeable againt ETH
       { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
@@ -452,6 +457,9 @@ Trader.getCapabilities = function () {
       { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'XBT'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
       { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
+
+      //Tradeable against USDT
+      { pair: ['USD', 'USDT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
     ],
     requires: ['key', 'secret'],
     providesHistory: 'date',
