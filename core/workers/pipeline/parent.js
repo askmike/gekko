@@ -18,6 +18,9 @@ module.exports = (mode, config, callback) => {
     if(m === 'ready')
       return child.send(message);
 
+    if(m === 'done')
+      return child.send({what: 'exit'});
+
     handle.message(m);
   });
 
