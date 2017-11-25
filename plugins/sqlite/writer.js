@@ -82,20 +82,21 @@ Store.prototype.writeCandles = function() {
 
 var processCandle = function(candle, done) {
 
-  // because we might get a lot of candles
-  // in the same tick, we rather batch them
-  // up and insert them at once at next tick.
   this.cache.push(candle);
-  _.defer(this.writeCandles);
+  this.writeCandles();
 
-  // NOTE: sqlite3 has it's own buffering, at
-  // this point we are confident that the candle will
-  // get written to disk on next tick.
   done();
 }
 
-if(config.candleWriter.enabled)
+var finalize = function() {
+  this.db.close();
+  this.db = null;
+}
+
+if(config.candleWriter.enabled) {
   Store.prototype.processCandle = processCandle;
+  Store.prototype.finalize = finalize;
+}
 
 // TODO: add storing of trades / advice?
 

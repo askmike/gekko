@@ -162,6 +162,7 @@ Reader.prototype.getBoundry = function(next) {
 }
 
 Reader.prototype.close = function() {
+  this.db.close();
   this.db = null;
 }
 

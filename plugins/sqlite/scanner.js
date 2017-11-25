@@ -32,7 +32,7 @@ module.exports = done => {
   async.each(dbs, (db, next) => {
 
     const exchange = _.first(db.split('_'));
-    const handle = new sqlite3.Database(dbDirectory + '/' + db, err => {
+    const handle = new sqlite3.Database(dbDirectory + '/' + db, sqlite3.OPEN_READONLY, err => {
       if(err)
         return next(err);
 
