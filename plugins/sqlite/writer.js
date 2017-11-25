@@ -81,14 +81,15 @@ Store.prototype.writeCandles = function() {
 }
 
 var processCandle = function(candle, done) {
-
   this.cache.push(candle);
-  this.writeCandles();
+  if (this.cache.length > 100) 
+    this.writeCandles();
 
   done();
-}
+};
 
 var finalize = function() {
+  this.writeCandles();
   this.db.close();
   this.db = null;
 }
