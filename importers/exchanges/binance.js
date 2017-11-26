@@ -23,19 +23,14 @@ var fetch = () => {
 
 var handleFetch = (unk, trades) => {
   if (trades.length > 0) {
-    var last = moment.unix(_.last(trades).date);
-
-    if (last < from) {
-      log.debug(
-        'Skipping data, they are before from date (probably a programming error)',
-        last.format()
-      );
-      return fetch();
-    }
+    var last = moment.unix(_.last(trades).date).utc();
+    var next = last.clone();
+  } else {
+    var next = from.clone().add(1, 'd');
+    log.debug('Import step returned no results, moving to the next 24h period');
   }
 
-  var next = from.add(1, 'd');
-  if (next >= end) {
+  if (from.add(1, 'd') >= end) {
     fetcher.emit('done');
 
     var endUnix = end.unix();
@@ -47,8 +42,8 @@ var handleFetch = (unk, trades) => {
 };
 
 module.exports = function(daterange) {
-  from = daterange.from.clone();
-  end = daterange.to.clone();
+  from = daterange.from.clone().utc();
+  end = daterange.to.clone().utc();
 
   return {
     bus: fetcher,
