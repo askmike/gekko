@@ -64,9 +64,10 @@ var processCandle = function processCandle (candle, done) {
   done();
 }
 
-var finalize = function() {
+var finalize = function(done) {
   this.writeCandles();
   this.db = null;
+  done();
 }
 
 var processAdvice = function processAdvice (advice) {

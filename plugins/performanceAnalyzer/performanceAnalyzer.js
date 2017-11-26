@@ -166,9 +166,10 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
   return report;
 }
 
-PerformanceAnalyzer.prototype.finalize = function() {
+PerformanceAnalyzer.prototype.finalize = function(done) {
   const report = this.calculateReportStatistics();
   this.handler.finalize(report);
+  done();
 }
 
 

@@ -72,9 +72,10 @@ var processCandle = function(candle, done) {
   done();
 };
 
-var finalize = function() {
+var finalize = function(done) {
   this.writeCandles();
   this.db = null;
+  done();
 }
 
 if(config.candleWriter.enabled) {

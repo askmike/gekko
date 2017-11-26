@@ -49,7 +49,7 @@ if(mode === 'realtime' || mode === 'importer') {
     util.die(`History database does not exist for exchange ${config.watch.exchange} at version ${version}.`);
 }
 
-var journalMode = config.sqlite.journalMode || 'DELETE';
+var journalMode = config.sqlite.journalMode || 'PERSIST';
 var syncMode = journalMode === 'WAL' ? 'NORMAL' : 'FULL';
 
 var db = new sqlite3.Database(fullPath);

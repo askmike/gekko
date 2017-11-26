@@ -398,7 +398,7 @@ config.sqlite = {
   dataDirectory: 'history',
   version: 0.1,
 
-  journalMode: 'WAL', // setting this to 'DEL' may prevent db locking on windows
+  journalMode: require('../isWindows.js') ? 'PERSIST' : 'WAL',
 
   dependencies: []
 }
