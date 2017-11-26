@@ -40,7 +40,6 @@ Gekko.prototype.finalize = function() {
 }
 
 Gekko.prototype.shutdown = function() {
-  console.log("Finalizing gekko stream");
   async.eachSeries(
     this.candleConsumers,
     function(c, callback) {
