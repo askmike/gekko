@@ -40,10 +40,12 @@ Gekko.prototype.finalize = function() {
 }
 
 Gekko.prototype.shutdown = function() {
+  console.log("Finalizing gekko stream");
   async.eachSeries(
     this.candleConsumers,
     function(c, callback) {
       if (c.finalize) c.finalize(callback);
+      else callback();
     },
     function() {
       // If we are a child process, we signal to the parent to kill the child once it is done
