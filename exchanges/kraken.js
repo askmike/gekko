@@ -91,7 +91,7 @@ var Trader = function(config) {
   );
 }
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Response code 520|Response code 504|Response code 502)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
 Trader.prototype.retry = function(method, args, error) {
   if (!error || !error.message.match(recoverableErrors)) {
