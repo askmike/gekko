@@ -17,11 +17,11 @@ var Actor = function() {
   this.priceTime = utc();
 
   this.commands = {
-    'advice': 'emitAdvice',
-    'price': 'emitPrice',
-    'donate': 'emitDonation',
-    'real advice': 'emitRealAdvice',
-    'help': 'emitHelp'
+    '/advice': 'emitAdvice',
+    '/price': 'emitPrice',
+    '/donate': 'emitDonation',
+    '/real advice': 'emitRealAdvice',
+    '/help': 'emitHelp'
   };
 
   this.rawCommands = _.keys(this.commands);
