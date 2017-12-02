@@ -91,11 +91,11 @@ var Trader = function(config) {
   );
 }
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|between Cloudflare and the origin web server)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Response code 520|Response code 504|Response code 502)/)
 
 Trader.prototype.retry = function(method, args, error) {
   if (!error || !error.message.match(recoverableErrors)) {
-    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error');
+    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error: ', error.message);
     return;
   }
 
