@@ -96,7 +96,7 @@ var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUS
 Trader.prototype.retry = function(method, args, error) {
   if (!error || !error.message.match(recoverableErrors)) {
     log.error('[kraken.js] ', this.name, 'returned an irrecoverable error: ', error.message);
-    return;
+    return false;
   }
 
   // 5 -> 10s to avoid more rejection
@@ -118,6 +118,8 @@ Trader.prototype.retry = function(method, args, error) {
     function() { method.apply(self, args) },
     wait
   );
+
+  return true;
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -127,7 +129,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
       log.error('error getting trades', err);
-      return this.retry(this.getTrades, args, err);
+      if (!this.retry(this.getTrades, args, err))
+        callback(err);
     }
 
     var pair = this.pair;
@@ -178,7 +181,8 @@ Trader.prototype.getPortfolio = function(callback) {
 
     if (err || !data.result) {
       log.error('[kraken.js] ' , err);
-      return this.retry(this.getPortfolio, args, err);
+      if (!this.retry(this.getPortfolio, args, err))
+        callback(err);
     }
 
     // When using the prefix-less assets, you remove the prefix from the assset but leave
@@ -225,8 +229,10 @@ Trader.prototype.getTicker = function(callback) {
     else if(!err && !_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if (err)
-      return log.error('unable to get ticker', JSON.stringify(err));
+    if (err) {
+      log.error('unable to get ticker', JSON.stringify(err));
+      callback(err);
+    }
 
     var result = data.result[this.pair];
     var ticker = {
@@ -276,7 +282,8 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
     if(err) {
       log.error('unable to ' + tradeType.toLowerCase(), err);
-      return this.retry(this.addOrder, args, err);
+      if (!this.retry(this.addOrder, args, err))
+        callback(err);
     }
 
     var txid = data.result.txid[0];
@@ -304,8 +311,10 @@ Trader.prototype.getOrder = function(order, callback) {
     else if(!err && !_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if(err)
-      return log.error('Unable to get order', order, JSON.stringify(err));
+    if(err) {
+      log.error('Unable to get order', order, JSON.stringify(err));
+      return callback(err);
+    }
 
     var price = parseFloat( data.result[ order ].price );
     var amount = parseFloat( data.result[ order ].vol_exec );
@@ -333,8 +342,10 @@ Trader.prototype.checkOrder = function(order, callback) {
     if(!_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if(err)
-      return log.error('Unable to check order', order, JSON.stringify(err));
+    if(err) {
+      log.error('Unable to check order', order, JSON.stringify(err));
+      return callback(err);
+    }
 
     var result = data.result[order];
     var stillThere = result.status === 'open' || result.status === 'pending';
@@ -354,7 +365,8 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
     if(err) {
       log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
-      return this.retry(this.cancelOrder, args, err);
+      if (!this.retry(this.cancelOrder, args, err))
+        callback(err);
     }
 
     callback();
