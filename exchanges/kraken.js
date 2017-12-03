@@ -91,10 +91,10 @@ var Trader = function(config) {
   );
 }
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Response code 525|Response code 520|Response code 504|Response code 502)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
-Trader.prototype.retry = function(method, args, error) {
-  if (!error || !error.message.match(recoverableErrors)) {
+Trader.prototype.retry = function(method, args, error, alwaysRetry) {
+  if (!alwaysRetry && (!error || !error.message.match(recoverableErrors))) {
     log.error('[kraken.js] ', this.name, 'returned an irrecoverable error: ', error.message);
     return false;
   }
@@ -129,8 +129,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
       log.error('error getting trades', err);
-      if (!this.retry(this.getTrades, args, err))
-        callback(err);
+      return this.retry(this.getTrades, args, err, true);
     }
 
     var pair = this.pair;
