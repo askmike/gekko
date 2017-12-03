@@ -230,7 +230,7 @@ Trader.prototype.getTicker = function(callback) {
 
     if (err) {
       log.error('unable to get ticker', JSON.stringify(err));
-      callback(err);
+      return callback(err);
     }
 
     var result = data.result[this.pair];
