@@ -17,7 +17,6 @@ var log = require(dirs.core + 'log');
 var async = require('async');
 var checker = require(dirs.core + 'exchangeChecker.js');
 var moment = require('moment');
-var async = require('async');
 
 var Manager = function(conf) {
   _.bindAll(this);
