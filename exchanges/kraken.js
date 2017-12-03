@@ -64,6 +64,9 @@ var addPrefix = function(value) {
 
 // Some currencies in Kraken don't use the prefix, not clearly documented
 var getAssetPair = function(asset, currency) {
+  if (asset === 'USDT') 
+    return 'USDTZUSD'; // Yet another kraken inconsistency 
+
   if (_.contains(assets_without_prefix, asset))
     return asset + currency;
   else
@@ -132,12 +135,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return this.retry(this.getTrades, args, err, true);
     }
 
-    var pair = this.pair;
-    if (this.asset === 'USDT')
-      pair = 'USDTZUSD'; // Yet another kraken inconsistency
-
     var parsedTrades = [];
-    _.each(trades.result[pair], function(trade) {
+    _.each(trades.result[this.pair], function(trade) {
       // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
       if (_.isNull(startTs) || startTs < moment.unix(trade[2]).valueOf()) {
         parsedTrades.push({
