@@ -64,6 +64,9 @@ var addPrefix = function(value) {
 
 // Some currencies in Kraken don't use the prefix, not clearly documented
 var getAssetPair = function(asset, currency) {
+  if (asset === 'USDT') 
+    return 'USDTZUSD'; // Yet another kraken inconsistency 
+
   if (_.contains(assets_without_prefix, asset))
     return asset + currency;
   else
@@ -91,12 +94,12 @@ var Trader = function(config) {
   );
 }
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|between Cloudflare and the origin web server)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
-Trader.prototype.retry = function(method, args, error) {
-  if (!error || !error.message.match(recoverableErrors)) {
-    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error');
-    return;
+Trader.prototype.retry = function(method, args, error, alwaysRetry) {
+  if (!alwaysRetry && (!error || !error.message.match(recoverableErrors))) {
+    log.error('[kraken.js] ', this.name, 'returned an irrecoverable error: ', error.message);
+    return false;
   }
 
   // 5 -> 10s to avoid more rejection
@@ -118,6 +121,8 @@ Trader.prototype.retry = function(method, args, error) {
     function() { method.apply(self, args) },
     wait
   );
+
+  return true;
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -127,15 +132,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var process = function(err, trades) {
     if (err || !trades || trades.length === 0) {
       log.error('error getting trades', err);
-      return this.retry(this.getTrades, args, err);
+      return this.retry(this.getTrades, args, err, true);
     }
 
-    var pair = this.pair;
-    if (this.asset === 'USDT')
-      pair = 'USDTZUSD'; // Yet another kraken inconsistency
-
     var parsedTrades = [];
-    _.each(trades.result[pair], function(trade) {
+    _.each(trades.result[this.pair], function(trade) {
       // Even when you supply 'since' you can still get more trades than you asked for, it needs to be filtered
       if (_.isNull(startTs) || startTs < moment.unix(trade[2]).valueOf()) {
         parsedTrades.push({
@@ -148,9 +149,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }, this);
 
     if(descending)
-      callback(null, parsedTrades.reverse());
+      callback(undefined, parsedTrades.reverse());
     else
-      callback(null, parsedTrades);
+      callback(undefined, parsedTrades);
   };
 
   var reqData = {
@@ -178,7 +179,8 @@ Trader.prototype.getPortfolio = function(callback) {
 
     if (err || !data.result) {
       log.error('[kraken.js] ' , err);
-      return this.retry(this.getPortfolio, args, err);
+      if (!this.retry(this.getPortfolio, args, err))
+        return callback(err);
     }
 
     // When using the prefix-less assets, you remove the prefix from the assset but leave
@@ -202,7 +204,7 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount }
     ];
 
-    return callback(err.message, portfolio);
+    return callback(undefined, portfolio);
   };
 
   this.kraken.api('Balance', {}, _.bind(setBalance, this));
@@ -213,7 +215,7 @@ Trader.prototype.getPortfolio = function(callback) {
 // Base maker fee is 0.16%, taker fee is 0.26%.
 Trader.prototype.getFee = function(callback) {
   var makerFee = 0.16;
-  callback(false, makerFee / 100);
+  callback(undefined, makerFee / 100);
 };
 
 Trader.prototype.getTicker = function(callback) {
@@ -225,15 +227,17 @@ Trader.prototype.getTicker = function(callback) {
     else if(!err && !_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if (err)
-      return log.error('unable to get ticker', JSON.stringify(err));
+    if (err) {
+      log.error('unable to get ticker', JSON.stringify(err));
+      return callback(err);
+    }
 
     var result = data.result[this.pair];
     var ticker = {
       ask: result.a[0],
       bid: result.b[0]
     };
-    callback(err.message, ticker);
+    callback(undefined, ticker);
   };
 
   this.kraken.api('Ticker', {pair: this.pair}, _.bind(setTicker, this));
@@ -276,7 +280,8 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
     if(err) {
       log.error('unable to ' + tradeType.toLowerCase(), err);
-      return this.retry(this.addOrder, args, err);
+      if (!this.retry(this.addOrder, args, err))
+        return callback(err);
     }
 
     var txid = data.result.txid[0];
@@ -304,8 +309,10 @@ Trader.prototype.getOrder = function(order, callback) {
     else if(!err && !_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if(err)
-      return log.error('Unable to get order', order, JSON.stringify(err));
+    if(err) {
+      log.error('Unable to get order', order, JSON.stringify(err));
+      return callback(err);
+    }
 
     var price = parseFloat( data.result[ order ].price );
     var amount = parseFloat( data.result[ order ].vol_exec );
@@ -333,12 +340,14 @@ Trader.prototype.checkOrder = function(order, callback) {
     if(!_.isEmpty(data.error))
       err = new Error(data.error);
 
-    if(err)
-      return log.error('Unable to check order', order, JSON.stringify(err));
+    if(err) {
+      log.error('Unable to check order', order, JSON.stringify(err));
+      return callback(err);
+    }
 
     var result = data.result[order];
     var stillThere = result.status === 'open' || result.status === 'pending';
-    callback(err.message, !stillThere);
+    callback(undefined, !stillThere);
   };
 
   this.kraken.api('QueryOrders', {txid: order}, _.bind(check, this));
@@ -354,7 +363,8 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
     if(err) {
       log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
-      return this.retry(this.cancelOrder, args, err);
+      if (!this.retry(this.cancelOrder, args, err))
+        return callback(err);
     }
 
     callback();

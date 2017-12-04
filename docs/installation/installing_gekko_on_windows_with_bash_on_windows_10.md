@@ -68,23 +68,6 @@ cd gekko
 npm install --only=production
 ```
 
-## Edit the handle.js file (taken from [here](https://github.com/askmike/gekko/issues/708#issuecomment-296329300))
-
-Navigate to gekko/plugins/sqlite:
-
-`cd  ~/gekko/plugins/sqlite`
-
-Change line 53 in handle.js from 
-
-`db.run("PRAGMA journal_mode = WAL"); `
-
-to 
-
-`db.run("PRAGMA journal_mode = DEL"); `
-
-(I use nano for this --> `nano handle.js`)
-
-
 ## Restart Bash and install the correct version of TA-lib (taken from [here](https://github.com/askmike/gekko/issues/908#issuecomment-319657408))
 
 Restart Bash by closing it and reopening it. Then:
