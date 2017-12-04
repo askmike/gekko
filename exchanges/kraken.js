@@ -149,9 +149,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }, this);
 
     if(descending)
-      callback(null, parsedTrades.reverse());
+      callback(undefined, parsedTrades.reverse());
     else
-      callback(null, parsedTrades);
+      callback(undefined, parsedTrades);
   };
 
   var reqData = {
@@ -180,7 +180,7 @@ Trader.prototype.getPortfolio = function(callback) {
     if (err || !data.result) {
       log.error('[kraken.js] ' , err);
       if (!this.retry(this.getPortfolio, args, err))
-        callback(err);
+        return callback(err);
     }
 
     // When using the prefix-less assets, you remove the prefix from the assset but leave
@@ -204,7 +204,7 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount }
     ];
 
-    return callback(err.message, portfolio);
+    return callback(undefined, portfolio);
   };
 
   this.kraken.api('Balance', {}, _.bind(setBalance, this));
@@ -215,7 +215,7 @@ Trader.prototype.getPortfolio = function(callback) {
 // Base maker fee is 0.16%, taker fee is 0.26%.
 Trader.prototype.getFee = function(callback) {
   var makerFee = 0.16;
-  callback(false, makerFee / 100);
+  callback(undefined, makerFee / 100);
 };
 
 Trader.prototype.getTicker = function(callback) {
@@ -237,7 +237,7 @@ Trader.prototype.getTicker = function(callback) {
       ask: result.a[0],
       bid: result.b[0]
     };
-    callback(err.message, ticker);
+    callback(undefined, ticker);
   };
 
   this.kraken.api('Ticker', {pair: this.pair}, _.bind(setTicker, this));
@@ -281,7 +281,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     if(err) {
       log.error('unable to ' + tradeType.toLowerCase(), err);
       if (!this.retry(this.addOrder, args, err))
-        callback(err);
+        return callback(err);
     }
 
     var txid = data.result.txid[0];
@@ -347,7 +347,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 
     var result = data.result[order];
     var stillThere = result.status === 'open' || result.status === 'pending';
-    callback(err.message, !stillThere);
+    callback(undefined, !stillThere);
   };
 
   this.kraken.api('QueryOrders', {txid: order}, _.bind(check, this));
@@ -364,7 +364,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
     if(err) {
       log.error('unable to cancel order', order, '(', err, JSON.stringify(err), ')');
       if (!this.retry(this.cancelOrder, args, err))
-        callback(err);
+        return callback(err);
     }
 
     callback();
