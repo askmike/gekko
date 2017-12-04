@@ -28,8 +28,9 @@ Actor.prototype.processAdvice = function(advice) {
   console.log()
 };
 
-Actor.prototype.finalize = function(advice) {
+Actor.prototype.finalize = function(advice, done) {
   // todo
+  done();
 };
 
 module.exports = Actor;
