@@ -64,8 +64,8 @@ var addPrefix = function(value) {
 
 // Some currencies in Kraken don't use the prefix, not clearly documented
 var getAssetPair = function(asset, currency) {
-  if (asset === 'USDT') 
-    return 'USDTZUSD'; // Yet another kraken inconsistency 
+  if (asset === 'USDT')
+    return 'USDTZUSD'; // Yet another kraken inconsistency
 
   if (_.contains(assets_without_prefix, asset))
     return asset + currency;
