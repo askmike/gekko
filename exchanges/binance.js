@@ -122,13 +122,15 @@ Trader.prototype.getPortfolio = function(callback) {
       return this.retry(this.getPortfolio, args, err);
     }
 
-    var assetAmount = parseFloat(_.first(data.balances, function(item) {
+    var findAsset = function(item) {
       return item.asset === this.asset;
-    }).free);
+    }
+    var assetAmount = parseFloat(_.find(data.balances, _.bind(findAsset, this)).free);
 
-    var currencyAmount = parseFloat(_.first(data.balances, function(item) {
+    var findCurrency = function(item) {
       return item.asset === this.currency;
-    }).free);
+    }
+    var currencyAmount = parseFloat(_.find(data.balances, _.bind(findCurrency, this)).free);
 
     if (!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       log.error(
@@ -178,9 +180,10 @@ Trader.prototype.getTicker = function(callback) {
         JSON.stringify(err)
       );
 
-    var result = _first(data, function(ticker) {
+    var findSymbol = function(ticker) {
       return ticker.symbol === this.pair;
-    });
+    }
+    var result = _.find(data, _.bind(findSymbol, this));
 
     var ticker = {
       ask: parseFloat(result.askPrice),
@@ -198,12 +201,37 @@ Trader.prototype.getTicker = function(callback) {
   );
 };
 
-// ---------
-// YOU LEFT OFF HERE
-// ---------
+// Effectively counts the number of decimal places, so 0.001 or 0.234 results in 3
+Trader.prototype.getPrecision = function(tickSize) {
+  if (!isFinite(tickSize)) return 0;
+  var e = 1, p = 0;
+  while (Math.round(tickSize * e) / e !== tickSize) { e *= 10; p++; }
+  return p;
+};
+
+Trader.prototype.roundAmount = function(amount, tickSize) {
+  var precision = 100000000;
+  var t = this.getPrecision(tickSize);
+
+  if(Number.isInteger(t))
+    precision = Math.pow(10, t);
+
+  amount *= precision;
+  amount = Math.floor(amount);
+  amount /= precision;
+  return amount;
+};
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var args = _.toArray(arguments);
+
+  var findMarket = function(market) {
+    return market.pair[0] === this.currency && market.pair[1] === this.asset
+  }
+  var market = _.find(Trader.getCapabilities().markets, _.bind(findMarket, this));
+  amount = this.roundAmount(amount, market.minimalOrder.amount);
+  price = this.roundAmount(price, market.precision);
+
   log.debug(
     '[binance.js] (addOrder)',
     tradeType.toUpperCase(),
@@ -216,7 +244,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
   var setOrder = function(err, data) {
     log.debug(
-      '[binance.js] entering "getTicker" callback after api call, err:',
+      '[binance.js] entering "setOrder" callback after api call, err:',
       err,
       ' data:',
       data
@@ -243,6 +271,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
       timeInForce: 'GTC', // Good to cancel (I think, not really covered in docs, but is default)
       quantity: amount,
       price: price,
+      timestamp: new Date().getTime()
     },
     _.bind(setOrder, this)
   );
@@ -379,207 +408,154 @@ Trader.getCapabilities = function() {
       'ZEC',
     ],
     markets: [
+      // https://www.binance.com/exchange/public/product
+
       //Tradeable againt BTC
       {
         pair: ['BTC', 'BCC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['BTC', 'BCG'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'BNB'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 1, unit: 'asset' },
+        precision: 0.00000001,
       },
       {
         pair: ['BTC', 'DASH'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'ETH'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'ETC'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'EOS'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 1.0, unit: 'asset' },
+        precision: 0.00000001,
       },
       {
         pair: ['BTC', 'NEO'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'OMG'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'POWR'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.00000001,
       },
       {
         pair: ['BTC', 'QTUM'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['BTC', 'ZEC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.000001,
       },
 
       //Tradeable againt BNB
       {
-        pair: ['BTC', 'BCC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        pair: ['BNB', 'BCC'],
+        minimalOrder: { amount: 0.00001, unit: 'asset' },
+        precision: 0.01,
       },
       {
-        pair: ['BTC', 'NEO'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        pair: ['BNB', 'NEO'],
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.001,
       },
 
       //Tradeable againt ETH
       {
-        pair: ['ETH', 'BTC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
         pair: ['ETH', 'BCC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['ETH', 'BCG'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.00001,
       },
       {
         pair: ['ETH', 'BNB'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 1.0, unit: 'asset' },
+        precision: 0.00000001,
       },
       {
         pair: ['ETH', 'DASH'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.00001,
       },
       {
         pair: ['ETH', 'ETC'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['ETH', 'EOS'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['ETH', 'NEO'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['ETH', 'OMG'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['ETH', 'POWR'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 1, unit: 'asset' },
+        precision: 0.00000001,
       },
       {
         pair: ['ETH', 'QTUM'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.000001,
       },
       {
         pair: ['ETH', 'ZEC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 00001,
       },
 
       //Tradeable againt USDT
       {
         pair: ['USDT', 'BTC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.000001, unit: 'asset' },
+        precision: 0.01,
       },
       {
         pair: ['USDT', 'BCC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'BCG'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.00001, unit: 'asset' },
+        precision: 0.01,
       },
       {
         pair: ['USDT', 'BNB'],
         minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'DASH'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        precision: 0.01,
       },
       {
         pair: ['USDT', 'ETH'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'ETC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'EOS'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.00001, unit: 'asset' },
+        precision: 0.01,
       },
       {
         pair: ['USDT', 'NEO'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'OMG'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'POWR'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'QTUM'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
-      },
-      {
-        pair: ['USDT', 'ZEC'],
-        minimalOrder: { amount: 0.01, unit: 'asset' },
-        precision: 8,
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.01,
       },
     ],
     requires: ['key', 'secret'],
