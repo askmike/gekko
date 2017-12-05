@@ -137,7 +137,7 @@ methods.aroon = {
 methods.aroonosc = {
     requires: ['optInTimePeriod'],
     create: (params) => {
-        verifyParams('arronosc', params);
+        verifyParams('aroonosc', params);
 
         return (data, callback) => execute(callback, {
             indicator: tulind.indicators.aroonosc,
