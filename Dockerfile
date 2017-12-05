@@ -7,12 +7,16 @@ ENV PORT 3000
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+# Install GYP dependencies globally, will be used to code build other dependencies
+RUN npm install -g --production node-gyp && \
+    cd $(npm root -g)/npm && npm install --production fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js && \
+    npm cache clean
+
 # Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install -g node-gyp
-RUN cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
-RUN npm install --production
-RUN npm install redis@0.10.0 talib@1.0.2 tulind@0.8.7 pg
+COPY package.json /usr/src/app
+RUN npm install --production && \
+    npm install --production redis@0.10.0 talib@1.0.2 tulind@0.8.7 pg && \
+    npm cache clean
 
 # Bundle app source
 COPY . /usr/src/app
