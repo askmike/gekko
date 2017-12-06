@@ -14,6 +14,7 @@ var Store = function(done, pluginMeta) {
   this.db.serialize(this.upsertTables);
 
   this.cache = [];
+  this.buffered = !(config.market && config.market.type === 'leech');
 }
 
 Store.prototype.upsertTables = function() {
@@ -89,7 +90,7 @@ Store.prototype.writeCandles = function() {
 
 var processCandle = function(candle, done) {
   this.cache.push(candle);
-  if (this.cache.length > 1000) 
+  if (this.buffered || this.cache.length > 1000) 
     this.writeCandles();
 
   done();
