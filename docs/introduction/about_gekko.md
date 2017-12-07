@@ -12,7 +12,7 @@ Gekko is a tool that makes it very easy to automate your own trading stragies.
 
 ![gist of gekko](https://gekko.wizb.it/_static/gekko-gist.png)
 
-You can either create your own trading strategy or start with the build in example strategies. Once you have a strategy you can use Gekko to automatically run it in a few different ways:
+You can either create your own trading strategy or start with the built-in example strategies. Once you have a strategy you can use Gekko to automatically run it in a few different ways:
 
 - **Backtest**: You can start a simulation of the strategy over a historical data period and Gekko will tell you what would have happened (which trades would have been performed as well as overall performance and risk metrics).
 - **Paper trader**: You can run the strategy in realtime simulate trading (trade with fake money) to see in realtime how profitable your strategy would have been.
