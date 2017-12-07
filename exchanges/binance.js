@@ -229,8 +229,8 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     return market.pair[0] === this.currency && market.pair[1] === this.asset
   }
   var market = _.find(Trader.getCapabilities().markets, _.bind(findMarket, this));
-  amount = this.roundAmount(amount, market.minimalOrder.amount);
-  price = this.roundAmount(price, market.precision);
+  amount = Math.max(this.roundAmount(amount, market.minimalOrder.amount), market.minimalOrder.amount);
+  price = Math.max(this.roundAmount(price, market.precision), market.precision);
 
   log.debug(
     '[binance.js] (addOrder)',
