@@ -110,7 +110,7 @@ var retryForever = {
   maxTimeout: 30
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 520|Response code 504|Response code 502)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
