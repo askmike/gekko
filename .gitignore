@@ -44,4 +44,6 @@ history
 TMP_*
 .idea
 volumes
+config.js
+config-*.js
 SECRET-api-keys.json
