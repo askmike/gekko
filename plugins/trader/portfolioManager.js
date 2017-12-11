@@ -17,7 +17,6 @@ var log = require(dirs.core + 'log');
 var async = require('async');
 var checker = require(dirs.core + 'exchangeChecker.js');
 var moment = require('moment');
-var async = require('async');
 
 var Manager = function(conf) {
   _.bindAll(this);
@@ -105,7 +104,7 @@ Manager.prototype.setPortfolio = function(callback) {
 
   }.bind(this);
 
-  util.retry(this.exchange.getPortfolio, set);
+  this.exchange.getPortfolio(set);
 };
 
 Manager.prototype.setFee = function(callback) {
@@ -118,7 +117,7 @@ Manager.prototype.setFee = function(callback) {
     if(_.isFunction(callback))
       callback();
   }.bind(this);
-  util.retry(this.exchange.getFee, set);
+  this.exchange.getFee(set);
 };
 
 Manager.prototype.setTicker = function(callback) {
@@ -131,7 +130,7 @@ Manager.prototype.setTicker = function(callback) {
     if(_.isFunction(callback))
       callback();
   }.bind(this);
-  util.retry(this.exchange.getTicker, set);
+  this.exchange.getTicker(set);
 };
 
 // return the [fund] based on the data we have in memory

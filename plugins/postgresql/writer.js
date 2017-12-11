@@ -65,17 +65,22 @@ Store.prototype.writeCandles = function() {
 }
 
 var processCandle = function(candle, done) {
-
-  // because we might get a lot of candles
-  // in the same tick, we rather batch them
-  // up and insert them at once at next tick.
   this.cache.push(candle);
-  _.defer(this.writeCandles);
+  if (this.cache.length > 100) 
+    this.writeCandles();
+
+  done();
+};
+
+var finalize = function(done) {
+  this.writeCandles();
+  this.db = null;
   done();
 }
 
-if(config.candleWriter.enabled){
+if(config.candleWriter.enabled) {
   Store.prototype.processCandle = processCandle;
+  Store.prototype.finalize = finalize;
 }
 
 module.exports = Store;

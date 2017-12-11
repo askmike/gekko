@@ -18,8 +18,6 @@ const wss = new WebSocketServer({ server: server });
 const cache = require('./state/cache');
 const ListManager = require('./state/listManager');
 
-require('./supportsTalib');
-
 // broadcast function
 const broadcast = data => {
   if(_.isEmpty(data))
@@ -95,8 +93,9 @@ server.listen(config.api.port, config.api.host, '::', () => {
   // this prevents opening the browser during development
   let nodeCommand = _.last(process.argv[1].split('/'));
   if(nodeCommand === 'gekko' && !config.headless) {
-    try {
-      opn(location);
-    } catch(e) {}
+    opn(location)
+      .catch(err => {
+        console.log('Something went wrong when trying to open your web browser. UI is running on ' + location + '.');
+    });
   }
 });

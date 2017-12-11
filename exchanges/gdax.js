@@ -226,6 +226,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     var lastScan = 0;
 
     var process = function(err, response, data) {
+        if (data && data.message)
+            err = new Error(data.message);
+            
         if(err)
             return this.retry(this.getTrades, args);
 

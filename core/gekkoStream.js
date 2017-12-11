@@ -3,6 +3,7 @@
 
 var Writable = require('stream').Writable;
 var _ = require('lodash');
+var async = require('async');
 
 var util = require('./util');
 var env = util.gekkoEnv();
@@ -39,13 +40,18 @@ Gekko.prototype.finalize = function() {
 }
 
 Gekko.prototype.shutdown = function() {
-  _.each(this.candleConsumers, function(c) {
-    if(c.finalize)
-      c.finalize();
-  });
-
-  if(env === 'child-process')
-    process.exit(0);
-}
+  async.eachSeries(
+    this.candleConsumers,
+    function(c, callback) {
+      if (c.finalize) c.finalize(callback);
+      else callback();
+    },
+    function() {
+      // If we are a child process, we signal to the parent to kill the child once it is done
+      // so that is has time to process all remaining events (and send report data)
+      if (env === 'child-process') process.send('done');
+    }
+  );
+};
 
 module.exports = Gekko;
