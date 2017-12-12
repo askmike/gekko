@@ -821,7 +821,7 @@ methods.ultosc = {
 
         return (data, callback) => execute(callback, {
             indicator: tulind.indicators.ultosc,
-            inputs: [data.close],
+            inputs: [data.high, data.low, data.close],
             options: [params.optInTimePeriod1, params.optInTimePeriod2, params.optInTimePeriod3],
             results: ['result'],
         });
