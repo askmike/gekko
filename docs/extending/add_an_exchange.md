@@ -146,36 +146,11 @@ In reality calls to web APIs are inherently unreliable, as so it is important to
 
 Refer to the Kraken Exchange implementation for a reference on how to ideally handle retries.
 
-### How to get yourself banned from an exhange
+### How to get yourself banned from an exchange
 
 Most exchanges implement ratelimits on their APIs, retrying an API function too quickly or too much is an effective way to have your IP banned from an exchange API. For this reason it is recommended to use a backoff on subsequent retries, and limit retries to a reasonable timeperiod or number of attempts before failing completely.
 
-### Implementing Retry Handling
-
-From `core/util.js` you can schedule a retry by doing the following:
-
-```
-var retryCritical = {
-  retries: 10,
-  factor: 1.2,
-  minTimeout: 1 * 1000,
-  maxTimeout: 30 * 1000
-};
-
-let handler = (cb) => this.kraken.api('Trades', reqData, this.handleResponse('getTrades', cb));
-util.retryCustom(retryForever, _.bind(handler, this), _.bind(processResults, this));
-```
-
-In the event of an error `handleResponse` function returns either an object of type `AbortError` or `RetryError`.
-
-From `core/error.js` you can create a `RetryError` or an `AbortError` by doing the following:
-
-```
-return new AbortError(err.message);
-return new RetryError(err.message);
-```
-
-Note that a standard JavaScript `Error` is treated as an `AbortError`.
+Gekko itself is quite conservative and won't query the exchange a lot, so retries are the only place where this is likely to be a problem.
 
 ### Recoverable Errors
 
