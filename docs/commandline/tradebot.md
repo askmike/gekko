@@ -6,7 +6,7 @@ You can set Gekko up as a tradebot, this will instruct Gekko to:
 - Run a strategy (in semi-realtime) over live market data.
 - Automatically create buy/sell orders based on signals coming from the strategy.
 
-*As with everything in Gekko, the tradebot will make decisions based on the selected/configured/created strategy. If you end up losing money, you have no one to blame but yourself.*
+*As with everything in Gekko, the tradebot will make decisions based on the strategy selected/configured/created **by YOU**. If you end up losing money, you have no one to blame but yourself.*
 
 ## Configuration
 
