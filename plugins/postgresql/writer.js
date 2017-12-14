@@ -45,7 +45,8 @@ Store.prototype.writeCandles = function() {
   var stmt = `
   INSERT INTO ${postgresUtil.table('candles')}
   (start, open, high,low, close, vwp, volume, trades)
-  values($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING;
+  select $1, $2, $3, $4, $5, $6, $7, $8
+  WHERE NOT EXISTS (select id from ${postgresUtil.table('candles')} where start=$1);
   `;
 
   _.each(this.cache, candle => {
