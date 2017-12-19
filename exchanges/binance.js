@@ -292,7 +292,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   };
 
   let handler = (cb) => this.binance.cancelOrder(reqData, this.handleResponse('cancelOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(check, this));
+  util.retryCustom(retryForever, _.bind(handler, this), _.bind(cancel, this));
 };
 
 Trader.getCapabilities = function() {
