@@ -48,7 +48,7 @@ var retryForever = {
 
 // Probably we need to update these string
 var recoverableErrors = new RegExp(
-  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded)/
+  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded|Response code 525|Response code 520|Response code 504|Response code 502)/
 );
 
     // run the failed method again with the same
@@ -64,8 +64,10 @@ Trader.prototype.getPortfolio = function(callback) {
 
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, response, body) => {
-    if(!_.isEmpty(body.message))
+    if (body && !_.isEmpty(body.message))
       error = new Error(body.message);
+    else if (response && response.statusCode < 200 && response.statusCode >= 300)
+      error = new Error(`Response code ${response.statusCode}`);
 
         var portfolio = data.map(function (account) {
                 return {
