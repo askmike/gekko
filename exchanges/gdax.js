@@ -6,18 +6,19 @@ var log = require('../core/log');
 
 var batchSize = 100;
 
+const BATCH_SIZE = 100;
+
 var Trader = function(config) {
     _.bindAll(this);
 
-    this.post_only = true;
-    this.use_sandbox = false;
-    this.name = 'GDAX';
-    this.import = false;
-    this.scanback = false;
-    this.scanbackTid = 0;
-    this.scanbackResults = [];
-    this.asset = config.asset;
-    this.currency = config.currency;
+  this.post_only = true;
+  this.use_sandbox = false;
+  this.name = "GDAX";
+  this.scanback = false;
+  this.scanbackTid = 0;
+  this.scanbackResults = [];
+  this.asset = config.asset;
+  this.currency = config.currency;
 
     if(_.isObject(config)) {
         this.key = config.key;
@@ -38,14 +39,17 @@ Trader.prototype.retry = function(method, args) {
     var wait = +moment.duration(10, 'seconds');
     log.debug(this.name, 'returned an error, retrying..');
 
-    var self = this;
+var retryForever = {
+  forever: true,
+  factor: 1.2,
+  minTimeout: 10 * 1000,
+  maxTimeout: 300 * 1000
+};
 
-    // make sure the callback (and any other fn)
-    // is bound to Trader
-    _.each(args, function(arg, i) {
-        if(_.isFunction(arg))
-            args[i] = _.bind(arg, self);
-    });
+// Probably we need to update these string
+var recoverableErrors = new RegExp(
+  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded)/
+);
 
     // run the failed method again with the same
     // arguments after wait
@@ -58,12 +62,10 @@ Trader.prototype.retry = function(method, args) {
 Trader.prototype.getPortfolio = function(callback) {
     var result = function(err, response, data) {
 
-        if(_.has(data, 'message')) {
-            if(data.message === 'Invalid API Key' || data.message === 'Invalid Passphrase')
-                util.die('GDAX said: ' + data.message);
-
-            return callback(data.message, []);
-        }
+Trader.prototype.handleResponse = function(funcName, callback) {
+  return (error, response, body) => {
+    if(!_.isEmpty(body.message))
+      error = new Error(body.message);
 
         var portfolio = data.map(function (account) {
                 return {
@@ -75,13 +77,15 @@ Trader.prototype.getPortfolio = function(callback) {
         callback(err, portfolio);
     };
 
-    this.gdax.getAccounts(result);
-}
+Trader.prototype.getPortfolio = function(callback) {
+  var result = function(err, data) {
+    if (err) return callback(err);
 
 Trader.prototype.getTicker = function(callback) {
-    var result = function(err, response, data) {
-        callback(err, {bid: +data.bid, ask: +data.ask})
-    };
+  var result = function(err, data) {
+    if (err) return callback(err);
+    callback(undefined, { bid: +data.bid, ask: +data.ask });
+  };
 
     this.gdax_public.getProductTicker(result);
 }
@@ -225,12 +229,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     var args = _.toArray(arguments);
     var lastScan = 0;
 
-    var process = function(err, response, data) {
-        if (data && data.message)
-            err = new Error(data.message);
-            
-        if(err)
-            return this.retry(this.getTrades, args);
+  var process = function(err, data) {
+    if (err) return callback(err);
 
         var result = _.map(data, function(trade) {
             return {
@@ -245,47 +245,44 @@ Trader.prototype.getTrades = function(since, callback, descending) {
             var last = _.last(data);
             var first = _.first(data);
 
-            // Try to find trade id matching the since date
-            if (!this.scanbackTid) {
-                // either scan for new ones or we found it.
-                if (moment.utc(last.time) < moment.utc(since)) {
-                    this.scanbackTid = last.trade_id;
-                } else {
-                    log.debug('Scanning backwards...' + last.time);
-                    this.gdax_public.getProductTrades({after: last.trade_id - (batchSize * lastScan) , limit: batchSize}, process);
-                    lastScan++;
-                    if (lastScan > 100) {
-                        lastScan = 10;
-                    }
-                }
-            }
+      // Try to find trade id matching the since date
+      if (!this.scanbackTid) {
+        // either scan for new ones or we found it.
+        if (moment.utc(last.time) < moment.utc(since)) {
+          this.scanbackTid = last.trade_id;
+        } else {
+          log.debug("Scanning backwards..." + last.time);
+          setTimeout(() => {
+            let handler = (cb) => this.gdax_public.getProductTrades({ after: last.trade_id - BATCH_SIZE * lastScan, limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
+            util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+          }, QUERY_DELAY);
+          lastScan++;
+          if (lastScan > 100) {
+            lastScan = 10;
+          }
+        }
+      }
 
             if (this.scanbackTid) {
             // if scanbackTid is set we need to move forward again
                 log.debug('Backwards: ' + last.time + ' (' + last.trade_id + ') to ' + first.time + ' (' + first.trade_id + ')');
 
-                if (this.import) {
-                    this.scanbackTid = first.trade_id;
-                    callback(null, result.reverse());
-                } else {
-                    this.scanbackResults = this.scanbackResults.concat(result.reverse());
+        this.scanbackResults = this.scanbackResults.concat(result.reverse());
 
-                    if (this.scanbackTid != first.trade_id) {
-                        this.scanbackTid = first.trade_id;
-                        this.gdax_public.getProductTrades({after: this.scanbackTid + batchSize + 1, limit: batchSize}, process);
-                    } else {
-                        this.scanback = false;
-                        this.scanbackTid = 0;
-                        if (!this.import) {
-                            log.debug('Scan finished: data found:' + this.scanbackResults.length);
-                            callback(null, this.scanbackResults);
-                        }
-                        this.scanbackResults = [];
-                    }
-                }
-            }
+        if (this.scanbackTid != first.trade_id) {
+          this.scanbackTid = first.trade_id;
+          setTimeout(() => {
+            let handler = (cb) => this.gdax_public.getProductTrades({ after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
+            util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+          }, QUERY_DELAY);
         } else {
-            callback(null, result.reverse());
+          this.scanback = false;
+          this.scanbackTid = 0;
+
+          log.debug("Scan finished: data found:" + this.scanbackResults.length);
+          callback(null, this.scanbackResults);
+
+          this.scanbackResults = [];
         }
     }.bind(this);
 
