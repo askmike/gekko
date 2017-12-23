@@ -21,7 +21,13 @@ var fetch = () => {
   fetcher.getTrades(from, handleFetch);
 };
 
-var handleFetch = (unk, trades) => {
+var handleFetch = (err, trades) => {
+  if (err) {
+    log.error(`There was an error importing from Binance ${err}`);
+    fetcher.emit('done');
+    return fetcher.emit('trades', []);
+}
+
   if (trades.length > 0) {
     var last = moment.unix(_.last(trades).date).utc();
     var next = last.clone();
