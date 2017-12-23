@@ -153,6 +153,7 @@ let handleFetch = (err, trades) => {
   batch = _.filter(batch, t => t.date >= startUnix && t.date <= endUnix);
 
   fetcher.emit('trades', batch);
+  batch = [];
 }
 
 module.exports = function (daterange) {
