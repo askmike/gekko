@@ -217,7 +217,7 @@ Manager.prototype.buy = function(amount, price) {
   }
 
   if (_.has(this.exchange, 'getLotSize')) {
-    this.exchange.getLotSize(amount, price, _.bind(process));
+    this.exchange.getLotSize('buy', amount, price, _.bind(process));
   } else {
     minimum = this.getMinimum(price);
     process(undefined, { amount: amount, price: price });
@@ -256,7 +256,7 @@ Manager.prototype.sell = function(amount, price) {
   }
 
   if (_.has(this.exchange, 'getLotSize')) {
-    this.exchange.getLotSize(amount, price, _.bind(process));
+    this.exchange.getLotSize('sell', amount, price, _.bind(process));
   } else {
     minimum = this.getMinimum(price);
     process(undefined, { amount: amount, price: price });
