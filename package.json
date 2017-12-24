@@ -65,6 +65,8 @@
     "chai": "^2.0.0",
     "mocha": "^2.1.1",
     "proxyquire": "^1.7.10",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "sinon": "^1.12.2"
   },
   "engines": {
