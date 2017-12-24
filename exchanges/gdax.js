@@ -1,6 +1,6 @@
-var Gdax = require("gdax");
-var _ = require("lodash");
-var moment = require("moment");
+var Gdax = require('gdax');
+var _ = require('lodash');
+var moment = require('moment');
 
 const util = require('../core/util');
 const Errors = require('../core/error');
@@ -13,7 +13,7 @@ var Trader = function(config) {
 
   this.post_only = true;
   this.use_sandbox = false;
-  this.name = "GDAX";
+  this.name = 'GDAX';
   this.scanback = false;
   this.scanbackTid = 0;
   this.scanbackResults = [];
@@ -25,20 +25,20 @@ var Trader = function(config) {
     this.secret = config.secret;
     this.passphrase = config.passphrase;
 
-    this.pair = [config.asset, config.currency].join("-").toUpperCase();
+    this.pair = [config.asset, config.currency].join('-').toUpperCase();
     this.post_only =
-      typeof config.post_only !== "undefined" ? config.post_only : true;
+      typeof config.post_only !== 'undefined' ? config.post_only : true;
   }
 
   this.gdax_public = new Gdax.PublicClient(
     this.pair,
-    this.use_sandbox ? "https://api-public.sandbox.gdax.com" : undefined
+    this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined
   );
   this.gdax = new Gdax.AuthenticatedClient(
     this.key,
     this.secret,
     this.passphrase,
-    this.use_sandbox ? "https://api-public.sandbox.gdax.com" : undefined
+    this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined
   );
 };
 
@@ -46,14 +46,14 @@ var retryCritical = {
   retries: 10,
   factor: 1.2,
   minTimeout: 10 * 1000,
-  maxTimeout: 60 * 1000
+  maxTimeout: 60 * 1000,
 };
 
 var retryForever = {
   forever: true,
   factor: 1.2,
   minTimeout: 10 * 1000,
-  maxTimeout: 300 * 1000
+  maxTimeout: 300 * 1000,
 };
 
 // Probably we need to update these string
@@ -70,24 +70,27 @@ Trader.prototype.processError = function(funcName, error) {
         error.message
       }`
     );
-    return new Errors.AbortError("[bitfinex.js] " + error.message);
+    return new Errors.AbortError('[bitfinex.js] ' + error.message);
   }
 
   log.debug(
     `[bitfinex.js] (${funcName}) returned an error, retrying: ${error.message}`
   );
-  return new Errors.RetryError("[bitfinex.js] " + error.message);
+  return new Errors.RetryError('[bitfinex.js] ' + error.message);
 };
 
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, response, body) => {
-    if (body && !_.isEmpty(body.message))
-      error = new Error(body.message);
-    else if (response && response.statusCode < 200 && response.statusCode >= 300)
+    if (body && !_.isEmpty(body.message)) error = new Error(body.message);
+    else if (
+      response &&
+      response.statusCode < 200 &&
+      response.statusCode >= 300
+    )
       error = new Error(`Response code ${response.statusCode}`);
 
     return callback(this.processError(funcName, error), body);
-  }
+  };
 };
 
 Trader.prototype.getPortfolio = function(callback) {
@@ -97,13 +100,14 @@ Trader.prototype.getPortfolio = function(callback) {
     var portfolio = data.map(function(account) {
       return {
         name: account.currency.toUpperCase(),
-        amount: parseFloat(account.available)
+        amount: parseFloat(account.available),
       };
     });
     callback(undefined, portfolio);
   };
 
-  let handler = (cb) => this.gdax.getAccounts(this.handleResponse('getPortfolio', cb));
+  let handler = cb =>
+    this.gdax.getAccounts(this.handleResponse('getPortfolio', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -113,13 +117,14 @@ Trader.prototype.getTicker = function(callback) {
     callback(undefined, { bid: +data.bid, ask: +data.ask });
   };
 
-  let handler = (cb) => this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
+  let handler = cb =>
+    this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getFee = function(callback) {
   //https://www.gdax.com/fees
-  const fee = this.asset == "BTC" ? 0.0025 : 0.003;
+  const fee = this.asset == 'BTC' ? 0.0025 : 0.003;
 
   //There is no maker fee, not sure if we need taker fee here
   //If post only is enabled, gdax only does maker trades which are free
@@ -128,10 +133,10 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   var buyParams = {
-    price: this.getMaxDecimalsNumber(price, this.currency == "BTC" ? 5 : 2),
+    price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
-    post_only: this.post_only
+    post_only: this.post_only,
   };
 
   var result = (err, data) => {
@@ -139,16 +144,16 @@ Trader.prototype.buy = function(amount, price, callback) {
     callback(undefined, data.id);
   };
 
-  let handler = (cb) => this.gdax.buy(buyParams, this.handleResponse('buy', cb));
+  let handler = cb => this.gdax.buy(buyParams, this.handleResponse('buy', cb));
   util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.sell = function(amount, price, callback) {
   var sellParams = {
-    price: this.getMaxDecimalsNumber(price, this.currency == "BTC" ? 5 : 2),
+    price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
-    post_only: this.post_only
+    post_only: this.post_only,
   };
 
   var result = function(err, data) {
@@ -156,7 +161,8 @@ Trader.prototype.sell = function(amount, price, callback) {
     callback(undefined, data.id);
   };
 
-  let handler = (cb) => this.gdax.sell(sellParams, this.handleResponse('buy', cb));
+  let handler = cb =>
+    this.gdax.sell(sellParams, this.handleResponse('buy', cb));
   util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -165,17 +171,18 @@ Trader.prototype.checkOrder = function(order, callback) {
     if (err) return callback(err);
 
     var status = data.status;
-    if (status == "done") {
+    if (status == 'done') {
       return callback(undefined, true);
-    } else if (status == "rejected") {
+    } else if (status == 'rejected') {
       return callback(undefined, false);
-    } else if (status == "pending") {
+    } else if (status == 'pending') {
       return callback(undefined, false);
     }
     callback(undefined, false);
   };
 
-  let handler = (cb) => this.gdax.getOrder(order, this.handleResponse('checkOrder', cb));
+  let handler = cb =>
+    this.gdax.getOrder(order, this.handleResponse('checkOrder', cb));
   util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -188,9 +195,10 @@ Trader.prototype.getOrder = function(order, callback) {
     var date = moment(data.done_at);
 
     callback(undefined, { price, amount, date });
-  }
+  };
 
-  let handler = (cb) => this.gdax.getOrder(order, this.handleResponse('getOrder', cb));
+  let handler = cb =>
+    this.gdax.getOrder(order, this.handleResponse('getOrder', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -200,7 +208,8 @@ Trader.prototype.cancelOrder = function(order, callback) {
     callback();
   };
 
-  let handler = (cb) => this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
+  let handler = cb =>
+    this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -214,8 +223,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       return {
         tid: trade.trade_id,
         amount: parseFloat(trade.size),
-        date: moment.utc(trade.time).format("X"),
-        price: parseFloat(trade.price)
+        date: moment.utc(trade.time).format('X'),
+        price: parseFloat(trade.price),
       };
     });
 
@@ -229,10 +238,21 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         if (moment.utc(last.time) < moment.utc(since)) {
           this.scanbackTid = last.trade_id;
         } else {
-          log.debug("Scanning backwards..." + last.time);
+          log.debug('Scanning backwards...' + last.time);
           setTimeout(() => {
-            let handler = (cb) => this.gdax_public.getProductTrades({ after: last.trade_id - BATCH_SIZE * lastScan, limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
-            util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+            let handler = cb =>
+              this.gdax_public.getProductTrades(
+                {
+                  after: last.trade_id - BATCH_SIZE * lastScan,
+                  limit: BATCH_SIZE,
+                },
+                this.handleResponse('getTrades', cb)
+              );
+            util.retryCustom(
+              retryForever,
+              _.bind(handler, this),
+              _.bind(process, this)
+            );
           }, QUERY_DELAY);
           lastScan++;
           if (lastScan > 100) {
@@ -244,15 +264,15 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       if (this.scanbackTid) {
         // if scanbackTid is set we need to move forward again
         log.debug(
-          "Backwards: " +
+          'Backwards: ' +
             last.time +
-            " (" +
+            ' (' +
             last.trade_id +
-            ") to " +
+            ') to ' +
             first.time +
-            " (" +
+            ' (' +
             first.trade_id +
-            ")"
+            ')'
         );
 
         this.scanbackResults = this.scanbackResults.concat(result.reverse());
@@ -260,14 +280,22 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         if (this.scanbackTid != first.trade_id) {
           this.scanbackTid = first.trade_id;
           setTimeout(() => {
-            let handler = (cb) => this.gdax_public.getProductTrades({ after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
-            util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+            let handler = cb =>
+              this.gdax_public.getProductTrades(
+                { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
+                this.handleResponse('getTrades', cb)
+              );
+            util.retryCustom(
+              retryForever,
+              _.bind(handler, this),
+              _.bind(process, this)
+            );
           }, QUERY_DELAY);
         } else {
           this.scanback = false;
           this.scanbackTid = 0;
 
-          log.debug("Scan finished: data found:" + this.scanbackResults.length);
+          log.debug('Scan finished: data found:' + this.scanbackResults.length);
           callback(null, this.scanbackResults);
 
           this.scanbackResults = [];
@@ -281,15 +309,27 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   if (since || this.scanback) {
     this.scanback = true;
     if (this.scanbackTid) {
-      let handler = (cb) => this.gdax_public.getProductTrades({ after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
-      util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+      let handler = cb =>
+        this.gdax_public.getProductTrades(
+          { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
+          this.handleResponse('getTrades', cb)
+        );
+      util.retryCustom(
+        retryForever,
+        _.bind(handler, this),
+        _.bind(process, this)
+      );
     } else {
-      log.debug("Scanning back in the history needed...");
+      log.debug('Scanning back in the history needed...');
       log.debug(moment.utc(since).format());
     }
   }
 
-  let handler = (cb) => this.gdax_public.getProductTrades({ limit: BATCH_SIZE }, this.handleResponse('getTrades', cb));
+  let handler = cb =>
+    this.gdax_public.getProductTrades(
+      { limit: BATCH_SIZE },
+      this.handleResponse('getTrades', cb)
+    );
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 };
 
@@ -299,7 +339,7 @@ Trader.prototype.getMaxDecimalsNumber = function(number, decimalLimit = 8) {
   // The ^-?\d*\. strips off any sign, integer portion, and decimal point
   // leaving only the decimal fraction.
   // The 0+$ strips off any trailing zeroes.
-  var decimalCount = (+decimalNumber).toString().replace(/^-?\d*\.?|0+$/g, "")
+  var decimalCount = (+decimalNumber).toString().replace(/^-?\d*\.?|0+$/g, '')
     .length;
 
   var decimalMultiplier = 1;
@@ -316,27 +356,27 @@ Trader.prototype.getMaxDecimalsNumber = function(number, decimalLimit = 8) {
 
 Trader.getCapabilities = function() {
   return {
-    name: "GDAX",
-    slug: "gdax",
-    currencies: ["USD", "EUR", "GBP", "BTC"],
-    assets: ["BTC", "LTC", "ETH"],
+    name: 'GDAX',
+    slug: 'gdax',
+    currencies: ['USD', 'EUR', 'GBP', 'BTC'],
+    assets: ['BTC', 'LTC', 'ETH'],
     markets: [
-      { pair: ["USD", "BTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["USD", "LTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["USD", "ETH"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["EUR", "BTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["EUR", "ETH"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["EUR", "LTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["GBP", "BTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["BTC", "LTC"], minimalOrder: { amount: 0.01, unit: "asset" } },
-      { pair: ["BTC", "ETH"], minimalOrder: { amount: 0.01, unit: "asset" } }
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
     ],
-    requires: ["key", "secret", "passphrase"],
-    providesHistory: "date",
+    requires: ['key', 'secret', 'passphrase'],
+    providesHistory: 'date',
     providesFullHistory: true,
-    tid: "tid",
+    tid: 'tid',
     tradable: true,
-    forceReorderDelay: true
+    forceReorderDelay: true,
   };
 };
 
