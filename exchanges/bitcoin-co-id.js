@@ -53,9 +53,9 @@ Trader.prototype.getTicker = function(callback) {
   set = function(err, data) {
     if(err)
       return this.retry(this.getTicker, args);
+    var ticker = {
       ask: this.roundAmount(data.ticker.buy),
       bid: this.roundAmount(data.ticker.sell),
-    var ticker = {
     };
     callback(err, ticker);
   }.bind(this);
