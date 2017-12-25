@@ -111,7 +111,8 @@ Promise.all([assetPromise, assetPairsPromise])
       return results[0][market.quote].altname;
     }));
 
-    let markets = _.map(_.keys(results[1]), k => {
+    let marketKeys = _.filter(_.keys(results[1]), k => { return !k.endsWith('.d'); });
+    let markets = _.map(marketKeys, k => {
       let market = results[1][k];
       let asset = results[0][market.base];
       let currency = results[0][market.quote];

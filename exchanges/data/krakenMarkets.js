@@ -287,22 +287,6 @@ module.exports = {
     },
     {
       "pair": [
-        "XBT",
-        "ETH"
-      ],
-      "prefixed": [
-        "XXBT",
-        "XETH"
-      ],
-      "book": "XETHXXBT.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 6
-    },
-    {
-      "pair": [
         "CAD",
         "ETH"
       ],
@@ -316,22 +300,6 @@ module.exports = {
         "unit": "asset"
       },
       "precision": 2
-    },
-    {
-      "pair": [
-        "CAD",
-        "ETH"
-      ],
-      "prefixed": [
-        "ZCAD",
-        "XETH"
-      ],
-      "book": "XETHZCAD.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 5
     },
     {
       "pair": [
@@ -351,22 +319,6 @@ module.exports = {
     },
     {
       "pair": [
-        "EUR",
-        "ETH"
-      ],
-      "prefixed": [
-        "ZEUR",
-        "XETH"
-      ],
-      "book": "XETHZEUR.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 5
-    },
-    {
-      "pair": [
         "GBP",
         "ETH"
       ],
@@ -380,22 +332,6 @@ module.exports = {
         "unit": "asset"
       },
       "precision": 2
-    },
-    {
-      "pair": [
-        "GBP",
-        "ETH"
-      ],
-      "prefixed": [
-        "ZGBP",
-        "XETH"
-      ],
-      "book": "XETHZGBP.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 5
     },
     {
       "pair": [
@@ -415,22 +351,6 @@ module.exports = {
     },
     {
       "pair": [
-        "JPY",
-        "ETH"
-      ],
-      "prefixed": [
-        "ZJPY",
-        "XETH"
-      ],
-      "book": "XETHZJPY.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 3
-    },
-    {
-      "pair": [
         "USD",
         "ETH"
       ],
@@ -444,22 +364,6 @@ module.exports = {
         "unit": "asset"
       },
       "precision": 2
-    },
-    {
-      "pair": [
-        "USD",
-        "ETH"
-      ],
-      "prefixed": [
-        "ZUSD",
-        "XETH"
-      ],
-      "book": "XETHZUSD.d",
-      "minimalOrder": {
-        "amount": "0.02",
-        "unit": "asset"
-      },
-      "precision": 5
     },
     {
       "pair": [
@@ -639,22 +543,6 @@ module.exports = {
     },
     {
       "pair": [
-        "CAD",
-        "XBT"
-      ],
-      "prefixed": [
-        "ZCAD",
-        "XXBT"
-      ],
-      "book": "XXBTZCAD.d",
-      "minimalOrder": {
-        "amount": 0.01,
-        "unit": "asset"
-      },
-      "precision": 3
-    },
-    {
-      "pair": [
         "EUR",
         "XBT"
       ],
@@ -668,22 +556,6 @@ module.exports = {
         "unit": "asset"
       },
       "precision": 1
-    },
-    {
-      "pair": [
-        "EUR",
-        "XBT"
-      ],
-      "prefixed": [
-        "ZEUR",
-        "XXBT"
-      ],
-      "book": "XXBTZEUR.d",
-      "minimalOrder": {
-        "amount": 0.01,
-        "unit": "asset"
-      },
-      "precision": 2
     },
     {
       "pair": [
@@ -703,22 +575,6 @@ module.exports = {
     },
     {
       "pair": [
-        "GBP",
-        "XBT"
-      ],
-      "prefixed": [
-        "ZGBP",
-        "XXBT"
-      ],
-      "book": "XXBTZGBP.d",
-      "minimalOrder": {
-        "amount": 0.01,
-        "unit": "asset"
-      },
-      "precision": 3
-    },
-    {
-      "pair": [
         "JPY",
         "XBT"
       ],
@@ -735,22 +591,6 @@ module.exports = {
     },
     {
       "pair": [
-        "JPY",
-        "XBT"
-      ],
-      "prefixed": [
-        "ZJPY",
-        "XXBT"
-      ],
-      "book": "XXBTZJPY.d",
-      "minimalOrder": {
-        "amount": 0.01,
-        "unit": "asset"
-      },
-      "precision": 1
-    },
-    {
-      "pair": [
         "USD",
         "XBT"
       ],
@@ -764,22 +604,6 @@ module.exports = {
         "unit": "asset"
       },
       "precision": 1
-    },
-    {
-      "pair": [
-        "USD",
-        "XBT"
-      ],
-      "prefixed": [
-        "ZUSD",
-        "XXBT"
-      ],
-      "book": "XXBTZUSD.d",
-      "minimalOrder": {
-        "amount": 0.01,
-        "unit": "asset"
-      },
-      "precision": 3
     },
     {
       "pair": [
