@@ -255,31 +255,34 @@ Trader.getCapabilities = function () {
     slug: 'bitcoin-co-id',
     currencies: ['IDR', 'BTC'],
     assets: [
-      'BTC', 'BCH', 'BTS', 'ETH', 'ETC', 'LTC', 'WAVE', 'XRP', 'XZR', 'BTC', 'DASH', 'DOGE', 'NXT', 'XLM', 'XEM'
+      'BTC', 'BCH', 'BTG', 'ETH', 'ETC', 'LTC', 'NXT', 'WAVES', 'STR', 'XRP', 'XZC', 'BTS', 'DRK', 'DOGE', 'NEM'
     ],
     markets: [
 
       // IDR <-> XXXX
 
       { pair: ['IDR', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['IDR', 'BCH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['IDR', 'ETH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['IDR', 'ETC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['IDR', 'LTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['IDR', 'WAVE'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['IDR', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['IDR', 'XZR'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['IDR', 'BCH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
+      { pair: ['IDR', 'BTG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['IDR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['IDR', 'ETC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['IDR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['IDR', 'NXT'], minimalOrder: { amount: 5, unit: 'asset' } },
+      { pair: ['IDR', 'WAVES'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+      { pair: ['IDR', 'STR'], minimalOrder: { amount: 20, unit: 'asset' } }, // Listed as XLM
+      { pair: ['IDR', 'XRP'], minimalOrder: { amount: 10, unit: 'asset' } },
+      { pair: ['IDR', 'XZC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
 
       // BTC <-> XXXX
 
       { pair: ['BTC', 'BTS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'DOGE'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'DRK'], minimalOrder: { amount: 0.01, unit: 'asset' } }, // Listed as DASH
+      { pair: ['BTC', 'DOGE'], minimalOrder: { amount: 1, unit: 'asset' } },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['BTC', 'NXT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'XLM'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'XEM'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['BTC', 'STR'], minimalOrder: { amount: 0.01, unit: 'asset' } }, // Listed as XLM
+      { pair: ['BTC', 'NEM'], minimalOrder: { amount: 1, unit: 'asset' } }, // Listed as XEM
       { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } }
 
     ],
