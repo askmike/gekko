@@ -18,7 +18,6 @@ var Trader = function(config) {
 }
 
 Trader.prototype.roundAmount = function(amount) {
-
   var priceDivider = 100000000; // one hundred million;
   amount *= priceDivider;
   amount = Math.floor(amount);
@@ -44,7 +43,7 @@ Trader.prototype.retry = function(method, args) {
   // run the failed method again with the same
   // arguments after wait
   setTimeout(
-    function() { method.apply(self, args) },
+    function() { method.apply(self, args); },
     wait
   );
 }
@@ -54,9 +53,9 @@ Trader.prototype.getTicker = function(callback) {
   set = function(err, data) {
     if(err)
       return this.retry(this.getTicker, args);
-      var ticker = {
       ask: this.roundAmount(data.ticker.buy),
       bid: this.roundAmount(data.ticker.sell),
+    var ticker = {
     };
     callback(err, ticker);
   }.bind(this);
@@ -93,19 +92,19 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var args = _.toArray(arguments);
 
   if(since)
-      since = 150 //???;
+    since = 150; // ???
 
   var process = function(err, data) {
     if(err)
       return this.retry(this.getTrades, args);
-  
+
     var trades = _.map(data, function(trade) {
       return {
-         price: +trade.price,
-         amount: +trade.amount,
-         tid: +trade.tid,
-         date: trade.date
-       }
+        price: +trade.price,
+        amount: +trade.amount,
+        tid: +trade.tid,
+        date: trade.date
+      };
     });
     callback(null, data.reverse());
   }.bind(this);
@@ -116,14 +115,14 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 // bitcoin.co.id: Maker 0% - Taker 0.3%
 // Note: trading fee: 0.3% for IDR pairs and 0% for BTC pairs
 Trader.prototype.getFee = function(callback) {
-
+  var fee = 0;
   if (this.currency.toUpperCase() === 'IDR')
     {
-       var fee = 0.003;
+      fee = 0.003;
     }
     else if (this.currency.toUpperCase() === 'BTC')
     {
-       var fee = 0.000;;
+      fee = 0.000;
     }
 
   callback(false, fee);
@@ -132,14 +131,14 @@ Trader.prototype.getFee = function(callback) {
 Trader.prototype.buy = function(amount, price, callback) {
   this.type = 'buy';
 
-  // decrease purchase by 1% to avoid trying to buy more than balance 
+  // decrease purchase amount by 1% to avoid trying to buy more than balance
   amount -= amount / 100;
   amount = this.roundAmount(amount);
-  
+
   // decrease purchase price by 1% less than asking price
-  //price -= price / 100;
+  // price -= price / 100;
   amount *= price;
-  
+
   var set = function(err, data) {
     if(!err && _.isEmpty(data))
       err = 'no data';
@@ -160,10 +159,10 @@ Trader.prototype.buy = function(amount, price, callback) {
 
 Trader.prototype.sell = function(amount, price, callback) {
   this.type = 'sell';
-  
-  // increase purchase price by 1% more than bidding price
-  //price += price / 100;
-  
+
+  // increase selling price by 1% more than bidding price
+  // price += price / 100;
+
   amount = this.roundAmount(amount);
   var set = function(err, data) {
     if(!err && _.isEmpty(data))
@@ -171,7 +170,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     else if(!err && !_.isEmpty(data.errorMessage))
       err = data.errorMessage;
     if(err)
-      return log.error('unable to sell', err)
+      return log.error('unable to sell', err);
     callback(null, data.return.order_id);
   }.bind(this);
   this.bitcoincoid.createOrders(
@@ -212,24 +211,24 @@ Trader.prototype.getOrder = function(order, callback) {
   var get = function(data, err) {
     if(err)
       return callback(err);
-  
+
     var price = 0;
     var amount = 0;
     var date = moment(0);
 
-      if(!data.success)
-        return callback(null, {price, amount, date});
+    if(!data.success)
+      return callback(null, {price, amount, date});
 
     var result = data.return.order;
     var orderAmount = result.order+'_'+this.asset;
     price = result.Price;
     amount = result.orderAmount;
 
-      if(result.status === 'open') {
-        date = moment(result.submit_time);
-      } else {
-        date = moment(result.finish_time);
-      }
+    if(result.status === 'open') {
+      date = moment(result.submit_time);
+    } else {
+      date = moment(result.finish_time);
+    }
     callback(err, {price, amount, date});
   }.bind(this);
 
@@ -239,10 +238,9 @@ Trader.prototype.getOrder = function(order, callback) {
 Trader.prototype.cancelOrder = function(order, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, data) {
-
-    if(err){
-       return log.error('unable to cancel order: ',order, '(', err, '), retrying...');
-       this.retry(this.cancelOrder, args);
+    if(err) {
+      return log.error('unable to cancel order: ', order, '(', err, '), retrying...');
+      this.retry(this.cancelOrder, args);
     }
     callback();
   };
