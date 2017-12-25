@@ -185,7 +185,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var args = _.toArray(arguments);
-  if (order == null) {
+  if (order === null) {
     return callback('no order_id', false);
   }
   var check = function(err, data) {
@@ -206,7 +206,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.getOrder = function(order, callback) {
   var args = _.toArray(arguments);
-  if (order == null) {
+  if (order === null) {
     return callback('no order_id', false);
   }
   var get = function(data, err) {
