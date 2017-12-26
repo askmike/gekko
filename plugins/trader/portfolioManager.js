@@ -197,7 +197,7 @@ Manager.prototype.buy = function(amount, price) {
         'Wanted to buy',
         this.asset,
         'but the amount is too small',
-        '(' + parseFloat(amount).toFixed(12) + ')',
+        '(' + parseFloat(order.amount).toFixed(12) + ')',
         'at',
         this.exchange.name
       );
@@ -205,15 +205,15 @@ Manager.prototype.buy = function(amount, price) {
 
     log.info(
       'Attempting to BUY',
-      amount,
+      order.amount,
       this.asset,
       'at',
       this.exchange.name,
       'price:',
-      price
+      order.price
     );
 
-    this.exchange.buy(amount, price, this.noteOrder);
+    this.exchange.buy(order.amount, order.price, this.noteOrder);
   }
 
   if (_.has(this.exchange, 'getLotSize')) {
@@ -252,7 +252,7 @@ Manager.prototype.sell = function(amount, price) {
       order.price
     );
 
-    this.exchange.sell(amount, price, this.noteOrder);
+    this.exchange.sell(order.amount, order.price, this.noteOrder);
   }
 
   if (_.has(this.exchange, 'getLotSize')) {
