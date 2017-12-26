@@ -54,11 +54,11 @@ Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
 
   if (!error.message || !error.message.match(recoverableErrors)) {
-    log.error(`[binance.js] (${funcName}) returned an irrecoverable error: ${error.message}`);
+    log.error(`[binance.js] (${funcName}) returned an irrecoverable error: ${error}`);
     return new Errors.AbortError('[binance.js] ' + error.message || error);
   }
 
-  log.debug(`[binance.js] (${funcName}) returned an error, retrying: ${error.message}`);
+  log.debug(`[binance.js] (${funcName}) returned an error, retrying: ${error}`);
   return new Errors.RetryError('[binance.js] ' + error.message || error);
 };
 
