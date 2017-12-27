@@ -206,7 +206,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     type: tradeType.toLowerCase(),
     ordertype: 'limit',
     price: price,
-    volume: amount.toString()
+    volume: amount
   };
 
   let handler = (cb) => this.kraken.api('AddOrder', reqData, this.handleResponse('addOrder', cb));
