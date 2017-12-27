@@ -44,12 +44,15 @@ if (mode === 'realtime' || mode === 'importer') {
     );
 }
 
-var journalMode = config.sqlite.journalMode || 'PERSIST';
-var syncMode = journalMode === 'WAL' ? 'NORMAL' : 'FULL';
-
-var db = new sqlite3.Database(fullPath);
-db.run('PRAGMA synchronous = ' + syncMode);
-db.run('PRAGMA journal_mode = ' + journalMode);
-db.configure('busyTimeout', 1500);
-
-module.exports = db;
+module.exports = {
+  initDB: () => {
+    var journalMode = config.sqlite.journalMode || 'PERSIST';
+    var syncMode = journalMode === 'WAL' ? 'NORMAL' : 'FULL';
+  
+    var db = new sqlite3.Database(fullPath);
+    db.run('PRAGMA synchronous = ' + syncMode);
+    db.run('PRAGMA journal_mode = ' + journalMode);
+    db.configure('busyTimeout', 1500);
+    return db;
+  }
+};
