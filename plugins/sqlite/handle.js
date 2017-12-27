@@ -11,18 +11,15 @@ var adapter = config.sqlite;
 var pluginHelper = require(dirs.core + 'pluginUtil');
 var pluginMock = {
   slug: 'sqlite adapter',
-  dependencies: adapter.dependencies
+  dependencies: adapter.dependencies,
 };
 
 var cannotLoad = pluginHelper.cannotLoad(pluginMock);
-if(cannotLoad)
-  util.die(cannotLoad);
+if (cannotLoad) util.die(cannotLoad);
 
 // should be good now
-if(config.debug)
-  var sqlite3 = require('sqlite3').verbose();
-else
-  var sqlite3 = require('sqlite3');
+if (config.debug) var sqlite3 = require('sqlite3').verbose();
+else var sqlite3 = require('sqlite3');
 
 var plugins = require(util.dirs().gekko + 'plugins');
 
@@ -34,19 +31,17 @@ var dir = dirs.gekko + adapter.dataDirectory;
 var fullPath = [dir, dbName].join('/');
 
 var mode = util.gekkoMode();
-if(mode === 'realtime' || mode === 'importer') {
+if (mode === 'realtime' || mode === 'importer') {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+} else if (mode === 'backtest') {
+  if (!fs.existsSync(dir)) util.die('History directory does not exist.');
 
-  if(!fs.existsSync(dir))
-    fs.mkdirSync(dir);
-
-
-} else if(mode === 'backtest') {
-
-  if(!fs.existsSync(dir))
-    util.die('History directory does not exist.');
-
-  if(!fs.existsSync(fullPath))
-    util.die(`History database does not exist for exchange ${config.watch.exchange} at version ${version}.`);
+  if (!fs.existsSync(fullPath))
+    util.die(
+      `History database does not exist for exchange ${
+        config.watch.exchange
+      } at version ${version}.`
+    );
 }
 
 var journalMode = config.sqlite.journalMode || 'PERSIST';
