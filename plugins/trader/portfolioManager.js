@@ -193,12 +193,13 @@ Manager.prototype.buy = function(amount, price) {
   let process = (err, order) => {
     // if order to small
     if(!order.amount || order.amount < minimum) {
-      return log.error(
+      return log.warning(
         'Wanted to buy',
         this.asset,
-        'but the amount is too small',
-        '(' + parseFloat(order.amount).toFixed(12) + ')',
-        'at',
+        'but the amount is too small ',
+        '(' + parseFloat(amount).toFixed(8) + ' @',
+        parseFloat(price).toFixed(8),
+        ') at',
         this.exchange.name
       );
     }
@@ -232,12 +233,13 @@ Manager.prototype.sell = function(amount, price) {
   let process = (err, order) => {
     // if order to small
     if (!order.amount || order.amount < minimum) {
-      return log.error(
+      return log.warning(
         'Wanted to buy',
         this.currency,
-        'but the amount is too small',
-        '(' + parseFloat(order.amount).toFixed(12) + ')',
-        'at',
+        'but the amount is too small ',
+        '(' + parseFloat(amount).toFixed(8) + ' @',
+        parseFloat(price).toFixed(8),
+        ') at',
         this.exchange.name
       );
     }
