@@ -33,7 +33,7 @@ var handleFetch = (err, trades) => {
     var next = last.clone();
   } else {
     var next = from.clone().add(1, 'h');
-    log.debug('Import step returned no results, moving to the next 24h period');
+    log.debug('Import step returned no results, moving to the next 1h period');
   }
 
   if (from.add(1, 'h') >= end) {
