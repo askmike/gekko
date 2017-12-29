@@ -58,7 +58,7 @@ var retryForever = {
 
 // Probably we need to update these string
 var recoverableErrors = new RegExp(
-  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded|Response code 525|Response code 520|Response code 504|Response code 502)/
+  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded|Response code 5)/
 );
 
 Trader.prototype.processError = function(funcName, error) {
@@ -66,17 +66,17 @@ Trader.prototype.processError = function(funcName, error) {
 
   if (!error.message.match(recoverableErrors)) {
     log.error(
-      `[bitfinex.js] (${funcName}) returned an irrecoverable error: ${
+      `[gdax.js] (${funcName}) returned an irrecoverable error: ${
         error.message
       }`
     );
-    return new Errors.AbortError('[bitfinex.js] ' + error.message);
+    return new Errors.AbortError('[gdax.js] ' + error.message);
   }
 
   log.debug(
-    `[bitfinex.js] (${funcName}) returned an error, retrying: ${error.message}`
+    `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
   );
-  return new Errors.RetryError('[bitfinex.js] ' + error.message);
+  return new Errors.RetryError('[gdax.js] ' + error.message);
 };
 
 Trader.prototype.handleResponse = function(funcName, callback) {
