@@ -30,9 +30,9 @@ var handleFetch = (err, trades) => {
 
   if (trades.length > 0) {
     var last = moment.unix(_.last(trades).date).utc();
-    var next = last.clone();
+    var next = from.clone().add(1, 'h').subtract(1, 's');
   } else {
-    var next = from.clone().add(1, 'h');
+    var next = from.clone().add(1, 'h').subtract(1, 's');
     log.debug('Import step returned no results, moving to the next 1h period');
   }
 
