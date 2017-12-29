@@ -193,7 +193,7 @@ Manager.prototype.buy = function(amount, price) {
   let process = (err, order) => {
     // if order to small
     if(!order.amount || order.amount < minimum) {
-      return log.warning(
+      return log.warn(
         'Wanted to buy',
         this.asset,
         'but the amount is too small ',
@@ -233,7 +233,7 @@ Manager.prototype.sell = function(amount, price) {
   let process = (err, order) => {
     // if order to small
     if (!order.amount || order.amount < minimum) {
-      return log.warning(
+      return log.warn(
         'Wanted to buy',
         this.currency,
         'but the amount is too small ',
