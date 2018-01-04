@@ -53,7 +53,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
   );
 
   var endTime = moment().utc().startOf('minute');
-  var idealStartTime = endTime.clone().subtract('m', requiredHistory);
+  var idealStartTime = endTime.clone().subtract(requiredHistory, 'm');
 
   this.reader.mostRecentWindow(idealStartTime, endTime, function(localData) {
     // now we know what data is locally available, what
