@@ -250,7 +250,7 @@ Trader.getCapabilities = function () {
       
         //Tradeable Pairs to ETH
         { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-        { pair: ['ETH', 'IOT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+        { pair: ['ETH', 'IOT'], minimalOrder: { amount: 6.00, unit: 'asset' } },
         { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'SAN'], minimalOrder: { amount: 0.01, unit: 'asset' } },
         { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
