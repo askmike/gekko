@@ -2,6 +2,17 @@
 
 When writing [your own strategy](./creating_a_trading_method.md) you can use all indicators offered by [the Tulip Indicators library](https://tulipindicators.org/). Gekko will pass the correct market data to Tulip and you only have to provide the `optIn` configurable parameters.
 
+## Install
+
+### Bash on Windows, OSX or Linux
+
+Open your terminal. Then:
+
+```
+cd ~/gekko
+npm install tulind
+```
+
 ## Example
 
 If you want to use the MACD indicator from Tulip, you need to register it in your strategy like so:

@@ -18,4 +18,4 @@ This is a small selection of things currently on the roadmap:
 
 -----
 
-Note that besides this list there are a big number of smaller issues and bugfixes happening constantly. See the [issue tracker](https://github.com/askmike/gekko/issues) for more details.
+Note that besides this list there are a big number of smaller issues and bugfixes happening constantly. See the [issue tracker](https://github.com/askmike/gekko/issues) and [the forum](https://gekko.forum.wizb.it) for more details.
