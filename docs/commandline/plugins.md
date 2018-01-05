@@ -98,7 +98,7 @@ Go to the config and configure it like this:
 
 - How much spread is there normally on this market?
 - How thick is the top of the book normally?
-- How volatile is this market (the more volatility the bigger the change you will not get the price you expected)?
+- How volatile is this market (the more volatility the bigger the chance you will not get the price you expected)?
 
 The output will be something like:
 
