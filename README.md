@@ -2,11 +2,6 @@
 
 ![Gordon Gekko](http://mikevanrossum.nl/static/gekko.jpg)
 
-### Discord community for crypto bots
-<a href="https://discord.gg/qZHhdju"><img src="https://discordapp.com/assets/fc0b01fe10a0b8c602fb0106d8189d9b.png" height="70" ></a>
-<br>
-
-
 *The most valuable commodity I know of is information.*
 
 -Gordon Gekko
@@ -22,6 +17,10 @@ See [the documentation website](https://gekko.wizb.it/docs/introduction/about_ge
 ## Installation & Usage
 
 See [the installing Gekko doc](https://gekko.wizb.it/docs/installation/installing_gekko.html).
+
+## Community & Support
+
+Gekko has [a forum](https://forum.gekko.wizb.it/) that is the place for discussions on using Gekko, autometed trading and exchanges. In case you rather want to chat in realtime about Gekko feel free to join the [Gekko Support Discord](https://discord.gg/26wMygt).
 
 ## Final
 

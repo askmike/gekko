@@ -164,6 +164,13 @@ var plugins = [
     modes: ['realtime']
   },
   {
+    name: 'Kodi',
+    description: 'Sends advice to Kodi.',
+    slug: 'kodi',
+    async: false,
+    modes: ['realtime']
+  },
+  {
     name: 'Twitter',
     description: 'Sends trades to twitter.',
     slug: 'twitter',

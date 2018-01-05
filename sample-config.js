@@ -284,6 +284,14 @@ config.pushbullet = {
   tag: '[GEKKO]'
 };
 
+config.kodi = {
+  // if you have a username & pass, add it like below
+  // http://user:pass@ip-or-hostname:8080/jsonrpc
+  host: 'http://ip-or-hostname:8080/jsonrpc',
+  enabled: false,
+  sendMessageOnStart: true,
+}
+
 config.ircbot = {
   enabled: false,
   emitUpdates: false,
