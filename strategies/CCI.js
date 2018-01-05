@@ -17,7 +17,7 @@ method.init = function() {
     persisted: false,
     adviced: false
   };
-  this.historySize = this.tradingAdvisor.historySize;
+  this.historySize = this.settings.history;
   this.ppoadv = 'none';
   this.uplevel = this.settings.thresholds.up;
   this.downlevel = this.settings.thresholds.down;
@@ -34,7 +34,7 @@ method.update = function(candle) {
 
 // for debugging purposes: log the last calculated
 // EMAs and diff.
-method.log = function() {
+method.log = function(candle) {
     var cci = this.indicators.cci;
     if (typeof(cci.result) == 'boolean') {
         log.debug('Insufficient data available. Age: ', cci.size, ' of ', cci.maxSize);
@@ -43,14 +43,14 @@ method.log = function() {
     }
 
     log.debug('calculated CCI properties for candle:');
-    log.debug('\t', 'Price:\t\t\t', this.lastPrice);
+    log.debug('\t', 'Price:\t\t', candle.close.toFixed(8));
     log.debug('\t', 'CCI tp:\t', cci.tp.toFixed(8));
     log.debug('\t', 'CCI tp/n:\t', cci.TP.result.toFixed(8));
     log.debug('\t', 'CCI md:\t', cci.mean.toFixed(8));
     if (typeof(cci.result) == 'boolean' )
         log.debug('\t In sufficient data available.');
     else
-        log.debug('\t', 'CCI:\t', cci.result.toFixed(2));
+        log.debug('\t', 'CCI:\t\t', cci.result.toFixed(2));
 }
 
 /*
@@ -58,7 +58,7 @@ method.log = function() {
  */
 method.check = function(candle) {
 
-  var price = candle.close;
+    var lastPrice = candle.close;
 
     this.age++;
     var cci = this.indicators.cci;
