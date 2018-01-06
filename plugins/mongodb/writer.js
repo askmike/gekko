@@ -33,7 +33,7 @@ Store.prototype.writeCandles = function writeCandles () {
   var candles = [];
   _.each(this.candleCache, candle => {
     var mCandle = {
-      time: moment().utc(),
+      time: moment().unix(),
       start: candle.start.unix(),
       open: candle.open,
       high: candle.high,
@@ -77,7 +77,7 @@ var processAdvice = function processAdvice (advice) {
 
   log.debug(`Writing advice '${advice.recommendation}' to database.`);
   var mAdvice = {
-    time: moment().utc(),
+    time: moment().unix(),
     marketTime: this.marketTime,
     pair: this.pair,
     recommendation: advice.recommendation,
