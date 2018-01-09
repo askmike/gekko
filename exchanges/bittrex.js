@@ -378,7 +378,7 @@ Trader.getCapabilities = function() {
       'VIRAL', 'VOX', 'VPN', 'VRC', 'VRM', 'VTC', 'VTR', 'WARP', 'WAVES', 'WBB',
       'WINGS', 'XAUR', 'XBB', 'XC', 'XCO', 'XCP', 'XDN', 'XDQ', 'XEL', 'XEM',
       'XLM', 'XMG', 'XMR', 'XPY', 'XQN', 'XRP', 'XSEED', 'XST', 'XTC', 'XVC',
-      'XVG', 'XWC', 'XZC', 'YBC', 'ZCL', 'ZEC', 'ZEN'
+      'XVG', 'XWC', 'XZC', 'YBC', 'ZCL', 'ZEC', 'ZEN','BTG','OMG','ADA'
     ],
     markets: [
 
@@ -649,6 +649,9 @@ Trader.getCapabilities = function() {
       { pair: ['USDT','XMR'], minimalOrder: { amount: 0.00000001, unit: 'asset' }},
       { pair: ['USDT','XRP'], minimalOrder: { amount: 0.00000001, unit: 'asset' }},
       { pair: ['USDT','ZEC'], minimalOrder: { amount: 0.00000001, unit: 'asset' }},
+      { pair: ['USDT','BTG'], minimalOrder: { amount: 0.00000001, unit: 'asset' }},
+      { pair: ['USDT','OMG'], minimalOrder: { amount: 0.00000001, unit: 'asset' }},
+      { pair: ['USDT','ADA'], minimalOrder: { amount: 0.00000001, unit: 'asset' }}
 
     ],
     requires: ['key', 'secret'],
