@@ -1,7 +1,8 @@
-var ForkTask = require('relieve').tasks.ForkTask
-var fork = require('child_process').fork
+var ForkTask = require('relieve').tasks.ForkTask;
+var fork = require('child_process').fork;
 
 module.exports = function(config, done) {
+  process.execArgv = [];
   task = new ForkTask(fork(__dirname + '/child'));
 
   task.send('start', config);

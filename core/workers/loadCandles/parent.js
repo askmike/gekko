@@ -36,6 +36,7 @@ const fork = require('child_process').fork;
 const _ = require('lodash');
 
 module.exports = (config, callback) => {
+  process.execArgv = [];
   const child = fork(__dirname + '/child');
 
   const message = {
