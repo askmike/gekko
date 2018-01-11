@@ -36,7 +36,11 @@ const fork = require('child_process').fork;
 const _ = require('lodash');
 
 module.exports = (config, callback) => {
-  process.execArgv = [];
+  var debug = typeof v8debug === 'object';
+  if (debug) {
+    process.execArgv = [];
+  }
+
   const child = fork(__dirname + '/child');
 
   const message = {
