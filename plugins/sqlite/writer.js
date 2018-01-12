@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var config = require('../../core/util.js').getConfig();
 
-var handle = require('./handle');
+var sqlite = require('./handle');
 var sqliteUtil = require('./util');
 var util = require('../../core/util');
 var log = require('../../core/log');
@@ -10,7 +10,7 @@ var Store = function(done, pluginMeta) {
   _.bindAll(this);
   this.done = done;
 
-  this.db = handle;
+  this.db = sqlite.initDB(false);
   this.db.serialize(this.upsertTables);
 
   this.cache = [];

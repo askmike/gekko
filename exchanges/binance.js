@@ -100,7 +100,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   if (since) {
     var endTs = moment(since)
-      .add(1, 'd')
+      .add(1, 'h')
       .valueOf();
     var nowTs = moment().valueOf();
 

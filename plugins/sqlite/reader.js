@@ -3,12 +3,12 @@ var util = require('../../core/util.js');
 var config = util.getConfig();
 var log = require(util.dirs().core + 'log');
 
-var handle = require('./handle');
+var sqlite = require('./handle');
 var sqliteUtil = require('./util');
 
 var Reader = function() {
   _.bindAll(this);
-  this.db = handle;
+  this.db = sqlite.initDB(true);
 }
 
 
