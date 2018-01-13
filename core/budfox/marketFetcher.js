@@ -91,7 +91,7 @@ Fetcher.prototype.fetch = function() {
 Fetcher.prototype.processTrades = function(err, trades) {
   if(err || _.isEmpty(trades)) {
     if(err) {
-      log.warn(this.exhange.name, 'returned an error while fetching trades:', err);
+      log.warn(this.exchange.name, 'returned an error while fetching trades:', err);
       log.debug('refetching...');
     } else
       log.debug('Trade fetch came back empty, refetching...');
