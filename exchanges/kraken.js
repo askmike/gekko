@@ -1,10 +1,10 @@
-var Kraken = require('kraken-api-es5');
-var moment = require('moment');
-var _ = require('lodash');
+const Kraken = require('kraken-api-es5');
+const moment = require('moment');
+const _ = require('lodash');
 
-var util = require('../core/util');
-var Errors = require('../core/error');
-var log = require('../core/log');
+const util = require('../core/util');
+const Errors = require('../core/error');
+const log = require('../core/log');
 
 var crypto_currencies = [
   "XBT",
@@ -106,11 +106,11 @@ var retryCritical = {
 var retryForever = {
   forever: true,
   factor: 1.2,
-  minTimeout: 10,
-  maxTimeout: 30
+  minTimeout: 10 * 1000,
+  maxTimeout: 30 * 1000
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Rate limit exceeded|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
@@ -415,7 +415,6 @@ Trader.getCapabilities = function () {
       { pair: ['XBT', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against XBT
-      { pair: ['BCH', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
       { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
       { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
