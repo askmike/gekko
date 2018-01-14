@@ -15,7 +15,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [Kraken][6]          | ✓          | ✓            | ✓         |                          |
 | [Bitfinex][7]        | ✓          | ✓            | ✓         |                          |
 | [Bittrex][8]         | ✓          | ✓            | ✕         |                          |
-| [wex.nz][9]          | ✓          | ✓            | ✕         |                          |
+| [coinfalcon][25]     | ✓          | ✓            | ✓         |                          |
 | [wex.nz][9]          | ✓          | ✓            | ✕         |                          |
 | [Gemini][10]         | ✓          | ✓            | ✕         |                          |
 | [Okcoin.cn][11]      | ✓          | ✓            | ✕         | China, see [#352][20]    |
@@ -55,4 +55,5 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [22]: https://vip.bitcoin.co.id/
 [23]: https://quadrigacx.com/
 [24]: https://binance.com/
+[25]: https://coinfalcon.com/
 

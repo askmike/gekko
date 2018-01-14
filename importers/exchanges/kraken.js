@@ -28,13 +28,21 @@ var fetch = () => {
 
     if (lastId) {
         var tidAsTimestamp = lastId / 1000000;
-        fetcher.getTrades(tidAsTimestamp, handleFetch);
+        setTimeout(() => {
+            fetcher.getTrades(tidAsTimestamp, handleFetch)
+        }, 500);
     }
     else
         fetcher.getTrades(from, handleFetch);
 }
 
-var handleFetch = (unk, trades) => {
+var handleFetch = (err, trades) => {
+    if (err) {
+        log.error(`There was an error importing from Kraken ${err}`);
+        fetcher.emit('done');
+        return fetcher.emit('trades', []);
+    }
+
     var last = moment.unix(_.last(trades).date);
     lastId = _.last(trades).tid
 

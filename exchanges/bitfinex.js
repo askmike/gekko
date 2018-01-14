@@ -1,8 +1,10 @@
 
 const Bitfinex = require("bitfinex-api-node");
-const util = require('../core/util.js');
 const _ = require('lodash');
 const moment = require('moment');
+
+const util = require('../core/util');
+const Errors = require('../core/error');
 const log = require('../core/log');
 
 const marketData = require('./data/bitfinexMarkets');
@@ -22,41 +24,44 @@ var Trader = function(config) {
   this.bitfinex = new Bitfinex(this.key, this.secret, { version: 1 }).rest;
 }
 
-// if the exchange errors we try the same call again after
-// waiting 10 seconds
-Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..');
+var retryCritical = {
+  retries: 10,
+  factor: 1.2,
+  minTimeout: 10 * 1000,
+  maxTimeout: 60 * 1000
+};
 
-  var self = this;
+var retryForever = {
+  forever: true,
+  factor: 1.2,
+  minTimeout: 10 * 1000,
+  maxTimeout: 300 * 1000
+};
 
-  // make sure the callback (and any other fn)
-  // is bound to Trader
-  _.each(args, function(arg, i) {
-    if(_.isFunction(arg))
-      args[i] = _.bind(arg, self);
-  });
+// Probably we need to update these string
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|StatusCodeError: 429|StatusCodeError: 5)/)
 
-  // run the failed method again with the same
-  // arguments after wait
-  setTimeout(
-    function() { method.apply(self, args) },
-    wait
-  );
-}
+Trader.prototype.processError = function(funcName, error) {
+  if (!error) return undefined;
+
+  if (!error.message.match(recoverableErrors)) {
+    log.error(`[bitfinex.js] (${funcName}) returned an irrecoverable error: ${error.message}`);
+    return new Errors.AbortError('[bitfinex.js] ' + error.message);
+  }
+
+  log.debug(`[bitfinex.js] (${funcName}) returned an error, retrying: ${error.message}`);
+  return new Errors.RetryError('[bitfinex.js] ' + error.message);
+};
+
+Trader.prototype.handleResponse = function(funcName, callback) {
+  return (error, data, body) => {
+    return callback(this.processError(funcName, error), data);
+  }
+};
 
 Trader.prototype.getPortfolio = function(callback) {
-  var args = _.toArray(arguments);
-  this.bitfinex.wallet_balances((err, data, body) => {
-
-    if(err && err.message === '401') {
-      let e = 'Bitfinex replied with an unauthorized error. ';
-      e += 'Double check whether your API key is correct.';
-      util.die(e);
-    }
-
-    if(err || !data)
-      return this.retry(this.getPortfolio, args);
+  let process = (err, data) => {
+    if (err) return callback(err);
 
     // We are only interested in funds in the "exchange" wallet
     data = data.filter(c => c.type === 'exchange');
@@ -85,51 +90,52 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount },
     ];
 
-    callback(err, portfolio);
-  });
+    callback(undefined, portfolio);
+  };
+
+  let handler = (cb) => this.bitfinex.wallet_balances(this.handleResponse('getPortfolio', cb));
+  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 }
 
 Trader.prototype.getTicker = function(callback) {
-  var args = _.toArray(arguments);
-  // the function that will handle the API callback
-  var process = (err, data, body) => {
-    if (err)
-        return this.retry(this.getTicker(args));
+  let process = (err, data) => {
+    if (err) return callback(err);
 
     // whenever we reach this point we have valid
     // data, the callback is still the same since
     // we are inside the same javascript scope.
-    callback(err, {bid: +data.bid, ask: +data.ask})
+    callback(undefined, {bid: +data.bid, ask: +data.ask})
   };
-  this.bitfinex.ticker(this.pair, process);
+  
+  let handler = (cb) => this.bitfinex.ticker(this.pair, this.handleResponse('getTicker', cb));
+  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 }
 
 // This assumes that only limit orders are being placed, so fees are the
 // "maker fee" of 0.1%.  It does not take into account volume discounts.
 Trader.prototype.getFee = function(callback) {
     var makerFee = 0.1;
-    callback(false, makerFee / 100);
+    callback(undefined, makerFee / 100);
 }
 
 Trader.prototype.submit_order = function(type, amount, price, callback) {
-  var args = _.toArray(arguments);
+  let process = (err, data) => {
+    if (err) return callback(err);
+
+    callback(err, data.order_id);
+  }
 
   amount = Math.floor(amount*100000000)/100000000;
-  this.bitfinex.new_order(
-    this.pair,
+  let handler = (cb) => this.bitfinex.new_order(this.pair,
     amount + '',
     price + '',
     this.name.toLowerCase(),
     type,
     'exchange limit',
-    (err, data, body) => {
-      if (err) {
-        log.error('unable to ' + type, err, body);
-        return this.retry(this.submit_order, args);
-      }
+    this.handleResponse('submitOrder', cb)
+  );
 
-      callback(err, data.order_id);
-    });
+  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(process, this));
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -141,22 +147,20 @@ Trader.prototype.sell = function(amount, price, callback) {
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
-  var args = _.toArray(arguments);
-  this.bitfinex.order_status(order_id, function (err, data, body) {
+  let process = (err, data) => {
+    if (err) return callback(err);
 
-    if(err || !data)
-      return this.retry(this.checkOrder, arguments);
+    callback(undefined, !data.is_live);
+  }
 
-    callback(err, !data.is_live);
-  }.bind(this));
+  let handler = (cb) => this.bitfinex.order_status(order_id, this.handleResponse('checkOrder', cb));
+  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(process, this));
 }
 
 
-Trader.prototype.getOrder = function(order, callback) {
-  var args = _.toArray(arguments);
-  var get = (err, data) => {
-    if(err || !data)
-      return this.retry(this.getOrder, arguments);
+Trader.prototype.getOrder = function(order_id, callback) {
+  let process = (err, data) => {
+    if (err) return callback(err);
 
     var price = parseFloat(data.avg_execution_price);
     var amount = parseFloat(data.executed_amount);
@@ -165,36 +169,25 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(undefined, {price, amount, date});
   };
 
-  this.bitfinex.order_status(order, get);
+  let handler = (cb) => this.bitfinex.order_status(order_id, this.handleResponse('getOrder', cb));
+  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(process, this));
 }
 
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
-  var args = _.toArray(arguments);
-  this.bitfinex.cancel_order(order_id, (err, data, body) => {
-      if (err || !data) {
-        // bitfinex way of telling it was already cancelled..
-        if(err.message === 'Order could not be cancelled.')
-          return callback();
+  let process = (err, data) => {
+    if (err) return callback(err);
 
-        log.error('unable to cancel order', order_id, '(', err, data, '), retrying...');
-        return this.retry(this.cancelOrder, args);
-      }
+    return callback();
+  }
 
-      return callback();
-  });
+  let handler = (cb) => this.bitfinex.order_status(order_id, this.handleResponse('cancelOrder', cb));
+  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
-  var args = _.toArray(arguments);
-
-  var path = this.pair; 
-  if(since) 
-    path += '?limit_trades=2000'; 
-
-  this.bitfinex.trades(path, (err, data) => {
-    if (err)
-      return this.retry(this.getTrades, args);
+  let process = (err, data) => {  
+    if (err) return callback(err);
 
     var trades = _.map(data, function(trade) {
       return {
@@ -205,8 +198,15 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       }
     });
 
-    callback(null, descending ? trades : trades.reverse());
-  });
+    callback(undefined, descending ? trades : trades.reverse());
+  };
+
+  var path = this.pair; 
+  if(since) 
+    path += '?limit_trades=2000'; 
+
+  let handler = (cb) => this.bitfinex.trades(path, this.handleResponse('getTrades', cb));
+  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 }
 
 Trader.getCapabilities = function () {

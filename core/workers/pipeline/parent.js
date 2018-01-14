@@ -1,6 +1,11 @@
 var fork = require('child_process').fork;
 
 module.exports = (mode, config, callback) => {
+  var debug = typeof v8debug === 'object';
+  if (debug) {
+    process.execArgv = [];
+  }
+
   var child = fork(__dirname + '/child');
 
   // How we should handle client messages depends
@@ -11,7 +16,7 @@ module.exports = (mode, config, callback) => {
     what: 'start',
     mode: mode,
     config: config
-  }
+  };
 
   child.on('message', function(m) {
 

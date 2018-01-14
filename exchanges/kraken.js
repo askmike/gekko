@@ -42,11 +42,11 @@ var retryCritical = {
 var retryForever = {
   forever: true,
   factor: 1.2,
-  minTimeout: 10,
-  maxTimeout: 30
+  minTimeout: 10 * 1000,
+  maxTimeout: 30 * 1000
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Rate limit exceeded|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502)/)
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
