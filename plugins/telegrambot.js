@@ -20,7 +20,7 @@ var Actor = function() {
     '/advice': 'emitAdvice',
     '/price': 'emitPrice',
     '/donate': 'emitDonation',
-    '/real advice': 'emitRealAdvice',
+    '/realadvice': 'emitRealAdvice', //Without space
     '/help': 'emitHelp'
   };
 

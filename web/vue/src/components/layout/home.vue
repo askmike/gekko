@@ -2,7 +2,7 @@
   section.contain.grd-row
     .grd-row-col-3-6(v-html='left')
     .grd-row-col-3-6.txt--center
-      img(src='/assets/gekko.jpg')
+      img(src='./assets/gekko.jpg')
       p
         em The most valuable commodity I know of is information.
 </template>

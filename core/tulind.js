@@ -711,7 +711,7 @@ methods.stoch = {
             indicator: tulind.indicators.stoch,
             inputs: [data.high, data.low, data.close],
             options: [params.optInFastKPeriod, params.optInSlowKPeriod, params.optInSlowDPeriod],
-            results: ['sotchK', 'stochD'],
+            results: ['stochK', 'stochD'],
         });
     }
 }

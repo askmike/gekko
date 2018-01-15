@@ -42,7 +42,7 @@ Here is a list of all supported indicators, click on them to read more about wha
 ### EMA
 
 > **What is an 'Exponential Moving Average - EMA'**
-> An exponential moving average (EMA) is a type of moving average that is similar to a simple moving average, except that more weight is given to the latest data. It's also known as the exponentially weighted moving average. This type of moving average reacts faster to recent price changes than a simple moving average.
+> "An exponential moving average (EMA) is a type of moving average that is similar to a simple moving average, except that more weight is given to the latest data. It's also known as the exponentially weighted moving average. This type of moving average reacts faster to recent price changes than a simple moving average."
 
 *[More info on investopedia](http://www.investopedia.com/terms/e/ema.asp).*
 
@@ -64,37 +64,60 @@ You can implement the EMA like so:
 
 
 ### PPO
+> **What is the 'Percentage Price Oscillator - PPO'** 
+> "The percentage price oscillator (PPO) is a technical momentum indicator showing the relationship between two moving averages." 
 
-[todo]
+*[More info on investopedia](https://www.investopedia.com/terms/p/ppo.asp).*
 
 ### CCI
+> **What is the 'Commodity Channel Index - CCI'**
+> "The Commodity Channel Index​ (CCI) is a momentum based technical trading tool used most often to help determine when an investment vehicle is reaching a condition of being overbought or oversold."
 
-[todo]
+*[More info on investopedia](https://www.investopedia.com/terms/c/commoditychannelindex.asp).*
 
 ### DEMA
 
-[todo]
+> **What is the 'Double Exponential Moving Average - DEMA'**
+> "The DEMA is a fast-acting moving average that is more responsive to market changes than a traditional moving average. It was developed in an attempt to create a calculation that eliminated some of the lag associated with traditional moving averages."
+
+*[More info on investopedia](https://www.investopedia.com/terms/d/double-exponential-moving-average.asp).*
 
 ### LRC
 
-[todo]
+> **What is the 'Linear Regression Channel - LRC'**
+> "This indicator plots a line that best fits the prices specified over a user-defined time period. The Linear Regression Curve is used mainly to identify trend direction and is sometimes used to generate buy and sell signals."
+
+*[More info on Interactive Brokers](https://www.interactivebrokers.co.uk/en/software/tws/usersguidebook/technicalanalytics/linearregressioncurve.htm).*
 
 ### MACD
+> **What is the 'Moving Average Convergence Divergence - MACD'**
+> "Moving average convergence divergence (MACD) is a trend-following momentum indicator that shows the relationship between two moving averages of prices."
 
-[todo]
+*[More info on investopedia](https://www.investopedia.com/terms/m/macd.asp).*
 
 ### RSI
+> **What is the 'Relative Strength Index - RSI'**
+> "Compares the magnitude of recent gains and losses over a specified time period to measure speed and change of price movements of a security. It is primarily used to attempt to identify overbought or oversold conditions in the trading of an asset."
 
-[todo]
+*[More info on investopedia](https://www.investopedia.com/terms/r/rsi.asp).*
 
 ### SMA
+> **What is the 'Simple Moving Average - SMA'**
+> "A simple moving average (SMA) is an arithmetic moving average calculated by adding the closing price of the security for a number of time periods and then dividing this total by the number of time periods."
 
-[todo]
+*[More info on investopedia](https://www.investopedia.com/terms/s/sma.asp).*
 
 ### TSI
 
-[todo]
+> **What is the 'True Strength Index - TSI'**
+> "A technical momentum indicator that helps traders determine overbought and oversold conditions of a security by incorporating the short-term purchasing momentum of the market with the lagging benefits of moving averages."
+
+*[More info on investopedia](https://www.investopedia.com/terms/t/tsi.asp).*
 
 ### UO
 
-[todo]
+> **What is the 'Ultimate Oscillator - UO'**
+> "A technical indicator that uses the weighted average of three different time periods to reduce the volatility and false transaction signals that are associated with many other indicators that mainly rely on a single time period"
+
+*[More info on investopedia](https://www.investopedia.com/terms/u/ultimateoscillator.asp).*
+
