@@ -55,6 +55,10 @@ var batch_start = false;
 var batch_end = false;
 var batch_last = false;
 
+const SCANNING_STRIDE = 24;
+const ITERATING_STRIDE = 2;
+var stride = ITERATING_STRIDE;
+
 var fetcher = new Fetcher(config.watch);
 fetcher.bitfinex = new Bitfinex(null, null, { version: 2, transform: true }).rest;
 

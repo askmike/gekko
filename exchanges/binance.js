@@ -313,6 +313,7 @@ Trader.getCapabilities = function() {
       'BCPT',
       'BNB',
       'BNT',
+      'BTC',
       'BQX',
       'BTG',
       'BTS',
