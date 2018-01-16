@@ -266,7 +266,8 @@ Trader.prototype.checkOrder = function(order, callback) {
     if (err) return callback(err);
 
     var stillThere = data.status === 'NEW' || data.status === 'PARTIALLY_FILLED';
-    callback(undefined, !stillThere);
+    var canceledManually = data.status === 'CANCELED' || data.status === 'REJECTED' || data.status === 'EXPIRED';
+    callback(undefined, !stillThere && !canceledManually);
   };
 
   let reqData = {
