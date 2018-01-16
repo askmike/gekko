@@ -4,11 +4,11 @@ const _ = require('lodash');
 const moment = require('moment');
 const log = require('../core/log');
 
-const TREND_DURATION = 100;
+const TREND_DURATION = 1000;
 
 const Trader = function() {
   this.name = 'Exchange Simulator';
-  this.at = moment.utc('1980-01-01');
+  this.at = moment().subtract(30, 'minutes');
 
 
   // fake data
@@ -18,7 +18,7 @@ const Trader = function() {
 }
 
 Trader.prototype.getTrades = function(since, cb) {
-  const amount = Math.round(Math.random() * 100)
+  const amount = moment().diff(this.at, 'seconds');
 
   const trades = _.range(amount).map(() => {
 
@@ -37,14 +37,14 @@ Trader.prototype.getTrades = function(since, cb) {
       this.price -= Math.random();
 
     return {
-      date: this.at.add(30, 'seconds').unix(),
+      date: this.at.add(1, 'seconds').unix(),
       price: this.price,
       amount: Math.random() * 100,
       tid: this.tid
     }
   });
 
-  log.debug(
+  console.log(
     `[EXCHANGE SIMULATOR] emitted ${amount} fake trades, up until ${this.at.format('YYYY-MM-DD HH:mm:ss')}.`
   );
 
