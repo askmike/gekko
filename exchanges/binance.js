@@ -299,12 +299,7 @@ Trader.getCapabilities = function() {
   return {
     name: 'Binance',
     slug: 'binance',
-    currencies: [
-      'BNB',
-      'BTC',
-      'ETH',
-      'USDT'
-    ],
+    currencies: ['BNB', 'BTC', 'ETH', 'USDT'],
     assets: [
       'ADA',
       'ADX',
@@ -411,2665 +406,2665 @@ Trader.getCapabilities = function() {
     ],
     markets: [
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BNB',
-          'GTO'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'NULS'
         ],
-        precision: 0.00001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
           'BNB',
-          'BTC'
+          'VEN'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.0001
+      },
+      {
+        pair: [
+          'BTC',
+          'BNB'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'NULS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'CTR'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'NEO'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'NEO'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'NULS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'LINK'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'SALT'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'BTC',
-          'IOTA'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'BTC',
+          'SALT'
+        ],
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'IOTA'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'ETC'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
+        pair: [
+          'ETH',
+          'AST'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'AST',
-          'ETH'
-        ],
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'KNC'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'WTC'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'SNGLS'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'EOS',
-          'ETH'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'ETH',
-          'SNT'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'EOS'
+        ],
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'SNT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'MCO'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
+        pair: [
+          'USDT',
+          'BTC'
+        ],
         minimalOrder: {
           amount: 0.000001,
           unit: 'asset'
         },
-        pair: [
-          'BTC',
-          'USDT'
-        ],
         precision: 0.01
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'OAX'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'OMG'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'GAS'
         ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BQX',
-          'ETH'
-        ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'BQX'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'WTC'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'QTUM'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
-        pair: [
-          'BNT',
-          'ETH'
-        ],
         precision: 0.000001
       },
       {
+        pair: [
+          'ETH',
+          'BNT'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'DNT'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'DNT',
-          'ETH'
-        ],
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'ICN'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'BTC',
           'SNM'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'SNM'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'SNGLS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'BQX',
-          'BTC'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'BTC',
+          'BQX'
+        ],
         minimalOrder: {
-          amount: 0.01,
+          amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'NEO'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'KNC'
         ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'STRAT'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'ETH',
-          'ZRX'
-        ],
-        precision: 1e-8
+        precision: 1e-7
       },
       {
+        pair: [
+          'ETH',
+          'STRAT'
+        ],
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'ZRX'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'QTUM'
         ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'FUN'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
-        pair: [
-          'BTC',
-          'LTC'
-        ],
         precision: 0.000001
       },
       {
+        pair: [
+          'ETH',
+          'FUN'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'LTC'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'LINK'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'ETH'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'ETH'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'XVG'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'STRAT'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'ZRX'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'IOTA'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCC',
-          'BTC'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
-          'CTR',
-          'ETH'
+          'BTC',
+          'BCC'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'CTR'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'OMG'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'MCO'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'SALT'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
+        pair: [
+          'BTC',
+          'ADA'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'ADA',
-          'BTC'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'ADA'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'ADA',
-          'ETH'
-        ],
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ADX',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ADX',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ADX',
-          'ETH'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'AION',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'AION',
-          'BTC'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'AION',
-          'ETH'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'AMB',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'AMB',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'AMB',
-          'ETH'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'APPC',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'APPC',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'APPC',
-          'ETH'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ARK',
-          'BTC'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ARK',
-          'ETH'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ARN',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ARN',
-          'ETH'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'AST',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BAT',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BAT',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BAT',
-          'ETH'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.00001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCC',
-          'BNB'
-        ],
-        precision: 0.01
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCC',
-          'ETH'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 0.00001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCC',
-          'USDT'
-        ],
-        precision: 0.01
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCD',
-          'BTC'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BCD',
-          'ETH'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BCPT',
-          'BNB'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BCPT',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BCPT',
-          'ETH'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
-          'ETH'
+          'ADX'
         ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BNT',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'ADX'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'ADX'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'BNB',
+          'AION'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'AION'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'AION'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BNB',
+          'AMB'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'AMB'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'AMB'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BNB',
+          'APPC'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'APPC'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'APPC'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'BTC',
+          'ARK'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'ARK'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'ARN'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'ARN'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'AST'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BNB',
+          'BAT'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'BAT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'BAT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BNB',
+          'BCC'
+        ],
+        minimalOrder: {
+          amount: 0.00001,
+          unit: 'asset'
+        },
+        precision: 0.01
+      },
+      {
+        pair: [
+          'ETH',
+          'BCC'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'USDT',
+          'BCC'
+        ],
+        minimalOrder: {
+          amount: 0.00001,
+          unit: 'asset'
+        },
+        precision: 0.01
+      },
+      {
+        pair: [
+          'BTC',
+          'BCD'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'BCD'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BNB',
+          'BCPT'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'BCPT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'BCPT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'BNB'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'BNT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'BRD'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BRD',
-          'BTC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BRD',
-          'ETH'
-        ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'BRD'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'BRD'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
         pair: [
           'BTC',
           'BTG'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
-          'BTG',
-          'ETH'
+          'ETH',
+          'BTG'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BNB',
           'BTS'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'BTS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
-          'BTS',
-          'ETH'
+          'ETH',
+          'BTS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'CDT'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'CDT',
-          'ETH'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'CDT'
+        ],
         minimalOrder: {
-          amount: 0.01,
+          amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'CMT'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'CMT'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'CMT',
-          'ETH'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'CMT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'CMT'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'CND'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'CND'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'CND',
-          'ETH'
-        ],
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'CND'
+        ],
         minimalOrder: {
-          amount: 0.001,
+          amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'DASH'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
+        pair: [
+          'ETH',
+          'DASH'
+        ],
         minimalOrder: {
           amount: 0.001,
           unit: 'asset'
         },
-        pair: [
-          'DASH',
-          'ETH'
-        ],
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'DGD'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.001,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
-          'DGD',
-          'ETH'
+          'ETH',
+          'DGD'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'DLT'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'DLT'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
-          'DLT',
-          'ETH'
+          'ETH',
+          'DLT'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'DNT'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'EDO'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
-          'EDO',
-          'ETH'
+          'ETH',
+          'EDO'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'ELF'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
-          'ELF',
-          'ETH'
+          'ETH',
+          'ELF'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'ENG'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'ENG'
+        ],
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
-        pair: [
-          'ENG',
-          'ETH'
-        ],
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'ENJ'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
-          'ENJ',
-          'ETH'
+          'ETH',
+          'ENJ'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'EOS'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
+        pair: [
+          'ETH',
+          'ETC'
+        ],
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
-        pair: [
-          'ETC',
-          'ETH'
-        ],
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'EVX'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'EVX'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'FUEL'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'FUEL'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'FUN'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
-          'VEN'
+          'GTO'
         ],
-        precision: 0.0001
-      },
-      {
         minimalOrder: {
-          amount: 1,
+          amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
           'BTC',
           'GTO'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'GTO'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'GVT'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'GVT'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'GXS'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'GXS'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'HSR'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'HSR'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'GVT'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'GVT'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'GXS'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'GXS'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'HSR'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'HSR'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'ICN'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'ICX'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'ICX'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'ICX'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'INS'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'INS'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BNB',
           'IOTA'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'KMD'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'KMD'
         ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'LEND'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'LEND'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'LRC'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'LRC'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'LEND'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'LEND'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'LRC'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'LRC'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'LSK'
         ],
-        precision: 0.0001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.0001
+      },
+      {
         pair: [
           'BTC',
           'LSK'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'LSK'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 0.00001,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'LTC'
         ],
+        minimalOrder: {
+          amount: 0.00001,
+          unit: 'asset'
+        },
         precision: 0.01
       },
       {
+        pair: [
+          'ETH',
+          'LTC'
+        ],
         minimalOrder: {
           amount: 0.001,
           unit: 'asset'
         },
-        pair: [
-          'ETH',
-          'LTC'
-        ],
         precision: 0.00001
       },
       {
+        pair: [
+          'USDT',
+          'LTC'
+        ],
         minimalOrder: {
           amount: 0.00001,
           unit: 'asset'
         },
-        pair: [
-          'LTC',
-          'USDT'
-        ],
         precision: 0.01
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'LUN'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'LUN'
         ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'MANA'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'MANA'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'BTC',
+          'MANA'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'MANA'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'MCO'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'MDA'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'MDA'
         ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'MOD'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'MOD'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'BTC',
+          'MOD'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'MOD'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'MTH'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'MTH'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'MTL'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'MTL'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BNB',
           'NAV'
         ],
-        precision: 0.00001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
           'BTC',
           'NAV'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'NAV'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BNB',
           'NEBL'
         ],
-        precision: 0.00001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
           'BTC',
           'NEBL'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'NEBL'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'NEO'
         ],
-        precision: 0.001
-      },
-      {
         minimalOrder: {
           amount: 0.001,
           unit: 'asset'
         },
-        pair: [
-          'NEO',
-          'USDT'
-        ],
         precision: 0.001
       },
       {
+        pair: [
+          'USDT',
+          'NEO'
+        ],
         minimalOrder: {
-          amount: 1,
+          amount: 0.001,
           unit: 'asset'
         },
+        precision: 0.001
+      },
+      {
         pair: [
           'BTC',
           'OAX'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'OST'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'OST'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'OST'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'POE'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'POE'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'POWR'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'POWR'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'POWR'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'POWR'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'POWR'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'PPT'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'PPT'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'QSP'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'QSP'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'QSP'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'QSP'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'QSP'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'RCN'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'RCN'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'RCN'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'RCN'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'RCN'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'RDN'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'RDN'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'RDN'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'REQ'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'REQ'
         ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BNB',
-          'RLC'
-        ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'RLC'
-        ],
-        precision: 1e-7
-      },
-      {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'RLC'
-        ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BNB',
+          'RLC'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'RLC'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 1e-7
+      },
+      {
+        pair: [
+          'ETH',
+          'RLC'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BTC',
           'SNT'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'STORJ'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'STORJ'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'SUB'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'SUB'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'TNB'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'TNB'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'TNT'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'TNT'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'TRIG'
         ],
-        precision: 0.00001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
           'BTC',
           'TRIG'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'TRIG'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'TRX'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'TRX'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'VEN'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'VEN'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'VIB'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'VIBE'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'VIBE'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'VIB'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'WABI'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'WABI'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'WABI'
-        ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'BTC',
+          'WABI'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'WABI'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BNB',
           'WAVES'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.0001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'WAVES'
         ],
-        precision: 1e-7
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 1e-7
+      },
+      {
         pair: [
           'ETH',
           'WAVES'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'WINGS'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'WINGS'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-7
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'WTC'
         ],
-        precision: 0.0001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.0001
+      },
+      {
         pair: [
           'BNB',
           'XLM'
         ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'XLM'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'XLM'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'XMR'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
         precision: 0.000001
       },
       {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
         pair: [
           'ETH',
           'XMR'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
         precision: 0.00001
       },
       {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'XRP'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'ETH',
           'XRP'
         ],
-        precision: 1e-8
-      },
-      {
         minimalOrder: {
           amount: 1,
           unit: 'asset'
         },
+        precision: 1e-8
+      },
+      {
         pair: [
           'BTC',
           'XVG'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
         precision: 1e-8
       },
       {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
         pair: [
           'BNB',
           'XZC'
         ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
         precision: 0.001
       },
       {
-        minimalOrder: {
-          amount: 0.01,
-          unit: 'asset'
-        },
         pair: [
           'BTC',
           'XZC'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'ETH',
           'XZC'
         ],
-        precision: 0.000001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.000001
+      },
+      {
         pair: [
           'BNB',
           'YOYO'
         ],
-        precision: 0.00001
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'YOYO'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 1,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'YOYO'
-        ],
-        precision: 1e-8
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'BTC',
-          'ZEC'
-        ],
-        precision: 0.000001
-      },
-      {
-        minimalOrder: {
-          amount: 0.001,
-          unit: 'asset'
-        },
-        pair: [
-          'ETH',
-          'ZEC'
-        ],
-        precision: 0.00001
-      },
-      {
         minimalOrder: {
           amount: 0.01,
           unit: 'asset'
         },
+        precision: 0.00001
+      },
+      {
         pair: [
-          'BNB',
-          'USDT'
+          'BTC',
+          'YOYO'
         ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'ETH',
+          'YOYO'
+        ],
+        minimalOrder: {
+          amount: 1,
+          unit: 'asset'
+        },
+        precision: 1e-8
+      },
+      {
+        pair: [
+          'BTC',
+          'ZEC'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.000001
+      },
+      {
+        pair: [
+          'ETH',
+          'ZEC'
+        ],
+        minimalOrder: {
+          amount: 0.001,
+          unit: 'asset'
+        },
+        precision: 0.00001
+      },
+      {
+        pair: [
+          'USDT',
+          'BNB'
+        ],
+        minimalOrder: {
+          amount: 0.01,
+          unit: 'asset'
+        },
         precision: 0.0001
       },
       {
+        pair: [
+          'USDT',
+          'ETH'
+        ],
         minimalOrder: {
           amount: 0.00001,
           unit: 'asset'
         },
-        pair: [
-          'ETH',
-          'USDT'
-        ],
         precision: 0.01
       }
     ],
