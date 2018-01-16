@@ -83,7 +83,7 @@ module.exports = function *() {
       });
     }
 
-    if(!event)
+    if(!event || !event.type)
       return;
 
     if(event.type === 'trade') {
