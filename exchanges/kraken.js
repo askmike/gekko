@@ -344,34 +344,34 @@ Trader.getCapabilities = function () {
 
       //Tradeable against LTC
       { pair: ['XBT', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
 
       //Tradeable against BCH
-      { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
-      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
+      { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 3 },
+      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 3 },
       { pair: ['XBT', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against DASH
-      { pair: ['USD', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'DASH'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
+      { pair: ['EUR', 'DASH'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
       { pair: ['XBT', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against EOS
-      { pair: ['USD', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'EOS'], minimalOrder: { amount: 3, unit: 'asset' } },
+      { pair: ['EUR', 'EOS'], minimalOrder: { amount: 3, unit: 'asset' } },
       { pair: ['XBT', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 7 },
       { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
 
       //Tradeable against ETC
-      { pair: ['USD', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 3 },
-      { pair: ['EUR', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 3 },
+      { pair: ['USD', 'ETC'], minimalOrder: { amount: 0.3, unit: 'asset' }, precision: 3 },
+      { pair: ['EUR', 'ETC'], minimalOrder: { amount: 0.3, unit: 'asset' }, precision: 3 },
       { pair: ['XBT', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
       { pair: ['ETH', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against GNO
-      { pair: ['USD', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'GNO'], minimalOrder: { amount: 0.03, unit: 'asset' } },
+      { pair: ['EUR', 'GNO'], minimalOrder: { amount: 0.03, unit: 'asset' } },
       { pair: ['XBT', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
       { pair: ['ETH', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 4 },
 
@@ -393,36 +393,36 @@ Trader.getCapabilities = function () {
       { pair: ['XBT', 'XDG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
 
       //Tradeable against XLM
-      { pair: ['USD', 'XLM'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'XLM'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['USD', 'XLM'], minimalOrder: { amount: 300, unit: 'asset' } },
+      { pair: ['EUR', 'XLM'], minimalOrder: { amount: 300, unit: 'asset' } },
       { pair: ['XBT', 'XLM'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
 
       //Tradeable against XMR
-      { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
+      { pair: ['EUR', 'XMR'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
       { pair: ['XBT', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
 
       //Tradeable against XRP
-      { pair: ['USD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['EUR', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
+      { pair: ['USD', 'XRP'], minimalOrder: { amount: 30, unit: 'asset' }, precision: 5 },
+      { pair: ['EUR', 'XRP'], minimalOrder: { amount: 30, unit: 'asset' }, precision: 5 },
       { pair: ['XBT', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
       { pair: ['CAD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
 
       //Tradeable against ZEC
-      { pair: ['USD', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'ZEC'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
+      { pair: ['EUR', 'ZEC'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
       { pair: ['XBT', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
 
       //Tradeable against XBT
-      { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
-      { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
-      { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.01, unit: 'asset' } },
+      { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 1 },
+      { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 1 },
+      { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' } },
       { pair: ['JPY', 'XBT'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
       { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
 
       //Tradeable against USDT
-      { pair: ['USD', 'USDT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'USDT'], minimalOrder: { amount: 5, unit: 'asset' }, precision: 2 },
     ],
     requires: ['key', 'secret'],
     providesHistory: 'date',
