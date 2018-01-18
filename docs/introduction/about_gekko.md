@@ -4,7 +4,7 @@ Gekko is a **free and open source** Bitcoin TA trading and backtesting platform 
 
 *Use Gekko at your own risk.*
 
-![screen shot of gekko backtesting](https://cloud.githubusercontent.com/assets/969743/24838718/8c790a86-1d45-11e7-99ae-e7e551cb40cb.png)
+![screen shot of gekko backtesting](https://user-images.githubusercontent.com/969743/35054500-fc705b46-fbac-11e7-9652-306c468505a3.png)
 
 ## The gist
 

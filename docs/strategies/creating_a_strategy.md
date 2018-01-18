@@ -191,9 +191,9 @@ In your check or update method:
 
     var result = this.indicators.mytalibmacd.result;
 
-See the [TA-lib indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/talib_indicators.md) document for a list of all suppported TA-lib indicators and their required parameters.
+See the [TA-lib indicators](./talib_indicators.md) document for a list of all suppported TA-lib indicators and their required parameters.
 
-See the [Tulip indicators](https://github.com/askmike/gekko/blob/stable/docs/trading_bot/tulip_indicators.md) document for a list of all supported Tulip indicators and their required parameters.
+See the [Tulip indicators](./tulip_indicators.md) document for a list of all supported Tulip indicators and their required parameters.
 
 ### Configurables
 
