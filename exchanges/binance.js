@@ -27,6 +27,10 @@ var Trader = function(config) {
     recvWindow: 60000, // suggested by binance
     disableBeautification: false
   });
+
+  // Binance has tight timing requirements, this will ask their server for the time and store
+  // a drift value so we can calculate the most accurate timestamp possible form our system time
+  this.binance.startTimeSync();
 };
 
 var retryCritical = {
