@@ -336,11 +336,11 @@ Trader.getCapabilities = function () {
     markets: [
       //Tradeable againt ETH
       { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.02, unit: 'asset' }, precision: 3 },
       { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
       { pair: ['GBP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
       { pair: ['JPY', 'ETH'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
-      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.02, unit: 'asset' }, precision: 4 },
 
       //Tradeable against LTC
       { pair: ['XBT', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
