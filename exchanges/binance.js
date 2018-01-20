@@ -48,7 +48,7 @@ var retryForever = {
   maxTimeout: 30 * 1000
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Error -1021|Response code 429)/);
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Error -1021|Response code 429|Response code 5)/);
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
