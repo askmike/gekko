@@ -253,9 +253,10 @@ Manager.prototype.noteOrder = function(err, order) {
   }
 
   this.orders.push(order);
-  // if after 1 minute the order is still there
-  // we cancel and calculate & make a new one
-  setTimeout(this.checkOrder, util.minToMs(1));
+
+  // If unfilled, cancel and replace order with adjusted price
+  let cancelDelay = conf.orderUpdateDelay || 1;
+  setTimeout(this.checkOrder, util.minToMs(cancelDelay));
 };
 
 
