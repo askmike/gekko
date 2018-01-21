@@ -83,6 +83,9 @@ module.exports = function *() {
       });
     }
 
+    if(event.log)
+      return logger.write(event.log);
+
     if(!event || !event.type)
       return;
 
@@ -112,12 +115,9 @@ module.exports = function *() {
       }
       broadcast(wsEvent);
       return;
-    } else if(event.log) {
-      logger.write(event.log);
     }
 
     let updates = {};
-
 
     if(event.type === 'update') {
       updates.latest = event.latest;
