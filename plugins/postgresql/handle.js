@@ -48,7 +48,7 @@ checkClient.connect(function(err){
       if(err) {
         util.die(err);
       }
-      if(res.rowCount == 0){ //database does not exist
+      if(res.rows[0].count == 0){ //database does not exist
         log.debug("Database "+dbName+" does not exist");
         if(mode === 'realtime') { //create database if not found
           log.debug("Creating database "+dbName);
