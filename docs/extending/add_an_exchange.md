@@ -41,6 +41,14 @@ The callback needs to have the parameters of `err` and `fee`. Fee is a float tha
 
 The callback needs to have the parameters of `err` and `portfolio`. Portfolio needs to be an array of all currencies and assets combined in the form of objects, an example object looks like `{name: 'BTC', amount: 1.42131}` (name needs to be an uppercase string, amount needs to be a float).
 
+### getLotSize
+
+    this.exchange.getLotSize(tradeType, amount, size, callback)
+
+The callback needs to have the parameters of `err` and `lot`. Lot needs to be an object with `amount` and `purchase` size appropriately for the exchange. In the event that the lot is too small, return 0 to both fields and this will generate a lot size warning in the portfolioManager.
+
+Note: This function is currently optional. If not implemented `portfolioManager` will fallback to basic lot sizing mechanism it uses internally. However exchanges are not all the same in how rounding and lot sizing work, it is recommend to implement this function.
+
 ### buy
 
     this.exchange.buy(amount, price, callback);
