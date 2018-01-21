@@ -255,7 +255,7 @@ Manager.prototype.noteOrder = function(err, order) {
   this.orders.push(order);
 
   // If unfilled, cancel and replace order with adjusted price
-  let cancelDelay = conf.orderUpdateDelay || 1;
+  let cancelDelay = this.conf.orderUpdateDelay || 1;
   setTimeout(this.checkOrder, util.minToMs(cancelDelay));
 };
 
