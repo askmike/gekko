@@ -9,8 +9,6 @@ module.exports = {
     "ZEC",
     "XMR",
     "DSH",
-    "BCC",
-    "BCU",
     "XRP",
     "IOT",
     "EOS",
@@ -20,14 +18,20 @@ module.exports = {
     "NEO",
     "ETP",
     "QTM",
-    "BT1",
-    "BT2",
     "AVT",
     "EDO",
     "BTG",
     "DAT",
     "QSH",
-    "YYW"
+    "YYW",
+    "GNT",
+    "SNT",
+    "BAT",
+    "MNA",
+    "FUN",
+    "ZRX",
+    "TNB",
+    "SPK"
   ],
   "currencies": [
     "USD",
@@ -72,7 +76,7 @@ module.exports = {
         "ETH"
       ],
       "minimalOrder": {
-        "amount": "0.04",
+        "amount": "0.02",
         "unit": "asset"
       }
     },
@@ -82,7 +86,7 @@ module.exports = {
         "ETH"
       ],
       "minimalOrder": {
-        "amount": "0.04",
+        "amount": "0.02",
         "unit": "asset"
       }
     },
@@ -112,7 +116,7 @@ module.exports = {
         "RRT"
       ],
       "minimalOrder": {
-        "amount": "72.0",
+        "amount": "80.0",
         "unit": "asset"
       }
     },
@@ -122,7 +126,7 @@ module.exports = {
         "RRT"
       ],
       "minimalOrder": {
-        "amount": "72.0",
+        "amount": "80.0",
         "unit": "asset"
       }
     },
@@ -183,46 +187,6 @@ module.exports = {
       ],
       "minimalOrder": {
         "amount": "0.02",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "BCC"
-      ],
-      "minimalOrder": {
-        "amount": "0.002",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "BCU"
-      ],
-      "minimalOrder": {
-        "amount": "0.08",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "BCC"
-      ],
-      "minimalOrder": {
-        "amount": "0.002",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "BCU"
-      ],
-      "minimalOrder": {
-        "amount": "0.08",
         "unit": "asset"
       }
     },
@@ -242,7 +206,7 @@ module.exports = {
         "XRP"
       ],
       "minimalOrder": {
-        "amount": "22.0",
+        "amount": "10.0",
         "unit": "asset"
       }
     },
@@ -252,7 +216,7 @@ module.exports = {
         "XRP"
       ],
       "minimalOrder": {
-        "amount": "22.0",
+        "amount": "10.0",
         "unit": "asset"
       }
     },
@@ -352,7 +316,7 @@ module.exports = {
         "OMG"
       ],
       "minimalOrder": {
-        "amount": "2.0",
+        "amount": "1.0",
         "unit": "asset"
       }
     },
@@ -362,7 +326,7 @@ module.exports = {
         "OMG"
       ],
       "minimalOrder": {
-        "amount": "2.0",
+        "amount": "1.0",
         "unit": "asset"
       }
     },
@@ -372,7 +336,7 @@ module.exports = {
         "OMG"
       ],
       "minimalOrder": {
-        "amount": "2.0",
+        "amount": "1.0",
         "unit": "asset"
       }
     },
@@ -410,106 +374,6 @@ module.exports = {
       "pair": [
         "USD",
         "NEO"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "NEO"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "NEO"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "ETP"
-      ],
-      "minimalOrder": {
-        "amount": "4.0",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "ETP"
-      ],
-      "minimalOrder": {
-        "amount": "4.0",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "ETP"
-      ],
-      "minimalOrder": {
-        "amount": "4.0",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "QTM"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "QTM"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "QTM"
-      ],
-      "minimalOrder": {
-        "amount": "0.4",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "BT1"
-      ],
-      "minimalOrder": {
-        "amount": "0.002",
-        "unit": "asset"
-      }
-    },
-    {
-      "pair": [
-        "USD",
-        "BT2"
       ],
       "minimalOrder": {
         "amount": "0.2",
@@ -519,17 +383,17 @@ module.exports = {
     {
       "pair": [
         "BTC",
-        "BT1"
+        "NEO"
       ],
       "minimalOrder": {
-        "amount": "0.002",
+        "amount": "0.2",
         "unit": "asset"
       }
     },
     {
       "pair": [
-        "BTC",
-        "BT2"
+        "ETH",
+        "NEO"
       ],
       "minimalOrder": {
         "amount": "0.2",
@@ -539,10 +403,70 @@ module.exports = {
     {
       "pair": [
         "USD",
+        "ETP"
+      ],
+      "minimalOrder": {
+        "amount": "4.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ETP"
+      ],
+      "minimalOrder": {
+        "amount": "4.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "ETP"
+      ],
+      "minimalOrder": {
+        "amount": "4.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "QTM"
+      ],
+      "minimalOrder": {
+        "amount": "0.4",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "QTM"
+      ],
+      "minimalOrder": {
+        "amount": "0.4",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "QTM"
+      ],
+      "minimalOrder": {
+        "amount": "0.4",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
         "AVT"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -552,7 +476,7 @@ module.exports = {
         "AVT"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -562,7 +486,7 @@ module.exports = {
         "AVT"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -572,7 +496,7 @@ module.exports = {
         "EDO"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -582,7 +506,7 @@ module.exports = {
         "EDO"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -592,7 +516,7 @@ module.exports = {
         "EDO"
       ],
       "minimalOrder": {
-        "amount": "6.0",
+        "amount": "4.0",
         "unit": "asset"
       }
     },
@@ -622,7 +546,7 @@ module.exports = {
         "DAT"
       ],
       "minimalOrder": {
-        "amount": "84.0",
+        "amount": "74.0",
         "unit": "asset"
       }
     },
@@ -632,7 +556,7 @@ module.exports = {
         "DAT"
       ],
       "minimalOrder": {
-        "amount": "84.0",
+        "amount": "74.0",
         "unit": "asset"
       }
     },
@@ -642,7 +566,7 @@ module.exports = {
         "DAT"
       ],
       "minimalOrder": {
-        "amount": "84.0",
+        "amount": "74.0",
         "unit": "asset"
       }
     },
@@ -652,7 +576,7 @@ module.exports = {
         "QSH"
       ],
       "minimalOrder": {
-        "amount": "16.0",
+        "amount": "10.0",
         "unit": "asset"
       }
     },
@@ -662,7 +586,7 @@ module.exports = {
         "QSH"
       ],
       "minimalOrder": {
-        "amount": "16.0",
+        "amount": "10.0",
         "unit": "asset"
       }
     },
@@ -672,7 +596,7 @@ module.exports = {
         "QSH"
       ],
       "minimalOrder": {
-        "amount": "16.0",
+        "amount": "10.0",
         "unit": "asset"
       }
     },
@@ -682,7 +606,7 @@ module.exports = {
         "YYW"
       ],
       "minimalOrder": {
-        "amount": "58.0",
+        "amount": "48.0",
         "unit": "asset"
       }
     },
@@ -692,7 +616,7 @@ module.exports = {
         "YYW"
       ],
       "minimalOrder": {
-        "amount": "58.0",
+        "amount": "48.0",
         "unit": "asset"
       }
     },
@@ -702,7 +626,257 @@ module.exports = {
         "YYW"
       ],
       "minimalOrder": {
-        "amount": "58.0",
+        "amount": "48.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "GNT"
+      ],
+      "minimalOrder": {
+        "amount": "16.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "GNT"
+      ],
+      "minimalOrder": {
+        "amount": "16.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "GNT"
+      ],
+      "minimalOrder": {
+        "amount": "16.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "SNT"
+      ],
+      "minimalOrder": {
+        "amount": "38.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "SNT"
+      ],
+      "minimalOrder": {
+        "amount": "38.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "SNT"
+      ],
+      "minimalOrder": {
+        "amount": "38.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "IOT"
+      ],
+      "minimalOrder": {
+        "amount": "4.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "BAT"
+      ],
+      "minimalOrder": {
+        "amount": "18.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "BAT"
+      ],
+      "minimalOrder": {
+        "amount": "18.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "BAT"
+      ],
+      "minimalOrder": {
+        "amount": "18.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "MNA"
+      ],
+      "minimalOrder": {
+        "amount": "80.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "MNA"
+      ],
+      "minimalOrder": {
+        "amount": "80.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "MNA"
+      ],
+      "minimalOrder": {
+        "amount": "80.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "FUN"
+      ],
+      "minimalOrder": {
+        "amount": "108.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "FUN"
+      ],
+      "minimalOrder": {
+        "amount": "108.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "FUN"
+      ],
+      "minimalOrder": {
+        "amount": "108.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "ZRX"
+      ],
+      "minimalOrder": {
+        "amount": "6.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ZRX"
+      ],
+      "minimalOrder": {
+        "amount": "6.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "ZRX"
+      ],
+      "minimalOrder": {
+        "amount": "6.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "TNB"
+      ],
+      "minimalOrder": {
+        "amount": "104.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "TNB"
+      ],
+      "minimalOrder": {
+        "amount": "104.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "TNB"
+      ],
+      "minimalOrder": {
+        "amount": "104.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "USD",
+        "SPK"
+      ],
+      "minimalOrder": {
+        "amount": "26.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "SPK"
+      ],
+      "minimalOrder": {
+        "amount": "26.0",
+        "unit": "asset"
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "SPK"
+      ],
+      "minimalOrder": {
+        "amount": "26.0",
         "unit": "asset"
       }
     }
