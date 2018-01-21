@@ -5,75 +5,7 @@ const _ = require('lodash');
 const util = require('../core/util');
 const Errors = require('../core/error');
 const log = require('../core/log');
-
-var crypto_currencies = [
-  "XBT",
-  "DASH",
-  "EOS",
-  "ETC",
-  "ETH",
-  "GNO",
-  "ICN",
-  "LTC",
-  "MLN",
-  "REP",
-  "USDT",
-  "XDG",
-  "XLM",
-  "XMR",
-  "XRP",
-  "ZEC",
-  "BCH"
-];
-
-var fiat_currencies = [
-  "EUR",
-  "GBP",
-  "USD",
-  "JPY",
-  "CAD",
-];
-
-var assets_without_prefix = [
-  'BCH',
-  'DASH',
-  'EOS',
-  'GNO',
-  'USDT'
-]
-
-// Method to check if asset/currency is a crypto currency
-var isCrypto = function(value) {
-  return _.contains(crypto_currencies, value);
-};
-
-// Method to check if asset/currency is a fiat currency
-var isFiat = function(value) {
-  return _.contains(fiat_currencies, value);
-};
-
-var addPrefix = function(value) {
-  var fiatPrefix = "Z";
-  var cryptoPrefix = "X";
-
-  if(isFiat(value))
-    return fiatPrefix + value;
-  else if(isCrypto(value))
-    return cryptoPrefix + value;
-  else
-    return value;
-}
-
-// Some currencies in Kraken don't use the prefix, not clearly documented
-var getAssetPair = function(asset, currency) {
-  if (asset === 'USDT')
-    return 'USDTZUSD'; // Yet another kraken inconsistency
-
-  if (_.contains(assets_without_prefix, asset))
-    return asset + currency;
-  else
-    return addPrefix(asset) + addPrefix(currency);
-}
+const marketData = require('./data/krakenMarkets');
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -85,9 +17,13 @@ var Trader = function(config) {
     this.asset = config.asset.toUpperCase();
   }
 
-  this.pair = getAssetPair(this.asset, this.currency);
   this.name = 'kraken';
   this.since = null;
+  
+  this.market = _.find(Trader.getCapabilities().markets, (market) => {
+    return market.pair[0] === this.currency && market.pair[1] === this.asset
+  });
+  this.pair = this.market.book;
 
   this.kraken = new Kraken(
     this.key,
@@ -110,7 +46,7 @@ var retryForever = {
   maxTimeout: 30 * 1000
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Rate limit exceeded|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 525|Response code 520|Response code 504|Response code 502|Response code 522)/)
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|API:Rate limit exceeded|API:Invalid nonce|Service:Unavailable|Request timed out|Response code 5)/)
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
@@ -177,17 +113,12 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 };
 
 Trader.prototype.getPortfolio = function(callback) {
-  console.log('getPortfolio');
   var setBalance = function(err, data) {
-    console.log('aa', arguments);
     if(err) return callback(err);
     log.debug('[kraken.js] entering "setBalance" callback after kraken-api call, data:' , data);
 
-    // When using the prefix-less assets, you remove the prefix from the assset but leave
-    // it on the curreny in this case. An undocumented Kraken quirk.
-    var assetId = _.contains(assets_without_prefix, this.asset) ? this.asset : addPrefix(this.asset);
-    var assetAmount = parseFloat( data.result[assetId] );
-    var currencyAmount = parseFloat( data.result[addPrefix(this.currency)] );
+    var assetAmount = parseFloat( data.result[this.market.prefixed[1]] );
+    var currencyAmount = parseFloat( data.result[this.market.prefixed[0]] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       log.error(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
@@ -275,7 +206,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     type: tradeType.toLowerCase(),
     ordertype: 'limit',
     price: price,
-    volume: amount.toString()
+    volume: amount
   };
 
   let handler = (cb) => this.kraken.api('AddOrder', reqData, this.handleResponse('addOrder', cb));
@@ -331,99 +262,9 @@ Trader.getCapabilities = function () {
   return {
     name: 'Kraken',
     slug: 'kraken',
-    currencies: ['CAD', 'EUR', 'GBP', 'JPY', 'USD', 'XBT', 'ETH'],
-    assets: ['XBT', 'LTC', 'GNO', 'ICN', 'MLN', 'REP', 'XDG', 'XLM', 'XMR', 'XRP', 'ZEC', 'ETH', 'BCH', 'DASH', 'EOS', 'ETC', 'USDT'],
-    markets: [
-      //Tradeable againt ETH
-      { pair: ['XBT', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.02, unit: 'asset' }, precision: 3 },
-      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 2 },
-      { pair: ['GBP', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['JPY', 'ETH'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
-      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.02, unit: 'asset' }, precision: 4 },
-
-      //Tradeable against LTC
-      { pair: ['XBT', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
-      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
-
-      //Tradeable against BCH
-      { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 3 },
-      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 3 },
-      { pair: ['XBT', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against DASH
-      { pair: ['USD', 'DASH'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'DASH'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
-      { pair: ['XBT', 'DASH'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against EOS
-      { pair: ['USD', 'EOS'], minimalOrder: { amount: 3, unit: 'asset' } },
-      { pair: ['EUR', 'EOS'], minimalOrder: { amount: 3, unit: 'asset' } },
-      { pair: ['XBT', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 7 },
-      { pair: ['ETH', 'EOS'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-
-      //Tradeable against ETC
-      { pair: ['USD', 'ETC'], minimalOrder: { amount: 0.3, unit: 'asset' }, precision: 3 },
-      { pair: ['EUR', 'ETC'], minimalOrder: { amount: 0.3, unit: 'asset' }, precision: 3 },
-      { pair: ['XBT', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['ETH', 'ETC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against GNO
-      { pair: ['USD', 'GNO'], minimalOrder: { amount: 0.03, unit: 'asset' } },
-      { pair: ['EUR', 'GNO'], minimalOrder: { amount: 0.03, unit: 'asset' } },
-      { pair: ['XBT', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-      { pair: ['ETH', 'GNO'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 4 },
-
-      //Tradeable against ICN
-      { pair: ['XBT', 'ICN'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 7 },
-      { pair: ['ETH', 'ICN'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-
-      //Tradeable against MLN
-      { pair: ['XBT', 'MLN'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['ETH', 'MLN'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against REP
-      { pair: ['USD', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 3 },
-      { pair: ['XBT', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-      { pair: ['ETH', 'REP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against XDG
-      { pair: ['XBT', 'XDG'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-
-      //Tradeable against XLM
-      { pair: ['USD', 'XLM'], minimalOrder: { amount: 300, unit: 'asset' } },
-      { pair: ['EUR', 'XLM'], minimalOrder: { amount: 300, unit: 'asset' } },
-      { pair: ['XBT', 'XLM'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
-
-      //Tradeable against XMR
-      { pair: ['USD', 'XMR'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'XMR'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 2 },
-      { pair: ['XBT', 'XMR'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 6 },
-
-      //Tradeable against XRP
-      { pair: ['USD', 'XRP'], minimalOrder: { amount: 30, unit: 'asset' }, precision: 5 },
-      { pair: ['EUR', 'XRP'], minimalOrder: { amount: 30, unit: 'asset' }, precision: 5 },
-      { pair: ['XBT', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 8 },
-      { pair: ['CAD', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['JPY', 'XRP'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-
-      //Tradeable against ZEC
-      { pair: ['USD', 'ZEC'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
-      { pair: ['EUR', 'ZEC'], minimalOrder: { amount: 0.03, unit: 'asset' }, precision: 2 },
-      { pair: ['XBT', 'ZEC'], minimalOrder: { amount: 0.01, unit: 'asset' }, precision: 5 },
-
-      //Tradeable against XBT
-      { pair: ['CAD', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 1 },
-      { pair: ['EUR', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' }, precision: 1 },
-      { pair: ['GBP', 'XBT'], minimalOrder: { amount: 0.002, unit: 'asset' } },
-      { pair: ['JPY', 'XBT'], minimalOrder: { amount: 1, unit: 'asset' }, precision: 0 },
-      { pair: ['USD', 'XBT'], minimalOrder: { amount: 0.1, unit: 'asset' }, precision: 1 },
-
-      //Tradeable against USDT
-      { pair: ['USD', 'USDT'], minimalOrder: { amount: 5, unit: 'asset' }, precision: 2 },
-    ],
+    currencies: marketData.currencies,
+    assets: marketData.assets,
+    markets: marketData.markets,
     requires: ['key', 'secret'],
     providesHistory: 'date',
     providesFullHistory: true,
