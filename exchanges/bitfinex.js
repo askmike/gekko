@@ -7,7 +7,7 @@ const util = require('../core/util');
 const Errors = require('../core/error');
 const log = require('../core/log');
 
-const marketData = require('./data/bitfinexMarkets');
+const marketData = require('./bitfinex-markets.json');
 
 var Trader = function(config) {
   _.bindAll(this);

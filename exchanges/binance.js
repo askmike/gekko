@@ -4,7 +4,7 @@ const _ = require('lodash');
 const util = require('../core/util');
 const Errors = require('../core/error');
 const log = require('../core/log');
-const marketData = require('./data/binanceMarkets');
+const marketData = require('./binance-markets.json');
 
 const Binance = require('binance');
 
