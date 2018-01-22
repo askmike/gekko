@@ -7,6 +7,7 @@ const Errors = require('../core/error');
 const log = require('../core/log');
 
 const BATCH_SIZE = 100;
+const QUERY_DELAY = 350;
 
 var Trader = function(config) {
   _.bindAll(this);
