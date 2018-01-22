@@ -1,0 +1,163 @@
+{
+  "assets": [
+    "IOT",
+    "ETH",
+    "LTC",
+    "BTC",
+    "XRB",
+    "BCH",
+    "TAU",
+    "CRED",
+    "KIN"
+  ],
+  "currencies": [
+    "BTC",
+    "EUR",
+    "ETH"
+  ],
+  "markets": [
+    {
+      "pair": [
+        "BTC",
+        "IOT"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ETH"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "LTC"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "BTC"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "XRB"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "XRB"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "BCH"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "TAU"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "TAU"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "CRED"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "CRED"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "KIN"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "KIN"
+      ],
+      "minimalOrder": {
+        "amount": 0,
+        "price": 0,
+        "order": 0
+      }
+    }
+  ]
+}
