@@ -68,7 +68,7 @@
     "proxyquire": "^1.7.10",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "sinon": "^1.12.2"
+    "sinon": "^4.2.0"
   },
   "engines": {
     "node": ">=6.0"
