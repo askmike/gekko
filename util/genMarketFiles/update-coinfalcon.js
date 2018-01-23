@@ -26,9 +26,9 @@ request(options)
       return {
         pair: [currency, asset],
         minimalOrder: {
-          amount: 0.0,
-          price: 0.0,
-          order: 0.0,
+          amount: parseFloat(market.min_volume),
+          price: parseFloat(market.min_price),
+          order: 0.0
         },
       };
     });

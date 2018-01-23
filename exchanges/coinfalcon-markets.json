@@ -8,7 +8,8 @@
     "BCH",
     "TAU",
     "CRED",
-    "KIN"
+    "KIN",
+    "SPHTX"
   ],
   "currencies": [
     "BTC",
@@ -22,8 +23,8 @@
         "IOT"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -33,8 +34,8 @@
         "ETH"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.00001,
+        "price": 0.00001,
         "order": 0
       }
     },
@@ -44,8 +45,8 @@
         "LTC"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.00001,
+        "price": 0.00001,
         "order": 0
       }
     },
@@ -55,8 +56,8 @@
         "BTC"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.00001,
+        "price": 0.01,
         "order": 0
       }
     },
@@ -66,8 +67,8 @@
         "XRB"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -77,8 +78,8 @@
         "XRB"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -88,8 +89,8 @@
         "BCH"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.00001,
+        "price": 0.00001,
         "order": 0
       }
     },
@@ -99,8 +100,8 @@
         "TAU"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -110,8 +111,8 @@
         "TAU"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -121,8 +122,8 @@
         "CRED"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 0.000001,
         "order": 0
       }
     },
@@ -132,8 +133,8 @@
         "CRED"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 0.000001,
         "order": 0
       }
     },
@@ -143,8 +144,8 @@
         "KIN"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     },
@@ -154,8 +155,30 @@
         "KIN"
       ],
       "minimalOrder": {
-        "amount": 0,
-        "price": 0,
+        "amount": 0.000001,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "SPHTX"
+      ],
+      "minimalOrder": {
+        "amount": 0.000001,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "SPHTX"
+      ],
+      "minimalOrder": {
+        "amount": 0.000001,
+        "price": 1e-8,
         "order": 0
       }
     }
