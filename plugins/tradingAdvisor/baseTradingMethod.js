@@ -223,10 +223,17 @@ Base.prototype.propogateTick = function(candle) {
   // than minimally needed. In that case check
   // whether candle start time is > startTime
   var isPremature;
-  if(mode === 'realtime')
-    isPremature = candle.start < startTime;
-  else
+
+  // Subtract number of minutes in current candle for instant start
+  let startTimeMinusCandleSize = startTime.clone();
+  startTimeMinusCandleSize.subtract(this.tradingAdvisor.candleSize, "minutes"); 
+
+  if(mode === 'realtime'){
+    isPremature = candle.start < startTimeMinusCandleSize;
+  }
+  else{
     isPremature = false;
+  }
 
   if(isAllowedToCheck && !isPremature) {
     this.log(candle);
