@@ -39,7 +39,7 @@ method.log = function(candle) {
   var digits = 8;
   var ppo = this.indicators.ppo.result;
   var result = ppo.ppo;
-  var signal = ppo.ppo.PPOsignal;
+  var signal = ppo.PPOsignal;
   var hist = ppo.PPOhist;
   var momentumResult = this.indicators[momentumName][momentumName];
 
