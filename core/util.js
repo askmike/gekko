@@ -183,8 +183,8 @@ var util = {
       minTimeout: 1 * 1000,
       maxTimeout: 3 * 1000
     };
- 
-    retryHelper(fn, operation, callback);
+
+    retryHelper(fn, options, callback);
   },
   retryCustom: function(options, fn, callback) {
     retryHelper(fn, options, callback);
