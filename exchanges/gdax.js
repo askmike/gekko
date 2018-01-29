@@ -21,6 +21,9 @@ var Trader = function(config) {
   this.asset = config.asset;
   this.currency = config.currency;
 
+  this.api_url = 'https://api.gdax.com';
+  this.api_sandbox_url = 'https://api-public.sandbox.gdax.com';
+
   if (_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;
@@ -29,17 +32,21 @@ var Trader = function(config) {
     this.pair = [config.asset, config.currency].join('-').toUpperCase();
     this.post_only =
       typeof config.post_only !== 'undefined' ? config.post_only : true;
+    
+    if (config.sandbox) {
+      this.use_sandbox = config.sandbox;
+    }
+
   }
 
   this.gdax_public = new Gdax.PublicClient(
-    this.pair,
-    this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined
+    this.use_sandbox ? this.api_sandbox_url : undefined
   );
   this.gdax = new Gdax.AuthenticatedClient(
     this.key,
     this.secret,
     this.passphrase,
-    this.use_sandbox ? 'https://api-public.sandbox.gdax.com' : undefined
+    this.use_sandbox ? this.api_sandbox_url : undefined
   );
 };
 
@@ -73,7 +80,7 @@ Trader.prototype.processError = function(funcName, error) {
     );
     return new Errors.AbortError('[gdax.js] ' + error.message);
   }
-
+  
   log.debug(
     `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
   );
@@ -107,20 +114,20 @@ Trader.prototype.getPortfolio = function(callback) {
     callback(undefined, portfolio);
   };
 
-  let handler = cb =>
+  let handler = cb => 
     this.gdax.getAccounts(this.handleResponse('getPortfolio', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var result = function(err, data) {
-    if (err) return callback(err);
-    callback(undefined, { bid: +data.bid, ask: +data.ask });
-  };
+        var result = function(err, data) {
+            if (err) return callback(err);
+            callback(undefined, { bid: +data.bid, ask: +data.ask });
+        };
 
-  let handler = cb =>
-    this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+        let handler = cb => 
+          this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
+        util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getFee = function(callback) {
@@ -134,10 +141,10 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   var buyParams = {
-    price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
-    size: this.getMaxDecimalsNumber(amount),
-    product_id: this.pair,
-    post_only: this.post_only,
+      price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
+      size: this.getMaxDecimalsNumber(amount),
+      product_id: this.pair,
+      post_only: this.post_only
   };
 
   var result = (err, data) => {
@@ -151,10 +158,10 @@ Trader.prototype.buy = function(amount, price, callback) {
 
 Trader.prototype.sell = function(amount, price, callback) {
   var sellParams = {
-    price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
-    size: this.getMaxDecimalsNumber(amount),
-    product_id: this.pair,
-    post_only: this.post_only,
+      price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
+      size: this.getMaxDecimalsNumber(amount),
+      product_id: this.pair,
+      post_only: this.post_only
   };
 
   var result = function(err, data) {
@@ -162,8 +169,8 @@ Trader.prototype.sell = function(amount, price, callback) {
     callback(undefined, data.id);
   };
 
-  let handler = cb =>
-    this.gdax.sell(sellParams, this.handleResponse('buy', cb));
+  let handler = cb => 
+    this.gdax.sell(sellParams, this.handleResponse('sell', cb));
   util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -182,7 +189,7 @@ Trader.prototype.checkOrder = function(order, callback) {
     callback(undefined, false);
   };
 
-  let handler = cb =>
+  let handler = cb => 
     this.gdax.getOrder(order, this.handleResponse('checkOrder', cb));
   util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
@@ -198,18 +205,23 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(undefined, { price, amount, date });
   };
 
-  let handler = cb =>
+  let handler = cb => 
     this.gdax.getOrder(order, this.handleResponse('getOrder', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  var result = function(err, data) {
-    // todo, verify result..
-    callback();
-  };
+    // callback for cancelOrder should be true if the order was already filled, otherwise false
+    var result = function(err, data) {
+        if(err) {
+            log.error('Error cancelling order:', err);
+            callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
+        }
 
-  let handler = cb =>
+        callback(false);
+    };
+
+  let handler = cb => 
     this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
 };
@@ -377,7 +389,7 @@ Trader.getCapabilities = function() {
     providesFullHistory: true,
     tid: 'tid',
     tradable: true,
-    forceReorderDelay: true,
+    forceReorderDelay: false
   };
 };
 
