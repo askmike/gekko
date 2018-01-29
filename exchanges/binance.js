@@ -301,7 +301,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, data) {
     log.debug(`[binance.js] entering "cancelOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
     if (err) {
-      if(data.msg === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
+      if(_.get(data, 'msg') === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
         return callback(true); // tell the thing the order was already filled
       }
       return callback(err);
