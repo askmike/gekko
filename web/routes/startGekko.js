@@ -83,7 +83,7 @@ module.exports = function *() {
       });
     }
 
-    if(event.log)
+    if(_.get(event, 'log'))
       return logger.write(event.log);
 
     if(!event || !event.type)
