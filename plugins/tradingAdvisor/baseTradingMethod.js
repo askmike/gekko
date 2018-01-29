@@ -57,6 +57,7 @@ var Base = function(settings) {
   this.deferredTicks = [];
 
   this._prevAdvice;
+  this._position; // store the current position from the last successful trade
 
   this.candleProps = {
     open: [],
@@ -79,6 +80,9 @@ var Base = function(settings) {
 
   if(!this.end)
     this.end = function() {};
+
+  if(!this.onTrade)
+    this.onTrade = function() {};
 
   // let's run the implemented starting point
   this.init();
@@ -255,6 +259,11 @@ Base.prototype.propogateTick = function(candle) {
     this.finishCb();
 }
 
+Base.prototype.processTrade = function(trade) {
+    this.onTrade(trade);
+    this._position = (trade.action === 'buy' && _.isNumber(trade.price)) ? 'long' : 'short';
+}
+
 Base.prototype.addTalibIndicator = function(name, type, parameters) {
   if(!talib)
     util.die('Talib is not enabled');
@@ -310,8 +319,13 @@ Base.prototype.advice = function(newPosition, _candle) {
     return;
 
   // ignore if advice equals previous advice
-  if(newPosition === this._prevAdvice)
+  // updated to take the current actual position into account in case a previous advice resulted in a cancelled/failed trade
+  // ** still need to consider a way to deal with an enhancement to not use the full balance on every trade
+  // ** making multiple instances of the same advice in succession desirable
+  if(newPosition === this._prevAdvice && newPosition === this._position) {
+    log.debug('Advice to go [' + newPosition.toUpperCase() + '] is the same as the previous advice and current market position, ignoring.');
     return;
+  }
 
   // cache the candle this advice is based on
   if(_candle)
