@@ -57,7 +57,6 @@ var Base = function(settings) {
   this.deferredTicks = [];
 
   this._prevAdvice;
-  this._position; // store the current position from the last successful trade
 
   this.candleProps = {
     open: [],
@@ -261,7 +260,6 @@ Base.prototype.propogateTick = function(candle) {
 
 Base.prototype.processTrade = function(trade) {
   this.onTrade(trade);
-  this._position = (trade.action === 'buy' && _.isNumber(trade.price)) ? 'long' : 'short';
 }
 
 Base.prototype.addTalibIndicator = function(name, type, parameters) {
@@ -318,11 +316,9 @@ Base.prototype.advice = function(newPosition, _candle) {
   if(!newPosition)
     return;
 
-  // ignore if advice equals previous advice and the current trade action is the same as the current position
-  if(newPosition === this._prevAdvice && newPosition === this._position) {
-    log.debug('Advice to go [' + newPosition.toUpperCase() + '] is the same as the previous advice and current market position, ignoring.');
+  // ignore if advice equals previous advice
+  if(newPosition === this._prevAdvice)
     return;
-  }
 
   // cache the candle this advice is based on
   if(_candle)
