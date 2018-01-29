@@ -260,8 +260,8 @@ Base.prototype.propogateTick = function(candle) {
 }
 
 Base.prototype.processTrade = function(trade) {
-    this.onTrade(trade);
-    this._position = (trade.action === 'buy' && _.isNumber(trade.price)) ? 'long' : 'short';
+  this.onTrade(trade);
+  this._position = (trade.action === 'buy' && _.isNumber(trade.price)) ? 'long' : 'short';
 }
 
 Base.prototype.addTalibIndicator = function(name, type, parameters) {
@@ -318,10 +318,7 @@ Base.prototype.advice = function(newPosition, _candle) {
   if(!newPosition)
     return;
 
-  // ignore if advice equals previous advice
-  // updated to take the current actual position into account in case a previous advice resulted in a cancelled/failed trade
-  // ** still need to consider a way to deal with an enhancement to not use the full balance on every trade
-  // ** making multiple instances of the same advice in succession desirable
+  // ignore if advice equals previous advice and the current trade action is the same as the current position
   if(newPosition === this._prevAdvice && newPosition === this._position) {
     log.debug('Advice to go [' + newPosition.toUpperCase() + '] is the same as the previous advice and current market position, ignoring.');
     return;
