@@ -80,7 +80,8 @@ Trader.prototype.processError = function(funcName, error) {
       }`
     );
     return new Errors.AbortError('[gdax.js] ' + error.message);
-  }  
+  }
+ 
   log.debug(
     `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
   );
@@ -144,7 +145,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
-    post_only: this.post_only
+    post_only: this.post_only,
   };
 
   var result = (err, data) => {
@@ -162,7 +163,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
-    post_only: this.post_only
+    post_only: this.post_only,
   };
 
   var result = function(err, data) {
