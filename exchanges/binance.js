@@ -164,25 +164,25 @@ Trader.prototype.getFee = function(callback) {
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var setTicker = function(err, data) {
-    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
-    if (err) return callback(err);
+    var setTicker = function(err, data) {
+      log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
+      if (err) return callback(err);
 
-    var findSymbol = function(ticker) {
-      return ticker.symbol === this.pair;
-    }
-    var result = _.find(data, _.bind(findSymbol, this));
+      var findSymbol = function(ticker) {
+        return ticker.symbol === this.pair;
+      }
+      var result = _.find(data, _.bind(findSymbol, this));
 
-    var ticker = {
-      ask: parseFloat(result.askPrice),
-      bid: parseFloat(result.bidPrice),
+      var ticker = {
+          ask: parseFloat(result.askPrice),
+          bid: parseFloat(result.bidPrice),
+      };
+
+      callback(undefined, ticker);
     };
 
-    callback(undefined, ticker);
-  };
-
-  let handler = (cb) => this.binance._makeRequest({}, this.handleResponse('getTicker', cb), 'api/v1/ticker/allBookTickers');
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(setTicker, this));
+    let handler = (cb) => this.binance._makeRequest({}, this.handleResponse('getTicker', cb), 'api/v1/ticker/allBookTickers');
+    util.retryCustom(retryForever, _.bind(handler, this), _.bind(setTicker, this));
 };
 
 // Effectively counts the number of decimal places, so 0.001 or 0.234 results in 3
@@ -227,7 +227,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var setOrder = function(err, data) {
     log.debug(`[binance.js] entering "setOrder" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
     if (err) return callback(err);
-
+    
     var txid = data.orderId;
     log.debug(`[binance.js] added order with txid: ${txid}`);
 
@@ -297,9 +297,15 @@ Trader.prototype.checkOrder = function(order, callback) {
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
+  // callback for cancelOrder should be true if the order was already filled, otherwise false
   var cancel = function(err, data) {
     log.debug(`[binance.js] entering "cancelOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
-    if (err) return callback(err);
+    if (err) {
+      if(data.msg === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
+        return callback(true); // tell the thing the order was already filled
+      }
+      return callback(err);
+    }
     callback(undefined);
   };
 
