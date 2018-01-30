@@ -227,7 +227,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   var setOrder = function(err, data) {
     log.debug(`[binance.js] entering "setOrder" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
     if (err) return callback(err);
-    
+
     var txid = data.orderId;
     log.debug(`[binance.js] added order with txid: ${txid}`);
 
