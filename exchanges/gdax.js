@@ -213,15 +213,15 @@ Trader.prototype.getOrder = function(order, callback) {
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
-    // callback for cancelOrder should be true if the order was already filled, otherwise false
-    var result = function(err, data) {
-        if(err) {
-            log.error('Error cancelling order:', err);
-            callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
-        }
+  // callback for cancelOrder should be true if the order was already filled, otherwise false
+  var result = function(err, data) {
+    if(err) {
+      log.error('Error cancelling order:', err);
+      return callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
+    }
 
-        callback(false);
-    };
+    return callback(false);
+  };
 
   let handler = cb =>
     this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
