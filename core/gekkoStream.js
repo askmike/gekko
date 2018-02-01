@@ -46,7 +46,7 @@ Gekko.prototype.shutdown = function() {
       if (c.finalize) c.finalize(callback);
       else callback();
     },
-    function() {
+    () => {
       // If we are a child process, we signal to the parent to kill the child once it is done
       // so that is has time to process all remaining events (and send report data)
       if (env === 'child-process') process.send('done');

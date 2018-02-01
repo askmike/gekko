@@ -17,8 +17,8 @@ var message = (type, payload) => {
 
 var cp = {
   // string like: '2016-12-03T22:23:00.000Z'
-  update: latest => message('update', { latest }),
-  startAt: startAt => message('startAt', { startAt }),
+  // update: latest => message('update', { latest }),
+  // startAt: startAt => message('startAt', { startAt }),
 
   // object like:
   //

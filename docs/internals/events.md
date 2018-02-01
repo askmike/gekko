@@ -15,6 +15,11 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [trade](#trade-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
 - [portfolioUpdate](#portfolioUpdate-event): Is broadcasted once a trading plugin has an updated portflio.
 
+Beside those there are also two additional market events, note that those are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
+
+- [marketStart](#marketStart-event): Once, when the market just started.
+- [marketUpdate](#marketUpdate-event): Whenever the market has fetched new raw market data.
+
 ### candle event
 
 - What: an object containing a one minute candle from the market.
@@ -71,3 +76,20 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
         currency: [number, portfolio amount of currency],
         asset: [number, portfolio amount of asset]
       }
+
+### marketStart event
+
+- What: a moment object describing the first date of the market data.
+- When: when the market is started.
+- Subscribe: Your plugin can subscribe to this event by registering the `processMarketStart` method.
+- Example:
+      [moment object describing the date of the first market data]
+
+### marketUpdate event
+
+- What: a moment object describing the point in time for up to which the market has market data.
+- When: every few seconds.
+- Subscribe: Your plugin can subscribe to this event by registering the `processMarketUpdate` method.
+- Example:
+      [moment object describing the date of the latest market data]
+

@@ -35,12 +35,13 @@ Manager.prototype.retrieve = function() {
 Manager.prototype.relayTrades = function(batch) {
   this.emit('trades', batch);
 
-  this.sendStartAt(batch);
-  cp.update(batch.last.date.format());
+  this.sendMarketStart(batch);
+  // cp.update(batch.last.date.format());
+  this.emit('marketUpdate', batch.last.date);
 }
 
-Manager.prototype.sendStartAt = _.once(function(batch) {
-  cp.startAt(batch.first.date.format())
+Manager.prototype.sendMarketStart = _.once(function(batch) {
+  this.emit('marketStart', batch.first.date);
 });
 
 module.exports = Manager;

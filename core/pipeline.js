@@ -88,8 +88,9 @@ var pipeline = (settings) => {
       pluginSubscriptions.filter(s => _.isArray(s.emitter)),
       subscription => {
         var singleEventEmitters = subscription.emitter
-          .filter(s => _.size(plugins.filter(p => p.meta.slug === s)
-        ));
+          .filter(
+            s => _.size(plugins.filter(p => p.meta.slug === s))
+          );
 
         if(_.size(singleEventEmitters) > 1) {
           var error = `Multiple plugins are broadcasting`;
