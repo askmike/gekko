@@ -61,19 +61,6 @@ var BudFox = function(config) {
   );
 
   this.heart.pump();
-
-  //    Budfox also reports:
-
-  // Trades & last trade
-  //
-  // this.marketDataProvider.on(
-  //   'trades',
-  //   this.broadcast('trades')
-  // );
-  // this.marketDataProvider.on(
-  //   'trades',
-  //   this.broadcastTrade
-  // );
 }
 
 var Readable = require('stream').Readable;
@@ -87,19 +74,5 @@ BudFox.prototype._read = function noop() {}
 BudFox.prototype.pushCandles = function(candles) {
   _.each(candles, this.push);
 }
-
-// BudFox.prototype.broadcastTrade = function(trades) {
-//   _.defer(function() {
-//     this.emit('trade', trades.last);
-//   }.bind(this));
-// }
-
-// BudFox.prototype.broadcast = function(message) {
-//   return function(payload) {
-//     _.defer(function() {
-//       this.emit(message, payload);
-//     }.bind(this));
-//   }.bind(this);
-// }
 
 module.exports = BudFox;

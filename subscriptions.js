@@ -11,8 +11,13 @@ var subscriptions = [
   },
   {
     emitter: 'market',
-    event: 'history',
-    handler: 'processHistory'
+    event: 'marketUpdate',
+    handler: 'processMarketUpdate'
+  },
+  {
+    emitter: 'market',
+    event: 'marketStart',
+    handler: 'processMarketStart'
   },
   {
     emitter: 'tradingAdvisor',

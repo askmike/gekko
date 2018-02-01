@@ -190,6 +190,13 @@ var plugins = [
     slug: 'ifttt',
     async: false,
     modes: ['realtime']
+  },
+  {
+    name: 'event logger',
+    description: 'Logs all gekko events.',
+    slug: 'eventLogger',
+    async: false,
+    modes: ['realtime']
   }
 ];
 

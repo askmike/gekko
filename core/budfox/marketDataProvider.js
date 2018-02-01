@@ -36,7 +36,6 @@ Manager.prototype.relayTrades = function(batch) {
   this.emit('trades', batch);
 
   this.sendMarketStart(batch);
-  // cp.update(batch.last.date.format());
   this.emit('marketUpdate', batch.last.date);
 }
 
