@@ -2,9 +2,11 @@
 
 As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between seperate components. This makes the codebase scalable, testable and it seperates concerns.
 
-Events are not just relayed between core components in a GekkoStream, if you run the Gekko UI they are also broadcasted (via the UI server) over the websocket to the web UI. This means that all events broadcasted by any plugin automatically end up in the web UI.
+if you run the Gekko UI events are relayed between core components as well as broadcasted (via the UI server) to the web UI. This means that all events broadcasted by any plugin automatically end up in the web UI.
 
-Note that all events from Gekko come from a plugin (with the exception of the `candle` event, which comes from the market), and no plugin is required for Gekko to run, this means it might be possible that some events are never broadcasted since their originating plugin is not active. If a plugin 
+Note that all events from Gekko come from a plugin (with the exception of the `candle` event, which comes from the market), and no plugin is required for Gekko to run, this means it might be possible that some events are never broadcasted since their originating plugin is not active. If a plugin wants to listen to an event that will never be broadcasted (because of a lack of another plugin) this will be warn in the console like so:
+
+    (WARN): Paper Trader wanted to listen to the tradingAdvisor, however the tradingAdvisor is disabled.
 
 ## List of events
 
@@ -61,7 +63,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 
 ### portfolioUpdate event
 
-- What: an object containing updated portfolion information.
+- What: an object containing updated portfolio information.
 - When: Some point in time after the advice event, at the same time as the trade event.
 - Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioUpdate` method.
 - Example:
