@@ -225,6 +225,10 @@ config.adviceLogger = {
   muteSoft: true // disable advice printout if it's soft
 }
 
+config.eventLogger = {
+  enabled: false
+}
+
 config.pushover = {
   enabled: false,
   sendPushoverOnStart: false,
