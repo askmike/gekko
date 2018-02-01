@@ -25,7 +25,13 @@ const broadcast = data => {
 
   _.each(
     wss.clients,
-    client => client.send(JSON.stringify(data))
+    client => {
+      try {
+        client.send(JSON.stringify(data);
+      } catch(e) {
+        log.warn('unable to send data to client');
+      }
+    })
   );
 }
 cache.set('broadcast', broadcast);
@@ -75,7 +81,7 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-server.timeout = config.api.timeout||120000;
+server.timeout = config.api.timeout || 120000;
 server.on('request', app.callback());
 server.listen(config.api.port, config.api.host, '::', () => {
   const host = `${config.ui.host}:${config.ui.port}${config.ui.path}`;
