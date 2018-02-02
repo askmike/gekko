@@ -25,6 +25,16 @@ var subscriptions = [
     handler: 'processAdvice'
   },
   {
+    emitter: 'tradingAdvisor',
+    event: 'stratStart',
+    handler: 'processStratStart'
+  },
+  {
+    emitter: 'tradingAdvisor',
+    event: 'stratUpdate',
+    handler: 'processStratUpdate'
+  },
+  {
     emitter: ['trader', 'paperTrader'],
     event: 'trade',
     handler: 'processTrade'

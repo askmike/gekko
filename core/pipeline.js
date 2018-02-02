@@ -194,7 +194,6 @@ var pipeline = (settings) => {
           return;
 
         if(plugin[sub.handler]) {
-          console.log(plugin.meta, sub.event)
           market.on(sub.event, plugin[sub.handler]);
         }
 

@@ -64,7 +64,8 @@ Actor.prototype.setupTradingMethod = function() {
     .on('advice', this.relayAdvice);
 
   this.batcher
-    .on('candle', this.processCustomCandle);
+    .on('candle', this.processStratCandle)
+    .once('candle', this.relayFirstStratCandle)
 }
 
 // HANDLERS
@@ -75,8 +76,9 @@ Actor.prototype.processCandle = function(candle, done) {
 }
 
 // propogate a custom sized candle to the trading method
-Actor.prototype.processCustomCandle = function(candle) {
+Actor.prototype.processStratCandle = function(candle) {
   this.method.tick(candle);
+  this.emit('stratUpdate', candle);
 }
 
 // pass through shutdown handler
@@ -87,6 +89,10 @@ Actor.prototype.finish = function(done) {
 // EMITTERS
 Actor.prototype.relayAdvice = function(advice) {
   this.emit('advice', advice);
+}
+
+Actor.prototype.relayFirstStratCandle = function(candle) {
+  this.emit('stratStart', candle);
 }
 
 
