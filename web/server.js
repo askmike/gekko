@@ -27,7 +27,7 @@ const broadcast = data => {
     wss.clients,
     client => {
       try {
-        client.send(JSON.stringify(data);
+        client.send(JSON.stringify(data));
       } catch(e) {
         log.warn('unable to send data to client');
       }
