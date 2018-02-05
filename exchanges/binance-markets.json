@@ -47,6 +47,7 @@
     "BTG",
     "BTS",
     "CDT",
+    "CHAT",
     "CMT",
     "CND",
     "DASH",
@@ -64,6 +65,7 @@
     "HSR",
     "ICX",
     "INS",
+    "IOST",
     "KMD",
     "LEND",
     "LRC",
@@ -74,9 +76,11 @@
     "MOD",
     "MTH",
     "MTL",
+    "NANO",
     "NAV",
     "NEBL",
     "OST",
+    "PIVX",
     "POE",
     "POWR",
     "PPT",
@@ -85,12 +89,14 @@
     "RDN",
     "REQ",
     "RLC",
+    "STEEM",
     "STORJ",
     "SUB",
     "TNB",
     "TNT",
     "TRIG",
     "TRX",
+    "VIA",
     "VIB",
     "VIBE",
     "WABI",
@@ -1124,6 +1130,28 @@
     },
     {
       "pair": [
+        "BTC",
+        "CHAT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "CHAT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
         "BNB",
         "CMT"
       ],
@@ -1608,6 +1636,28 @@
     },
     {
       "pair": [
+        "BTC",
+        "IOST"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "IOST"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
         "BNB",
         "IOTA"
       ],
@@ -1895,6 +1945,39 @@
     {
       "pair": [
         "BNB",
+        "NANO"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "NANO"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-7,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "NANO"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.000001,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
+        "BNB",
         "NAV"
       ],
       "minimalOrder": {
@@ -2021,6 +2104,39 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "PIVX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "PIVX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-7,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "PIVX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.000001,
         "order": 0.02
       }
     },
@@ -2268,6 +2384,39 @@
     },
     {
       "pair": [
+        "BNB",
+        "STEEM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "STEEM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-7,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "STEEM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.000001,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
         "BTC",
         "STORJ"
       ],
@@ -2428,6 +2577,39 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
+        "order": 0.02
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "VIA"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "VIA"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-7,
+        "order": 0.002
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "VIA"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.000001,
         "order": 0.02
       }
     },
