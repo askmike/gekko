@@ -78,25 +78,6 @@ Beside those there are also two additional market events, note that those are on
         asset: [number, portfolio amount of asset]
       }
 
-### stratStart event
-
-- What: An object describing the first candle the strat has processed.
-- When: when the strategy is initialized.
-- Subscribe: Your plugin can subscribe to this event by registering the `processStratStart` method.
-- Notes:
-  - There are scenarios where the date of this event is before the date of the marketStart, this can happen when the strategy requires historical data and Gekko was able to load some from disk (this process bypasses the market).
-- Example:
-      {
-        start: [moment object of the start time of the candle],
-        open: [number, open of candle],
-        high: [number, high of candle],
-        low: [number, low of candle],
-        close: [number, close of candle],
-        vwp: [number, average weighted price of candle],
-        volume: [number, total volume volume],
-        trades: [number, amount of trades]
-      }
-
 ### stratUpdate event
 
 - What: An object describing an updated candle the strat has processed.
