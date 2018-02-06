@@ -16,24 +16,6 @@ var message = (type, payload) => {
 }
 
 var cp = {
-  // string like: '2016-12-03T22:23:00.000Z'
-  // update: latest => message('update', { latest }),
-  // startAt: startAt => message('startAt', { startAt }),
-
-  // object like:
-  //
-  // {
-  //   start: '2016-12-03T22:23:00.000Z',
-  //   open: 765,
-  //   high: 765,
-  //   low: 765,
-  //   close: 765,
-  //   vwp: 765,
-  //   volume: 0,
-  //   trades: 0
-  // }
-  lastCandle: lastCandle => message('lastCandle', { lastCandle }),
-  firstCandle: firstCandle => message('firstCandle', { firstCandle }),
 
   // object like:
   //

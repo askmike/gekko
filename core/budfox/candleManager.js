@@ -21,10 +21,6 @@ var Manager = function() {
 
   this.candleCreator
     .on('candles', this.relayCandles);
-
-  this.messageFirstCandle = _.once(candle => {
-    cp.firstCandle(candle);
-  })
 };
 
 util.makeEventEmitter(Manager);
@@ -34,12 +30,6 @@ Manager.prototype.processTrades = function(tradeBatch) {
 
 Manager.prototype.relayCandles = function(candles) {
   this.emit('candles', candles);
-
-  if(!_.size(candles))
-    return;
-
-  this.messageFirstCandle(_.first(candles));
-  cp.lastCandle(_.last(candles));
 }
 
 module.exports = Manager;

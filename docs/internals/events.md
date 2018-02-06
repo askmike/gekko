@@ -13,8 +13,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
 - [advice](#advice-event): Every time the trading strategy has new advice.
 - [trade](#trade-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
-- [portfolioUpdate](#portfolioUpdate-event): Every time a trading plugin has an updated portflio.
-- [stratStat](#stratStart-event): Once, with the first data this strategy is based on.
+- [portfolioUpdate](#portfolioUpdate-event): Every time the portfolio has changed.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed new data.
 
 Beside those there are also two additional market events, note that those are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
@@ -81,8 +80,8 @@ Beside those there are also two additional market events, note that those are on
 
 ### stratStart event
 
-- What: An object describing the first candle of the strat has processed.
-- When: when the strategy is initialized is started.
+- What: An object describing the first candle the strat has processed.
+- When: when the strategy is initialized.
 - Subscribe: Your plugin can subscribe to this event by registering the `processStratStart` method.
 - Notes:
   - There are scenarios where the date of this event is before the date of the marketStart, this can happen when the strategy requires historical data and Gekko was able to load some from disk (this process bypasses the market).
@@ -102,9 +101,9 @@ Beside those there are also two additional market events, note that those are on
 
 - What: An object describing an updated candle the strat has processed.
 - When: when the strategy is initialized is started.
-- Subscribe: Your plugin can subscribe to this event by registering the `processStratStart` method.
+- Subscribe: Your plugin can subscribe to this event by registering the `processStratUpdate` method.
 - Notes:
-  - This event is guaranteed to happen before any possible advice of the same candle, this can happen when the strategy uses async indicators (for example from TAlib or Tulip).
+  - This event is not guaranteed to happen before any possible advice of the same candle, this situation can happen when the strategy uses async indicators (for example from TAlib or Tulip).
 - Example:
       {
         start: [moment object of the start time of the candle],

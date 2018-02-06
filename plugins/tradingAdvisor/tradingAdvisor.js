@@ -91,9 +91,5 @@ Actor.prototype.relayAdvice = function(advice) {
   this.emit('advice', advice);
 }
 
-Actor.prototype.relayFirstStratCandle = function(candle) {
-  this.emit('stratStart', candle);
-}
-
 
 module.exports = Actor;
