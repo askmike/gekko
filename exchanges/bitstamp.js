@@ -167,7 +167,7 @@ Trader.prototype.getOrder = function(id, callback) {
       });
     }
 
-    var price = parseFloat( order[this.market] );
+    var price = parseFloat( order[`${this.asset}_${this.currency}`] );
     var amount = Math.abs(parseFloat( order[this.asset] ));
     var date = moment( order.datetime );
 
