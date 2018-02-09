@@ -26,11 +26,6 @@ var subscriptions = [
   },
   {
     emitter: 'tradingAdvisor',
-    event: 'stratStart',
-    handler: 'processStratStart'
-  },
-  {
-    emitter: 'tradingAdvisor',
     event: 'stratUpdate',
     handler: 'processStratUpdate'
   },
