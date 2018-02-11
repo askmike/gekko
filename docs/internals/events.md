@@ -13,8 +13,11 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
 - [advice](#advice-event): Every time the trading strategy has new advice.
 - [trade](#trade-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
-- [portfolioUpdate](#portfolioUpdate-event): Every time the portfolio has changed.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed new data.
+- [portfolioChange](#portfolioChange-event): Every time the content of the portfolio has changed.
+- [portfolioTick](#portfolioTick-event): Every time the total worth of the portfolio has changed.
+- [report](#report-event): Every time the profit report has updated.
+- [roundtrip](#roundtrip-event): Every time a new roundtrip has been completed.
 
 Beside those there are also two additional market events, note that those are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
 
@@ -67,15 +70,25 @@ Beside those there are also two additional market events, note that those are on
         balance: [number, total worth of portfolio]
       }
 
-### portfolioUpdate event
+### portfolioChange event
 
-- What: An object containing updated portfolio information.
+- What: An object containing new portfolio contents (amount of asset & currency).
 - When: Some point in time after the advice event, at the same time as the trade event.
-- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioUpdate` method.
+- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioChange` method.
 - Example:
       {
         currency: [number, portfolio amount of currency],
         asset: [number, portfolio amount of asset]
+      }
+
+### portfolioValueChange event
+
+- What: An object containing the total portfolio worth (amount of asset & currency calculated in currency).
+- When: Every time the value of the portfolio has changed, if the strategy is in a LONG position this will be every minute.
+- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioValueChange` method.
+- Example:
+      {
+        value: [number, portfolio amount of currency]
       }
 
 ### stratUpdate event

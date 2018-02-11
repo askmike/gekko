@@ -36,8 +36,23 @@ var subscriptions = [
   },
   {
     emitter: ['trader', 'paperTrader'],
-    event: 'portfolioUpdate',
-    handler: 'processPortfolioUpdate'
+    event: 'portfolioChange',
+    handler: 'processPortfolioChange'
+  },
+  {
+    emitter: ['trader', 'paperTrader'],
+    event: 'portfolioValueChange',
+    handler: 'processPortfolioValueChange'
+  },
+  {
+    emitter: ['performanceAnalyzer'],
+    event: 'performanceReport',
+    handler: 'processPerformanceReport'
+  },
+  {
+    emitter: ['performanceAnalyzer'],
+    event: 'roundtrip',
+    handler: 'processRoundtrip'
   },
 ];
 
