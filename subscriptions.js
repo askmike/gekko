@@ -31,8 +31,18 @@ var subscriptions = [
   },
   {
     emitter: ['trader', 'paperTrader'],
-    event: 'trade',
-    handler: 'processTrade'
+    event: 'tradeInitiated',
+    handler: 'processTradeInitiated'
+  },
+  {
+    emitter: ['trader', 'paperTrader'],
+    event: 'tradeAborted',
+    handler: 'processTradeAborted'
+  },
+  {
+    emitter: ['trader', 'paperTrader'],
+    event: 'tradeCompleted',
+    handler: 'processTradeCompleted'
   },
   {
     emitter: ['trader', 'paperTrader'],
