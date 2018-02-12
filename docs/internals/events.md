@@ -14,6 +14,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 
 - [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed new market data.
+- [stratWarmupCompleted](#stratWarmupCompleted-event): When the strategy is done warming up.
 - [advice](#advice-event): Every time the trading strategy has new advice.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
@@ -66,6 +67,19 @@ Beside those there are also two additional market events, note that those are on
         vwp: [number, average weighted price of candle],
         volume: [number, total volume volume],
         trades: [number, amount of trades]
+      }
+
+### stratWarmupCompleted event
+
+- What: An object signaling that the strategy is now completely warmed up
+and will start signaling advice.
+- When: Once the strategy consumed more market data than defined by the required history.
+- Subscribe: Your plugin can subscribe to this event by registering the `processWarmupCompleted` method.
+- Notes:
+  - This event is triggered on init when the strategy does not require any history (and thus no warmup time).
+- Example:
+      {
+        start: [moment object of the start time of the last candle in the warmup],
       }
 
 ### advice event
