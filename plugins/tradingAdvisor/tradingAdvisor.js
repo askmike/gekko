@@ -65,7 +65,11 @@ Actor.prototype.setupTradingMethod = function() {
     .on(
       'stratWarmupCompleted',
       e => this.emit('stratWarmupCompleted', e)
-    );
+    )
+    .on(
+      'stratUpdate',
+      e => this.emit('stratUpdate', e)
+    )
 
   this.batcher
     .on('candle', this.processStratCandle)

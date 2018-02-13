@@ -242,6 +242,11 @@ Base.prototype.propogateTick = function(candle) {
     }
   }
 
+  this.emit('stratUpdate', {
+    start: candle.start,
+    // TODO: add indicator results
+  })
+
   // are we totally finished?
   var done = this.age === this.processedTicks;
   if(done && this.finishCb)
