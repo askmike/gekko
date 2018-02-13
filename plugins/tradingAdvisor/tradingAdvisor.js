@@ -61,11 +61,14 @@ Actor.prototype.setupTradingMethod = function() {
 
   this.method = new Consultant(tradingSettings);
   this.method
-    .on('advice', this.relayAdvice);
+    .on('advice', this.relayAdvice)
+    .on(
+      'stratWarmupCompleted',
+      e => this.emit('stratWarmupCompleted', e)
+    );
 
   this.batcher
     .on('candle', this.processStratCandle)
-    .once('candle', this.relayFirstStratCandle)
 }
 
 // HANDLERS

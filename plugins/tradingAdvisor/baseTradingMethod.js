@@ -56,6 +56,8 @@ var Base = function(settings) {
   this.candlePropsCacheSize = 1000;
   this.deferredTicks = [];
 
+  this.completedWarmup = false;
+
   this._prevAdvice;
 
   this.candleProps = {
@@ -195,58 +197,49 @@ Base.prototype.tick = function(candle) {
       )
     );
   }
-
-  this.propogateCustomCandle(candle);
-}
-
-// if this is a child process the parent might
-// be interested in the custom candle.
-if(ENV !== 'child-process') {
-  Base.prototype.propogateCustomCandle = _.noop;
-} else {
-  Base.prototype.propogateCustomCandle = function(candle) {
-    process.send({
-      type: 'candle',
-      candle: candle
-    });
-  }
 }
 
 Base.prototype.propogateTick = function(candle) {
   this.candle = candle;
-
   this.update(candle);
 
+  this.processedTicks++;
   var isAllowedToCheck = this.requiredHistory <= this.age;
 
-  // in live mode we might receive more candles
-  // than minimally needed. In that case check
-  // whether candle start time is > startTime
-  var isPremature;
+  if(!this.completedWarmup) {
 
-  if(mode === 'realtime'){
-    // Subtract number of minutes in current candle for instant start
-    let startTimeMinusCandleSize = startTime.clone();
-    startTimeMinusCandleSize.subtract(this.tradingAdvisor.candleSize, "minutes"); 
-    
-    isPremature = candle.start < startTimeMinusCandleSize;
-  }
-  else{
-    isPremature = false;
+    // in live mode we might receive more candles
+    // than minimally needed. In that case check
+    // whether candle start time is > startTime
+    var isPremature = false;
+
+    if(mode === 'realtime'){
+      let startTimeMinusCandleSize = startTime.clone();
+      startTimeMinusCandleSize.subtract(this.tradingAdvisor.candleSize, "minutes");
+
+      isPremature = candle.start < startTimeMinusCandleSize;
+    }
+
+    if(isAllowedToCheck && !isPremature) {
+      this.completedWarmup = true;
+      this.emit(
+        'stratWarmupCompleted',
+        {start: candle.start.clone()}
+      );
+    }
   }
 
-  if(isAllowedToCheck && !isPremature) {
+  if(this.completedWarmup) {
     this.log(candle);
     this.check(candle);
-  }
-  this.processedTicks++;
 
-  if(
-    this.asyncTick &&
-    this.hasSyncIndicators &&
-    this.deferredTicks.length
-  ) {
-    return this.tick(this.deferredTicks.shift())
+    if(
+      this.asyncTick &&
+      this.hasSyncIndicators &&
+      this.deferredTicks.length
+    ) {
+      return this.tick(this.deferredTicks.shift())
+    }
   }
 
   // are we totally finished?

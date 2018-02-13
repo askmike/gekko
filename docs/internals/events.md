@@ -79,7 +79,7 @@ and will start signaling advice.
   - This event is triggered on init when the strategy does not require any history (and thus no warmup time).
 - Example:
       {
-        start: [moment object of the start time of the last candle in the warmup],
+        start: [moment object of the start time of the first candle after the warmup],
       }
 
 ### advice event
