@@ -38,6 +38,7 @@ const PerformanceAnalyzer = function() {
 
   this.roundTrips = [];
   this.roundTrip = {
+    id: 0,
     entry: false,
     exit: false
   }
@@ -74,21 +75,26 @@ PerformanceAnalyzer.prototype.processTrade = function(trade) {
 
 PerformanceAnalyzer.prototype.logRoundtripPart = function(trade) {
   // this is not part of a valid roundtrip
-  if(this.trades === 1 && trade.action === 'sell') {
+  if(!this.roundTrip.entry && trade.action === 'sell') {
     return;
   }
 
   if(trade.action === 'buy') {
+    if (this.roundTrip.exit) {
+      this.roundTrip.id++;
+      this.roundTrip.exit = false
+    }
+
     this.roundTrip.entry = {
       date: trade.date,
       price: trade.price,
-      total: trade.portfolio.asset * trade.price,
+      total: trade.portfolio.currency + (trade.portfolio.asset * trade.price),
     }
   } else if(trade.action === 'sell') {
     this.roundTrip.exit = {
       date: trade.date,
       price: trade.price,
-      total: trade.portfolio.currency
+      total: trade.portfolio.currency + (trade.portfolio.asset * trade.price),
     }
 
     this.handleRoundtrip();
@@ -101,6 +107,8 @@ PerformanceAnalyzer.prototype.round = function(amount) {
 
 PerformanceAnalyzer.prototype.handleRoundtrip = function() {
   var roundtrip = {
+    id: this.roundTrip.id,
+
     entryAt: this.roundTrip.entry.date,
     entryPrice: this.roundTrip.entry.price,
     entryBalance: this.roundTrip.entry.total,
@@ -115,7 +123,9 @@ PerformanceAnalyzer.prototype.handleRoundtrip = function() {
   roundtrip.pnl = roundtrip.exitBalance - roundtrip.entryBalance;
   roundtrip.profit = (100 * roundtrip.exitBalance / roundtrip.entryBalance) - 100;
 
-  this.roundTrips.push(roundtrip);
+  this.roundTrips[this.roundTrip.id] = roundtrip;
+
+  // this will keep resending roundtrips, that is not ideal.. what do we do about it?
   this.handler.handleRoundtrip(roundtrip);
 
   // we need a cache for sharpe
