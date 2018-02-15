@@ -96,12 +96,12 @@ Trader.prototype.getPortfolio = function(callback) {
     var currencyAmount = parseFloat( data[this.currency + '_available'] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
-      log.error(`Quadriga did not return balance for ${this.asset}, assuming 0.`);
+      log.error(`Quadriga did not return balance for ${this.asset.toLowerCase()}, assuming 0.`);
       assetAmount = 0;
     }
 
     if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
-      log.error(`Quadriga did not return balance for ${this.currency}, assuming 0.`);
+      log.error(`Quadriga did not return balance for ${this.currency.toLowerCase()}, assuming 0.`);
       currencyAmount = 0;
     }
 
@@ -137,7 +137,7 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.roundAmount = function(amount) {
   var precision = 100000000;
-  var market = this.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
+  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
 
   if(Number.isInteger(market.precision))
     precision = 10 * market.precision;
