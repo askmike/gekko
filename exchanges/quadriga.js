@@ -175,7 +175,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
 Trader.prototype.getOrder = function(order, callback) {
   var args = _.toArray(arguments);
-  
+
   var get = function(err, data) {
     if (data && data.error) return this.retry(this.getOrder, 'unable to get order', args, data.error);
     if (err) return this.retry(this.getOrder, 'unable to get order', args, err);
@@ -199,6 +199,8 @@ Trader.prototype.sell = function(amount, price, callback) {
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
+  var args = _.toArray(arguments);
+  
   var check = function(err, data) {
 
     if (data && data.error) return this.retry(this.checkOrder, 'unable to get order', args, data.error);
