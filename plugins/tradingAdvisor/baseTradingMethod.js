@@ -305,7 +305,7 @@ Base.prototype.addIndicator = function(name, type, parameters) {
   if(this.setup)
     util.die('Can only add indicators in the init method!');
 
-  this.indicators[name] = new Indicators[type](parameters);
+  return this.indicators[name] = new Indicators[type](parameters);
 
   // some indicators need a price stream, others need full candles
 }
