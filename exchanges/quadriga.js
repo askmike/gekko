@@ -92,8 +92,8 @@ Trader.prototype.getPortfolio = function(callback) {
     if (data && data.error) return this.retry(this.getPortfolio, 'unable to get balance', args, data.error);
     if (err) return this.retry(this.getPortfolio, 'unable to get balance', args, err);
 
-    var assetAmount = parseFloat( data[this.asset + '_available'] );
-    var currencyAmount = parseFloat( data[this.currency + '_available'] );
+    var assetAmount = parseFloat( data[this.asset.toLowerCase() + '_available'] );
+    var currencyAmount = parseFloat( data[this.currency.toLowerCase() + '_available'] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       log.error(`Quadriga did not return balance for ${this.asset.toLowerCase()}, assuming 0.`);
