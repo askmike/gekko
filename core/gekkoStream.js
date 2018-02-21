@@ -1,13 +1,16 @@
 // Small writable stream wrapper that
 // passes data to all `candleConsumers`.
 
-var Writable = require('stream').Writable;
-var _ = require('lodash');
-var async = require('async');
+const Writable = require('stream').Writable;
+const _ = require('lodash');
+const async = require('async');
+const moment = require('moment');
 
-var util = require('./util');
-var env = util.gekkoEnv();
-var mode = util.gekkoMode();
+const util = require('./util');
+const env = util.gekkoEnv();
+const mode = util.gekkoMode();
+const config = util.getConfig();
+const log = require(util.dirs().core + 'log');
 
 var Gekko = function(candleConsumers) {
   this.candleConsumers = candleConsumers;
@@ -20,12 +23,41 @@ Gekko.prototype = Object.create(Writable.prototype, {
   constructor: { value: Gekko }
 });
 
-Gekko.prototype._write = function(chunk, encoding, _done) {
-  var done = _.after(this.candleConsumers.length, _done);
-  _.each(this.candleConsumers, function(c) {
-    c.processCandle(chunk, done);
-  });
+if(config.debug) {
+  Gekko.prototype._write = function(chunk, encoding, _done) {
+
+    const start = moment();
+    var relayed = false;
+    var at = null;
+
+    const timer = setTimeout(() => {
+      if(!relayed)
+        log.error([
+          `The plugin "${at}" has not processed a candle for 0.5 seconds.`,
+          `This will cause Gekko to slow down or stop working completely.`
+        ].join(' '));
+    }, 1000);
+
+    const done = _.after(this.candleConsumers.length, () => {
+      relayed = true;
+      clearInterval(timer);
+      _done();
+    });
+    _.each(this.candleConsumers, function(c) {
+      at = c.meta.name;
+      c.processCandle(chunk, done);
+    });
+  }
+} else {
+  // skip decoration
+  Gekko.prototype._write = function(chunk, encoding, _done) {
+    const done = _.after(this.candleConsumers.length, _done);
+    _.each(this.candleConsumers, function(c) {
+      c.processCandle(chunk, done);
+    });
+  }
 }
+
 
 Gekko.prototype.finalize = function() {
   var tradingMethod = _.find(

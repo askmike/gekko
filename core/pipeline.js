@@ -218,17 +218,17 @@ var pipeline = (settings) => {
     ],
     function() {
       
-      var gekko = new GekkoStream(candleConsumers);
+      var gekkoStream = new GekkoStream(candleConsumers);
 
       market
-        .pipe(gekko)
+        .pipe(gekkoStream)
 
         // convert JS objects to JSON string
         // .pipe(new require('stringify-stream')())
         // output to standard out
         // .pipe(process.stdout);
 
-      market.on('end', gekko.finalize);
+      market.on('end', gekkoStream.finalize);
     }
   );
 
