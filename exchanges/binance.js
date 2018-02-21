@@ -115,7 +115,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var setBalance = function(err, data) {
-    log.debug(`[binance.js] entering "setBalance" callback after api call, err: ${err}, data: ${data}`)
+    log.debug(`[binance.js] entering "setBalance" callback after api call, err: ${err} data: ${JSON.stringify(data)}`)
     if (err) return callback(err);
 
     var findAsset = function(item) {
@@ -162,7 +162,7 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
-    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
+    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${(data || []).length} symbols`);
     if (err) return callback(err);
 
     var findSymbol = function(ticker) {
