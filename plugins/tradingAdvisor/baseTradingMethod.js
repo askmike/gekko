@@ -214,8 +214,9 @@ Base.prototype.propogateTick = function(candle) {
     var isPremature = false;
 
     if(mode === 'realtime'){
-      let startTimeMinusCandleSize = startTime.clone();
-      startTimeMinusCandleSize.subtract(this.tradingAdvisor.candleSize, "minutes");
+      const startTimeMinusCandleSize = startTime
+        .clone()
+        .subtract(this.tradingAdvisor.candleSize, "minutes");
 
       isPremature = candle.start < startTimeMinusCandleSize;
     }
@@ -302,8 +303,7 @@ Base.prototype.addIndicator = function(name, type, parameters) {
 }
 
 Base.prototype.advice = function(newPosition, _candle) {
-  // ignore soft advice coming from legacy
-  // strategies.
+  // ignore legacy soft advice
   if(!newPosition)
     return;
 
