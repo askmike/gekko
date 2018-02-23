@@ -4,8 +4,9 @@ const request = require('request-promise');
 const Promise = require('bluebird');
 
 let getOrderMinSize = currency => {
-  if (currency === 'BTC') return 0.002;
-  else if (currency === 'ETH') return 0.02;
+  if (currency === 'BTC') return 0.001;
+  else if (currency === 'ETH') return 0.01;
+  else if (currency === 'USDT') return 10;
   else return 1;
 };
 
