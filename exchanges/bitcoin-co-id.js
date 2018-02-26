@@ -1,4 +1,4 @@
-var Bitcoincoid = require('bitcoin-co-id'),
+var Bitcoincoid = require('bitcoin-co-id-update'),
    _ = require('lodash'),
    moment = require('moment'),
    log = require('../core/log');
