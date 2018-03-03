@@ -24,7 +24,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [performanceReport](#performanceReport-event): Every time the profit report was updated.
 - [roundtrip](#roundtrip-event): Every time a new roundtrip has been completed.
 
-Beside those there are also two additional market events, note that those are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
+Beside those there are also two additional market events that are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
 
 - [marketStart](#marketStart-event): Once, when the market just started.
 - [marketUpdate](#marketUpdate-event): Whenever the market has fetched new raw market data.
@@ -59,14 +59,10 @@ Beside those there are also two additional market events, note that those are on
   - This event is not guaranteed to happen before any possible advice of the same candle, this situation can happen when the strategy uses async indicators (for example from TAlib or Tulip).
 - Example:
       {
-        start: [moment object of the start time of the candle],
-        open: [number, open of candle],
-        high: [number, high of candle],
-        low: [number, low of candle],
-        close: [number, close of candle],
-        vwp: [number, average weighted price of candle],
-        volume: [number, total volume volume],
-        trades: [number, amount of trades]
+        date: [moment object of the start time of the candle],
+        indicators: {
+          mymacd: [number, result of running this indicator over current candle]
+        }
       }
 
 ### stratWarmupCompleted event

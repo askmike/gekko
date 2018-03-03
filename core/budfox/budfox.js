@@ -30,18 +30,6 @@ var BudFox = function(config) {
 
   //    BudFox data flow:
 
-  // on every `tick` retrieve trade data
-  this.heart.on(
-    'tick',
-    this.marketDataProvider.retrieve
-  );
-
-  // on new trade data create candles
-  this.marketDataProvider.on(
-    'trades',
-    this.candleManager.processTrades
-  );
-
   // relay a marketUpdate event
   this.marketDataProvider.on(
     'marketUpdate',
@@ -58,6 +46,18 @@ var BudFox = function(config) {
   this.candleManager.on(
     'candles',
     this.pushCandles
+  );
+
+  // on every `tick` retrieve trade data
+  this.heart.on(
+    'tick',
+    this.marketDataProvider.retrieve
+  );
+
+  // on new trade data create candles
+  this.marketDataProvider.on(
+    'trades',
+    this.candleManager.processTrades
   );
 
   this.heart.pump();

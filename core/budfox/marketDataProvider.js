@@ -33,10 +33,10 @@ Manager.prototype.retrieve = function() {
 
 
 Manager.prototype.relayTrades = function(batch) {
-  this.emit('trades', batch);
-
   this.sendMarketStart(batch);
   this.emit('marketUpdate', batch.last.date);
+
+  this.emit('trades', batch);
 }
 
 Manager.prototype.sendMarketStart = _.once(function(batch) {
