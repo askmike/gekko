@@ -43,7 +43,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
   var Reader = require(dirs.plugins + config.adapter + '/reader');
-
+  
   this.reader = new Reader;
 
   log.info(
@@ -60,6 +60,11 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
     // data would we need from the exchange?
     if(!localData) {
       log.info('\tNo usable local data available, trying to get as much as possible from the exchange..');
+      var idealExchangeStartTime = idealStartTime.clone();
+      var idealExchangeStartTimeTS = idealExchangeStartTime.unix();
+    }
+    else if (idealStartTime.unix() < localData.from) {
+      log.info('\tLocal data is still too recent, trying to get as much as possible from the exchange');
       var idealExchangeStartTime = idealStartTime.clone();
       var idealExchangeStartTimeTS = idealExchangeStartTime.unix();
     }
@@ -92,7 +97,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
       log.info('\tPreventing Gekko from requesting', minutesAgo, 'minutes of history.');
       idealExchangeStartTime = endTime.clone().subtract(maxMinutesAgo, 'minutes');
       idealExchangeStartTimeTS = idealExchangeStartTime.unix();
-    }
+    } 
 
     log.debug('\tFetching exchange data since', this.ago(idealExchangeStartTimeTS))
     this.checkExchangeTrades(idealExchangeStartTime, function(err, exchangeData) {
