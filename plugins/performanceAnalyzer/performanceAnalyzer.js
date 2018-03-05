@@ -1,3 +1,4 @@
+
 const _ = require('lodash');
 const moment = require('moment');
 
@@ -9,12 +10,7 @@ const config = util.getConfig();
 const perfConfig = config.performanceAnalyzer;
 const watchConfig = config.watch;
 
-// Load the proper module that handles the results
-var Handler;
-if(ENV === 'child-process')
-  Handler = require('./cpRelay');
-else
-  Handler = require('./logger');
+const Logger = require('./logger');
 
 const PerformanceAnalyzer = function() {
   _.bindAll(this);
@@ -30,7 +26,7 @@ const PerformanceAnalyzer = function() {
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
 
-  this.handler = new Handler(watchConfig);
+  this.logger = new Logger(watchConfig);
 
   this.trades = 0;
 
@@ -43,7 +39,11 @@ const PerformanceAnalyzer = function() {
   }
 }
 
+// teach our plugin events
+util.makeEventEmitter(PerformanceAnalyzer);
+
 PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
+  console.log('processCandle');
   this.price = candle.close;
   this.dates.end = candle.start;
 
@@ -57,17 +57,19 @@ PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
   done();
 }
 
-PerformanceAnalyzer.prototype.processPortfolioUpdate = function(portfolio) {
-  this.start = portfolio;
-  this.current = _.clone(portfolio);
-}
+// PerformanceAnalyzer.prototype.processPortfolioUpdate = function(portfolio) {
+//   this.start = portfolio;
+//   this.current = _.clone(portfolio);
+// }
 
 PerformanceAnalyzer.prototype.processTrade = function(trade) {
+  console.log('processTrade');
   this.trades++;
   this.current = trade.portfolio;
 
   const report = this.calculateReportStatistics();
-  this.handler.handleTrade(trade, report);
+
+  this.logger.handleTrade(trade, report);
 
   this.logRoundtripPart(trade);
 }
@@ -95,10 +97,6 @@ PerformanceAnalyzer.prototype.logRoundtripPart = function(trade) {
   }
 }
 
-PerformanceAnalyzer.prototype.round = function(amount) {
-  return amount.toFixed(8);
-}
-
 PerformanceAnalyzer.prototype.handleRoundtrip = function() {
   var roundtrip = {
     entryAt: this.roundTrip.entry.date,
@@ -116,7 +114,7 @@ PerformanceAnalyzer.prototype.handleRoundtrip = function() {
   roundtrip.profit = (100 * roundtrip.exitBalance / roundtrip.entryBalance) - 100;
 
   this.roundTrips.push(roundtrip);
-  this.handler.handleRoundtrip(roundtrip);
+  this.logger.handleRoundtrip(roundtrip);
 
   // we need a cache for sharpe
 
@@ -130,15 +128,15 @@ PerformanceAnalyzer.prototype.handleRoundtrip = function() {
 
 PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
   // the portfolio's balance is measured in {currency}
-  let balance = this.current.currency + this.price * this.current.asset;
-  let profit = balance - this.start.balance;
+  const balance = this.current.currency + this.price * this.current.asset;
+  const profit = balance - this.start.balance;
 
-  let timespan = moment.duration(
+  const timespan = moment.duration(
     this.dates.end.diff(this.dates.start)
   );
-  let relativeProfit = balance / this.start.balance * 100 - 100
+  const relativeProfit = balance / this.start.balance * 100 - 100;
 
-  let report = {
+  const report = {
     currency: this.currency,
     asset: this.asset,
 
@@ -151,8 +149,8 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     profit: profit,
     relativeProfit: relativeProfit,
 
-    yearlyProfit: this.round(profit / timespan.asYears()),
-    relativeYearlyProfit: this.round(relativeProfit / timespan.asYears()),
+    yearlyProfit: profit / timespan.asYears(),
+    relativeYearlyProfit: relativeProfit / timespan.asYears(),
 
     startPrice: this.startPrice,
     endPrice: this.endPrice,
@@ -168,7 +166,7 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
 
 PerformanceAnalyzer.prototype.finalize = function(done) {
   const report = this.calculateReportStatistics();
-  this.handler.finalize(report);
+  this.logger.finalize(report);
   done();
 }
 
