@@ -43,7 +43,6 @@ const PerformanceAnalyzer = function() {
 util.makeEventEmitter(PerformanceAnalyzer);
 
 PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
-  console.log('processCandle');
   this.price = candle.close;
   this.dates.end = candle.start;
 
@@ -57,13 +56,7 @@ PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
   done();
 }
 
-// PerformanceAnalyzer.prototype.processPortfolioUpdate = function(portfolio) {
-//   this.start = portfolio;
-//   this.current = _.clone(portfolio);
-// }
-
 PerformanceAnalyzer.prototype.processTrade = function(trade) {
-  console.log('processTrade');
   this.trades++;
   this.current = trade.portfolio;
 
@@ -165,6 +158,10 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
 }
 
 PerformanceAnalyzer.prototype.finalize = function(done) {
+  if(!_.size(this.trades)) {
+    return done();
+  }
+
   const report = this.calculateReportStatistics();
   this.logger.finalize(report);
   done();
