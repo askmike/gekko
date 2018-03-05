@@ -1,4 +1,4 @@
-// log paper trade results using the logger
+// log trade performance results
 
 const _ = require('lodash');
 const moment = require('moment');
@@ -7,8 +7,6 @@ const humanizeDuration = require('humanize-duration');
 const util = require('../../core/util.js');
 const dirs = util.dirs();
 const mode = util.gekkoMode();
-const config = util.getConfig();
-const calcConfig = config.paperTrader;
 const log = require(dirs.core + 'log');
 
 const Logger = function(watchConfig) {
@@ -22,10 +20,6 @@ Logger.prototype.round = function(amount) {
   return amount.toFixed(8);
 }
 
-Logger.prototype.handleStartBalance = function() {
-  // noop
-}
-
 // used for:
 // - realtime logging (per advice)
 // - backtest logging (on finalize)
@@ -35,10 +29,10 @@ Logger.prototype.logReport = function(trade, report) {
   var start = this.round(report.startBalance);
   var current = this.round(report.balance);
 
-  log.info(`(PROFIT REPORT) original simulated balance:\t ${start} ${this.currency}`);
-  log.info(`(PROFIT REPORT) current simulated balance:\t ${current} ${this.currency}`);
+  log.info(`(PROFIT REPORT) original balance:\t ${start} ${this.currency}`);
+  log.info(`(PROFIT REPORT) current balance:\t ${current} ${this.currency}`);
   log.info(
-    `(PROFIT REPORT) simulated profit:\t\t ${this.round(report.profit)} ${this.currency}`,
+    `(PROFIT REPORT) profit:\t\t ${this.round(report.profit)} ${this.currency}`,
     `(${this.round(report.relativeProfit)}%)`
   );
 }
