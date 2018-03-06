@@ -87,6 +87,9 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
+  var findMarket = function(pair) {
+    return pair.pair[0].toLowerCase() === this.currency && pair.pair[1].toLowerCase() === this.asset
+  }
   var args = _.toArray(arguments);
   var set = function(err, result) {
     if(err || result.status === "error") {
@@ -98,22 +101,19 @@ Trader.prototype.buy = function(amount, price, callback) {
   }.bind(this);
 
   //Decrease amount by 1% to avoid trying to buy more than balance allows.
-  amount -= amount / 100;
+  amount = Number(amount * 0.99).toFixed(8);
 
-  amount *= 100000000;
-  amount = Math.floor(amount);
-  amount /= 100000000;
-
-  // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
-  price = Math.floor(price);
-  price /= 100;
+  // Use proper precision by currency pair
+  var pair = _.find(Trader.getCapabilities().markets, _.bind(findMarket, this));
+  price = Number(Number.parseFloat(price).toFixed(pair.precision));
 
   this.bitstamp.buy(this.market, amount, price, undefined, set);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
+  var findMarket = function(pair) {
+    return pair.pair[0].toLowerCase() === this.currency && pair.pair[1].toLowerCase() === this.asset
+  }
   var args = _.toArray(arguments);
   var set = function(err, result) {
     if(err || result.status === "error") {
@@ -126,15 +126,11 @@ Trader.prototype.sell = function(amount, price, callback) {
 
   // prevent:
   // 'Ensure that there are no more than 8 decimal places.'
-  amount *= 100000000;
-  amount = Math.floor(amount);
-  amount /= 100000000;
+  amount = Number(Number.parseFloat(amount)).toFixed(8);
 
-  // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
-  price = Math.ceil(price);
-  price /= 100;
+  // Use proper precision by currency pair
+  var pair = _.find(Trader.getCapabilities().markets, _.bind(findMarket, this));
+  price = Number(Number.parseFloat(price).toFixed(pair.precision));
 
   this.bitstamp.sell(this.market, amount, price, undefined, set);
 }
@@ -234,26 +230,26 @@ Trader.getCapabilities = function () {
     maxTradesAge: 60,
     maxHistoryFetch: null,
     markets: [
-      { pair: ['USD', 'EUR'], minimalOrder: { amount: 5, unit: 'currency' } },
+      { pair: ['USD', 'EUR'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
 
-      { pair: ['USD', 'BTC'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 5, unit: 'currency' } },
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
 
-      { pair: ['USD', 'BCH'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.001, unit: 'currency' } },
+      { pair: ['USD', 'BCH'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.001, unit: 'currency'}, precision: 8  },
 
-      { pair: ['USD', 'XRP'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['EUR', 'XRP'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.001, unit: 'currency' } },
+      { pair: ['USD', 'XRP'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 5 },
+      { pair: ['EUR', 'XRP'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 5 },
+      { pair: ['BTC', 'XRP'], minimalOrder: { amount: 0.001, unit: 'currency'}, precision: 8  },
 
-      { pair: ['USD', 'LTC'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'currency' } },
+      { pair: ['USD', 'LTC'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.001, unit: 'currency'}, precision: 8  },
 
-      { pair: ['USD', 'ETH'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 5, unit: 'currency' } },
-      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'currency' } },
+      { pair: ['USD', 'ETH'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 5, unit: 'currency' }, precision: 2 },
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.001, unit: 'currency'}, precision: 8  },
     ],
     requires: ['key', 'secret', 'username'],
     fetchTimespan: 60,
