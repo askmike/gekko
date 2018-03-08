@@ -15,6 +15,10 @@ const transformMarkets = backendData => {
       exchangesTemp[e.slug].markets[currency].push( asset );
     });
 
+    if ("exchangeMaxHistoryAge" in e) {
+      exchangesTemp[e.slug].exchangeMaxHistoryAge = e.exchangeMaxHistoryAge;
+    }
+
     exchangesTemp[e.slug].importable = e.providesFullHistory ? true : false;
     exchangesTemp[e.slug].tradable = e.tradable ? true : false;
     exchangesTemp[e.slug].requires = e.requires;

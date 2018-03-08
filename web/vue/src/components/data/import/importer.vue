@@ -7,7 +7,7 @@
     ul(v-if='imports.length')
       li(v-for='_import in imports')
         router-link(:to='"/data/importer/import/" + _import.id') {{ _import.watch.exchange }}:{{ _import.watch.currency }}/{{ _import.watch.asset }}
-        
+
     .hr
     h3 Start a new import
     import-config-builder(v-on:config='updateConfig')
@@ -63,6 +63,13 @@ export default {
 
       if(daysApart < 1)
         return alert('You can only import at least one day of data..')
+
+      let exchange = this.$store.state.exchanges[this.config.watch.exchange];
+      if ("exchangeMaxHistoryAge" in exchange) {
+        if (moment(this.config.importer.daterange.from) < moment().subtract(exchange.exchangeMaxHistoryAge, "days")) {
+          return alert('Your date from is too old for ' + this.config.watch.exchange + '. It supports only the last ' + exchange.exchangeMaxHistoryAge + ' days..');
+        }
+      }
 
       post('import', this.config, (error, response) => {
         if(error)
