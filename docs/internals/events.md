@@ -86,7 +86,7 @@ and will start signaling advice.
 - Example:
       {
         recommendation: [position to take, either long or short],
-        portfolio: [amount of portfolio you should move to position] **DECREPATED**
+        date: [moment object of this advice]
       }
 
 ### tradeInitiated event
@@ -96,6 +96,7 @@ and will start signaling advice.
 - Subscribe: Your plugin can subscribe to this event by registering the `processTradeInitiated` method.
 - Example:
       {
+        id: [number identifying this unique trade]
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency and asset],
@@ -109,6 +110,7 @@ and will start signaling advice.
 - Subscribe: Your plugin can subscribe to this event by registering the `processTradeAborted` method.
 - Example:
       {
+        id: [number identifying this unique trade]
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency and asset],
@@ -123,8 +125,10 @@ and will start signaling advice.
 - Subscribe: Your plugin can subscribe to this event by registering the `processTradeCompleted` method.
 - Example:
       {
+        id: [number identifying this unique trade]
         action: [either "buy" or "sell"],
         price: [number, average price that was sold at],
+        cost: [ideal execution cost - ],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency and asset],
         balance: [number, total worth of portfolio]

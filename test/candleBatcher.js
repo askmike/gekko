@@ -53,12 +53,22 @@ describe('core/candleBatcher', function() {
     expect(spy.called).to.be.false;
   });
 
+  it('should not emit an event when not flushed', function() {
+    cb = new CandleBatcher(2);
+
+    var spy = sinon.spy();
+    cb.on('candle', spy);
+    cb.write( candles );
+    expect(spy.called).to.be.false;
+  });
+
   it('should emit 5 events when fed 10 candles', function() {
     cb = new CandleBatcher(2);
 
     var spy = sinon.spy();
     cb.on('candle', spy);
     cb.write( candles );
+    cb.flush();
     expect(spy.callCount).to.equal(5);
   });
 
@@ -84,6 +94,7 @@ describe('core/candleBatcher', function() {
     var spy = sinon.spy();
     cb.on('candle', spy);
     cb.write( _candles );
+    cb.flush();
 
     var cbResult = _.first(_.first(spy.args));
     expect(cbResult).to.deep.equal(result);

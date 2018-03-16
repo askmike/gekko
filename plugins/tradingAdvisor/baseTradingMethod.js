@@ -100,7 +100,8 @@ var Base = function(settings) {
 // teach our base trading method events
 util.makeEventEmitter(Base);
 
-Base.prototype.tick = function(candle) {
+
+Base.prototype.tick = function(candle, done) {
 
   if(
     this.asyncTick &&
@@ -113,7 +114,8 @@ Base.prototype.tick = function(candle) {
     // updated with future candles.
     //
     // See @link: https://github.com/askmike/gekko/issues/837#issuecomment-316549691
-    return this.deferredTicks.push(candle);
+    this.deferredTicks.push(candle);
+    return done();
   }
 
   this.age++;
@@ -150,53 +152,59 @@ Base.prototype.tick = function(candle) {
   // update the trading method
   if(!this.asyncTick) {
     this.propogateTick(candle);
-  } else {
 
-    var next = _.after(
-      _.size(this.talibIndicators) + _.size(this.tulipIndicators),
-      () => this.propogateTick(candle)
-    );
-
-    var basectx = this;
-
-    // handle result from talib
-    var talibResultHander = function(err, result) {
-      if(err)
-        util.die('TALIB ERROR:', err);
-
-      // fn is bound to indicator
-      this.result = _.mapValues(result, v => _.last(v));
-      next(candle);
-    }
-
-    // handle result from talib
-    _.each(
-      this.talibIndicators,
-      indicator => indicator.run(
-        basectx.candleProps,
-        talibResultHander.bind(indicator)
-      )
-    );
-
-    // handle result from tulip
-    var tulindResultHander = function(err, result) {
-      if(err)
-        util.die('TULIP ERROR:', err);
-
-      // fn is bound to indicator
-      this.result = _.mapValues(result, v => _.last(v));
-      next(candle);
-    }
-
-    // handle result from tulip indicators
-    _.each(
-      this.tulipIndicators,
-      indicator => indicator.run(
-        basectx.candleProps,
-        tulindResultHander.bind(indicator)
-      )
-    );
+    return done();
   }
+
+  this.tickDone = done;
+
+  var next = _.after(
+    _.size(this.talibIndicators) + _.size(this.tulipIndicators),
+    () => {
+      this.propogateTick(candle);
+      this.tickDone();
+    }
+  );
+
+  var basectx = this;
+
+  // handle result from talib
+  var talibResultHander = function(err, result) {
+    if(err)
+      util.die('TALIB ERROR:', err);
+
+    // fn is bound to indicator
+    this.result = _.mapValues(result, v => _.last(v));
+    next(candle);
+  }
+
+  // handle result from talib
+  _.each(
+    this.talibIndicators,
+    indicator => indicator.run(
+      basectx.candleProps,
+      talibResultHander.bind(indicator)
+    )
+  );
+
+  // handle result from tulip
+  var tulindResultHander = function(err, result) {
+    if(err)
+      util.die('TULIP ERROR:', err);
+
+    // fn is bound to indicator
+    this.result = _.mapValues(result, v => _.last(v));
+    next(candle);
+  }
+
+  // handle result from tulip indicators
+  _.each(
+    this.tulipIndicators,
+    indicator => indicator.run(
+      basectx.candleProps,
+      tulindResultHander.bind(indicator)
+    )
+  );
 }
 
 Base.prototype.propogateTick = function(candle) {
@@ -244,9 +252,8 @@ Base.prototype.propogateTick = function(candle) {
   }
 
   this.emit('stratUpdate', {
-    start: candle.start,
-    // TODO: add indicator results
-  })
+    date: candle.start,
+  });
 
   // are we totally finished?
   var done = this.age === this.processedTicks;
@@ -302,7 +309,7 @@ Base.prototype.addIndicator = function(name, type, parameters) {
   // some indicators need a price stream, others need full candles
 }
 
-Base.prototype.advice = function(newPosition, _candle) {
+Base.prototype.advice = function(newPosition) {
   // ignore legacy soft advice
   if(!newPosition)
     return;
@@ -311,18 +318,12 @@ Base.prototype.advice = function(newPosition, _candle) {
   if(newPosition === this._prevAdvice)
     return;
 
-  // cache the candle this advice is based on
-  if(_candle)
-    var candle = _candle;
-  else
-    var candle = this.candle;
-
   this._prevAdvice = newPosition;
 
+  console.log('emitting advice', newPosition);
+
   this.emit('advice', {
-    recommendation: newPosition,
-    portfolio: 1,
-    candle
+    recommendation: newPosition
   });
 }
 

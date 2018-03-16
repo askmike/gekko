@@ -18,6 +18,7 @@ var CandleBatcher = function(candleSize) {
 
   this.candleSize = candleSize;
   this.smallCandles = [];
+  this.calculatedCandles = [];
 
   _.bindAll(this);
 }
@@ -28,18 +29,32 @@ CandleBatcher.prototype.write = function(candles) {
   if(!_.isArray(candles))
     throw 'candles is not an array';
 
+  this.emitted = 0;
+
   _.each(candles, function(candle) {
     this.smallCandles.push(candle);
     this.check();
   }, this);
+
+  return this.emitted;
 }
 
 CandleBatcher.prototype.check = function() {
   if(_.size(this.smallCandles) % this.candleSize !== 0)
     return;
 
-  this.emit('candle', this.calculate());
+  this.emitted++;
+  this.calculatedCandles.push(this.calculate());
   this.smallCandles = [];
+}
+
+CandleBatcher.prototype.flush = function() {
+  _.each(
+    this.calculatedCandles,
+    candle => this.emit('candle', candle)
+  );
+
+  this.calculatedCandles = [];
 }
 
 CandleBatcher.prototype.calculate = function() {
