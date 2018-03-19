@@ -11,6 +11,35 @@ var CandleBatcher = require(dirs.core + 'candleBatcher');
 var moment = require('moment');
 var isLeecher = config.market && config.market.type === 'leech';
 
+const Emitter = require(util.dirs().core + 'emitter');
+
+// const a = new Emitter();
+// console.log(a.deferredEmit);
+// throw 'a';
+
+// const makeEventEmitter = ctx => {
+//   ctx.prototype = Object.create(MyEmitter);
+
+// }
+
+
+// class TradingAdviser extends Emitter {
+//   constructor() {
+//     super();
+
+//     this.on('bla', () => console.log('asdasdasd'));
+
+//     // console.log(this.on, this.defferedEmit);
+
+//     this.defferedEmit('bla', 1);
+//     // this.broadcastDeferredEmit();
+//   }
+// }
+
+// var a = new TradingAdviser;
+// module.exports = TradingAdviser;
+// return;
+
 var Actor = function(done) {
   _.bindAll(this);
 
@@ -21,6 +50,8 @@ var Actor = function(done) {
   this.methodName = config.tradingAdvisor.method;
 
   this.setupTradingMethod();
+
+  // makeEventEmitter(this);
 
   var mode = util.gekkoMode();
 
@@ -35,8 +66,6 @@ var Actor = function(done) {
   } else
     done();
 }
-
-util.makeEventEmitter(Actor);
 
 Actor.prototype.setupTradingMethod = function() {
 
@@ -102,8 +131,12 @@ Actor.prototype.finish = function(done) {
 // EMITTERS
 Actor.prototype.relayAdvice = function(advice) {
   advice.date = this.candle.start.clone().add(1, 'minute');
-  this.emit('advice', advice);
+  this.deferredEmit('advice', advice);
 }
+
+// var a = new Actor(_.noop);
+// console.log(a.defferedEvents);
+// throw 'a';
 
 
 module.exports = Actor;

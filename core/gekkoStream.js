@@ -16,6 +16,9 @@ var Gekko = function(candleConsumers) {
   this.candleConsumers = candleConsumers;
   Writable.call(this, {objectMode: true});
 
+  this.defferedProducers = this.candleConsumers
+    .filter(p => p.broadcastDeferredEmit);
+
   this.finalize = _.bind(this.finalize, this);
 }
 
@@ -24,6 +27,7 @@ Gekko.prototype = Object.create(Writable.prototype, {
 });
 
 if(config.debug) {
+  // decorate with more debug information
   Gekko.prototype._write = function(chunk, encoding, _done) {
 
     const start = moment();
@@ -41,23 +45,39 @@ if(config.debug) {
     const done = _.after(this.candleConsumers.length, () => {
       relayed = true;
       clearInterval(timer);
+      this.flushDefferedEvents();
       _done();
     });
     _.each(this.candleConsumers, function(c) {
       at = c.meta.name;
       c.processCandle(chunk, done);
-    });
+    }, this);
   }
 } else {
   // skip decoration
   Gekko.prototype._write = function(chunk, encoding, _done) {
-    const done = _.after(this.candleConsumers.length, _done);
+    const done = _.after(this.candleConsumers.length, () => {
+      this.flushDefferedEvents();
+      _done();
+    });
     _.each(this.candleConsumers, function(c) {
       c.processCandle(chunk, done);
-    });
+    }, this);
   }
 }
 
+Gekko.prototype.flushDefferedEvents = function() {
+  const broadcasted = _.find(
+    this.defferedProducers,
+    producer => producer.broadcastDeferredEmit()
+  );
+
+  // If we braodcasted anything we might have
+  // triggered more events, recurse until we
+  // have fully broadcasted everything.
+  if(broadcasted)
+    this.flushDefferedEvents();
+}
 
 Gekko.prototype.finalize = function() {
   var tradingMethod = _.find(

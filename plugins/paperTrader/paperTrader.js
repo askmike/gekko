@@ -22,9 +22,6 @@ const PaperTrader = function() {
   }
 }
 
-// teach our paper trader events
-util.makeEventEmitter(PaperTrader);
-
 PaperTrader.prototype.relayPortfolio = function() {
   this.emit('portfolioUpdate', _.clone(this.portfolio));
 }
@@ -77,6 +74,7 @@ PaperTrader.prototype.getPortfolio = function() {
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
+  console.log('PaperTrader.prototype.processAdvice');
   let action;
   if(advice.recommendation === 'short')
     action = 'sell';
@@ -87,7 +85,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
 
   this.tradeId = _.uniqueId();
 
-  this.emit('tradeInitiated', {
+  this.deferredEmit('tradeInitiated', {
     id: this.tradeId,
     action,
     portfolio: this.getPortfolio(),
@@ -97,7 +95,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
   const executionPrice = this.updatePosition(advice);
   console.log('price', this.price);
 
-  this.emit('tradeCompleted', {
+  this.deferredEmit('tradeCompleted', {
     id: this.tradeId,
     action,
     price: executionPrice,
@@ -108,6 +106,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
+  console.log('PaperTrader.prototype.processCandle');
   this.price = candle.close;
 
   if(!this.portfolio.balance)
