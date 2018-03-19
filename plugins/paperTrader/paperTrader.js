@@ -25,28 +25,6 @@ const PaperTrader = function() {
 // teach our paper trader events
 util.makeEventEmitter(PaperTrader);
 
-PaperTrader.prototype.relayTrade = function(advice) {
-  var what = advice.recommendation;
-  var price = advice.candle.close;
-  var at = advice.candle.start;
-
-  let action;
-  if(what === 'short')
-    action = 'sell';
-  else if(what === 'long')
-    action = 'buy';
-  else
-    return;
-
-  this.emit('trade', {
-    action,
-    price,
-    portfolio: _.clone(this.portfolio),
-    balance: this.portfolio.currency + this.price * this.portfolio.asset,
-    date: at
-  });
-}
-
 PaperTrader.prototype.relayPortfolio = function() {
   this.emit('portfolioUpdate', _.clone(this.portfolio));
 }
@@ -69,12 +47,14 @@ PaperTrader.prototype.setStartBalance = function() {
 // calculates Gekko's profit in %.
 PaperTrader.prototype.updatePosition = function(advice) {
   let what = advice.recommendation;
-  let price = advice.candle.close;
+
+  let executionPrice;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   if(what === 'long') {
-    this.portfolio.asset += this.extractFee(this.portfolio.currency / price);
+    this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
+    executionPrice = this.extractFee(this.price);
     this.portfolio.currency = 0;
     this.trades++;
   }
@@ -82,18 +62,49 @@ PaperTrader.prototype.updatePosition = function(advice) {
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   else if(what === 'short') {
-    this.portfolio.currency += this.extractFee(this.portfolio.asset * price);
+    this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
+    executionPrice = this.price + this.price - this.extractFee(this.price);
     this.portfolio.asset = 0;
     this.trades++;
   }
+
+  return executionPrice;
+}
+
+PaperTrader.prototype.getPortfolio = function() {
+  this.portfolio.balance = this.portfolio.currency + this.price * this.portfolio.asset;
+  return _.clone(this.portfolio);
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
-  if(advice.recommendation === 'soft')
+  let action;
+  if(advice.recommendation === 'short')
+    action = 'sell';
+  else if(advice.recommendation === 'long')
+    action = 'buy';
+  else
     return;
 
-  this.updatePosition(advice);
-  this.relayTrade(advice);
+  this.tradeId = _.uniqueId();
+
+  this.emit('tradeInitiated', {
+    id: this.tradeId,
+    action,
+    portfolio: this.getPortfolio(),
+    date: advice.date,
+  });
+
+  const executionPrice = this.updatePosition(advice);
+  console.log('price', this.price);
+
+  this.emit('tradeCompleted', {
+    id: this.tradeId,
+    action,
+    price: executionPrice,
+    portfolio: this.getPortfolio(),
+    date: advice.date
+  });
+
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
