@@ -2,7 +2,7 @@
 // the correct order of events that are triggered by eachother. Turns sync events from
 // LIFO into a FIFO stack based model.
 //
-// More details here: https://github.com/askmike/gekko/pull/1850#issuecomment-364842963 
+// More details here: https://forum.gekko.wizb.it/thread-56579.html
 
 const util = require('util');
 const events = require('events');
