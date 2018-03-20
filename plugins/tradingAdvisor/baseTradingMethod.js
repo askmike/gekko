@@ -251,8 +251,14 @@ Base.prototype.propogateTick = function(candle) {
     }
   }
 
+  const indicators = {};
+  _.each(this.indicators, (indicator, name) => {
+    indicators[name] = indicator.result;
+  });
+
   this.emit('stratUpdate', {
     date: candle.start,
+    indicators
   });
 
   // are we totally finished?

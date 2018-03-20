@@ -11,35 +11,6 @@ var CandleBatcher = require(dirs.core + 'candleBatcher');
 var moment = require('moment');
 var isLeecher = config.market && config.market.type === 'leech';
 
-const Emitter = require(util.dirs().core + 'emitter');
-
-// const a = new Emitter();
-// console.log(a.deferredEmit);
-// throw 'a';
-
-// const makeEventEmitter = ctx => {
-//   ctx.prototype = Object.create(MyEmitter);
-
-// }
-
-
-// class TradingAdviser extends Emitter {
-//   constructor() {
-//     super();
-
-//     this.on('bla', () => console.log('asdasdasd'));
-
-//     // console.log(this.on, this.defferedEmit);
-
-//     this.defferedEmit('bla', 1);
-//     // this.broadcastDeferredEmit();
-//   }
-// }
-
-// var a = new TradingAdviser;
-// module.exports = TradingAdviser;
-// return;
-
 var Actor = function(done) {
   _.bindAll(this);
 
@@ -50,8 +21,6 @@ var Actor = function(done) {
   this.methodName = config.tradingAdvisor.method;
 
   this.setupTradingMethod();
-
-  // makeEventEmitter(this);
 
   var mode = util.gekkoMode();
 
@@ -93,11 +62,11 @@ Actor.prototype.setupTradingMethod = function() {
     .on('advice', this.relayAdvice)
     .on(
       'stratWarmupCompleted',
-      e => this.emit('stratWarmupCompleted', e)
+      e => this.deferredEmit('stratWarmupCompleted', e)
     )
     .on(
       'stratUpdate',
-      e => this.emit('stratUpdate', e)
+      e => this.deferredEmit('stratUpdate', e)
     )
 
   this.batcher
