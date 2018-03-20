@@ -1,6 +1,6 @@
 // Gekko uses a custom event emitter within the GekkoStream (the plugins) to guarantee
 // the correct order of events that are triggered by eachother. Turns sync events from
-// FIFO into a LIFO stack based model.
+// LIFO into a FIFO stack based model.
 //
 // More details here: https://github.com/askmike/gekko/pull/1850#issuecomment-364842963 
 
@@ -20,7 +20,7 @@ GekkoEventEmitter.prototype.deferredEmit = function(name, payload) {
   this.defferedEvents.push({name, payload});
 }
 
-// resolve LIFO
+// resolve FIFO
 GekkoEventEmitter.prototype.broadcastDeferredEmit = function() {
   if(this.defferedEvents.length === 0)
     return false;
