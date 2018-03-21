@@ -35,6 +35,7 @@
     "BCC",
     "ADA",
     "ADX",
+    "AE",
     "AION",
     "AMB",
     "APPC",
@@ -43,6 +44,7 @@
     "BAT",
     "BCD",
     "BCPT",
+    "BLZ",
     "BRD",
     "BTG",
     "BTS",
@@ -78,9 +80,12 @@
     "MTL",
     "NANO",
     "NAV",
+    "NCASH",
     "NEBL",
+    "ONT",
     "OST",
     "PIVX",
+    "POA",
     "POE",
     "POWR",
     "PPT",
@@ -89,8 +94,10 @@
     "RDN",
     "REQ",
     "RLC",
+    "RPX",
     "STEEM",
     "STORJ",
+    "STORM",
     "SUB",
     "TNB",
     "TNT",
@@ -102,12 +109,14 @@
     "WABI",
     "WAVES",
     "WINGS",
+    "XEM",
     "XLM",
     "XMR",
     "XRP",
     "XZC",
     "YOYO",
-    "ZEC"
+    "ZEC",
+    "ZIL"
   ],
   "currencies": [
     "BNB",
@@ -146,7 +155,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -157,7 +166,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -168,7 +177,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -179,7 +188,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -190,7 +199,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -201,7 +210,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -211,8 +220,8 @@
       ],
       "minimalOrder": {
         "amount": 0.01,
-        "price": 0.000001,
-        "order": 0.002
+        "price": 1e-7,
+        "order": 0.001
       }
     },
     {
@@ -223,7 +232,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -234,7 +243,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -245,7 +254,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -256,7 +265,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -267,7 +276,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -278,7 +287,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -289,7 +298,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -300,7 +309,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -311,7 +320,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -322,7 +331,7 @@
       "minimalOrder": {
         "amount": 0.000001,
         "price": 0.01,
-        "order": 1
+        "order": 10
       }
     },
     {
@@ -333,7 +342,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -344,7 +353,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -355,7 +364,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -366,7 +375,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -377,7 +386,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -388,7 +397,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -399,7 +408,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -410,7 +419,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -421,7 +430,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -432,7 +441,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -443,7 +452,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -454,7 +463,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -465,7 +474,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -476,7 +485,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -487,7 +496,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -498,7 +507,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -509,7 +518,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -520,7 +529,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -531,7 +540,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -542,7 +551,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -553,7 +562,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -564,7 +573,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -575,7 +584,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -585,8 +594,8 @@
       ],
       "minimalOrder": {
         "amount": 0.01,
-        "price": 0.000001,
-        "order": 0.002
+        "price": 1e-7,
+        "order": 0.001
       }
     },
     {
@@ -597,7 +606,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -608,7 +617,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -619,7 +628,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -630,7 +639,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -641,7 +650,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -652,7 +661,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -663,7 +672,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -674,7 +683,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -685,7 +694,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -707,7 +716,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -718,7 +727,40 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "AE"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "AE"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-7,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "AE"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.000001,
+        "order": 0.01
       }
     },
     {
@@ -740,7 +782,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -751,7 +793,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -773,7 +815,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -784,7 +826,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -806,7 +848,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -817,7 +859,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -828,7 +870,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -839,7 +881,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -850,7 +892,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -861,7 +903,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -872,7 +914,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -894,7 +936,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -905,7 +947,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -927,7 +969,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -938,7 +980,7 @@
       "minimalOrder": {
         "amount": 0.00001,
         "price": 0.01,
-        "order": 1
+        "order": 10
       }
     },
     {
@@ -949,7 +991,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -960,7 +1002,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -982,7 +1024,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -993,7 +1035,40 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "BLZ"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "BLZ"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "BLZ"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -1004,7 +1079,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1015,7 +1090,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1037,7 +1112,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1048,7 +1123,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1059,7 +1134,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1070,7 +1145,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1092,7 +1167,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1103,7 +1178,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1114,7 +1189,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1125,7 +1200,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1136,7 +1211,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1147,7 +1222,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1169,7 +1244,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1180,7 +1255,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1202,7 +1277,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1213,7 +1288,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1224,7 +1299,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1235,7 +1310,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1246,7 +1321,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1257,7 +1332,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1279,7 +1354,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1290,7 +1365,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1301,7 +1376,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1312,7 +1387,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1323,7 +1398,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1334,7 +1409,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1345,7 +1420,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1356,7 +1431,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1367,7 +1442,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1378,7 +1453,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1389,7 +1464,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1400,7 +1475,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1411,7 +1486,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1422,7 +1497,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1433,7 +1508,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1444,7 +1519,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1455,7 +1530,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1466,7 +1541,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1488,7 +1563,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1499,7 +1574,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1510,7 +1585,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1521,7 +1596,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1532,7 +1607,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1543,7 +1618,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1554,7 +1629,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1565,7 +1640,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1576,7 +1651,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1598,7 +1673,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1609,7 +1684,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1620,7 +1695,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1631,7 +1706,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1642,7 +1717,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1653,7 +1728,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1675,7 +1750,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1686,7 +1761,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1697,7 +1772,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1708,7 +1783,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1719,7 +1794,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1730,7 +1805,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1752,7 +1827,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1763,7 +1838,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1785,7 +1860,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1796,7 +1871,7 @@
       "minimalOrder": {
         "amount": 0.00001,
         "price": 0.01,
-        "order": 1
+        "order": 10
       }
     },
     {
@@ -1807,7 +1882,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1818,7 +1893,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1829,7 +1904,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1840,7 +1915,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1862,7 +1937,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1873,7 +1948,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1884,7 +1959,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1895,7 +1970,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1906,7 +1981,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1917,7 +1992,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1927,8 +2002,8 @@
       ],
       "minimalOrder": {
         "amount": 0.01,
-        "price": 0.000001,
-        "order": 0.002
+        "price": 1e-7,
+        "order": 0.001
       }
     },
     {
@@ -1939,7 +2014,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1961,7 +2036,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -1972,7 +2047,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -1994,7 +2069,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2005,7 +2080,40 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "NCASH"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "NCASH"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "NCASH"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2027,7 +2135,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2038,7 +2146,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2060,7 +2168,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.001,
-        "order": 1
+        "order": 10
       }
     },
     {
@@ -2071,7 +2179,40 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "ONT"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ONT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "ONT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2093,7 +2234,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2104,7 +2245,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2126,7 +2267,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2137,7 +2278,40 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "POA"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "POA"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "POA"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2148,7 +2322,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2159,7 +2333,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2181,7 +2355,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2192,7 +2366,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2203,7 +2377,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2214,7 +2388,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2236,7 +2410,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2247,7 +2421,29 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "QTUM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "QTUM"
+      ],
+      "minimalOrder": {
+        "amount": 0.001,
+        "price": 0.001,
+        "order": 10
       }
     },
     {
@@ -2269,7 +2465,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2280,7 +2476,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2302,7 +2498,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2313,7 +2509,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2324,7 +2520,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2335,7 +2531,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2357,7 +2553,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2368,7 +2564,40 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "RPX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "RPX"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "RPX"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2379,7 +2608,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2401,7 +2630,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2412,7 +2641,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2423,7 +2652,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2434,7 +2663,40 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "STORM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "STORM"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "STORM"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2445,7 +2707,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2456,7 +2718,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2467,7 +2729,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2478,7 +2740,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2489,7 +2751,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2500,7 +2762,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2522,7 +2784,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2533,7 +2795,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2544,7 +2806,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2555,7 +2817,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2566,7 +2828,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2577,7 +2839,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2599,7 +2861,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2610,7 +2872,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2621,7 +2883,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2632,7 +2894,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2643,7 +2905,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2654,7 +2916,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2676,7 +2938,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2687,7 +2949,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2709,7 +2971,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 1e-7,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2720,7 +2982,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2731,7 +2993,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2742,7 +3004,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2759,6 +3021,39 @@
     {
       "pair": [
         "BNB",
+        "XEM"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "XEM"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "XEM"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
         "XLM"
       ],
       "minimalOrder": {
@@ -2775,7 +3070,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2786,7 +3081,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2797,7 +3092,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2808,7 +3103,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2819,7 +3114,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2830,7 +3125,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2841,7 +3136,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2863,7 +3158,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2874,7 +3169,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2896,7 +3191,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2907,7 +3202,7 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.02
+        "order": 0.01
       }
     },
     {
@@ -2918,7 +3213,7 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.000001,
-        "order": 0.002
+        "order": 0.001
       }
     },
     {
@@ -2929,7 +3224,40 @@
       "minimalOrder": {
         "amount": 0.001,
         "price": 0.00001,
-        "order": 0.02
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "ZIL"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ZIL"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "ZIL"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -2940,7 +3268,7 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.0001,
-        "order": 1
+        "order": 10
       }
     },
     {
@@ -2951,7 +3279,7 @@
       "minimalOrder": {
         "amount": 0.00001,
         "price": 0.01,
-        "order": 1
+        "order": 10
       }
     }
   ]
