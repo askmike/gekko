@@ -54,7 +54,7 @@ Beside those there are also two additional market events that are only emitted w
 
 - What: An object describing an updated candle the strat has processed.
 - When: when the strategy is initialized is started.
-- Subscribe: Your plugin can subscribe to this event by registering the `processStratUpdate` method.
+- Subscribe: You can subscribe to this event by registering the `processStratUpdate` method.
 - Notes:
   - This event is not guaranteed to happen before any possible advice of the same candle, this situation can happen when the strategy uses async indicators (for example from TAlib or Tulip).
 - Example:
@@ -70,7 +70,7 @@ Beside those there are also two additional market events that are only emitted w
 - What: An object signaling that the strategy is now completely warmed up
 and will start signaling advice.
 - When: Once the strategy consumed more market data than defined by the required history.
-- Subscribe: Your plugin can subscribe to this event by registering the `processWarmupCompleted` method.
+- Subscribe: You can subscribe to this event by registering the `processWarmupCompleted` method.
 - Notes:
   - This event is triggered on init when the strategy does not require any history (and thus no warmup time).
 - Example:
@@ -80,9 +80,9 @@ and will start signaling advice.
 
 ### advice event
 
-- What: An object containing an advice from the strategy, the advice will either be LONG or SHORT.
+- What: An advice from the strategy, the advice will either be LONG or SHORT.
 - When: This depends on the strategy and the candleSize.
-- Subscribe: Your plugin can subscribe to this event by registering the `processAdvice` method.
+- Subscribe: You can subscribe to this event by registering the `processAdvice` method.
 - Example:
       {
         recommendation: [position to take, either long or short],
@@ -93,13 +93,13 @@ and will start signaling advice.
 
 - What: An object singaling that a new trade will be executed.
 - When: At the same time as the advice event if the trader will try to trade.
-- Subscribe: Your plugin can subscribe to this event by registering the `processTradeInitiated` method.
+- Subscribe: You can subscribe to this event by registering the `processTradeInitiated` method.
 - Example:
       {
         id: [number identifying this unique trade]
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
-        portfolio: [object containing amount in currency and asset],
+        portfolio: [object containing amount in currency, asset and total balance],
         balance: [number, total worth of portfolio]
       }
 
@@ -107,22 +107,20 @@ and will start signaling advice.
 
 - What: An object singaling the fact that the trader will ignore the advice.
 - When: At the same time as the advice event if the trader will NOT try to trade.
-- Subscribe: Your plugin can subscribe to this event by registering the `processTradeAborted` method.
+- Subscribe: You can subscribe to this event by registering the `processTradeAborted` method.
 - Example:
       {
         id: [number identifying this unique trade]
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
-        portfolio: [object containing amount in currency and asset],
-        balance: [number, total worth of portfolio],
-        reason: "Not enough funds"
+        reason: [string explaining why the trade was aborted]
       }
 
 ### tradeCompleted event
 
-- What: An object containing details of a completed trade.
+- What: Details of a completed trade.
 - When: Some point in time after the tradeInitiated event.
-- Subscribe: Your plugin can subscribe to this event by registering the `processTradeCompleted` method.
+- Subscribe: You can subscribe to this event by registering the `processTradeCompleted` method.
 - Example:
       {
         id: [number identifying this unique trade]
@@ -138,18 +136,18 @@ and will start signaling advice.
 
 - What: An object containing new portfolio contents (amount of asset & currency).
 - When: Some point in time after the advice event, at the same time as the tradeCompleted event.
-- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioChange` method.
+- Subscribe: You can subscribe to this event by registering the `processPortfolioChange` method.
 - Example:
       {
         currency: [number, portfolio amount of currency],
-        asset: [number, portfolio amount of asset]
+        asset: [number, portfolio amount of asset],
       }
 
 ### portfolioValueChange event
 
 - What: An object containing the total portfolio worth (amount of asset & currency calculated in currency).
 - When: Every time the value of the portfolio has changed, if the strategy is in a LONG position this will be every minute.
-- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioValueChange` method.
+- Subscribe: You can subscribe to this event by registering the `processPortfolioValueChange` method.
 - Example:
       {
         value: [number, portfolio amount of currency]
@@ -159,10 +157,55 @@ and will start signaling advice.
 
 - What: An object containing a summary of the performance of the "tradebot" (advice signals + execution).
 - When: At the same time as every new candle.
-- Subscribe: Your plugin can subscribe to this event by registering the `processPortfolioValueChange` method.
+- Subscribe: You can subscribe to this event by registering the `processPerformanceReport` method.
 - Example:
       {
-        value: [number, portfolio amount of currency]
+        startTime: Moment<'2017-03-25 19:41:00'>,
+        endTime: Moment<'2017-03-25 20:01:00'>,
+        timespan: 36000000,
+        market: -0.316304880517734,
+        balance: 1016.7200029226638,
+        profit: -26.789997197336106,
+        relativeProfit: -2.5672966425099304,
+        yearlyProfit: '-704041.12634599',
+        relativeYearlyProfit: '-67468.55576516',
+        startPrice: 945.80000002,
+        endPrice: 942.80838846,
+        trades: 10,
+        roundtrips: 5,
+        startBalance: 1043.5100001199999,
+        sharpe: -2.676305165560598
+      }
+
+### roundtrip event
+
+- What: A summary of a completed roundtrip (buy + sell signal).
+- When: After every roundtrip: a completed sell trade event that superceded a buy sell trade event.
+- Subscribe: You can subscribe to this event by registering the `processRoundtrip` method.
+- Example:
+      {
+        entryAt: Moment<'2017-03-25 19:41:00'>,
+        entryPrice: 10.21315498,
+        entryBalance: 98.19707799420277,
+        exitAt: Moment<'2017-03-25 19:41:00'>
+        exitPrice: 10.22011632,
+        exitBalance: 97.9692176,
+        duration: 3600000,
+        pnl: -0.2278603942027786,
+        profit: -0.2320439659276161,
+      }
+
+### roundtripUpdate event
+
+- What: An updated summary of a currently open roundtrip.
+- When: After every candle for as long as the bot is in a long position.
+- Subscribe: You can subscribe to this event by registering the `processRoundtripUpdate` method.
+- Example:
+      {
+        at: Moment<'2017-03-25 19:41:00'>,
+        duration: 3600000,
+        uPnl: -0.2278603942027786,
+        uProfit: -0.2320439659276161,
       }
 
 ### marketStart event

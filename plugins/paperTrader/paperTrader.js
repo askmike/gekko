@@ -18,12 +18,26 @@ const PaperTrader = function() {
   this.portfolio = {
     asset: calcConfig.simulationBalance.asset,
     currency: calcConfig.simulationBalance.currency,
-    balance: false
+  }
+
+  this.balance = false;
+
+  if(this.portfolio.asset > 0) {
+    this.exposed = true;
   }
 }
 
-PaperTrader.prototype.relayPortfolio = function() {
-  this.emit('portfolioUpdate', _.clone(this.portfolio));
+PaperTrader.prototype.relayPortfolioChange = function() {
+  this.deferredEmit('portfolioChange', {
+    asset: this.portfolio.asset,
+    currency: this.portfolio.currency
+  });
+}
+
+PaperTrader.prototype.relayPortfolioValueChange = function() {
+  this.deferredEmit('portfolioValueChange', {
+    balance: this.getBalance()
+  });
 }
 
 PaperTrader.prototype.extractFee = function(amount) {
@@ -35,8 +49,7 @@ PaperTrader.prototype.extractFee = function(amount) {
 }
 
 PaperTrader.prototype.setStartBalance = function() {
-  this.portfolio.balance = this.portfolio.currency + this.price * this.portfolio.asset;
-  this.relayPortfolio();
+  this.balance = this.getBalance();
 }
 
 // after every succesfull trend ride we hopefully end up
@@ -54,6 +67,7 @@ PaperTrader.prototype.updatePosition = function(advice) {
     executionPrice = this.extractFee(this.price);
     this.portfolio.currency = 0;
     this.trades++;
+    this.exposed = true;
   }
 
   // virtually trade all {currency} to {asset}
@@ -62,19 +76,18 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
     executionPrice = this.price + this.price - this.extractFee(this.price);
     this.portfolio.asset = 0;
+    this.exposed = false;
     this.trades++;
   }
 
   return executionPrice;
 }
 
-PaperTrader.prototype.getPortfolio = function() {
-  this.portfolio.balance = this.portfolio.currency + this.price * this.portfolio.asset;
-  return _.clone(this.portfolio);
+PaperTrader.prototype.getBalance = function() {
+  return this.portfolio.currency + this.price * this.portfolio.asset;
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
-  console.log('PaperTrader.prototype.processAdvice');
   let action;
   if(advice.recommendation === 'short')
     action = 'sell';
@@ -88,29 +101,38 @@ PaperTrader.prototype.processAdvice = function(advice) {
   this.deferredEmit('tradeInitiated', {
     id: this.tradeId,
     action,
-    portfolio: this.getPortfolio(),
+    portfolio: _.clone(this.portfolio),
+    balance: this.getBalance(),
     date: advice.date,
   });
 
   const executionPrice = this.updatePosition(advice);
-  console.log('price', this.price);
+
+  this.relayPortfolioChange();
+  this.relayPortfolioValueChange();
 
   this.deferredEmit('tradeCompleted', {
     id: this.tradeId,
     action,
     price: executionPrice,
-    portfolio: this.getPortfolio(),
+    portfolio: this.portfolio,
+    balance: this.getBalance(),
     date: advice.date
   });
-
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
-  console.log('PaperTrader.prototype.processCandle');
   this.price = candle.close;
 
-  if(!this.portfolio.balance)
+  if(!this.balance) {
     this.setStartBalance();
+    this.relayPortfolioChange();
+    this.relayPortfolioValueChange();
+  }
+
+  if(this.exposed) {
+    this.relayPortfolioValueChange();
+  }
 
   done();
 }

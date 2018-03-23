@@ -143,6 +143,7 @@ var plugins = [
     slug: 'performanceAnalyzer',
     async: false,
     modes: ['realtime', 'backtest'],
+    emits: ['roundtrip', 'roundtripUpdate', 'performanceUpdate'],
     path: config => 'performanceAnalyzer/performanceAnalyzer.js',
   },
   {
@@ -196,7 +197,7 @@ var plugins = [
     description: 'Logs all gekko events.',
     slug: 'eventLogger',
     async: false,
-    modes: ['realtime']
+    modes: ['realtime', 'backtest']
   }
 ];
 

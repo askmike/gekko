@@ -66,6 +66,11 @@ var subscriptions = [
   },
   {
     emitter: ['performanceAnalyzer'],
+    event: 'roundtripUpdate',
+    handler: 'processRoundtripUpdate'
+  },
+  {
+    emitter: ['performanceAnalyzer'],
     event: 'roundtrip',
     handler: 'processRoundtrip'
   },

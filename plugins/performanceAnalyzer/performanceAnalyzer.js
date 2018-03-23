@@ -37,14 +37,27 @@ const PerformanceAnalyzer = function() {
     entry: false,
     exit: false
   }
+
+  this.portfolio = {};
+  this.balance;
+
+  this.start = {};
+  this.openRoundTrip = false;
 }
 
-// teach our plugin events
-util.makeEventEmitter(PerformanceAnalyzer);
+PerformanceAnalyzer.prototype.processPortfolioValueChange = function(event) {
+  if(!this.start.balance)
+    this.start.balance = event.balance;
+}
+
+PerformanceAnalyzer.prototype.processPortfolioChange = function(event) {
+  if(!this.start.portfolio)
+    this.start.portfolio = event;
+}
 
 PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
-  this.dates.end = candle.start;
+  this.dates.end = candle.start.clone().add(1, 'minute');
 
   if(!this.dates.start) {
     this.dates.start = candle.start;
@@ -53,23 +66,41 @@ PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
 
   this.endPrice = candle.close;
 
+  if(this.openRoundTrip) {
+    this.emitRoundtripUpdate();
+  }
+
   done();
 }
 
-PerformanceAnalyzer.prototype.processTrade = function(trade) {
+PerformanceAnalyzer.prototype.emitRoundtripUpdate = function() {
+  const uPnl = this.price - this.roundTrip.entry.price;
+
+  this.deferredEmit('roundtripUpdate', {
+    at: this.dates.end,
+    duration: this.dates.end.diff(this.roundTrip.entry.date),
+    uPnl,
+    uProfit: uPnl / this.roundTrip.entry.total * 100
+  })
+}
+
+PerformanceAnalyzer.prototype.processTradeCompleted = function(trade) {
   this.trades++;
-  this.current = trade.portfolio;
+  this.portfolio = trade.portfolio;
+  this.balance = trade.balance;
 
   const report = this.calculateReportStatistics();
 
   this.logger.handleTrade(trade, report);
 
-  this.logRoundtripPart(trade);
+  this.registerRoundtripPart(trade);
+
+  this.deferredEmit('performanceReport', report);
 }
 
-PerformanceAnalyzer.prototype.logRoundtripPart = function(trade) {
-  // this is not part of a valid roundtrip
+PerformanceAnalyzer.prototype.registerRoundtripPart = function(trade) {
   if(this.trades === 1 && trade.action === 'sell') {
+    // this is not part of a valid roundtrip
     return;
   }
 
@@ -79,18 +110,20 @@ PerformanceAnalyzer.prototype.logRoundtripPart = function(trade) {
       price: trade.price,
       total: trade.portfolio.asset * trade.price,
     }
+    this.openRoundTrip = true;
   } else if(trade.action === 'sell') {
     this.roundTrip.exit = {
       date: trade.date,
       price: trade.price,
       total: trade.portfolio.currency
     }
+    this.openRoundTrip = false;
 
-    this.handleRoundtrip();
+    this.handleCompletedRoundtrip();
   }
 }
 
-PerformanceAnalyzer.prototype.handleRoundtrip = function() {
+PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
   var roundtrip = {
     entryAt: this.roundTrip.entry.date,
     entryPrice: this.roundTrip.entry.price,
@@ -109,6 +142,8 @@ PerformanceAnalyzer.prototype.handleRoundtrip = function() {
   this.roundTrips.push(roundtrip);
   this.logger.handleRoundtrip(roundtrip);
 
+  this.deferredEmit('roundtrip', roundtrip);
+
   // we need a cache for sharpe
 
   // every time we have a new roundtrip
@@ -121,25 +156,21 @@ PerformanceAnalyzer.prototype.handleRoundtrip = function() {
 
 PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
   // the portfolio's balance is measured in {currency}
-  const balance = this.current.currency + this.price * this.current.asset;
-  const profit = balance - this.start.balance;
+  const profit = this.balance - this.start.balance;
 
   const timespan = moment.duration(
     this.dates.end.diff(this.dates.start)
   );
-  const relativeProfit = balance / this.start.balance * 100 - 100;
+  const relativeProfit = this.balance / this.start.balance * 100 - 100;
 
   const report = {
-    currency: this.currency,
-    asset: this.asset,
-
     startTime: this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss'),
     endTime: this.dates.end.utc().format('YYYY-MM-DD HH:mm:ss'),
     timespan: timespan.humanize(),
     market: this.endPrice * 100 / this.startPrice - 100,
 
-    balance: balance,
-    profit: profit,
+    balance: this.balance,
+    profit,
     relativeProfit: relativeProfit,
 
     yearlyProfit: profit / timespan.asYears(),

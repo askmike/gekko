@@ -6,7 +6,7 @@ const EventLogger = function() {}
 
 _.each(subscriptions, sub => {
   EventLogger.prototype[sub.handler] = (event, next) => {
-    log.info(`[EVENT ${sub.event}]\n`, event);
+    log.info(`\t\t\t\t[EVENT ${sub.event}]\n`, event);
     if(_.isFunction(next))
       next();
   }
