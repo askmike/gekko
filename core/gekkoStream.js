@@ -12,11 +12,13 @@ const mode = util.gekkoMode();
 const config = util.getConfig();
 const log = require(util.dirs().core + 'log');
 
-var Gekko = function(candleConsumers) {
-  this.candleConsumers = candleConsumers;
+var Gekko = function(plugins) {
+  this.plugins = plugins;
+  this.candleConsumers = plugins
+    .filter(plugin => plugin.processCandle);
   Writable.call(this, {objectMode: true});
 
-  this.defferedProducers = this.candleConsumers
+  this.defferedProducers = this.plugins
     .filter(p => p.broadcastDeferredEmit);
 
   this.finalize = _.bind(this.finalize, this);
@@ -42,7 +44,7 @@ if(config.debug) {
         ].join(' '));
     }, 1000);
 
-    const done = _.after(this.candleConsumers.length, () => {
+    const flushEvents = _.after(this.candleConsumers.length, () => {
       relayed = true;
       clearInterval(timer);
       this.flushDefferedEvents();
@@ -50,18 +52,18 @@ if(config.debug) {
     });
     _.each(this.candleConsumers, function(c) {
       at = c.meta.name;
-      c.processCandle(chunk, done);
+      c.processCandle(chunk, flushEvents);
     }, this);
   }
 } else {
   // skip decoration
   Gekko.prototype._write = function(chunk, encoding, _done) {
-    const done = _.after(this.candleConsumers.length, () => {
+    const flushEvents = _.after(this.defferedProducers.length, () => {
       this.flushDefferedEvents();
       _done();
     });
     _.each(this.candleConsumers, function(c) {
-      c.processCandle(chunk, done);
+      c.processCandle(chunk, flushEvents);
     }, this);
   }
 }
@@ -93,7 +95,7 @@ Gekko.prototype.finalize = function() {
 
 Gekko.prototype.shutdown = function() {
   async.eachSeries(
-    this.candleConsumers,
+    this.plugins,
     function(c, callback) {
       if (c.finalize) c.finalize(callback);
       else callback();
