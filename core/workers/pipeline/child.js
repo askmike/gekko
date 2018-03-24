@@ -50,6 +50,6 @@ process.on('message', function(m) {
 });
 
 process.on('disconnect', function() {
-  console.log("disconnect");
+  console.log('disconnect');
   process.exit(-1);
 })

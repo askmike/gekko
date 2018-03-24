@@ -198,6 +198,13 @@ var plugins = [
     slug: 'eventLogger',
     async: false,
     modes: ['realtime', 'backtest']
+  },
+    {
+    name: 'backtest result export',
+    description: 'Exports the results of a gekko backtest',
+    slug: 'backtestResultExporter',
+    async: false,
+    modes: ['backtest']
   }
 ];
 
