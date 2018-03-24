@@ -217,8 +217,8 @@ var pipeline = (settings) => {
       subscribePluginsToMarket
     ],
     function() {
-      
-      var gekkoStream = new GekkoStream(candleConsumers);
+
+      var gekkoStream = new GekkoStream(plugins);
 
       market
         .pipe(gekkoStream)
