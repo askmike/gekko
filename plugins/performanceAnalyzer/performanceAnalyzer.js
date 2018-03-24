@@ -189,7 +189,7 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
 }
 
 PerformanceAnalyzer.prototype.finalize = function(done) {
-  if(!_.size(this.trades)) {
+  if(!this.trades) {
     return done();
   }
 

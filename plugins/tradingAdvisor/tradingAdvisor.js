@@ -103,9 +103,5 @@ Actor.prototype.relayAdvice = function(advice) {
   this.deferredEmit('advice', advice);
 }
 
-// var a = new Actor(_.noop);
-// console.log(a.defferedEvents);
-// throw 'a';
-
 
 module.exports = Actor;

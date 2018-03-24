@@ -326,17 +326,15 @@ Base.prototype.advice = function(newPosition) {
 
   this._prevAdvice = newPosition;
 
-  console.log('emitting advice', newPosition);
-
   this.emit('advice', {
     recommendation: newPosition
   });
 }
 
-// Because the trading method might be async we need
-// to be sure we only stop after all candles are
-// processed.
 Base.prototype.finish = function(done) {
+  // Because the trading method might be async we need
+  // to be sure we only stop after all candles are
+  // processed.
   if(!this.asyncTick) {
     this.end();
     return done();
