@@ -12,7 +12,7 @@ var Actor = function() {
   this.stratCandles = [];
 
   if(!config.backtestResultExporter.data.candles)
-    this.processStratUpdate = null;
+    this.processStratCandles = null;
 
   if(!config.backtestResultExporter.data.stratUpdates)
     this.processStratUpdate = null;
