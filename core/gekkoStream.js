@@ -18,8 +18,8 @@ var Gekko = function(plugins) {
     .filter(plugin => plugin.processCandle);
   Writable.call(this, {objectMode: true});
 
-  this.defferedProducers = this.plugins
-    .filter(p => p.broadcastDeferredEmit);
+  this.producers = this.plugins
+    .filter(p => p.meta.emits);
 
   this.finalize = _.bind(this.finalize, this);
 }
@@ -39,7 +39,7 @@ if(config.debug) {
     const timer = setTimeout(() => {
       if(!relayed)
         log.error([
-          `The plugin "${at}" has not processed a candle for 0.5 seconds.`,
+          `The plugin "${at}" has not processed a candle for 1 second.`,
           `This will cause Gekko to slow down or stop working completely.`
         ].join(' '));
     }, 1000);
@@ -70,7 +70,7 @@ if(config.debug) {
 
 Gekko.prototype.flushDefferedEvents = function() {
   const broadcasted = _.find(
-    this.defferedProducers,
+    this.producers,
     producer => producer.broadcastDeferredEmit()
   );
 
