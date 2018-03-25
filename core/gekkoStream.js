@@ -58,7 +58,7 @@ if(config.debug) {
 } else {
   // skip decoration
   Gekko.prototype._write = function(chunk, encoding, _done) {
-    const flushEvents = _.after(this.defferedProducers.length, () => {
+    const flushEvents = _.after(this.candleConsumers.length, () => {
       this.flushDefferedEvents();
       _done();
     });

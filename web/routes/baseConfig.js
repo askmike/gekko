@@ -6,8 +6,8 @@ var config = {};
 //                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-config.silent = false;
-config.debug = true;
+config.silent = true;
+config.debug = false;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING TRADING ADVICE
@@ -26,7 +26,7 @@ config.adviceWriter = {
 
 config.backtestResultExporter = {
   enabled: true,
-  writeToDisk: true,
+  writeToDisk: false,
   data: {
     stratUpdates: true,
     roundtrips: true
