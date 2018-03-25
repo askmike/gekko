@@ -13,9 +13,9 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 ## List of events emitted by standard plugins
 
 - [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
-- [stratUpdate](#stratUpdate-event): Every time the strategy has processed new market data.
 - [stratWarmupCompleted](#stratWarmupCompleted-event): When the strategy is done warming up.
-- [advice](#advice-event): Every time the trading strategy has new advice.
+- [advice](#advice-event): Every time the trading strategy is fed a new candle.
+- [stratUpdate](#stratUpdate-event): Every time the strategy has processed a new strat candle.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
 - [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
@@ -36,8 +36,9 @@ Beside those there are also two additional market events that are only emitted w
 - Subscribe: Your plugin can subscribe to this event by registering the `processCandle` method.
 - Async: When subscribing to this event the second argument will be a callback which you are expected to call when done handling this event.
 - Notes: 
-  - Depending on the gekko configuration these candles might be historical on startup.
+  - Depending on the gekko configuration these candles might be historical on startup. If this is a concern for consumers, make sure to deal with this properly.
   - In illiquid markets (of less than a trade per minute) Gekko will caculate these candles in batches and a few might come at the same time.
+  - These are always one minute candles, this is the lowest level of market data flowing through a gekko stream.
 - Example:
       {
         start: [moment object of the start time of the candle],
@@ -48,21 +49,6 @@ Beside those there are also two additional market events that are only emitted w
         vwp: [number, average weighted price of candle],
         volume: [number, total volume volume],
         trades: [number, amount of trades]
-      }
-
-### stratUpdate event
-
-- What: An object describing an updated candle the strat has processed.
-- When: when the strategy is initialized is started.
-- Subscribe: You can subscribe to this event by registering the `processStratUpdate` method.
-- Notes:
-  - This event is not guaranteed to happen before any possible advice of the same candle, this situation can happen when the strategy uses async indicators (for example from TAlib or Tulip).
-- Example:
-      {
-        date: [moment object of the start time of the candle],
-        indicators: {
-          mymacd: [number, result of running this indicator over current candle]
-        }
       }
 
 ### stratWarmupCompleted event
@@ -76,6 +62,39 @@ and will start signaling advice.
 - Example:
       {
         start: [moment object of the start time of the first candle after the warmup],
+      }
+
+### stratCandle event
+
+- What: An object describing an updated strat candle the strat has processed.
+- When: when the strategy is initialized is started.
+- Subscribe: You can subscribe to this event by registering the `processStratCandle` method.
+- Notes:
+  - This is the candle that the strategy sees: if you configured the candleSize to 60 (minutes) this event will containt a 60 minute candle.
+- Example:
+      {
+        start: [moment object of the start time of the candle],
+        open: [number, open of candle],
+        high: [number, high of candle],
+        low: [number, low of candle],
+        close: [number, close of candle],
+        vwp: [number, average weighted price of candle],
+        volume: [number, total volume volume],
+        trades: [number, amount of trades]
+      }
+
+
+### stratUpdate event
+
+- What: An object describing updated state of the strategy based on a new strat candle.
+- When: when the strategy has 
+- Subscribe: You can subscribe to this event by registering the `processStratUpdate` method.
+- Example:
+      {
+        date: [moment object of the start time of the candle],
+        indicators: {
+          mymacd: [number, result of running this indicator over current candle]
+        }
       }
 
 ### advice event

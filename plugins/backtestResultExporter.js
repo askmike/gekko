@@ -9,15 +9,29 @@ var Actor = function() {
   this.performanceReport;
   this.roundtrips = [];
   this.stratUpdates = [];
+  this.stratCandles = [];
+
+  if(!config.backtestResultExporter.data.candles)
+    this.processStratUpdate = null;
 
   if(!config.backtestResultExporter.data.stratUpdates)
-    this.processStratUpdate = _.noop;
+    this.processStratUpdate = null;
 
   if(!config.backtestResultExporter.data.roundtrips)
-    this.processRoundtrip = _.noop;
+    this.processRoundtrip = null;
+
+  if(!config.backtestResultExporter.data.stratCandles)
+    this.processStratCandles = null;
 
   _.bindAll(this);
 }
+
+Actor.prototype.processStratCandle = function(candle) {
+  this.stratCandles.push({
+    ...candle,
+    start: candle.start.unix()
+  })
+};
 
 Actor.prototype.processRoundtrip = function(roundtrip) {
   this.roundtrips.push({
@@ -48,6 +62,9 @@ Actor.prototype.finalize = function(done) {
 
   if(config.backtestResultExporter.data.roundtrips)
     backtest.roundtrips = this.roundtrips;
+
+  if(config.backtestResultExporter.data.stratCandles)
+    backtest.stratCandles = this.stratCandles;
 
   process.send({backtest});
 

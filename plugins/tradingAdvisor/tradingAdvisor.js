@@ -70,7 +70,11 @@ Actor.prototype.setupTradingMethod = function() {
     )
 
   this.batcher
-    .on('candle', this.processStratCandle)
+    .on('candle', _candle => {
+      const { id, ...candle } = _candle;
+      this.deferredEmit('stratCandle', candle);
+      this.emitStratCandle(candle);
+    });
 }
 
 // HANDLERS
@@ -88,7 +92,7 @@ Actor.prototype.processCandle = function(candle, done) {
 }
 
 // propogate a custom sized candle to the trading method
-Actor.prototype.processStratCandle = function(candle) {
+Actor.prototype.emitStratCandle = function(candle) {
   this.method.tick(candle, this.next);
 }
 

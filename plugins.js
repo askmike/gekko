@@ -38,7 +38,7 @@ var plugins = [
     slug: 'tradingAdvisor',
     async: true,
     modes: ['realtime', 'backtest'],
-    emits: ['advice'],
+    emits: ['advice', 'stratWarmupCompleted', 'stratCandle', 'stratUpdate'],
     path: config => 'tradingAdvisor/tradingAdvisor.js',
   },
   {

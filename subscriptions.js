@@ -31,6 +31,11 @@ var subscriptions = [
   },
   {
     emitter: 'tradingAdvisor',
+    event: 'stratCandle',
+    handler: 'processStratCandle'
+  },
+  {
+    emitter: 'tradingAdvisor',
     event: 'stratUpdate',
     handler: 'processStratUpdate'
   },
