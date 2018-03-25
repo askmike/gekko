@@ -58,7 +58,8 @@ CandleBatcher.prototype.flush = function() {
 }
 
 CandleBatcher.prototype.calculate = function() {
-  var first = this.smallCandles.shift();
+  // remove the id property of the small candle
+  var { id, ...first } = this.smallCandles.shift();
 
   first.vwp = first.vwp * first.volume;
 
