@@ -71,6 +71,7 @@ and will start signaling advice.
 - Subscribe: You can subscribe to this event by registering the `processStratCandle` method.
 - Notes:
   - This is the candle that the strategy sees: if you configured the candleSize to 60 (minutes) this event will containt a 60 minute candle.
+  - Strat Candles are emitted while the strategy is still warming up (before the `stratWarmupCompleted` event).
 - Example:
       {
         start: [moment object of the start time of the candle],
@@ -89,6 +90,8 @@ and will start signaling advice.
 - What: An object describing updated state of the strategy based on a new strat candle.
 - When: when the strategy has 
 - Subscribe: You can subscribe to this event by registering the `processStratUpdate` method.
+- Notes:
+  - Strat updates are emitted while the strategy is still warming up (before the `stratWarmupCompleted` event).
 - Example:
       {
         date: [moment object of the start time of the candle],
