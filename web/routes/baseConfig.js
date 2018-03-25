@@ -28,8 +28,10 @@ config.backtestResultExporter = {
   enabled: true,
   writeToDisk: false,
   data: {
-    stratUpdates: true,
-    roundtrips: true
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
   }
 }
 
