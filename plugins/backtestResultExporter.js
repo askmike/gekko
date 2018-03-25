@@ -10,9 +10,7 @@ var Actor = function() {
   this.roundtrips = [];
   this.stratUpdates = [];
   this.stratCandles = [];
-
-  if(!config.backtestResultExporter.data.candles)
-    this.processStratCandles = null;
+  this.trades = [];
 
   if(!config.backtestResultExporter.data.stratUpdates)
     this.processStratUpdate = null;
@@ -22,6 +20,9 @@ var Actor = function() {
 
   if(!config.backtestResultExporter.data.stratCandles)
     this.processStratCandles = null;
+
+  if(!config.backtestResultExporter.data.trades)
+    this.processTradeCompleted = null;
 
   _.bindAll(this);
 }
@@ -38,6 +39,13 @@ Actor.prototype.processRoundtrip = function(roundtrip) {
     ...roundtrip,
     entryAt: roundtrip.entryAt.unix(),
     exitAt: roundtrip.exitAt.unix()
+  });
+};
+
+Actor.prototype.processTradeCompleted = function(trade) {
+  this.trades.push({
+    ...trade,
+    date: trade.date.unix()
   });
 };
 
@@ -65,6 +73,9 @@ Actor.prototype.finalize = function(done) {
 
   if(config.backtestResultExporter.data.stratCandles)
     backtest.stratCandles = this.stratCandles;
+
+  if(config.backtestResultExporter.data.trades)
+    backtest.trades = this.trades;
 
   process.send({backtest});
 
