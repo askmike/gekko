@@ -31,7 +31,7 @@ const broadcast = data => {
       } catch(e) {
         log.warn('unable to send data to client');
       }
-    })
+    }
   );
 }
 cache.set('broadcast', broadcast);

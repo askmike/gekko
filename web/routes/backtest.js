@@ -25,25 +25,7 @@ module.exports = function *() {
 
   var req = this.request.body;
 
-  _.merge(config, base, req.gekkoConfig);
+  _.merge(config, base, req);
 
-  var result = yield pipelineRunner(mode, config);
-
-  if(!req.data.report)
-    delete result.report;
-
-  if(!req.data.roundtrips)
-    delete result.roundtrips;
-
-  if(!req.data.trades)
-    delete result.trades;
-
-  // todo: indicatorResults
-
-  result.candles = _.map(
-    result.candles,
-    c => _.pick(c, req.data.candleProps)
-  );
-
-  this.body = result;
+  this.body = yield pipelineRunner(mode, config);
 }

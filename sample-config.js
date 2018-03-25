@@ -391,6 +391,17 @@ config.adviceWriter = {
   muteSoft: true,
 }
 
+config.backtestResultExporter = {
+  enabled: false,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

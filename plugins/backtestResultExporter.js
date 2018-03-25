@@ -79,9 +79,13 @@ Actor.prototype.finalize = function(done) {
 
   process.send({backtest});
 
-  if(!config.backtestResultExporter.writeToDisk)
-    return done();
+  if(config.backtestResultExporter.writeToDisk)
+    this.writeToDisk(done)
+  else
+    done();
+};
 
+Actor.prototype.writeToDisk = function(next) {
   const now = moment().format('YYYY-MM-DD HH:mm:ss');
   const filename = `backtest-${config.tradingAdvisor.method}-${now}.log`;
   fs.writeFile(
@@ -91,9 +95,9 @@ Actor.prototype.finalize = function(done) {
       if(err)
         log.error('unable to write backtest result', err);
 
-      done();
+      next();
     }
   );
-};
+}
 
 module.exports = Actor;
