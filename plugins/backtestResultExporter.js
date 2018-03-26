@@ -12,6 +12,8 @@ var Actor = function() {
   this.stratCandles = [];
   this.trades = [];
 
+  this.candleProps = config.backtestResultExporter.data.stratCandleProps;
+
   if(!config.backtestResultExporter.data.stratUpdates)
     this.processStratUpdate = null;
 
@@ -28,10 +30,21 @@ var Actor = function() {
 }
 
 Actor.prototype.processStratCandle = function(candle) {
-  this.stratCandles.push({
-    ...candle,
-    start: candle.start.unix()
-  })
+  let strippedCandle;
+
+  if(!this.candleProps) {
+    strippedCandle = {
+      ...candle,
+      start: candle.start.unix()
+    }
+  } else {
+    strippedCandle = {
+      ..._.pick(candle, this.candleProps),
+      start: candle.start.unix()
+    }
+  }
+
+  this.stratCandles.push(strippedCandle);
 };
 
 Actor.prototype.processRoundtrip = function(roundtrip) {
