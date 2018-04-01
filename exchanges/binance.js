@@ -65,7 +65,7 @@ Trader.prototype.processError = function(funcName, error) {
 
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, body) => {
-    if (body && !_.isEmpty(body.code)) {
+    if (body && body.code) {
       error = new Error(`Error ${body.code}: ${body.msg}`);
     }
 
