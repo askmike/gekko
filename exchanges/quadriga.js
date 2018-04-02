@@ -12,11 +12,11 @@ var Trader = function(config) {
     this.key = config.key;
     this.secret = config.secret;
     this.clientId = config.username;
-    this.asset = config.asset.toLowerCase();
-    this.currency = config.currency.toLowerCase();
+    this.asset = config.asset;
+    this.currency = config.currency;
   }
     
-  this.pair = this.asset + '_' + this.currency; 
+  this.pair = this.asset.toLowerCase() + '_' + this.currency.toLowerCase(); 
   this.name = 'quadriga';
   this.since = null;
 
