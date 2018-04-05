@@ -265,7 +265,8 @@ Trader.getCapabilities = function () {
       'UVC', 'VIA', 'VOOT', 'VOX', 'VRC', 'VTC', 'WC', 'WDC', 'WIKI', 'WOLF',
       'X13', 'XAI', 'XAP', 'XBC', 'XC', 'XCH', 'XCN', 'XCP', 'XCR', 'XDN',
       'XDP', 'XEM', 'XHC', 'XLB', 'XMG', 'XMR', 'XPB', 'XPM', 'XRP', 'XSI',
-      'XST', 'XSV', 'XUSD', 'XVC', 'XXC', 'BCH', 'YACC', 'YANG', 'YC', 'YIN', 'ZEC'
+      'XST', 'XSV', 'XUSD', 'XVC', 'XXC', 'BCH', 'YACC', 'YANG', 'YC', 'YIN', 'ZEC',
+      'OMG', 'ZRX', 'CVC', 'GAS'
     ],
     markets: [
       // *** BTC <-> XXX
@@ -549,6 +550,10 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'YC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'YIN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'ZRX'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
 
       // *** USDT <-> XXX
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -573,6 +578,10 @@ Trader.getCapabilities = function () {
       { pair: ['ETH', 'REP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'STEEM'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'ZRX'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
 
       // *** XMR <-> XXX
       { pair: ['XMR', 'BCN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
