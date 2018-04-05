@@ -243,11 +243,11 @@ Trader.getCapabilities = function () {
       'BLU', 'BNS', 'BONES', 'BOST', 'BTC', 'BTCD', 'BTCS', 'BTM', 'BTS',
       'BURN', 'BURST', 'C2', 'CACH', 'CAI', 'CC', 'CCN', 'CGA', 'CHA', 'CINNI',
       'CLAM', 'CNL', 'CNMT', 'CNOTE', 'COMM', 'CON', 'CORG', 'CRYPT', 'CURE',
-      'CYC', 'DAO', 'DASH', 'DCR', 'DGB', 'DICE', 'DIEM', 'DIME', 'DIS', 'DNS',
+      'CVC', 'CYC', 'DAO', 'DASH', 'DCR', 'DGB', 'DICE', 'DIEM', 'DIME', 'DIS', 'DNS',
       'DOGE', 'DRKC', 'DRM', 'DSH', 'DVK', 'EAC', 'EBT', 'ECC', 'EFL', 'EMC2',
       'EMO', 'ENC', 'ETC', 'ETH', 'eTOK', 'EXE', 'EXP', 'FAC', 'FCN', 'FCT',
       'FIBRE', 'FLAP', 'FLDC', 'FLO', 'FLT', 'FOX', 'FRAC', 'FRK', 'FRQ',
-      'FVZ', 'FZ', 'FZN', 'GAME', 'GAP', 'GDN', 'GEMZ', 'GEO', 'GIAR', 'GLB',
+      'FVZ', 'FZ', 'FZN', 'GAME', 'GAP', 'GAS', 'GDN', 'GEMZ', 'GEO', 'GIAR', 'GLB',
       'GML', 'GNS', 'GNT', 'GOLD', 'GPC', 'GPUC', 'GRC', 'GRCX', 'GRS', 'GUE', 'H2O',
       'HIRO', 'HOT', 'HUC', 'HUGE', 'HVC', 'HYP', 'HZ', 'IFC', 'INDEX', 'IOC',
       'ITC', 'IXC', 'JLH', 'JPC', 'JUG', 'KDC', 'KEY', 'LBC', 'LC', 'LCL',
@@ -255,7 +255,7 @@ Trader.getCapabilities = function () {
       'MAID', 'MAST', 'MAX', 'MCN', 'MEC', 'METH', 'MIL', 'MIN', 'MINT', 'MMC',
       'MMNXT', 'MMXIV', 'MNTA', 'MON', 'MRC', 'MRS', 'MTS', 'MUN', 'MYR',
       'MZC', 'N5X', 'NAS', 'NAUT', 'NAV', 'NBT', 'NEOS', 'NL', 'NMC', 'NOBL',
-      'NOTE', 'NOXT', 'NRS', 'NSR', 'NTX', 'NXT', 'NXTI', 'OMNI', 'OPAL',
+      'NOTE', 'NOXT', 'NRS', 'NSR', 'NTX', 'NXT', 'NXTI', 'OMG', 'OMNI', 'OPAL',
       'PAND', 'PASC', 'PAWN', 'PIGGY', 'PINK', 'PLX', 'PMC', 'POT', 'PPC', 'PRC',
       'PRT', 'PTS', 'Q2C', 'QBK', 'QCN', 'QORA', 'QTL', 'RADS', 'RBY', 'RDD', 'REP',
       'RIC', 'RZR', 'SBD', 'SC', 'SDC', 'SHIBE', 'SHOPX', 'SILK', 'SJCX',
@@ -266,7 +266,7 @@ Trader.getCapabilities = function () {
       'X13', 'XAI', 'XAP', 'XBC', 'XC', 'XCH', 'XCN', 'XCP', 'XCR', 'XDN',
       'XDP', 'XEM', 'XHC', 'XLB', 'XMG', 'XMR', 'XPB', 'XPM', 'XRP', 'XSI',
       'XST', 'XSV', 'XUSD', 'XVC', 'XXC', 'BCH', 'YACC', 'YANG', 'YC', 'YIN', 'ZEC',
-      'OMG', 'ZRX', 'CVC', 'GAS'
+      'ZRX'
     ],
     markets: [
       // *** BTC <-> XXX
@@ -326,6 +326,7 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'CORG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'CRYPT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'CURE'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'CYC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'DAO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'DASH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -370,6 +371,7 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'FZN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'GAME'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'GAP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'GDN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'GEMZ'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'GEO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -450,6 +452,7 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'NTX'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'NXT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'NXTI'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'OMNI'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'OPAL'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'PAND'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -550,10 +553,8 @@ Trader.getCapabilities = function () {
       { pair: ['BTC', 'YC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'YIN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['BTC', 'ZRX'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['BTC', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      
 
       // *** USDT <-> XXX
       { pair: ['USDT', 'BTC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
@@ -570,18 +571,18 @@ Trader.getCapabilities = function () {
       { pair: ['USDT', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
 
       // *** ETH <-> XXX
+      { pair: ['ETH', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'ETC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'BCH'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'GNO'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'GNT'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'LSK'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
+      { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'REP'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'STEEM'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'ZEC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'OMG'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
       { pair: ['ETH', 'ZRX'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'CVC'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
-      { pair: ['ETH', 'GAS'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
 
       // *** XMR <-> XXX
       { pair: ['XMR', 'BCN'], minimalOrder: { amount: 0.0001, unit: 'asset' } },
