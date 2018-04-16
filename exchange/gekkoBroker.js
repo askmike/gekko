@@ -1,5 +1,8 @@
 /*
-  The portfolio manager manages the portfolio on the exchange
+  The broker manages all communicatinn with the exchange, delegating:
+
+  - the management of the portfolio to the portfolioManager
+  - managing actual trades to order instances.
 */
 
 const _ = require('lodash');
