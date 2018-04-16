@@ -1,6 +1,22 @@
 const _ = require('lodash');
 
-let RetryError = function(message) {
+const ExchangeError = function(message) {
+    _.bindAll(this);
+
+    this.name = "ExchangeError";
+    this.message = message;
+}
+
+const ExchangeAuthenticationError = function(message) {
+    _.bindAll(this);
+
+    this.name = "ExchangeAuthenticationError";
+    this.message = message;
+}
+
+ExchangeAuthenticationError.prototype = new Error();
+
+const RetryError = function(message) {
     _.bindAll(this);
 
     this.name = "RetryError";
@@ -9,7 +25,7 @@ let RetryError = function(message) {
 
 RetryError.prototype = new Error();
 
-let AbortError = function(message) {
+const AbortError = function(message) {
     _.bindAll(this);
 
     this.name = "AbortError";

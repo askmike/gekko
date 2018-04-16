@@ -3,7 +3,7 @@
 const retry = require('retry');
 const errors = require('./exchangeErrors');
 
-const retry = (fn, options, callback) => {
+const retryInstance = (options, fn, callback) => {
   if(!options) {
     options = {
       retries: 5,
@@ -13,18 +13,18 @@ const retry = (fn, options, callback) => {
     };
   }
 
-    var operation = retry.operation(options);
-    operation.attempt(function(currentAttempt) {
-      fn(function(err, result) {
-        if (!(err instanceof errors.AbortError) && operation.retry(err)) {
-          return;
-        }
+  var operation = retry.operation(options);
+  operation.attempt(function(currentAttempt) {
+    fn(function(err, result) {
+      if (!(err instanceof errors.AbortError) && operation.retry(err)) {
+        return;
+      }
 
-        callback(err ? err.message : null, result);
-      });
+      callback(err ? err.message : null, result);
     });
+  });
 }
 
 module.exports = {
-  retry
+  retry: retryInstance
 }

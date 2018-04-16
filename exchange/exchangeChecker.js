@@ -1,31 +1,17 @@
-var _ = require('lodash');
-var fs = require('fs');
-var util = require('./util');
-var config = util.getConfig();
-var dirs = util.dirs();
-var moment = require('moment');
+const _ = require('lodash');
+const fs = require('fs');
+const moment = require('moment');
+const errors = require('./exchangeErrors');
 
-var Checker = function() {
+const Checker = function() {
   _.bindAll(this);
 }
 
-Checker.prototype.notValid = function(conf) {
-  if(conf.tradingEnabled)
-    return this.cantTrade(conf);
-  else
-    return this.cantMonitor(conf);
-}
-
 Checker.prototype.getExchangeCapabilities = function(slug) {
-  var capabilities;
+  if(!fs.existsSync('./wrappers/' + slug + '.js'))
+    throw new errors.ExchangeError(`Gekko does not know exchange "${slug}"`);
 
-  if(!fs.existsSync(dirs.exchanges + slug + '.js'))
-    util.die(`Gekko does not know exchange "${slug}"`);
-
-  var Trader = require(dirs.exchanges + slug);
-  capabilities = Trader.getCapabilities();
-
-  return capabilities;
+  return require('./wrappers/' + slug).getCapabilities();
 }
 
 // check if the exchange is configured correctly for monitoring

@@ -1,10 +1,9 @@
-var Gdax = require('gdax');
-var _ = require('lodash');
-var moment = require('moment');
+const Gdax = require('gdax');
+const _ = require('lodash');
+const moment = require('moment');
 
-const util = require('../core/util');
-const Errors = require('../core/error');
-const log = require('../core/log');
+const errors = require('../exchangeErrors');
+const retry = require('../exchangeUtils').retry;
 
 const BATCH_SIZE = 100;
 const QUERY_DELAY = 350;
@@ -79,13 +78,13 @@ Trader.prototype.processError = function(funcName, error) {
         error.message
       }`
     );
-    return new Errors.AbortError('[gdax.js] ' + error.message);
+    return new errors.AbortError('[gdax.js] ' + error.message);
   }
  
   log.debug(
     `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
   );
-  return new Errors.RetryError('[gdax.js] ' + error.message);
+  return new errors.RetryError('[gdax.js] ' + error.message);
 };
 
 Trader.prototype.handleResponse = function(funcName, callback) {
@@ -117,7 +116,7 @@ Trader.prototype.getPortfolio = function(callback) {
 
   let handler = cb =>
     this.gdax.getAccounts(this.handleResponse('getPortfolio', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  retry(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getTicker = function(callback) {
@@ -128,7 +127,7 @@ Trader.prototype.getTicker = function(callback) {
 
   let handler = cb =>
     this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  retry(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getFee = function(callback) {
@@ -155,7 +154,7 @@ Trader.prototype.buy = function(amount, price, callback) {
 
   let handler = cb =>
     this.gdax.buy(buyParams, this.handleResponse('buy', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -173,7 +172,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 
   let handler = cb =>
     this.gdax.sell(sellParams, this.handleResponse('sell', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
@@ -193,7 +192,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 
   let handler = cb =>
     this.gdax.getOrder(order, this.handleResponse('checkOrder', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getOrder = function(order, callback) {
@@ -209,7 +208,7 @@ Trader.prototype.getOrder = function(order, callback) {
 
   let handler = cb =>
     this.gdax.getOrder(order, this.handleResponse('getOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  retry(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
@@ -225,7 +224,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
   let handler = cb =>
     this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  retry(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -263,7 +262,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
                 },
                 this.handleResponse('getTrades', cb)
               );
-            util.retryCustom(
+            retry(
               retryForever,
               _.bind(handler, this),
               _.bind(process, this)
@@ -300,7 +299,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
                 { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
                 this.handleResponse('getTrades', cb)
               );
-            util.retryCustom(
+            retry(
               retryForever,
               _.bind(handler, this),
               _.bind(process, this)
@@ -329,7 +328,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
           this.handleResponse('getTrades', cb)
         );
-      util.retryCustom(
+      retry(
         retryForever,
         _.bind(handler, this),
         _.bind(process, this)
@@ -345,7 +344,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       { limit: BATCH_SIZE },
       this.handleResponse('getTrades', cb)
     );
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+  retry(retryForever, _.bind(handler, this), _.bind(process, this));
 };
 
 Trader.prototype.getMaxDecimalsNumber = function(number, decimalLimit = 8) {
