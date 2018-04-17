@@ -64,7 +64,11 @@ class LimitOrder extends BaseOrder {
 
     this.id = id;
     this.emitStatus();
-    setTimeout(this.checkOrder, this.checkInterval)
+
+    if(this.cancelling)
+      return this.cancel();
+
+    this.timeout = setTimeout(this.checkOrder, this.checkInterval)
   }
 
   checkOrder() {
@@ -75,17 +79,41 @@ class LimitOrder extends BaseOrder {
     if(err)
       throw err;
 
-    if(!filled)
-      return setTimeout(this.checkOrder, checkInterval);
+    if(!filled) {
+      this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+      return;
+    }
+
+    this.filled(this.price);
   }
 
-  cancel(next) {
+  cancel() {
+    if(
+      this.status === states.INITIALIZING ||
+      this.status === states.COMPLETED ||
+      this.status === states.CANCELLED
+    )
+      return;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING
+    ) {
+      this.cancelling = true;
+      return;
+    }
+
+    clearTimeout(this.timeout);
+
     this.api.cancelOrder(this.id, (filled) => {
+
+      this.cancelling = false;
 
       if(filled)
         this.filled(this.price);
 
-      next(filled);
+      this.status = states.CANCELLED;
+      this.emitStatus();
     })
   }
  

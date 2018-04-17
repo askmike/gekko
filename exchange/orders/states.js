@@ -15,7 +15,10 @@ const states = {
   FILLED: 'FILLED',
 
   // Order is fully completed
-  COMPLETED: 'COMPLETED'
+  COMPLETED: 'COMPLETED',
+
+  // Order was succesfully cancelled
+  CANCELLED: 'CANCELLED'
 }
 
 module.exports = states;
