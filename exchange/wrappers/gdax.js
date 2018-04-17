@@ -39,7 +39,6 @@ var Trader = function(config) {
   }
 
   this.gdax_public = new Gdax.PublicClient(
-    this.pair,
     this.use_sandbox ? this.api_sandbox_url : undefined
   );
   this.gdax = new Gdax.AuthenticatedClient(
@@ -118,7 +117,7 @@ Trader.prototype.getTicker = function(callback) {
   };
 
   let handler = cb =>
-    this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
+    this.gdax_public.getProductTicker(this.pair, this.handleResponse('getTicker', cb));
   retry(retryForever, _.bind(handler, this), _.bind(result, this));
 };
 
@@ -255,6 +254,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           setTimeout(() => {
             let handler = cb =>
               this.gdax_public.getProductTrades(
+                this.pair,
                 {
                   after: last.trade_id - BATCH_SIZE * lastScan,
                   limit: BATCH_SIZE,
@@ -295,6 +295,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           setTimeout(() => {
             let handler = cb =>
               this.gdax_public.getProductTrades(
+                this.pair,
                 { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
                 this.handleResponse('getTrades', cb)
               );
@@ -324,6 +325,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     if (this.scanbackTid) {
       let handler = cb =>
         this.gdax_public.getProductTrades(
+          this.pair,
           { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
           this.handleResponse('getTrades', cb)
         );
@@ -340,6 +342,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   let handler = cb =>
     this.gdax_public.getProductTrades(
+      this.pair,
       { limit: BATCH_SIZE },
       this.handleResponse('getTrades', cb)
     );
