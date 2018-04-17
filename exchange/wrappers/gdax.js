@@ -70,20 +70,12 @@ var recoverableErrors = new RegExp(
 );
 
 Trader.prototype.processError = function(funcName, error) {
-  if (!error) return undefined;
+  if (!error)
+    return undefined;
 
-  if (!error.message.match(recoverableErrors)) {
-    log.error(
-      `[gdax.js] (${funcName}) returned an irrecoverable error: ${
-        error.message
-      }`
-    );
+  if (!error.message.match(recoverableErrors))
     return new errors.AbortError('[gdax.js] ' + error.message);
-  }
  
-  log.debug(
-    `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
-  );
   return new errors.RetryError('[gdax.js] ' + error.message);
 };
 
@@ -138,6 +130,14 @@ Trader.prototype.getFee = function(callback) {
   //If post only is enabled, gdax only does maker trades which are free
   callback(undefined, this.post_only ? 0 : fee);
 };
+
+Trader.prototype.roundPrice = function(price) {
+  return this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2);
+}
+
+Trader.prototype.roundAmount = function(amount) {
+  return this.getMaxDecimalsNumber(amount);
+}
 
 Trader.prototype.buy = function(amount, price, callback) {
   var buyParams = {
@@ -215,7 +215,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
   // callback for cancelOrder should be true if the order was already filled, otherwise false
   var result = function(err, data) {
     if(err) {
-      log.error('Error cancelling order:', err);
       return callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
     }
 

@@ -25,6 +25,20 @@ const retryInstance = (options, fn, callback) => {
   });
 }
 
+// es6 bind all: https://github.com/posrix/es6-class-bind-all/blob/master/lib/es6ClassBindAll.js
+const allMethods = targetClass => {
+  const propertys = Object.getOwnPropertyNames(Object.getPrototypeOf(targetClass))
+  propertys.splice(propertys.indexOf('constructor'), 1)
+  return propertys
+}
+
+const bindAll = (targetClass, methodNames = []) => {
+  for (const name of !methodNames.length ? allMethods(targetClass) : methodNames) {
+    targetClass[name] = targetClass[name].bind(targetClass)
+  }
+}
+
 module.exports = {
-  retry: retryInstance
+  retry: retryInstance,
+  bindAll
 }

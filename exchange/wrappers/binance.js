@@ -203,20 +203,33 @@ Trader.prototype.roundAmount = function(amount, tickSize) {
   return amount;
 };
 
-Trader.prototype.getLotSize = function(tradeType, amount, price, callback) {
-  amount = this.roundAmount(amount, this.market.minimalOrder.amount);
-  if (amount < this.market.minimalOrder.amount)
-    return callback(undefined, { amount: 0, price: 0 });
-
-  price = this.roundAmount(price, this.market.minimalOrder.price)
-  if (price < this.market.minimalOrder.price)
-    return callback(undefined, { amount: 0, price: 0 });
-
-  if (amount * price < this.market.minimalOrder.order)
-    return callback(undefined, { amount: 0, price: 0});
-
-  callback(undefined, { amount: amount, price: price });
+Trader.prototype.calculateAmount = function(amount) {
+  return this.roundAmount(amount, this.market.minimalOrder.amount);
 }
+
+Trader.prototype.calculatePrice = function(price) {
+  return this.roundAmount(price, this.market.minimalOrder.price);
+}
+
+Trader.prototype.checkPrice = function(price) {
+  if (price < this.market.minimalOrder.price)
+    throw new Error('Order price is too small');
+}
+
+// Trader.prototype.getLotSize = function(tradeType, amount, price) {
+//   amount = this.roundAmount(amount, this.market.minimalOrder.amount);
+//   if (amount < this.market.minimalOrder.amount)
+//     throw new Error('Order amount is too small');
+
+//   price = this.roundAmount(price, this.market.minimalOrder.price)
+//   if (price < this.market.minimalOrder.price)
+//     throw new Error('Order price is too small');
+
+//   if (amount * price < this.market.minimalOrder.order)
+//     throw new Error('Order lot size is too small');
+
+//   return { amount, price });
+// }
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   log.debug(`[binance.js] (addOrder) ${tradeType.toUpperCase()} ${amount} ${this.asset} @${price} ${this.currency}`);
