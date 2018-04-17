@@ -76,11 +76,17 @@ class StickyOrder extends BaseOrder {
     this.status = states.OPEN;
     this.emitStatus();
 
-    setTimeout(this.checkOrder, this.checkInterval);
+    if(this.cancelling)
+      return this.cancel();
+
+    this.timeout = setTimeout(this.checkOrder, this.checkInterval);
   }
 
   checkOrder() {
     this.api.checkOrder(this.id, (err, filled) => {
+      if(this.cancelling || this.status === states.CANCELLED)
+        return;
+
       if(err)
         throw err;
 
@@ -103,7 +109,7 @@ class StickyOrder extends BaseOrder {
         if(top != this.price)
           return this.move(top);
 
-        setTimeout(this.checkOrder, this.checkInterval);
+        this.timeout = setTimeout(this.checkOrder, this.checkInterval);
       });
     });
   }
@@ -117,11 +123,43 @@ class StickyOrder extends BaseOrder {
       if(filled)
         return this.filled(this.price);
 
+      if(this.cancelling)
+        return this.cancel();
+
       // update to new price
       this.price = price;
-
       this.submit();
     });
+  }
+
+  cancel() {
+    if(
+      this.status === states.INITIALIZING ||
+      this.status === states.COMPLETED ||
+      this.status === states.CANCELLED
+    )
+      return;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING
+    ) {
+      this.cancelling = true;
+      return;
+    }
+
+    clearTimeout(this.timeout);
+
+    this.api.cancelOrder(this.id, filled => {
+
+      this.cancelling = false;
+
+      if(filled)
+        return this.filled(this.price);
+
+      this.status = states.CANCELLED;
+      this.emitStatus();
+    })
   }
  
 }

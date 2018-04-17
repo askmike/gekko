@@ -76,6 +76,9 @@ class LimitOrder extends BaseOrder {
   }
 
   handleCheck(err, filled) {
+    if(this.cancelling || this.status === states.CANCELLED)
+      return;
+
     if(err)
       throw err;
 
@@ -105,12 +108,12 @@ class LimitOrder extends BaseOrder {
 
     clearTimeout(this.timeout);
 
-    this.api.cancelOrder(this.id, (filled) => {
+    this.api.cancelOrder(this.id, filled => {
 
       this.cancelling = false;
 
       if(filled)
-        this.filled(this.price);
+        return this.filled(this.price);
 
       this.status = states.CANCELLED;
       this.emitStatus();
