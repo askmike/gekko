@@ -11,7 +11,7 @@ class BaseOrder extends EventEmitter {
 
     this.api = api;
 
-    this.checkInterval = 555;
+    this.checkInterval = 1000;
 
     this.status = states.INITIALIZING;
     this.emitStatus();
