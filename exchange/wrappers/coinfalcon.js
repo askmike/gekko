@@ -1,7 +1,5 @@
 const moment = require('moment');
-const util = require('../core/util');
 const _ = require('lodash');
-const log = require('../core/log');
 const marketData = require('./coinfalcon-markets.json');
 
 const CoinFalcon = require('coinfalcon');
@@ -19,6 +17,10 @@ var Trader = function(config) {
   this.pair = this.asset + '-' + this.currency;
   this.name = 'coinfalcon';
 
+  this.market = _.find(Trader.getCapabilities().markets, (market) => {
+    return market.pair[0] === this.currency && market.pair[1] === this.asset
+  });
+
   this.coinfalcon = new CoinFalcon.Client(this.key, this.secret);
 };
 
@@ -35,10 +37,7 @@ Trader.prototype.retry = function(method, args, error) {
     }
   });
 
-  log.debug('[CoinFalcon] ', this.name, "Retrying...");
-
   if (!error || !error.message.match(recoverableErrors)) {
-    log.error('[CoinFalcon] ', this.name, 'returned an irrecoverable error');
     _.each(args, function(arg, i) {
       if (_.isFunction(arg)) {
         arg(error, null);
@@ -62,7 +61,6 @@ Trader.prototype.getTicker = function(callback) {
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] error getting ticker', err);
     callback(err, null);
   };
 
@@ -72,7 +70,7 @@ Trader.prototype.getTicker = function(callback) {
 };
 
 Trader.prototype.getFee = function(callback) {
-  var fees = 0.25; // 0.25% for both sell & buy
+  var fees = 0; // 0% for making!
   callback(false, fees / 100);
 };
 
@@ -82,18 +80,16 @@ Trader.prototype.getPortfolio = function(callback) {
       var err = new Error(res.error);
       callback(err, null);
     } else {
-      var portfolio = res.data.map(function(account) {
-        return {
-          name: account.currency,
-          amount: parseFloat(account.available)
-        }
-      });
+      var portfolio = res.data.map((account) => ({
+        name: account.currency_code.toUpperCase(),
+        amount: parseFloat(account.available_balance)
+      }));
+
       callback(null, portfolio);
     }
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] error getting portfolio', err);
     callback(err, null);
   }
 
@@ -113,7 +109,6 @@ Trader.prototype.addOrder = function(type, amount, price, callback) {
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] unable to ' + type.toLowerCase(), err);
     return this.retry(this.addOrder, args, err);
   }.bind(this);
 
@@ -134,6 +129,27 @@ Trader.prototype.addOrder = function(type, amount, price, callback) {
   };
 });
 
+const round = function(number, precision) {
+  var factor = Math.pow(10, precision);
+  var tempNumber = number * factor;
+  var roundedTempNumber = Math.round(tempNumber);
+  return roundedTempNumber / factor;
+};
+
+Trader.prototype.roundAmount = function(amount) {
+  return round(amount, 8);
+}
+
+Trader.prototype.roundPrice = function(price) {
+  let rounding;
+
+  if(this.pair.includes('EUR'))
+    rounding = 2;
+  else
+    rounding = 5;
+  return round(price, rounding);
+}
+
 Trader.prototype.getOrder = function(order, callback) {
   var success = function(res) {
     if (_.has(res, 'error')) {
@@ -148,7 +164,6 @@ Trader.prototype.getOrder = function(order, callback) {
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] unable to getOrder', err);
     callback(err, null);
   }.bind(this);
 
@@ -167,7 +182,6 @@ Trader.prototype.checkOrder = function(order, callback) {
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] unable to checkOrder', err);
     callback(err, null);
   }.bind(this);
 
@@ -181,16 +195,17 @@ Trader.prototype.cancelOrder = function(order, callback) {
       var err = new Error(res.error);
       failure(err);
     } else {
-      callback(false, res.data.id)
+      // todo
+      const filled = false;
+      callback(false, filled);
     }
   };
 
   var failure = function(err) {
-    log.error('[CoinFalcon] unable to cancel', err);
     return this.retry(this.cancelOrder, args, err);
   }.bind(this);
 
-  this.coinfalcon.delete('user/orders?id=' + order).then(success).catch(failure);
+  this.coinfalcon.delete('user/orders/' + order).then(success).catch(failure);
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -220,7 +235,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   var failure = function (err) {
     err = new Error(err);
-    log.error('[CoinFalcon] error getting trades', err);
     return this.retry(this.getTrades, args, err);
   }.bind(this);
 

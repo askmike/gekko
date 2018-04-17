@@ -84,6 +84,7 @@ class StickyOrder extends BaseOrder {
 
   checkOrder() {
     this.api.checkOrder(this.id, (err, filled) => {
+      // maybe we cancelled before the API call came back.
       if(this.cancelling || this.status === states.CANCELLED)
         return;
 

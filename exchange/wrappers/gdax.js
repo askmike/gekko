@@ -215,10 +215,10 @@ Trader.prototype.cancelOrder = function(order, callback) {
   // callback for cancelOrder should be true if the order was already filled, otherwise false
   var result = function(err, data) {
     if(err) {
-      return callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
+      return callback(null, true);  // need to catch the specific error but usually an error on cancel means it was filled
     }
 
-    return callback(false);
+    return callback(null, false);
   };
 
   let handler = cb =>

@@ -84,7 +84,7 @@ Broker.prototype.setTicker = function(callback) {
   });
 }
 
-Broker.prototype.createOrder = function(type, side, size, parameters, handler) {
+Broker.prototype.createOrder = function(type, side, amount, parameters, handler) {
   if(!this.config.private)
     throw new Error('Client not authenticated');
 
@@ -94,22 +94,11 @@ Broker.prototype.createOrder = function(type, side, size, parameters, handler) {
   if(!orders[type])
     throw new Error('Unknown order type');
 
-  let amount = size.amount;
-
-  if(size.in === this.config.currency) {
-
-    if(!parameters || !parameters.price)
-      throw 'no price :(';
-      
-    const price = parameters.price;
-
-    amount /= price;
-  }
-
   const order = new orders[type](this.api);
 
   this.orders.open.push(order);
 
+  // todo: figure out a smarter generic way
   this.syncPrivateData(() => {
     order.setData({
       balances: this.portfolio.balances,

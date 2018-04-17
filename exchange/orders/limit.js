@@ -54,6 +54,7 @@ class LimitOrder extends BaseOrder {
 
     this.price = price;
     this.amount = amount;
+    console.log(price, amount)
   }
 
   handleCreate(err, id) {
@@ -108,7 +109,9 @@ class LimitOrder extends BaseOrder {
 
     clearTimeout(this.timeout);
 
-    this.api.cancelOrder(this.id, filled => {
+    this.api.cancelOrder(this.id, (err, filled) => {
+      if(err)
+        throw err;
 
       this.cancelling = false;
 
@@ -119,7 +122,6 @@ class LimitOrder extends BaseOrder {
       this.emitStatus();
     })
   }
- 
 }
 
 module.exports = LimitOrder;
