@@ -63,7 +63,6 @@ class StickyOrder extends BaseOrder {
   }
 
   submit() {
-    console.log('submit', this.price);
     this.api[this.side](this.amount, this.price, this.handleCreate);
   }
 
@@ -100,6 +99,9 @@ class StickyOrder extends BaseOrder {
         return setTimeout(this.checkOrder, this.checkInterval);
 
       this.api.getTicker((err, ticker) => {
+        if(err)
+          throw err;
+
         let top;
         if(this.side === 'buy')
           top = Math.min(ticker.bid, this.limit);
