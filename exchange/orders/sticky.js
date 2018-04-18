@@ -84,6 +84,14 @@ class StickyOrder extends BaseOrder {
     if(err)
       throw err;
 
+    // potentailly clean up old order
+    if(
+      this.id &&
+      this.orders[this.id] &&
+      !this.orders[this.id].filled
+    )
+      delete this.orders[this.id];
+
     this.id = id;
     this.orders[id] = {
       price: this.price,
