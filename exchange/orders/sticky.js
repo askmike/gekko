@@ -51,6 +51,8 @@ class StickyOrder extends BaseOrder {
     this.status = states.SUBMITTED;
     this.emitStatus();
 
+    this.orders = {};
+
     // note: currently always sticks to max BBO, does not overtake
     if(side === 'buy')
       this.price = Math.min(this.data.ticker.bid, this.limit);
@@ -62,8 +64,12 @@ class StickyOrder extends BaseOrder {
     return this;
   }
 
-  submit() {
-    this.api[this.side](this.amount, this.price, this.handleCreate);
+  submit(amount) {
+    if(!amount)
+      amount = this.amount;
+
+
+    this.api[this.side](amount, this.price, this.handleCreate);
   }
 
   handleCreate(err, id) {
@@ -71,6 +77,10 @@ class StickyOrder extends BaseOrder {
       throw err;
 
     this.id = id;
+    this.orders[id] = {
+      price: this.price,
+      filled: 0
+    }
 
     this.status = states.OPEN;
     this.emitStatus();
@@ -82,7 +92,7 @@ class StickyOrder extends BaseOrder {
   }
 
   checkOrder() {
-    this.api.checkOrder(this.id, (err, filled) => {
+    this.api.checkOrder(this.id, (err, result) => {
       // maybe we cancelled before the API call came back.
       if(this.cancelling || this.status === states.CANCELLED)
         return;
@@ -90,30 +100,50 @@ class StickyOrder extends BaseOrder {
       if(err)
         throw err;
 
-      if(filled)
-        return this.filled(this.price);
+      if(result.open) {
+        if(result.filledAmount !== this.filled) {
+          this.orders[this.id].filled = result.filledAmount;
 
-      // if we are already at limit we dont care where the top is
-      // note: might be string VS float
-      if(this.price == this.limit)
-        return setTimeout(this.checkOrder, this.checkInterval);
+          // note: doc event API
+          this.emit('partialFill', this.filled);
+        }
 
-      this.api.getTicker((err, ticker) => {
-        if(err)
-          throw err;
-
-        let top;
-        if(this.side === 'buy')
-          top = Math.min(ticker.bid, this.limit);
-        else
-          top = Math.max(ticker.ask, this.limit);
-
+        // if we are already at limit we dont care where the top is
         // note: might be string VS float
-        if(top != this.price)
-          return this.move(top);
+        if(this.price == this.limit)
+          return setTimeout(this.checkOrder, this.checkInterval);
 
-        this.timeout = setTimeout(this.checkOrder, this.checkInterval);
-      });
+        this.api.getTicker((err, ticker) => {
+
+          if(err)
+            throw err;
+
+          let top;
+          if(this.side === 'buy')
+            top = Math.min(ticker.bid, this.limit);
+          else
+            top = Math.max(ticker.ask, this.limit);
+
+          // note: might be string VS float
+          if(top != this.price)
+            return this.move(top);
+
+          this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+        });
+
+        return;
+      }
+
+      if(!result.executed) {
+        // not open and not executed means it never hit the book
+        this.status = states.REJECTED;
+        this.emitStatus();
+        this.finish();
+        return;
+      }
+
+      this.filled(this.price);
+
     });
   }
 
@@ -131,7 +161,11 @@ class StickyOrder extends BaseOrder {
 
       // update to new price
       this.price = price;
-      this.submit();
+
+      let totalFilled = 0;
+      _.each(this.orders, (order, id) => totalFilled += order.filled);
+
+      this.submit(this.amount - totalFilled);
     });
   }
 

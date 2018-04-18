@@ -57,6 +57,7 @@ Trader.prototype.retry = function(method, args, error) {
 
 Trader.prototype.getTicker = function(callback) {
   var success = function(res) {
+
     callback(null, {bid: +res.data.bids[0].price, ask: +res.data.asks[0].price})
   };
 
@@ -172,16 +173,38 @@ Trader.prototype.getOrder = function(order, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
   var success = function(res) {
+    // console.log('checkOrder', res);
+
     if (_.has(res, 'error')) {
+
       var err = new Error(res.error);
       failure(err);
+
     } else {
-      var filled = res.data.status == "canceled" || res.data.status == "fulfilled";
-      callback(false, filled);
+
+      // https://docs.coinfalcon.com/#list-orders
+      const status = res.data.status;
+      // console.log(status);
+
+      if(status === 'canceled') {
+        return callback(undefined, { executed: false, open: false });
+      } if(status === 'fulfilled') {
+        return callback(undefined, { executed: true, open: false });
+      } if(
+        status === 'pending' ||
+        status === 'partially_filled' ||
+        status === 'open'
+      ) {
+        return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
+      }
+
+      callback(new Error('Unknown status ' + status));
+
     }
   };
 
   var failure = function(err) {
+    console.log('failure', err);
     callback(err, null);
   }.bind(this);
 

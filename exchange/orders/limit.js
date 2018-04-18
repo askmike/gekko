@@ -84,19 +84,19 @@ class LimitOrder extends BaseOrder {
       throw err;
 
     if(result.open) {
-      if(result.filledAmount !== this.filled) {
-        this.filled = result.filledAmount;
+      if(result.filledAmount !== this.filledAmount) {
+        this.filledAmount = result.filledAmount;
 
         // note: doc event API
-        this.emit('partialFill', this.filled);
+        this.emit('partialFill', this.filledAmount);
       }
 
       this.timeout = setTimeout(this.checkOrder, this.checkInterval);
       return;
     }
 
-    if(!result.completed) {
-      // not open and not completed means it never hit the book
+    if(!result.executed) {
+      // not open and not executed means it never hit the book
       this.status = states.REJECTED;
       this.emitStatus();
     }
