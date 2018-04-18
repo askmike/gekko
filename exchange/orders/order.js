@@ -34,10 +34,19 @@ class BaseOrder extends EventEmitter {
     this.status = states.COMPLETED;
     this.emitStatus();
 
-    this.emit('completed', {
+    this.emit('filled', {
       id: this.id,
       price,
       amount: this.amount
+    });
+
+    this.finish(true);
+  }
+
+  finish(filled) {
+    this.emit('completed', {
+      id: this.id,
+      filled
     })
   }
 }

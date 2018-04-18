@@ -57,7 +57,7 @@ class StickyOrder extends BaseOrder {
     else
       this.price = Math.max(this.data.ticker.ask, this.limit);
 
-    this.submit();  
+    this.submit();
 
     return this;
   }
@@ -139,7 +139,8 @@ class StickyOrder extends BaseOrder {
     if(
       this.status === states.INITIALIZING ||
       this.status === states.COMPLETED ||
-      this.status === states.CANCELLED
+      this.status === states.CANCELLED ||
+      this.status === states.REJECTED
     )
       return;
 
@@ -162,6 +163,8 @@ class StickyOrder extends BaseOrder {
 
       this.status = states.CANCELLED;
       this.emitStatus();
+
+      this.finish(false);
     })
   }
  

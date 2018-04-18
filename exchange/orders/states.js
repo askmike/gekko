@@ -18,7 +18,10 @@ const states = {
   COMPLETED: 'COMPLETED',
 
   // Order was succesfully cancelled
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+
+  // Order was rejected by the exchange
+  REJECTED: 'REJECTED'
 }
 
 module.exports = states;

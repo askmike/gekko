@@ -76,16 +76,29 @@ class LimitOrder extends BaseOrder {
     this.api.checkOrder(this.id, this.handleCheck);
   }
 
-  handleCheck(err, filled) {
+  handleCheck(err, result) {
     if(this.cancelling || this.status === states.CANCELLED)
       return;
 
     if(err)
       throw err;
 
-    if(!filled) {
+    if(result.open) {
+      if(result.filledAmount !== this.filled) {
+        this.filled = result.filledAmount;
+
+        // note: doc event API
+        this.emit('partialFill', this.filled);
+      }
+
       this.timeout = setTimeout(this.checkOrder, this.checkInterval);
       return;
+    }
+
+    if(!result.completed) {
+      // not open and not completed means it never hit the book
+      this.status = states.REJECTED;
+      this.emitStatus();
     }
 
     this.filled(this.price);
@@ -95,7 +108,8 @@ class LimitOrder extends BaseOrder {
     if(
       this.status === states.INITIALIZING ||
       this.status === states.COMPLETED ||
-      this.status === states.CANCELLED
+      this.status === states.CANCELLED ||
+      this.status === stateds.REJECTED
     )
       return;
 
@@ -120,6 +134,7 @@ class LimitOrder extends BaseOrder {
 
       this.status = states.CANCELLED;
       this.emitStatus();
+      this.finish(false);
     })
   }
 }
