@@ -33,9 +33,6 @@ class StickyOrder extends BaseOrder {
 
     this.amount = this.api.roundAmount(rawAmount);
 
-    if(this.amount < this.data.market.minimalOrder.amount)
-      throw new Error('Amount is too small');
-
     if(side === 'buy') {
       if(params.limit)
         this.limit = this.api.roundPrice(params.limit);
@@ -64,10 +61,21 @@ class StickyOrder extends BaseOrder {
     return this;
   }
 
-  submit(amount) {
-    if(!amount)
-      amount = this.amount;
+  submit() {
+    const alreadyFilled = this.calculateFilled();
+    const amount = this.amount - alreadyFilled;
 
+    if(amount < this.data.market.minimalOrder.amount) {
+      if(!alreadyFilled) {
+        // We are not partially filled, meaning the
+        // amount passed was too small to even start.
+        throw new Error('Amount is too small');
+      }
+
+      // partially filled, but the remainder is too
+      // small.
+      return this.finish();
+    }
 
     this.api[this.side](amount, this.price, this.handleCreate);
   }
@@ -87,6 +95,9 @@ class StickyOrder extends BaseOrder {
 
     if(this.cancelling)
       return this.cancel();
+
+    if(this.movingLimit)
+      return this.moveLimit();
 
     this.timeout = setTimeout(this.checkOrder, this.checkInterval);
   }
@@ -159,14 +170,46 @@ class StickyOrder extends BaseOrder {
       if(this.cancelling)
         return this.cancel();
 
+      if(this.movingLimit)
+        return this.moveLimit();
+
       // update to new price
       this.price = price;
 
-      let totalFilled = 0;
-      _.each(this.orders, (order, id) => totalFilled += order.filled);
-
-      this.submit(this.amount - totalFilled);
+      this.submit();
     });
+  }
+
+  calculateFilled() {
+    let totalFilled = 0;
+    _.each(this.orders, (order, id) => totalFilled += order.filled);
+
+    return totalFilled;
+  }
+
+  moveLimit(limit) {
+
+    if(!limit)
+      limit = this.moveLimitTo;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING
+    ) {
+      this.moveLimitTo = limit;
+      this.movingLimit = true;
+      return;
+    }
+
+    this.limit = this.api.roundPrice(params.limit);
+
+    if(this.side === 'buy' && this.limit > this.price) {
+      this.move(this.limit);
+    } else if(this.side === 'sell' && this.limit < this.price) {
+      this.move(this.limit);
+    } else {
+      this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+    }
   }
 
   cancel() {
