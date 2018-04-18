@@ -172,41 +172,33 @@ Trader.prototype.getOrder = function(order, callback) {
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
-  var success = function(res) {
-    // console.log('checkOrder', res);
+  var args = _.toArray(arguments);
 
-    if (_.has(res, 'error')) {
+  const failure = function() {
+    this.retry(this.checkOrder, args, res.error);
+  }
 
-      var err = new Error(res.error);
-      failure(err);
+  const success = function(res) {
+    // https://docs.coinfalcon.com/#list-orders
+    const status = res.data.status;
 
-    } else {
+    if(_.has(res, 'error'))
+      return failure();
 
-      // https://docs.coinfalcon.com/#list-orders
-      const status = res.data.status;
-      // console.log(status);
-
-      if(status === 'canceled') {
-        return callback(undefined, { executed: false, open: false });
-      } if(status === 'fulfilled') {
-        return callback(undefined, { executed: true, open: false });
-      } if(
-        status === 'pending' ||
-        status === 'partially_filled' ||
-        status === 'open'
-      ) {
-        return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
-      }
-
-      callback(new Error('Unknown status ' + status));
-
+    if(status === 'canceled') {
+      return callback(undefined, { executed: false, open: false });
+    } if(status === 'fulfilled') {
+      return callback(undefined, { executed: true, open: false });
+    } if(
+      status === 'pending' ||
+      status === 'partially_filled' ||
+      status === 'open'
+    ) {
+      return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
     }
-  };
 
-  var failure = function(err) {
-    console.log('failure', err);
-    callback(err, null);
-  }.bind(this);
+    callback(new Error('Unknown status ' + status));
+  };
 
   this.coinfalcon.get('user/orders/' + order).then(success).catch(failure);
 };
