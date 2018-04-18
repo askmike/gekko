@@ -209,7 +209,7 @@ class StickyOrder extends BaseOrder {
       return;
     }
 
-    this.limit = this.api.roundPrice(params.limit);
+    this.limit = this.api.roundPrice(limit);
 
     if(this.side === 'buy' && this.limit > this.price) {
       this.move(this.limit);
