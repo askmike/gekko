@@ -67,13 +67,17 @@ This should create a buy / sell order at the exchange for [amount] of [asset] at
 
     this.exchange.getOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `order`. Order is an object with properties `price`, `amount` and `date`. Price is the (volume weighted) average price of all trades necesarry to execute the order. Amount is the amount of currency traded and Date is a moment object of the last trade part of this order.
+Will only be called on orders that have been completed. The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `order`. Order is an object with properties `price`, `amount` and `date`. Price is the (volume weighted) average price of all trades necesarry to execute the order. Amount is the amount of currency traded and Date is a moment object of the last trade part of this order.
 
 ### checkOrder
 
     this.exchange.checkOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not. Currently partially filled orders should be treated as not filled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and a `result` object. The result object will have two or three properties:
+
+- `open`: whether this order is currently in the orderbook.
+- `completed`: whether this order has executed (filled completely).
+- `filledAmount`: the amount of the order that has been filled. This property is only needed when both `open` is true and `completed` is false.
 
 ### cancelOrder
 

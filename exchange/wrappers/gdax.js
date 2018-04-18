@@ -178,15 +178,25 @@ Trader.prototype.checkOrder = function(order, callback) {
   var result = function(err, data) {
     if (err) return callback(err);
 
+    var completed;
+    var filledAmount;
+    var open;
+
+    // @link:
+    // https://stackoverflow.com/questions/48132078/available-gdax-order-statuses-and-meanings
     var status = data.status;
-    if (status == 'done') {
-      return callback(undefined, true);
-    } else if (status == 'rejected') {
-      return callback(undefined, false);
-    } else if (status == 'pending') {
-      return callback(undefined, false);
+    if(status == 'pending') {
+      // technically not open yet, but will be soon
+      return callback(undefined, { completed: false, open: true, filledAmount: 0 });
+    } if (status === 'done' || status === 'settled') {
+      return callback(undefined, { completed: true, open: false });
+    } else if (status === 'rejected') {
+      return callback(undefined, { completed: false, open: false });
+    } else if(status === 'open' || status === 'active') {
+      return callback(undefined, { completed: false, open: true, filledAmount: parseFloat(data.filled_size) });
     }
-    callback(undefined, false);
+
+    callback(new Error('Unknown status ' + status));
   };
 
   let handler = cb =>
