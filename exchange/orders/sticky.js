@@ -26,6 +26,9 @@ const states = require('./states');
 class StickyOrder extends BaseOrder {
   constructor(api) {
     super(api);
+
+    // global async lock
+    this.sticking = false;
   }
 
   create(side, rawAmount, params = {}) {
@@ -101,39 +104,44 @@ class StickyOrder extends BaseOrder {
     this.status = states.OPEN;
     this.emitStatus();
 
-    if(this.cancelling)
-      return this.cancel();
+    this.sticking = false;
 
     if(this.movingLimit)
       return this.moveLimit();
+
+    if(this.movingAmount)
+      return this.moveAmount();
+
+    if(this.cancelling)
+      return this.cancel();
 
     this.timeout = setTimeout(this.checkOrder, this.checkInterval);
   }
 
   checkOrder() {
-    this.api.checkOrder(this.id, (err, result) => {
-      // maybe we cancelled before the API call came back.
-      if(this.cancelling || this.status === states.CANCELLED)
-        return;
+    this.sticking = true;
 
+    this.api.checkOrder(this.id, (err, result) => {
       if(err)
         throw err;
 
       if(result.open) {
-        if(result.filledAmount !== this.filled) {
+        if(result.filledAmount !== this.orders[this.id].filled) {
           this.orders[this.id].filled = result.filledAmount;
 
           // note: doc event API
-          this.emit('partialFill', this.filled);
+          this.emit('partialFill', this.calculateFilled());
         }
 
         // if we are already at limit we dont care where the top is
         // note: might be string VS float
-        if(this.price == this.limit)
-          return setTimeout(this.checkOrder, this.checkInterval);
+        if(this.price == this.limit) {
+          this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+          this.sticking = false;
+          return;
+        }
 
         this.api.getTicker((err, ticker) => {
-
           if(err)
             throw err;
 
@@ -148,6 +156,7 @@ class StickyOrder extends BaseOrder {
             return this.move(top);
 
           this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+          this.sticking = false;
         });
 
         return;
@@ -155,12 +164,15 @@ class StickyOrder extends BaseOrder {
 
       if(!result.executed) {
         // not open and not executed means it never hit the book
+        this.sticking = false;
         this.status = states.REJECTED;
         this.emitStatus();
         this.finish();
         return;
       }
 
+      // order got filled!
+      this.sticking = false;
       this.filled(this.price);
 
     });
@@ -175,14 +187,8 @@ class StickyOrder extends BaseOrder {
       if(filled)
         return this.filled(this.price);
 
-      if(this.cancelling)
-        return this.cancel();
-
-      if(this.movingLimit)
-        return this.moveLimit();
-
       // update to new price
-      this.price = price;
+      this.price = this.api.roundPrice(price);
 
       this.submit();
     });
@@ -196,13 +202,19 @@ class StickyOrder extends BaseOrder {
   }
 
   moveLimit(limit) {
+    if(
+      this.status === states.COMPLETED ||
+      this.status === states.FILLED
+    )
+      return;
 
     if(!limit)
       limit = this.moveLimitTo;
 
     if(
       this.status === states.SUBMITTED ||
-      this.status === states.MOVING
+      this.status === states.MOVING ||
+      this.sticking
     ) {
       this.moveLimitTo = limit;
       this.movingLimit = true;
@@ -211,9 +223,57 @@ class StickyOrder extends BaseOrder {
 
     this.limit = this.api.roundPrice(limit);
 
+    clearTimeout(this.timeout);
+
     if(this.side === 'buy' && this.limit > this.price) {
+      this.sticking = true;
       this.move(this.limit);
     } else if(this.side === 'sell' && this.limit < this.price) {
+      this.sticking = true;
+      this.move(this.limit);
+    } else {
+      this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+    }
+  }
+
+  moveAmount(amount) {
+    if(
+      this.status === states.COMPLETED ||
+      this.status === states.FILLED
+    )
+      return;
+
+    if(!amount)
+      amount = this.moveAmountTo;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING ||
+      this.sticking
+    ) {
+      this.moveAmountTo = amount;
+      this.movingAmount = true;
+      return;
+    }
+
+    this.amount = this.api.roundAmount(amount - this.calculateFilled());
+
+    if(this.amount < this.data.market.minimalOrder.amount) {
+      if(this.calculateFilled()) {
+        // we already filled enough of the order!
+        return this.filled();
+      } else {
+        throw new Error("The amount " + this.amount + " is too small.");
+      }
+    }
+
+    clearTimeout(this.timeout);
+
+    if(this.side === 'buy' && this.limit > this.price) {
+      this.sticking = true;
+      this.move(this.limit);
+    } else if(this.side === 'sell' && this.limit < this.price) {
+      this.sticking = true;
       this.move(this.limit);
     } else {
       this.timeout = setTimeout(this.checkOrder, this.checkInterval);
