@@ -211,6 +211,10 @@ class StickyOrder extends BaseOrder {
     if(!limit)
       limit = this.moveLimitTo;
 
+    if(this.limit === this.api.roundPrice(limit))
+      // effectively nothing changed
+      return;
+
     if(
       this.status === states.SUBMITTED ||
       this.status === states.MOVING ||
@@ -224,6 +228,8 @@ class StickyOrder extends BaseOrder {
     this.limit = this.api.roundPrice(limit);
 
     clearTimeout(this.timeout);
+
+    this.movingLimit = false;
 
     if(this.side === 'buy' && this.limit > this.price) {
       this.sticking = true;
@@ -245,6 +251,10 @@ class StickyOrder extends BaseOrder {
 
     if(!amount)
       amount = this.moveAmountTo;
+
+    if(this.amount === this.api.roundAmount(amount))
+      // effectively nothing changed
+      return;
 
     if(
       this.status === states.SUBMITTED ||
@@ -268,6 +278,8 @@ class StickyOrder extends BaseOrder {
     }
 
     clearTimeout(this.timeout);
+
+    this.movingAmount = false;
 
     if(this.side === 'buy' && this.limit > this.price) {
       this.sticking = true;
