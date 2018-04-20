@@ -4,6 +4,8 @@ An advanced order that stays at the top of the book (until the optional limit). 
 
 TODO:
 
+- implement "overtake"
+- implement fallback this order is alone at the top, some spread before everyone else
 - finalize API
 - add more events / ways to debug
 - pull ticker data out of this order market data should flow from the broker (so we can easier move to at least public websocket streams).
@@ -30,7 +32,7 @@ TODO:
     gdax.portfolio.setBalances(console.log);
 
     const type = 'sticky';
-    const amount = 0.002;
+    const amount = 0.5;
     const side = 'buy';
     const limit = 6555;
 
@@ -38,3 +40,6 @@ TODO:
     order.on('statusChange', status => console.log(status));
     order.on('filled', result => console.log(result));
     order.on('completed', result => console.log(result));
+
+    order.moveAmount(1);
+    order.moveLimit(6666);
