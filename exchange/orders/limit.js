@@ -19,42 +19,35 @@ class LimitOrder extends BaseOrder {
     super(api);
   }
 
-  roundLot(rawAmount, rawPrice) {
-    const amount = this.api.roundAmount(rawAmount);
+  create(side, amount, params) {
+    this.side = side;
 
-    if(amount < this.data.market.minimalOrder.amount)
-      throw new Error('Amount is too small');
-
-    const price = this.api.roundPrice(rawPrice);
-
-    if(this.api.checkPrice)
-      this.api.checkPrice(price);
-
-    if(this.api.checkLot)
-      this.api.checkLot({ price, amount });
-
-    return { price, amount }
-  }
-
-  create(side, rawAmount, params) {
-    
-    const { price, amount } = this.roundLot(rawAmount, params.price);
-
-    if(params.postOnly) {
-      if(side === 'buy' && price > this.data.ticker.ask)
-        throw new Error('Order crosses the book');
-      else if(side === 'sell' && price < this.data.ticker.bid)
-        throw new Error('Order crosses the book');
-    }
+    this.postOnly = params.postOnly;
 
     this.status = states.SUBMITTED;
     this.emitStatus();
 
-    this.api[side](amount, price, this.handleCreate);
+    this.createOrder(price, amount);
+  }
 
-    this.price = price;
-    this.amount = amount;
-    console.log(price, amount)
+  createOrder(price, amount) {
+    this.amount = this.api.roundAmount(amount);
+    this.price = this.api.roundPrice(price);
+
+    // note: this assumes ticker data to be up to date
+    if(this.postOnly) {
+      if(side === 'buy' && this.price > this.data.ticker.ask)
+        throw new Error('Order crosses the book');
+      else if(side === 'sell' && this.price < this.data.ticker.bid)
+        throw new Error('Order crosses the book');
+    }
+
+    this.submit({
+      side: this.side,
+      amount: this.api.roundAmount(this.amount - alreadyFilled),
+      price: this.price,
+      alreadyFilled: this.filled
+    });
   }
 
   handleCreate(err, id) {
@@ -62,23 +55,32 @@ class LimitOrder extends BaseOrder {
       throw err;
 
     this.status = states.OPEN;
+    this.emitStatus();
 
     this.id = id;
-    this.emitStatus();
 
     if(this.cancelling)
       return this.cancel();
+
+    if(this.movingAmount)
+      return this.moveAmount();
+
+    if(this.movingPrice)
+      return this.movePrice();
 
     this.timeout = setTimeout(this.checkOrder, this.checkInterval)
   }
 
   checkOrder() {
+    this.checking = true;
     this.api.checkOrder(this.id, this.handleCheck);
   }
 
   handleCheck(err, result) {
     if(this.cancelling || this.status === states.CANCELLED)
       return;
+
+    this.checking = false;
 
     if(err)
       throw err;
@@ -91,31 +93,126 @@ class LimitOrder extends BaseOrder {
         this.emit('partialFill', this.filledAmount);
       }
 
+      if(this.cancelling)
+        return this.cancel();
+
+      if(this.movingAmount)
+        return this.moveAmount();
+
+      if(this.movingPrice)
+        return this.movePrice();
+
       this.timeout = setTimeout(this.checkOrder, this.checkInterval);
       return;
     }
 
     if(!result.executed) {
       // not open and not executed means it never hit the book
-      this.status = states.REJECTED;
-      this.emitStatus();
+      this.rejected();
+      return;
     }
 
     this.filled(this.price);
   }
 
-  cancel() {
-    if(
-      this.status === states.INITIALIZING ||
-      this.status === states.COMPLETED ||
-      this.status === states.CANCELLED ||
-      this.status === stateds.REJECTED
-    )
+  movePrice(price) {
+    if(this.completed)
+      return;
+
+    if(!price)
+      price = this.movePriceTo;
+
+    if(this.price === this.api.roundPrice(price))
+      // effectively nothing changed
       return;
 
     if(
       this.status === states.SUBMITTED ||
-      this.status === states.MOVING
+      this.status === states.MOVING ||
+      this.checking
+    ) {
+      this.movePriceTo = price;
+      this.movingPrice = true;
+      return;
+    }
+
+    this.movingPrice = false;
+
+    this.price = this.api.roundPrice(price);
+
+    clearTimeout(this.timeout);
+
+    this.status = states.MOVING;
+
+    this.api.cancelOrder(this.id, (err, filled) => {
+      if(err)
+        throw err;
+
+      if(filled)
+        return this.filled(this.price);
+
+      this.submit({
+        side: this.side,
+        amount: this.amount,
+        price: this.price,
+        alreadyFilled: this.filled
+      });
+    });
+  }
+
+  moveAmount(amount) {
+    if(this.completed)
+      return;
+
+    if(!amount)
+      amount = this.moveAmountTo;
+
+    if(this.amount === this.api.roundAmount(amount))
+      // effectively nothing changed
+      return;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING ||
+      this.checking
+    ) {
+      this.moveAmountTo = amount;
+      this.movingAmount = true;
+      return;
+    }
+
+    this.movingAmount = false;
+    this.amount = this.api.roundAmount(amount);
+
+    clearTimeout(this.timeout);
+
+    this.status = states.MOVING;
+    this.emitStatus();
+
+    this.api.cancelOrder(this.id, (err, filled) => {
+      if(err)
+        throw err;
+
+      if(filled)
+        return this.filled(this.price);
+
+      this.submit({
+        side: this.side,
+        amount: this.amount,
+        price: this.price,
+        alreadyFilled: this.filled
+      });
+    });
+  }
+
+  cancel() {
+    if(this.completed)
+      return;
+
+    if(
+      this.status === states.SUBMITTED ||
+      this.status === states.MOVING ||
+      this.checking
     ) {
       this.cancelling = true;
       return;
@@ -135,7 +232,7 @@ class LimitOrder extends BaseOrder {
       this.status = states.CANCELLED;
       this.emitStatus();
       this.finish(false);
-    })
+    });
   }
 }
 
