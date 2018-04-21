@@ -25,7 +25,7 @@ var Trader = function(config) {
 };
 
 var recoverableErrors = new RegExp(
-  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|429|522)/
+  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|429|522|504|503|500|502)/
 );
 
 Trader.prototype.retry = function(method, args, error) {
@@ -51,6 +51,7 @@ Trader.prototype.retry = function(method, args, error) {
 
   // run the failed method again with the same arguments after wait
   setTimeout(function() {
+    console.log('cf retry..');
     method.apply(self, args);
   }, wait);
 };
@@ -103,6 +104,7 @@ Trader.prototype.addOrder = function(type, amount, price, callback) {
   var success = function(res) {
     if (_.has(res, 'error')) {
       var err = new Error(res.error);
+      console.log('failure', res);
       failure(err);
     } else {
       callback(false, res.data.id)
@@ -180,9 +182,8 @@ Trader.prototype.checkOrder = function(order, callback) {
 
   const success = function(res) {
 
-    console.log('success', res);
-
     if(_.has(res, 'error')) {
+      console.log('success, but error', res.error, typeof res.error);
       return failure(res.error);
     }
 
