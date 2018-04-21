@@ -6,8 +6,7 @@
     - it will readjust the order:
       - if overtake is true it will overbid the current bbo <- TODO
       - if overtake is false it will stick to current bbo when this moves
-    - If the price moves away from the order it will stay at the top
-
+    - If the price moves away from the order it will "stick to" the top
 
   TODO:
     - specify move behaviour (create new one first and cancel old order later?)
@@ -59,28 +58,20 @@ class StickyOrder extends BaseOrder {
     else
       this.price = Math.max(this.data.ticker.ask, this.limit);
 
-    this.submit();
+    this.createOrder();
 
     return this;
   }
 
-  submit() {
+  createOrder() {
     const alreadyFilled = this.calculateFilled();
-    const amount = this.amount - alreadyFilled;
 
-    if(amount < this.data.market.minimalOrder.amount) {
-      if(!alreadyFilled) {
-        // We are not partially filled, meaning the
-        // amount passed was too small to even start.
-        throw new Error('Amount is too small');
-      }
-
-      // partially filled, but the remainder is too
-      // small.
-      return this.finish();
-    }
-
-    this.api[this.side](amount, this.price, this.handleCreate);
+    this.submit({
+      side: this.side,
+      amount: this.api.roundAmount(this.amount - alreadyFilled),
+      price: this.price,
+      alreadyFilled: alreadyFilled
+    });
   }
 
   handleCreate(err, id) {
@@ -91,10 +82,11 @@ class StickyOrder extends BaseOrder {
     if(
       this.id &&
       this.orders[this.id] &&
-      !this.orders[this.id].filled
+      this.orders[this.id].filled === 0
     )
       delete this.orders[this.id];
 
+    // register new order
     this.id = id;
     this.orders[id] = {
       price: this.price,
@@ -104,8 +96,10 @@ class StickyOrder extends BaseOrder {
     this.status = states.OPEN;
     this.emitStatus();
 
+    // remove lock
     this.sticking = false;
 
+    // check whether we had an action pending
     if(this.movingLimit)
       return this.moveLimit();
 
@@ -115,6 +109,7 @@ class StickyOrder extends BaseOrder {
     if(this.cancelling)
       return this.cancel();
 
+    // register check
     this.timeout = setTimeout(this.checkOrder, this.checkInterval);
   }
 
@@ -173,6 +168,7 @@ class StickyOrder extends BaseOrder {
 
       // order got filled!
       this.sticking = false;
+      this.emit('partialFill', this.amount);
       this.filled(this.price);
 
     });
@@ -184,13 +180,15 @@ class StickyOrder extends BaseOrder {
 
     this.api.cancelOrder(this.id, (err, filled) => {
       // it got filled before we could cancel
-      if(filled)
+      if(filled) {
+        this.emit('partialFill', this.calculateFilled());
         return this.filled(this.price);
+      }
 
       // update to new price
       this.price = this.api.roundPrice(price);
 
-      this.submit();
+      this.createOrder();
     });
   }
 
@@ -202,10 +200,7 @@ class StickyOrder extends BaseOrder {
   }
 
   moveLimit(limit) {
-    if(
-      this.status === states.COMPLETED ||
-      this.status === states.FILLED
-    )
+    if(this.completed)
       return;
 
     if(!limit)
@@ -231,10 +226,10 @@ class StickyOrder extends BaseOrder {
 
     this.movingLimit = false;
 
-    if(this.side === 'buy' && this.limit > this.price) {
+    if(this.side === 'buy' && this.limit < this.price) {
       this.sticking = true;
       this.move(this.limit);
-    } else if(this.side === 'sell' && this.limit < this.price) {
+    } else if(this.side === 'sell' && this.limit > this.price) {
       this.sticking = true;
       this.move(this.limit);
     } else {
@@ -243,10 +238,7 @@ class StickyOrder extends BaseOrder {
   }
 
   moveAmount(amount) {
-    if(
-      this.status === states.COMPLETED ||
-      this.status === states.FILLED
-    )
+    if(this.completed)
       return;
 
     if(!amount)
@@ -293,12 +285,7 @@ class StickyOrder extends BaseOrder {
   }
 
   cancel() {
-    if(
-      this.status === states.INITIALIZING ||
-      this.status === states.COMPLETED ||
-      this.status === states.CANCELLED ||
-      this.status === states.REJECTED
-    )
+    if(this.completed)
       return;
 
     if(
@@ -315,8 +302,9 @@ class StickyOrder extends BaseOrder {
 
       this.cancelling = false;
 
-      if(filled)
+      if(filled) {
         return this.filled(this.price);
+      }
 
       this.status = states.CANCELLED;
       this.emitStatus();

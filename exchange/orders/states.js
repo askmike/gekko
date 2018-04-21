@@ -11,11 +11,12 @@ const states = {
   // Order is open on the exchange
   OPEN: 'OPEN',
 
+
+  // the orders below indicate a fully completed order
+
+
   // Order is completely filled
   FILLED: 'FILLED',
-
-  // Order is fully completed
-  COMPLETED: 'COMPLETED',
 
   // Order was succesfully cancelled
   CANCELLED: 'CANCELLED',
