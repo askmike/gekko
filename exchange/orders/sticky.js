@@ -248,6 +248,13 @@ class StickyOrder extends BaseOrder {
       // effectively nothing changed
       return;
 
+    if(this.calculateFilled() > this.api.roundAmount(amount)) {
+      // the amount is now below how much we have
+      // already filled.
+      this.filled();
+      return;
+    }
+
     if(
       this.status === states.SUBMITTED ||
       this.status === states.MOVING ||
