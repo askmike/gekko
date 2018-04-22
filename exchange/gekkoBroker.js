@@ -71,8 +71,13 @@ class Broker {
 
   setTicker(callback) {
     this.api.getTicker((err, ticker) => {
-      if(err)
-        throw new errors.ExchangeError(err);
+
+      if(err) {
+        if(err.message)
+          throw err;
+        else
+          throw new errors.ExchangeError(err);
+      }
 
       this.ticker = ticker;
 
@@ -103,7 +108,7 @@ class Broker {
         market: this.marketConfig
       });
 
-      order.create(side, amount, parameters)
+      order.create(side, amount, parameters);
     });
 
     order.on('completed', summary => {

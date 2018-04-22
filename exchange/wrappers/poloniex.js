@@ -1,13 +1,6 @@
 var Poloniex = require("poloniex.js");
-var util = require('../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');
-var log = require('../core/log');
-
-// Helper methods
-function joinCurrencies(currencyA, currencyB){
-    return currencyA + '_' + currencyB;
-}
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -21,16 +14,70 @@ var Trader = function(config) {
   this.balance;
   this.price;
 
-  this.pair = [this.currency, this.asset].join('_');
+  this.pair = this.currency + '_' + this.asset;
 
   this.poloniex = new Poloniex(this.key, this.secret);
 }
 
+
+var recoverableErrors = [
+  'SOCKETTIMEDOUT',
+  'TIMEDOUT',
+  'CONNRESET',
+  'CONNREFUSED',
+  'NOTFOUND',
+  '429',
+  '522',
+  '504',
+  '503',
+  '500',
+  '502'  
+];
+
+var notErrors = [
+  'Order not found, or you are not the person who placed it.',
+];
+
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
+
+  return str.includes(list);
+}
+
+Trader.prototype.processResponse = function(method, args, next) {
+  return (err, data) => {
+    if(err) {
+      if(includes(err, recoverableErrors))
+        return this.retry(method, args)
+
+      return next(err);
+    }
+
+    if(data.error) {
+      if(includes(data.error, recoverableErrors))
+        return this.retry(method, args)
+
+      if(includes(data.error, notErrors))
+        return next(undefined, data);
+
+      return next(err);
+    }
+
+    if(includes(data, 'Please complete the security check to proceed.'))
+      return next(new Error(
+        'Your IP has been flagged by CloudFlare. ' +
+        'As such Gekko Broker cannot access Poloniex.'
+      ));
+
+    return next(undefined, data);
+  }
+}
+
 // if the exchange errors we try the same call again after
-// waiting 10 seconds
+// waiting 1 seconds
 Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying..');
+  var wait = +moment.duration(1, 'seconds');
 
   var self = this;
 
@@ -50,10 +97,10 @@ Trader.prototype.retry = function(method, args) {
 }
 
 Trader.prototype.getPortfolio = function(callback) {
-  var args = _.toArray(arguments);
-  var set = function(err, data) {
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.getTicker, args, (err, data) => {
     if(err)
-      return this.retry(this.getPortfolio, args);
+      return callback(err);
 
     var assetAmount = parseFloat( data[this.asset] );
     var currencyAmount = parseFloat( data[this.currency] );
@@ -62,10 +109,8 @@ Trader.prototype.getPortfolio = function(callback) {
       !_.isNumber(assetAmount) || _.isNaN(assetAmount) ||
       !_.isNumber(currencyAmount) || _.isNaN(currencyAmount)
     ) {
-      log.info('asset:', this.asset);
-      log.info('currency:', this.currency);
-      log.info('exchange data:', data);
-      util.die('Gekko was unable to set the portfolio');
+      assetAmount = 0;
+      currencyAmount = 0;
     }
 
     var portfolio = [
@@ -73,17 +118,17 @@ Trader.prototype.getPortfolio = function(callback) {
       { name: this.currency, amount: currencyAmount }
     ];
 
-    callback(err, portfolio);
-  }.bind(this);
+    callback(undefined, portfolio);
+  });
 
-  this.poloniex.myBalances(set);
+  this.poloniex.myBalances(handle);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  var args = _.toArray(arguments);
-  this.poloniex.getTicker(function(err, data) {
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.getTicker, args, (err, data) => {
     if(err)
-      return this.retry(this.getTicker, args);
+      return callback(err);
 
     var tick = data[this.pair];
 
@@ -91,61 +136,81 @@ Trader.prototype.getTicker = function(callback) {
       bid: parseFloat(tick.highestBid),
       ask: parseFloat(tick.lowestAsk),
     });
+  });
 
-  }.bind(this));
+  this.poloniex.getTicker(handle);
 }
 
 Trader.prototype.getFee = function(callback) {
-  var set = function(err, data) {
-    if(err || data.error)
-      return callback(err || data.error);
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.getFee, args, (err, data) => {
+    if(err)
+      return callback(err);
 
-    callback(false, parseFloat(data.makerFee));
-  }
-  this.poloniex._private('returnFeeInfo', _.bind(set, this));
+    callback(undefined, parseFloat(data.makerFee));
+  });
+
+  this.poloniex._private('returnFeeInfo', handle);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
   var args = _.toArray(arguments);
-  var set = function(err, result) {
-    if(err || result.error) {
-      log.error('unable to buy:', err, result);
-      return this.retry(this.buy, args);
-    }
+  const handle = this.processResponse(this.buy, args, (err, result) => {
+    if(err)
+      return callback(err);
 
-    callback(null, result.orderNumber);
-  }.bind(this);
+    callback(undefined, result.orderNumber);
+  });
 
-  this.poloniex.buy(this.currency, this.asset, price, amount, set);
+  this.poloniex.buy(this.currency, this.asset, price, amount, handle);
+}
+
+Trader.prototype.roundAmount = function(amount) {
+  return +amount;
+}
+
+Trader.prototype.roundPrice = function(price) {
+  return +price;
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  var args = _.toArray(arguments);
-  var set = function(err, result) {
-    if(err || result.error) {
-      log.error('unable to sell:', err, result);
-      return this.retry(this.sell, args);
-    }
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.sell, args, (err, result) => {
+    if(err)
+      return callback(err);
 
-    callback(null, result.orderNumber);
-  }.bind(this);
+    callback(undefined, result.orderNumber);
+  });
 
-  this.poloniex.sell(this.currency, this.asset, price, amount, set);
+  this.poloniex.sell(this.currency, this.asset, price, amount, handle);
 }
 
-Trader.prototype.checkOrder = function(order, callback) {
-  var check = function(err, result) {
-    var stillThere = _.find(result, function(o) { return o.orderNumber === order });
-    callback(err, !stillThere);
-  }.bind(this);
+Trader.prototype.checkOrder = function(id, callback) {
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.sell, args, (err, result) => {
+    if(err)
+      return callback(err);
 
-  this.poloniex.myOpenOrders(this.currency, this.asset, check);
+    if(includes(result.error, 'Order not found, or you are not the person who placed it.'))
+      // we dont know wether it was filled or not, assume it was executed..
+      return callback(undefined, { executed: true, open: false });
+
+    const order = _.find(result, function(o) { return o.orderNumber === id });
+
+    if(!order)
+      // we dont know wether it was filled or not, assume it was executed..
+      return callback(undefined, { executed: true, open: false });
+
+
+    callback(undefined, { executed: false, open: true, filledAmount: order.startingAmount - order.amount });
+  });
+
+  this.poloniex.myOpenOrders(this.currency, this.asset, handle);
 }
 
 Trader.prototype.getOrder = function(order, callback) {
-
-  var get = function(err, result) {
-
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.sell, args, (err, result) => {
     if(err)
       return callback(err);
 
@@ -165,44 +230,45 @@ Trader.prototype.getOrder = function(order, callback) {
     });
 
     callback(err, {price, amount, date});
-  }.bind(this);
+  });
 
-  this.poloniex.returnOrderTrades(order, get);
+  this.poloniex.returnOrderTrades(order, handle);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  var args = _.toArray(arguments);
-  var cancel = function(err, result) {
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.sell, args, (err, result) => {
+    if(err)
+      return callback(err);
 
     // check if order is gone already
     if(result.error === 'Invalid order number, or you are not the person who placed the order.')
       return callback(true);
 
-    if(err || !result.success) {
-      log.error('unable to cancel order', order, '(', err, result, '), retrying');
-      return this.retry(this.cancelOrder, args);
+    if(!result.success) {
+      console.log('[poloniex] DEBUG OUTPUT, COULD NOT CANCEL', result);
+      return callback(true);
     }
 
-    callback();
-  }.bind(this);
+    callback(true);
+  });
 
   this.poloniex.cancelOrder(this.currency, this.asset, order, cancel);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
 
-  var firstFetch = !!since;
+  const firstFetch = !!since;
+  const args = _.toArray(arguments);
 
-  var args = _.toArray(arguments);
-  var process = function(err, result) {
-    if(err) {
-      return this.retry(this.getTrades, args);
-    }
+  const handle = this.processResponse(this.sell, args, (err, result) => {
+    if(err)
+      return callback(err);
 
     // Edge case, see here:
     // @link https://github.com/askmike/gekko/issues/479
     if(firstFetch && _.size(result) === 50000)
-      util.die(
+      return callback(
         [
           'Poloniex did not provide enough data. Read this:',
           'https://github.com/askmike/gekko/issues/479'
@@ -219,16 +285,16 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     });
 
     callback(null, result.reverse());
-  };
+  });
 
   var params = {
-    currencyPair: joinCurrencies(this.currency, this.asset)
+    currencyPair: this.pair
   }
 
   if(since)
     params.start = since.unix();
 
-  this.poloniex._public('returnTradeHistory', params, _.bind(process, this));
+  this.poloniex._public('returnTradeHistory', params, handle);
 }
 
 Trader.getCapabilities = function () {
