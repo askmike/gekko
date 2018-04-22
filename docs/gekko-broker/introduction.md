@@ -32,6 +32,12 @@ This library allows you to:
 
 Early WIP. All communication is via the REST APIs of exhanges. Not all exchanges are supported.
 
+Currently supported exchanges:
+
+- Binance
+- GDAX
+- Coinfalcon
+
 ## Order types
 
 This library aims to offer advanced order types, even on exchanges that do not natively support them by tracking the market and supplimenting native order support on specific exchanges.
@@ -49,11 +55,10 @@ TODO:
 - Triggers:
   - Stop
   - If Touched (stop but opposite direction)
-  - Time
 
 ### TODO
 
 - finish all exchange integrations that gekko supports
-- finsih all order types and triggers (under todo)
+- finish all order types and triggers (under todo)
 - implement websocket support (per exchange)
 - 
