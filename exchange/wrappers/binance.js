@@ -1,10 +1,9 @@
 const moment = require('moment');
 const _ = require('lodash');
 
-const util = require('../core/util');
-const Errors = require('../core/error');
-const log = require('../core/log');
+const Errors = require('../exchangeErrors');
 const marketData = require('./binance-markets.json');
+const retry = require('../exchangeUtils').retry;
 
 const Binance = require('binance');
 
@@ -55,11 +54,9 @@ Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
 
   if (!error.message || !error.message.match(recoverableErrors)) {
-    log.error(`[binance.js] (${funcName}) returned an irrecoverable error: ${error}`);
     return new Errors.AbortError('[binance.js] ' + error.message || error);
   }
 
-  log.debug(`[binance.js] (${funcName}) returned an error, retrying: ${error}`);
   return new Errors.RetryError('[binance.js] ' + error.message || error);
 };
 
@@ -110,12 +107,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   }
 
   let handler = (cb) => this.binance.aggTrades(reqData, this.handleResponse('getTrades', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(processResults, this));
+  retry(retryForever, _.bind(handler, this), _.bind(processResults, this));
 };
 
 Trader.prototype.getPortfolio = function(callback) {
   var setBalance = function(err, data) {
-    log.debug(`[binance.js] entering "setBalance" callback after api call, err: ${err} data: ${JSON.stringify(data)}`)
     if (err) return callback(err);
 
     var findAsset = function(item) {
@@ -129,16 +125,10 @@ Trader.prototype.getPortfolio = function(callback) {
     var currencyAmount = parseFloat(_.find(data.balances, _.bind(findCurrency, this)).free);
 
     if (!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
-      log.error(
-        `Binance did not return portfolio for ${this.asset}, assuming 0.`
-      );
       assetAmount = 0;
     }
 
     if (!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
-      log.error(
-        `Binance did not return portfolio for ${this.currency}, assuming 0.`
-      );
       currencyAmount = 0;
     }
 
@@ -151,7 +141,7 @@ Trader.prototype.getPortfolio = function(callback) {
   };
 
   let handler = (cb) => this.binance.account({}, this.handleResponse('getPortfolio', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(setBalance, this));
+  retry(retryForever, _.bind(handler, this), _.bind(setBalance, this));
 };
 
 // This uses the base maker fee (0.1%), and does not account for BNB discounts
@@ -162,7 +152,6 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
-    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${(data || []).length} symbols`);
     if (err) return callback(err);
 
     var findSymbol = function(ticker) {
@@ -179,7 +168,7 @@ Trader.prototype.getTicker = function(callback) {
   };
 
   let handler = (cb) => this.binance._makeRequest({}, this.handleResponse('getTicker', cb), 'api/v1/ticker/allBookTickers');
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(setTicker, this));
+  retry(retryForever, _.bind(handler, this), _.bind(setTicker, this));
 };
 
 // Effectively counts the number of decimal places, so 0.001 or 0.234 results in 3
@@ -190,7 +179,7 @@ Trader.prototype.getPrecision = function(tickSize) {
   return p;
 };
 
-Trader.prototype.roundAmount = function(amount, tickSize) {
+Trader.prototype.round = function(amount, tickSize) {
   var precision = 100000000;
   var t = this.getPrecision(tickSize);
 
@@ -203,43 +192,27 @@ Trader.prototype.roundAmount = function(amount, tickSize) {
   return amount;
 };
 
-Trader.prototype.calculateAmount = function(amount) {
-  return this.roundAmount(amount, this.market.minimalOrder.amount);
+Trader.prototype.roundAmount = function(amount) {
+  return this.round(amount, this.market.minimalOrder.amount);
 }
 
-Trader.prototype.calculatePrice = function(price) {
-  return this.roundAmount(price, this.market.minimalOrder.price);
+Trader.prototype.roundPrice = function(price) {
+  return this.round(price, this.market.minimalOrder.price);
 }
 
-Trader.prototype.checkPrice = function(price) {
-  if (price < this.market.minimalOrder.price)
-    throw new Error('Order price is too small');
+Trader.prototype.isValidPrice = function(price) {
+  return price >= this.market.minimalOrder.price;
 }
 
-// Trader.prototype.getLotSize = function(tradeType, amount, price) {
-//   amount = this.roundAmount(amount, this.market.minimalOrder.amount);
-//   if (amount < this.market.minimalOrder.amount)
-//     throw new Error('Order amount is too small');
-
-//   price = this.roundAmount(price, this.market.minimalOrder.price)
-//   if (price < this.market.minimalOrder.price)
-//     throw new Error('Order price is too small');
-
-//   if (amount * price < this.market.minimalOrder.order)
-//     throw new Error('Order lot size is too small');
-
-//   return { amount, price });
-// }
+Trader.prototype.isValidLot = function(price, amount) {
+  return amount * price >= this.market.minimalOrder.order;
+}
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
-  log.debug(`[binance.js] (addOrder) ${tradeType.toUpperCase()} ${amount} ${this.asset} @${price} ${this.currency}`);
-
   var setOrder = function(err, data) {
-    log.debug(`[binance.js] entering "setOrder" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
     if (err) return callback(err);
 
     var txid = data.orderId;
-    log.debug(`[binance.js] added order with txid: ${txid}`);
 
     callback(undefined, txid);
   };
@@ -248,19 +221,18 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     symbol: this.pair,
     side: tradeType.toUpperCase(),
     type: 'LIMIT',
-    timeInForce: 'GTC', // Good to cancel (I think, not really covered in docs, but is default)
+    timeInForce: 'GTC',
     quantity: amount,
     price: price,
     timestamp: new Date().getTime()
   };
 
   let handler = (cb) => this.binance.newOrder(reqData, this.handleResponse('addOrder', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(setOrder, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(setOrder, this));
 };
 
 Trader.prototype.getOrder = function(order, callback) {
   var get = function(err, data) {
-    log.debug(`[binance.js] entering "getOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
     if (err) return callback(err);
 
     var price = parseFloat(data.price);
@@ -279,7 +251,7 @@ Trader.prototype.getOrder = function(order, callback) {
   };
 
   let handler = (cb) => this.binance.queryOrder(reqData, this.handleResponse('getOrder', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(get, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(get, this));
 };
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -291,13 +263,44 @@ Trader.prototype.sell = function(amount, price, callback) {
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
+
+  // if(status === 'canceled') {
+  //   return callback(undefined, { executed: false, open: false });
+  // } if(status === 'fulfilled') {
+  //   return callback(undefined, { executed: true, open: false });
+  // } if(
+  //   status === 'pending' ||
+  //   status === 'partially_filled' ||
+  //   status === 'open'
+  // ) {
+  //   return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
+  // }
+
+
   var check = function(err, data) {
-    log.debug(`[binance.js] entering "checkOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
     if (err) return callback(err);
 
-    var stillThere = data.status === 'NEW' || data.status === 'PARTIALLY_FILLED';
-    var canceledManually = data.status === 'CANCELED' || data.status === 'REJECTED' || data.status === 'EXPIRED';
-    callback(undefined, !stillThere && !canceledManually);
+    const status = data.status;
+
+    if(
+      status === 'CANCELED' ||
+      status === 'REJECTED' ||
+      // for good measure: GB does
+      // not submit orders than can expire
+      status === 'EXPIRED'
+    ) {
+      return callback(undefined, { executed: false, open: false });
+    } else if(
+      status === 'NEW' ||
+      status === 'PARTIALLY_FILLED'
+    ) {
+      return callback(undefined, { executed: false, open: true, filledAmount: +data.executedQty });
+    } else if(status === 'FILLED') {
+      return callback(undefined, { executed: true, open: false })
+    }
+
+    console.log('what status?', status);
+    throw status;
   };
 
   let reqData = {
@@ -306,13 +309,12 @@ Trader.prototype.checkOrder = function(order, callback) {
   };
 
   let handler = (cb) => this.binance.queryOrder(reqData, this.handleResponse('checkOrder', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(check, this));
+  retry(retryCritical, _.bind(handler, this), _.bind(check, this));
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
   // callback for cancelOrder should be true if the order was already filled, otherwise false
   var cancel = function(err, data) {
-    log.debug(`[binance.js] entering "cancelOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
     if (err) {
       if(data && data.msg === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
         return callback(true); // tell the thing the order was already filled
@@ -328,7 +330,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   };
 
   let handler = (cb) => this.binance.cancelOrder(reqData, this.handleResponse('cancelOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(cancel, this));
+  retry(retryForever, _.bind(handler, this), _.bind(cancel, this));
 };
 
 Trader.prototype.initMarkets = function(callback) {
