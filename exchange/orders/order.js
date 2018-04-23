@@ -68,8 +68,6 @@ class BaseOrder extends EventEmitter {
       throw new Error('Lot size is too small');
     }
 
-    console.log('creating', this.side, amount, this.price);
-
     this.api[this.side](amount, this.price, this.handleCreate);
   }
 

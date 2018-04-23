@@ -36,6 +36,7 @@ Currently supported exchanges:
 
 - Binance
 - GDAX
+- Poloniex
 - Coinfalcon
 
 ## Order types
@@ -61,4 +62,4 @@ TODO:
 - finish all exchange integrations that gekko supports
 - finish all order types and triggers (under todo)
 - implement websocket support (per exchange)
-- 
+- use native move API calls wherever possible (poloniex)

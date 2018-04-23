@@ -39,8 +39,10 @@ class Portfolio {
 
   setBalances(callback) {
     let set = (err, fullPortfolio) => {
-      if(err)
+      if(err) {
+        console.log(err);
         throw new errors.ExchangeError(err);
+      }
 
       // only include the currency/asset of this market
       const balances = [ this.config.currency, this.config.asset ]

@@ -24,51 +24,80 @@ var Trader = function(config) {
   this.coinfalcon = new CoinFalcon.Client(this.key, this.secret);
 };
 
-var recoverableErrors = new RegExp(
-  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|429|522|504|503|500|502)/
-);
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
 
-Trader.prototype.retry = function(method, args, error) {
-  var self = this;
-  // make sure the callback (and any other fn) is bound to Trader
-  _.each(args, function(arg, i) {
-    if (_.isFunction(arg)) {
-      args[i] = _.bind(arg, self);
-    }
-  });
+  return !!_.find(list, str.includes(item));
+}
 
-  if (!error || !error.message.match(recoverableErrors)) {
-    _.each(args, function(arg, i) {
-      if (_.isFunction(arg)) {
-        arg(error, null);
-        return;
-      }
-    });
-    return;
+var recoverableErrors = [
+  'SOCKETTIMEDOUT',
+  'TIMEDOUT',
+  'CONNRESET',
+  'CONNREFUSED',
+  'NOTFOUND',
+  '429',
+  '522',
+  '429',
+  '504',
+  '503',
+  '500',
+  '502'
+];
+
+Trader.prototype.processResponse = function(method, args, next) {
+  const catcher = err => {
+    if(!err || !err.message)
+      err = new Error(err || 'Empty error');
+
+    if(includes(err, recoverableErrors))
+      return this.retry(method, args)
+
+    return next(err);
   }
 
-  var wait = +moment.duration(5, 'seconds');
+  return {
+    failure: catcher,
+    success: data => {
+      if(!data)
+        return catcher();
+
+      if(data.error)
+        return catcher(data.error);
+
+      if(includes(data, ['Please complete the security check to proceed.']))
+        return next(new Error(
+          'Your IP has been flagged by CloudFlare. ' +
+          'As such Gekko Broker cannot access Coinfalcon.'
+        ));
+
+      next(undefined, data);
+    }
+  }
+}
+
+Trader.prototype.retry = function(method, args) {
+  var wait = +moment.duration(1, 'seconds');
 
   // run the failed method again with the same arguments after wait
-  setTimeout(function() {
+  setTimeout(() => {
     console.log('cf retry..');
-    method.apply(self, args);
+    method.apply(this, args);
   }, wait);
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var success = function(res) {
+  const handle = this.processResponse(this.getTicker, [callback], (err, res) => {
+    if(err)
+      return callback(err);
 
     callback(null, {bid: +res.data.bids[0].price, ask: +res.data.asks[0].price})
-  };
-
-  var failure = function(err) {
-    callback(err, null);
-  };
+  });
 
   var url = "markets/" + this.pair + "/orders?level=1"
 
-  this.coinfalcon.get(url).then(success).catch(failure);
+  this.coinfalcon.get(url).then(handle.success).catch(handle.failure);
 };
 
 Trader.prototype.getFee = function(callback) {
@@ -77,45 +106,32 @@ Trader.prototype.getFee = function(callback) {
 };
 
 Trader.prototype.getPortfolio = function(callback) {
-  var success = function(res) {
-    if (_.has(res, 'error')) {
-      var err = new Error(res.error);
-      callback(err, null);
-    } else {
-      var portfolio = res.data.map((account) => ({
-        name: account.currency_code.toUpperCase(),
-        amount: parseFloat(account.available_balance)
-      }));
+  const handle = this.processResponse(this.getPortfolio, [callback], (err, res) => {
+    if(err)
+      return callback(err);
 
-      callback(null, portfolio);
-    }
-  };
+    var portfolio = res.data.map(account => ({
+      name: account.currency_code.toUpperCase(),
+      amount: parseFloat(account.available_balance)
+    }));
 
-  var failure = function(err) {
-    callback(err, null);
-  }
+    callback(null, portfolio);
+  });
 
-  this.coinfalcon.get('user/accounts').then(success).catch(failure);
+  this.coinfalcon.get('user/accounts').then(handle.success).catch(handle.failure);
 };
 
 Trader.prototype.addOrder = function(type, amount, price, callback) {
-  var args = _.toArray(arguments);
+  const args = _.toArray(arguments);
 
-  var success = function(res) {
-    if (_.has(res, 'error')) {
-      var err = new Error(res.error);
-      console.log('failure', res);
-      failure(err);
-    } else {
-      callback(false, res.data.id)
-    }
-  };
+  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+    if(err)
+      return callback(err);
 
-  var failure = function(err) {
-    return this.retry(this.addOrder, args, err);
-  }.bind(this);
+    callback(false, res.data.id);
+  });
 
-  var payload = {
+  const payload = {
     order_type: type,
     operation_type: 'limit_order',
     market: this.pair,
@@ -123,7 +139,7 @@ Trader.prototype.addOrder = function(type, amount, price, callback) {
     price: price
   }
 
-  this.coinfalcon.post('user/orders', payload).then(success).catch(failure);
+  this.coinfalcon.post('user/orders', payload).then(handle.success).catch(handle.failure);
 };
 
 ['buy', 'sell'].map(function(type) {
@@ -154,38 +170,26 @@ Trader.prototype.roundPrice = function(price) {
 }
 
 Trader.prototype.getOrder = function(order, callback) {
-  var success = function(res) {
-    if (_.has(res, 'error')) {
-      var err = new Error(res.error);
-      failure(err);
-    } else {
-      var price = parseFloat(res.data.price);
-      var amount = parseFloat(res.data.size);
-      var date = moment(res.data.created_at);
-      callback(false, { price, amount, date });
-    }
-  };
+  const args = _.toArray(arguments);
+  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+    if(err)
+      return callback(err);
 
-  var failure = function(err) {
-    callback(err, null);
-  }.bind(this);
+    const price = parseFloat(res.data.price);
+    const amount = parseFloat(res.data.size);
+    const date = moment(res.data.created_at);
+    callback(false, { price, amount, date });
+  });
 
-  this.coinfalcon.get('user/orders/' + order).then(success).catch(failure);
+  this.coinfalcon.get('user/orders/' + order).then(handle.success).catch(handle.failure);
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
-  var args = _.toArray(arguments);
+  const args = _.toArray(arguments);
 
-  const failure = res => {
-    this.retry(this.checkOrder, args, res);
-  }
-
-  const success = function(res) {
-
-    if(_.has(res, 'error')) {
-      console.log('success, but error', res.error, typeof res.error);
-      return failure(res.error);
-    }
+  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+    if(err)
+      return callback(err);
 
     // https://docs.coinfalcon.com/#list-orders
     const status = res.data.status;
@@ -203,32 +207,24 @@ Trader.prototype.checkOrder = function(order, callback) {
     }
 
     callback(new Error('Unknown status ' + status));
-  };
-
-  this.coinfalcon.get('user/orders/' + order).then(success.bind(this)).catch(error => {
-    console.log('catch', error);
-    failure(error);
   });
+
+  this.coinfalcon.get('user/orders/' + order).then(handle.success).catch(handle.failure);
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  var args = _.toArray(arguments);
-  var success = function(res) {
-    if (_.has(res, 'error')) {
-      var err = new Error(res.error);
-      failure(err);
-    } else {
-      // todo
-      const filled = false;
-      callback(false, filled);
-    }
-  };
+  const args = _.toArray(arguments);
 
-  var failure = function(err) {
-    return this.retry(this.cancelOrder, args, err);
-  }.bind(this);
+  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+    if(err)
+      return callback(err);
 
-  this.coinfalcon.delete('user/orders/' + order).then(success).catch(failure);
+    // todo
+    const filled = false;
+    callback(false, filled);
+  });
+
+  this.coinfalcon.delete('user/orders/' + order).then(handle.success).catch(handle.failure);
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {

@@ -42,7 +42,7 @@ const includes = (str, list) => {
   if(!_.isString(str))
     return false;
 
-  return str.includes(list);
+  return !!_.find(list, str.includes(item));
 }
 
 Trader.prototype.processResponse = function(method, args, next) {
@@ -61,10 +61,10 @@ Trader.prototype.processResponse = function(method, args, next) {
       if(includes(data.error, notErrors))
         return next(undefined, data);
 
-      return next(err);
+      return next(data.error);
     }
 
-    if(includes(data, 'Please complete the security check to proceed.'))
+    if(includes(data, ['Please complete the security check to proceed.']))
       return next(new Error(
         'Your IP has been flagged by CloudFlare. ' +
         'As such Gekko Broker cannot access Poloniex.'
@@ -253,7 +253,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
     callback(true);
   });
 
-  this.poloniex.cancelOrder(this.currency, this.asset, order, cancel);
+  this.poloniex.cancelOrder(this.currency, this.asset, order, handle);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
