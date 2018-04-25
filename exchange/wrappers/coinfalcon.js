@@ -28,10 +28,10 @@ const includes = (str, list) => {
   if(!_.isString(str))
     return false;
 
-  return !!_.find(list, str.includes(item));
+  return _.some(list, item => str.includes(item));
 }
 
-var recoverableErrors = [
+const recoverableErrors = [
   'SOCKETTIMEDOUT',
   'TIMEDOUT',
   'CONNRESET',
@@ -51,7 +51,7 @@ Trader.prototype.processResponse = function(method, args, next) {
     if(!err || !err.message)
       err = new Error(err || 'Empty error');
 
-    if(includes(err, recoverableErrors))
+    if(includes(err.message, recoverableErrors))
       return this.retry(method, args)
 
     return next(err);
@@ -83,6 +83,7 @@ Trader.prototype.retry = function(method, args) {
   // run the failed method again with the same arguments after wait
   setTimeout(() => {
     console.log('cf retry..');
+    console.log(args);
     method.apply(this, args);
   }, wait);
 };
@@ -135,8 +136,8 @@ Trader.prototype.addOrder = function(type, amount, price, callback) {
     order_type: type,
     operation_type: 'limit_order',
     market: this.pair,
-    size: amount,
-    price: price
+    size: amount + '',
+    price: price + ''
   }
 
   this.coinfalcon.post('user/orders', payload).then(handle.success).catch(handle.failure);
@@ -187,7 +188,7 @@ Trader.prototype.getOrder = function(order, callback) {
 Trader.prototype.checkOrder = function(order, callback) {
   const args = _.toArray(arguments);
 
-  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+  const handle = this.processResponse(this.checkOrder, args, (err, res) => {
     if(err)
       return callback(err);
 

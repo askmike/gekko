@@ -19,8 +19,7 @@ var Trader = function(config) {
   this.poloniex = new Poloniex(this.key, this.secret);
 }
 
-
-var recoverableErrors = [
+const recoverableErrors = [
   'SOCKETTIMEDOUT',
   'TIMEDOUT',
   'CONNRESET',
@@ -34,7 +33,7 @@ var recoverableErrors = [
   '502'  
 ];
 
-var notErrors = [
+const notErrors = [
   'Order not found, or you are not the person who placed it.',
 ];
 
@@ -42,7 +41,7 @@ const includes = (str, list) => {
   if(!_.isString(str))
     return false;
 
-  return !!_.find(list, str.includes(item));
+  return _.some(list, item => str.includes(item));
 }
 
 Trader.prototype.processResponse = function(method, args, next) {
