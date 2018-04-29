@@ -172,7 +172,7 @@ Trader.prototype.roundPrice = function(price) {
 
 Trader.prototype.getOrder = function(order, callback) {
   const args = _.toArray(arguments);
-  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+  const handle = this.processResponse(this.getOrder, args, (err, res) => {
     if(err)
       return callback(err);
 
@@ -216,7 +216,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 Trader.prototype.cancelOrder = function(order, callback) {
   const args = _.toArray(arguments);
 
-  const handle = this.processResponse(this.addOrder, args, (err, res) => {
+  const handle = this.processResponse(this.cancelOrder, args, (err, res) => {
     if(err)
       return callback(err);
 
