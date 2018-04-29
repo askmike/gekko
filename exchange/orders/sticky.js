@@ -279,16 +279,16 @@ class StickyOrder extends BaseOrder {
     clearTimeout(this.timeout);
 
     this.movingAmount = false;
+    this.sticking = true;
 
-    if(this.side === 'buy' && this.limit > this.price) {
-      this.sticking = true;
-      this.move(this.limit);
-    } else if(this.side === 'sell' && this.limit < this.price) {
-      this.sticking = true;
-      this.move(this.limit);
-    } else {
-      this.timeout = setTimeout(this.checkOrder, this.checkInterval);
-    }
+    this.api.cancelOrder(this.id, filled => {
+
+      if(filled) {
+        return this.filled(this.price);
+      }
+
+      this.createOrder();
+    });
   }
 
   cancel() {
