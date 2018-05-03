@@ -16,7 +16,7 @@ const retryInstance = (options, fn, callback) => {
   var operation = retry.operation(options);
   operation.attempt(function(currentAttempt) {
     fn(function(err, result) {
-      if (!(err instanceof errors.AbortError) && operation.retry(err)) {
+      if(err && err.notFatal && operation.retry(err)) {
         return;
       }
 

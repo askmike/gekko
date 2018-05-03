@@ -152,12 +152,10 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
-    if (err) return callback(err);
+    if (err)
+      return callback(err);
 
-    var findSymbol = function(ticker) {
-      return ticker.symbol === this.pair;
-    }
-    var result = _.find(data, _.bind(findSymbol, this));
+    var result = _.find(data, ticker => ticker.symbol === this.pair);
 
     var ticker = {
       ask: parseFloat(result.askPrice),

@@ -1,3 +1,4 @@
+// NOT USED, see: https://github.com/bitfinexcom/bitfinex-api-node/issues/321
 
 const Bitfinex = require("bitfinex-api-node");
 const _ = require('lodash');
@@ -19,8 +20,8 @@ var Trader = function(config) {
   this.price;
   this.asset = config.asset;
   this.currency = config.currency;
-  this.pair = this.asset + this.currency;
-  this.bitfinex = new Bitfinex.RESTv1({apiKey: this.key, apiSecret: this.secret, transform: true});
+  this.pair = 't' + this.asset + this.currency;
+  this.bitfinex = new Bitfinex.RESTv2({apiKey: this.key, apiSecret: this.secret, transform: true});
 }
 
 const includes = (str, list) => {
@@ -68,6 +69,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
 
 Trader.prototype.getPortfolio = function(callback) {
   const processResponse = (err, data) => {
+    console.log('processResponse', {err, data});
     if (err) return callback(err);
 
     // We are only interested in funds in the "exchange" wallet
@@ -76,16 +78,18 @@ Trader.prototype.getPortfolio = function(callback) {
     const asset = _.find(data, c => c.currency.toUpperCase() === this.asset);
     const currency = _.find(data, c => c.currency.toUpperCase() === this.currency);
 
+    console.log(currency.balance);
+
     let assetAmount, currencyAmount;
 
-    if(_.isObject(asset) && _.isNumber(+asset.available) && !_.isNaN(+asset.available))
-      assetAmount = +asset.available;
+    if(_.isObject(asset) && _.isNumber(+asset.balanceAvailable) && !_.isNaN(+asset.balanceAvailable))
+      assetAmount = +asset.balanceAvailable;
     else {
       assetAmount = 0;
     }
 
-    if(_.isObject(currency) && _.isNumber(+currency.available) && !_.isNaN(+currency.available))
-      currencyAmount = +currency.available;
+    if(_.isObject(currency) && _.isNumber(+currency.balanceAvailable) && !_.isNaN(+currency.balanceAvailable))
+      currencyAmount = +currency.balanceAvailable;
     else {
       currencyAmount = 0;
     }
@@ -98,7 +102,7 @@ Trader.prototype.getPortfolio = function(callback) {
     callback(undefined, portfolio);
   };
 
-  const fetch = cb => this.bitfinex.wallet_balances(this.handleResponse('getPortfolio', cb));
+  const fetch = cb => this.bitfinex.wallets(this.handleResponse('getPortfolio', cb));
   retry(null, fetch, processResponse);
 }
 

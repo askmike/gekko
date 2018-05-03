@@ -66,6 +66,8 @@ class StickyOrder extends BaseOrder {
   createOrder() {
     const alreadyFilled = this.calculateFilled();
 
+    console.log(this.api.roundAmount(this.amount - alreadyFilled));
+
     this.submit({
       side: this.side,
       amount: this.api.roundAmount(this.amount - alreadyFilled),

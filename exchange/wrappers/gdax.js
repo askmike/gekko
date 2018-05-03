@@ -147,7 +147,10 @@ Trader.prototype.buy = function(amount, price, callback) {
   };
 
   var result = (err, data) => {
-    if (err) return callback(err);
+    if (err) {
+      console.log({buyParams});
+      return callback(err);
+    }
     callback(undefined, data.id);
   };
 
@@ -165,7 +168,10 @@ Trader.prototype.sell = function(amount, price, callback) {
   };
 
   var result = function(err, data) {
-    if (err) return callback(err);
+    if (err) {
+      console.log({sellParams});
+      return callback(err);
+    }
     callback(undefined, data.id);
   };
 

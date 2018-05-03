@@ -12,6 +12,7 @@ const moment = require('moment');
 const checker = require('./exchangeChecker');
 const errors = require('./exchangeErrors');
 const Portfolio = require('./portfolioManager');
+// const Market = require('./market');
 const orders = require('./orders');
 const bindAll = require('./exchangeUtils').bindAll;
 
@@ -36,6 +37,8 @@ class Broker {
       return _.first(p.pair) === config.currency.toUpperCase() &&
         _.last(p.pair) === config.asset.toUpperCase();
     });
+
+//    this.market = new Market(config);
 
     this.market = config.currency.toUpperCase() + config.asset.toUpperCase();
 
