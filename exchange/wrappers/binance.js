@@ -262,20 +262,7 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order, callback) {
 
-  // if(status === 'canceled') {
-  //   return callback(undefined, { executed: false, open: false });
-  // } if(status === 'fulfilled') {
-  //   return callback(undefined, { executed: true, open: false });
-  // } if(
-  //   status === 'pending' ||
-  //   status === 'partially_filled' ||
-  //   status === 'open'
-  // ) {
-  //   return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
-  // }
-
-
-  var check = function(err, data) {
+  const check = (err, data) => {
     if (err) return callback(err);
 
     const status = data.status;
@@ -306,20 +293,20 @@ Trader.prototype.checkOrder = function(order, callback) {
     orderId: order,
   };
 
-  let handler = (cb) => this.binance.queryOrder(reqData, this.handleResponse('checkOrder', cb));
-  retry(retryCritical, _.bind(handler, this), _.bind(check, this));
+  const fetcher = cb => this.binance.queryOrder(reqData, this.handleResponse('checkOrder', cb));
+  retry(retryCritical, fetcher, check);
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
   // callback for cancelOrder should be true if the order was already filled, otherwise false
-  var cancel = function(err, data) {
+  const cancel = (err, data) => {
     if (err) {
       if(data && data.msg === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
-        return callback(true); // tell the thing the order was already filled
+        return callback(undefined, true); // tell the thing the order was already filled
       }
       return callback(err);
     }
-    callback(undefined);
+    callback(undefined, false);
   };
 
   let reqData = {
@@ -327,8 +314,8 @@ Trader.prototype.cancelOrder = function(order, callback) {
     orderId: order,
   };
 
-  let handler = (cb) => this.binance.cancelOrder(reqData, this.handleResponse('cancelOrder', cb));
-  retry(retryForever, _.bind(handler, this), _.bind(cancel, this));
+  const fetcher = cb => this.binance.cancelOrder(reqData, this.handleResponse('cancelOrder', cb));
+  retry(retryForever, fetcher, cancel);
 };
 
 Trader.prototype.initMarkets = function(callback) {
