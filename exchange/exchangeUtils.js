@@ -3,24 +3,32 @@
 const retry = require('retry');
 const errors = require('./exchangeErrors');
 
-const retryInstance = (options, fn, callback) => {
+const retryInstance = (options, checkFn, callback) => {
   if(!options) {
     options = {
-      retries: 5,
+      retries: 20,
       factor: 1.2,
       minTimeout: 1 * 1000,
       maxTimeout: 3 * 1000
     };
   }
 
-  var operation = retry.operation(options);
+  let attempt = 0;
+
+  const operation = retry.operation(options);
   operation.attempt(function(currentAttempt) {
-    fn(function(err, result) {
-      if(err && err.notFatal && operation.retry(err)) {
-        return;
+    checkFn((err, result) => {
+      if(!err)
+        return callback(undefined, result);
+
+      if(err.retryOnce && attempt++ === 0) {
+        return operation.retry(err);
       }
 
-      callback(err ? err.message : null, result);
+      if(err.notFatal)
+        return operation.retry(err);
+
+      callback(err, result);
     });
   });
 }

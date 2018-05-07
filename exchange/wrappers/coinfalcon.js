@@ -209,6 +209,7 @@ Trader.prototype.checkOrder = function(order, callback) {
       return callback(undefined, { executed: false, open: true, filledAmount: +res.data.size_filled });
     }
 
+    console.error(res.data);
     callback(new Error('Unknown status ' + status));
   });
 

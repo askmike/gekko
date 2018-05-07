@@ -111,7 +111,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 };
 
 Trader.prototype.getPortfolio = function(callback) {
-  const setBalance = function(err, data) {
+  const setBalance = (err, data) => {
     if (err) return callback(err);
 
     const findAsset = item => item.asset === this.asset;
@@ -136,8 +136,8 @@ Trader.prototype.getPortfolio = function(callback) {
     return callback(undefined, portfolio);
   };
 
-  let handler = (cb) => this.binance.account({}, this.handleResponse('getPortfolio', cb));
-  retry(retryForever, _.bind(handler, this), _.bind(setBalance, this));
+  const fetch = cb => this.binance.account({}, this.handleResponse('getPortfolio', cb));
+  retry(retryForever, fetch, setBalance);
 };
 
 // This uses the base maker fee (0.1%), and does not account for BNB discounts

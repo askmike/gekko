@@ -43,7 +43,8 @@ const recoverableErrors = [
   '503',
   '500',
   '502',
-  'Empty response'
+  'Empty response',
+  'Nonce is too small'
 ];
 
 Trader.prototype.handleResponse = function(funcName, callback) {
@@ -53,10 +54,29 @@ Trader.prototype.handleResponse = function(funcName, callback) {
     }
 
     if(error) {
-      const message = error.message || error;
+      const message = error.message;
+
+      // in case we just cancelled our balances might not have
+      // settled yet. Retry once manually
+      if(
+        funcName === 'submitOrder' &&
+        message.includes('not enough exchange balance')
+      ) {
+        error.retryOnce = true;
+        return callback(error);
+      }
+
+      // in some situations bfx returns 404 on
+      // orders created recently
+      if(
+        funcName === 'checkOrder' &&
+        message.includes('Not Found')
+      ) {
+        error.retryOnce = true;
+        return callback(error);
+      }
 
       if(includes(message, recoverableErrors)) {
-        const error = new Error(message);
         error.notFatal = true;
         return callback(error);
       }
@@ -115,9 +135,9 @@ Trader.prototype.getTicker = function(callback) {
 }
 
 Trader.prototype.getFee = function(callback) {
-    const makerFee = 0.1;
-    // const takerFee = 0.2;
-    callback(undefined, makerFee / 100);
+  const makerFee = 0.1;
+  // const takerFee = 0.2;
+  callback(undefined, makerFee / 100);
 }
 
 Trader.prototype.roundAmount = function(amount) {
@@ -129,16 +149,15 @@ Trader.prototype.roundPrice = function(price) {
   return price;
 }
 
-Trader.prototype.submit_order = function(type, amount, price, callback) {
+Trader.prototype.submitOrder = function(type, amount, price, callback) {
   const processResponse = (err, data) => {
     if (err)
-      console.log('submit_order error', err);
-    if (err) return callback(err);
+      return callback(err);
 
-    callback(err, data.order_id);
+    callback(null, data.order_id);
   }
 
-  const fetcher = cb => this.bitfinex.new_order(this.pair,
+  const fetch = cb => this.bitfinex.new_order(this.pair,
     amount + '',
     price + '',
     this.name.toLowerCase(),
@@ -147,24 +166,21 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
     this.handleResponse('submitOrder', cb)
   );
 
-  retry(null, fetcher, processResponse);
+  retry(null, fetch, processResponse);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  this.submit_order('buy', amount, price, callback);
+  this.submitOrder('buy', amount, price, callback);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  this.submit_order('sell', amount, price, callback);
+  this.submitOrder('sell', amount, price, callback);
 }
 
 Trader.prototype.checkOrder = function(order_id, callback) {
   const processResponse = (err, data) => {
-    // if(err && err.message === '') {
-
-    // }
-
-    if (err) return callback(err);
+    if (err)
+      return callback(err);
 
     return callback(undefined, {
       open: data.is_live,
