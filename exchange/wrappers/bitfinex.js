@@ -30,9 +30,9 @@ const includes = (str, list) => {
   return _.some(list, item => str.includes(item));
 }
 
-// Probably we need to update these string
 const recoverableErrors = [
   'SOCKETTIMEDOUT',
+  'ESOCKETTIMEDOUT',
   'TIMEDOUT',
   'CONNRESET',
   'CONNREFUSED',
@@ -55,7 +55,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
     if(error) {
       const message = error.message || error;
 
-      if(!includes(message, recoverableErrors)) {
+      if(includes(message, recoverableErrors)) {
         const error = new Error(message);
         error.notFatal = true;
         return callback(error);
@@ -131,6 +131,8 @@ Trader.prototype.roundPrice = function(price) {
 
 Trader.prototype.submit_order = function(type, amount, price, callback) {
   const processResponse = (err, data) => {
+    if (err)
+      console.log('submit_order error', err);
     if (err) return callback(err);
 
     callback(err, data.order_id);
@@ -145,7 +147,7 @@ Trader.prototype.submit_order = function(type, amount, price, callback) {
     this.handleResponse('submitOrder', cb)
   );
 
-  retry(retryCritical, fetcher, processResponse);
+  retry(null, fetcher, processResponse);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -158,17 +160,21 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order_id, callback) {
   const processResponse = (err, data) => {
+    // if(err && err.message === '') {
+
+    // }
+
     if (err) return callback(err);
 
     return callback(undefined, {
       open: data.is_live,
       executed: data.original_amount === data.executed_amount,
-      filled: +data.executed_amount
+      filledAmount: +data.executed_amount
     });
   }
 
   const fetcher = cb => this.bitfinex.order_status(order_id, this.handleResponse('checkOrder', cb));
-  retry(retryCritical, fetcher, processResponse);
+  retry(null, fetcher, processResponse);
 }
 
 
@@ -184,7 +190,7 @@ Trader.prototype.getOrder = function(order_id, callback) {
   };
 
   const fetcher = cb => this.bitfinex.order_status(order_id, this.handleResponse('getOrder', cb));
-  retry(retryCritical, fetcher, processResponse);
+  retry(null, fetcher, processResponse);
 }
 
 
@@ -196,7 +202,7 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
   }
 
   const handler = cb => this.bitfinex.cancel_order(order_id, this.handleResponse('cancelOrder', cb));
-  retry(retryForever, handler, processResponse);
+  retry(null, handler, processResponse);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -220,7 +226,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     path += '?limit_trades=2000'; 
 
   const handler = cb => this.bitfinex.trades(path, this.handleResponse('getTrades', cb));
-  retry(retryForever, handler, processResponse);
+  retry(null, handler, processResponse);
 }
 
 Trader.getCapabilities = function () {

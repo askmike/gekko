@@ -111,18 +111,14 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 };
 
 Trader.prototype.getPortfolio = function(callback) {
-  var setBalance = function(err, data) {
+  const setBalance = function(err, data) {
     if (err) return callback(err);
 
-    var findAsset = function(item) {
-      return item.asset === this.asset;
-    }
-    var assetAmount = parseFloat(_.find(data.balances, _.bind(findAsset, this)).free);
+    const findAsset = item => item.asset === this.asset;
+    const assetAmount = parseFloat(_.find(data.balances, findAsset).free);
 
-    var findCurrency = function(item) {
-      return item.asset === this.currency;
-    }
-    var currencyAmount = parseFloat(_.find(data.balances, _.bind(findCurrency, this)).free);
+    const findCurrency = item => item.asset === this.currency;
+    const currencyAmount = parseFloat(_.find(data.balances, findCurrency).free);
 
     if (!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       assetAmount = 0;
@@ -132,7 +128,7 @@ Trader.prototype.getPortfolio = function(callback) {
       currencyAmount = 0;
     }
 
-    var portfolio = [
+    const portfolio = [
       { name: this.asset, amount: assetAmount },
       { name: this.currency, amount: currencyAmount },
     ];

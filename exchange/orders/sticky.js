@@ -66,13 +66,11 @@ class StickyOrder extends BaseOrder {
   createOrder() {
     const alreadyFilled = this.calculateFilled();
 
-    console.log(this.api.roundAmount(this.amount - alreadyFilled));
-
     this.submit({
       side: this.side,
       amount: this.api.roundAmount(this.amount - alreadyFilled),
       price: this.price,
-      alreadyFilled: alreadyFilled
+      alreadyFilled
     });
   }
 
@@ -94,6 +92,8 @@ class StickyOrder extends BaseOrder {
       price: this.price,
       filled: 0
     }
+
+    console.log(new Date, "ID:", this.id);
 
     this.status = states.OPEN;
     this.emitStatus();
@@ -119,14 +119,14 @@ class StickyOrder extends BaseOrder {
     this.sticking = true;
 
     this.api.checkOrder(this.id, (err, result) => {
-      if(err)
+      if(err) {
         throw err;
+      }
 
       if(result.open) {
         if(result.filledAmount !== this.orders[this.id].filled) {
           this.orders[this.id].filled = result.filledAmount;
 
-          // note: doc event API
           this.emit('partialFill', this.calculateFilled());
         }
 
