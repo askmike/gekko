@@ -62,8 +62,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         funcName === 'submitOrder' &&
         message.includes('not enough exchange balance')
       ) {
-        console.log(new Date, 'not enough exchange balance - retry');
-        error.retry = 10;
+        error.retry = 20;
         return callback(error);
       }
 
