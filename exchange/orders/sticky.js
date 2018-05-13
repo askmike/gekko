@@ -127,7 +127,7 @@ class StickyOrder extends BaseOrder {
       if(result.open) {
         if(result.filledAmount !== this.orders[this.id].filled) {
           this.orders[this.id].filled = result.filledAmount;
-          this.emit('partialFill', this.calculateFilled());
+          this.emit('fill', this.calculateFilled());
         }
 
         // if we are already at limit we dont care where the top is
@@ -170,7 +170,7 @@ class StickyOrder extends BaseOrder {
 
       // order got filled!
       this.sticking = false;
-      this.emit('partialFill', this.amount);
+      this.emit('fill', this.amount);
       this.filled(this.price);
 
     });
@@ -183,7 +183,7 @@ class StickyOrder extends BaseOrder {
     this.api.cancelOrder(this.id, (err, filled) => {
       // it got filled before we could cancel
       if(filled) {
-        this.emit('partialFill', this.amount);
+        this.emit('fill', this.amount);
         return this.filled(this.price);
       }
 
@@ -286,7 +286,7 @@ class StickyOrder extends BaseOrder {
     this.api.cancelOrder(this.id, filled => {
 
       if(filled) {
-        this.emit('partialFill', this.amount);
+        this.emit('fill', this.amount);
         return this.filled(this.price);
       }
 
@@ -313,7 +313,7 @@ class StickyOrder extends BaseOrder {
       this.cancelling = false;
 
       if(filled) {
-        this.emit('partialFill', this.amount);
+        this.emit('fill', this.amount);
         return this.filled(this.price);
       }
 

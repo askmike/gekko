@@ -63,7 +63,16 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         message.includes('not enough exchange balance')
       ) {
         console.log(new Date, 'not enough exchange balance - retry');
-        error.retryOnce = true;
+        error.retry = 10;
+        return callback(error);
+      }
+
+      // most likely problem with v1 api
+      if(
+        funcName === 'submitOrder' &&
+        message.includes('Cannot evaluate your available balance, please try again')
+      ) {
+        error.retry = 10;
         return callback(error);
       }
 
@@ -73,7 +82,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         funcName === 'checkOrder' &&
         message.includes('Not Found')
       ) {
-        error.retry = 25s;
+        error.retry = 25;
         return callback(error);
       }
 

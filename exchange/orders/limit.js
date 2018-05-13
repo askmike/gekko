@@ -90,7 +90,7 @@ class LimitOrder extends BaseOrder {
         this.filledAmount = result.filledAmount;
 
         // note: doc event API
-        this.emit('partialFill', this.filledAmount);
+        this.emit('fill', this.filledAmount);
       }
 
       if(this.cancelling)
