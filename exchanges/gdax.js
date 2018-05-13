@@ -374,7 +374,7 @@ Trader.getCapabilities = function() {
     name: 'GDAX',
     slug: 'gdax',
     currencies: ['USD', 'EUR', 'GBP', 'BTC'],
-    assets: ['BTC', 'LTC', 'ETH', 'BCH],
+    assets: ['BTC', 'LTC', 'ETH', 'BCH'],
     markets: [
       { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
       { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
