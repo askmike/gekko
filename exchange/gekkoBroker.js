@@ -76,10 +76,12 @@ class Broker {
     this.api.getTicker((err, ticker) => {
 
       if(err) {
-        if(err.message)
+        if(err.message) {
           throw err;
-        else
+        } else {
+          console.log('err not wrapped in error:', err);
           throw new errors.ExchangeError(err);
+        }
       }
 
       this.ticker = ticker;

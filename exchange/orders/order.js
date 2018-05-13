@@ -97,12 +97,6 @@ class BaseOrder extends EventEmitter {
 
     this.completed = true;
 
-    this.emit('filled', {
-      id: this.id,
-      price,
-      amount: this.amount
-    });
-
     this.finish(true);
   }
 

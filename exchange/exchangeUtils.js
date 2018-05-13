@@ -21,7 +21,11 @@ const retryInstance = (options, checkFn, callback) => {
       if(!err)
         return callback(undefined, result);
 
-      if(err.retryOnce && attempt++ === 0) {
+      let maxAttempts = err.retry;
+      if(maxAttempts === true)
+        maxAttempts = 10;
+
+      if(err.retry && attempt++ < maxAttempts) {
         return operation.retry(err);
       }
 

@@ -62,6 +62,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         funcName === 'submitOrder' &&
         message.includes('not enough exchange balance')
       ) {
+        console.log(new Date, 'not enough exchange balance - retry');
         error.retryOnce = true;
         return callback(error);
       }
@@ -72,7 +73,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         funcName === 'checkOrder' &&
         message.includes('Not Found')
       ) {
-        error.retryOnce = true;
+        error.retry = 25s;
         return callback(error);
       }
 
@@ -179,8 +180,21 @@ Trader.prototype.sell = function(amount, price, callback) {
 
 Trader.prototype.checkOrder = function(order_id, callback) {
   const processResponse = (err, data) => {
-    if (err)
+    if (err) {
+      console.log('this is after we have retried fetching it');
+      // this is after we have retried fetching it
+      // in this.handleResponse.
+      if(err.message.includes('Not Found')) {
+        return callback(undefined, {
+          open: false,
+          executed: true
+        });
+      }
+
       return callback(err);
+    }
+
+    // console.log(data);
 
     return callback(undefined, {
       open: data.is_live,
@@ -212,9 +226,11 @@ Trader.prototype.getOrder = function(order_id, callback) {
 
 Trader.prototype.cancelOrder = function(order_id, callback) {
   const processResponse = (err, data) => {
-    if (err) return callback(err);
+    if (err) {
+      return callback(err);
+    }
 
-    return callback(undefined);
+    return callback(undefined, false);
   }
 
   const handler = cb => this.bitfinex.cancel_order(order_id, this.handleResponse('cancelOrder', cb));

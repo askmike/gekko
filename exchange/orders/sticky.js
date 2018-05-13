@@ -75,8 +75,9 @@ class StickyOrder extends BaseOrder {
   }
 
   handleCreate(err, id) {
-    if(err)
+    if(err) {
       throw err;
+    }
 
     // potentailly clean up old order
     if(
@@ -93,7 +94,7 @@ class StickyOrder extends BaseOrder {
       filled: 0
     }
 
-    console.log(new Date, "ID:", this.id);
+    this.emit('new order', this.id);
 
     this.status = states.OPEN;
     this.emitStatus();
@@ -126,7 +127,6 @@ class StickyOrder extends BaseOrder {
       if(result.open) {
         if(result.filledAmount !== this.orders[this.id].filled) {
           this.orders[this.id].filled = result.filledAmount;
-
           this.emit('partialFill', this.calculateFilled());
         }
 
@@ -183,7 +183,7 @@ class StickyOrder extends BaseOrder {
     this.api.cancelOrder(this.id, (err, filled) => {
       // it got filled before we could cancel
       if(filled) {
-        this.emit('partialFill', this.calculateFilled());
+        this.emit('partialFill', this.amount);
         return this.filled(this.price);
       }
 
@@ -286,6 +286,7 @@ class StickyOrder extends BaseOrder {
     this.api.cancelOrder(this.id, filled => {
 
       if(filled) {
+        this.emit('partialFill', this.amount);
         return this.filled(this.price);
       }
 
@@ -312,6 +313,7 @@ class StickyOrder extends BaseOrder {
       this.cancelling = false;
 
       if(filled) {
+        this.emit('partialFill', this.amount);
         return this.filled(this.price);
       }
 
