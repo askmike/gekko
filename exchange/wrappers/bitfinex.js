@@ -202,8 +202,6 @@ Trader.prototype.checkOrder = function(order_id, callback) {
       return callback(err);
     }
 
-    // console.log(data);
-
     return callback(undefined, {
       open: data.is_live,
       executed: data.original_amount === data.executed_amount,
