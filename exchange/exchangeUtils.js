@@ -6,10 +6,10 @@ const errors = require('./exchangeErrors');
 const retryInstance = (options, checkFn, callback) => {
   if(!options) {
     options = {
-      retries: 20,
+      retries: 100,
       factor: 1.2,
       minTimeout: 1 * 1000,
-      maxTimeout: 3 * 1000
+      maxTimeout: 4 * 1000
     };
   }
 
@@ -20,6 +20,8 @@ const retryInstance = (options, checkFn, callback) => {
     checkFn((err, result) => {
       if(!err)
         return callback(undefined, result);
+
+      console.log('retryInstance', err);
 
       let maxAttempts = err.retry;
       if(maxAttempts === true)

@@ -32,7 +32,8 @@ const recoverableErrors = [
   '503',
   '500',
   '502',
-  'Empty response'
+  'Empty response',
+  'Please try again in a few minutes.'
 ];
 
 const includes = (str, list) => {
@@ -58,10 +59,18 @@ Trader.prototype.processResponse = function(next, fn) {
         'Your IP has been flagged by CloudFlare. ' +
         'As such Gekko Broker cannot access Poloniex.'
       );
+      data = undefined;
+    } else if(includes(data, ['Please try again in a few minutes.'])) {
+      error = new Error('Please try again in a few minutes.');
+      error.notFatal = true;
+      data = undefined;
+    } else if(includes(data, ['<!DOCTYPE html>'])) {
+      error = new Error(data);
+      data = undefined;
     }
 
     if(error) {
-      if(includes(err.message, recoverableErrors)) {
+      if(includes(error.message, recoverableErrors)) {
         error.notFatal = true;
       }
 
@@ -73,6 +82,7 @@ Trader.prototype.processResponse = function(next, fn) {
         data = { unfilled: true };
       }
 
+      // already filled
       if(fn === 'cancelOrder' &&
         error.message.includes('Invalid order number, or you are not the person who placed the order.')
       ) {
@@ -230,14 +240,15 @@ Trader.prototype.getOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order, callback) {
   const handle = (err, result) => {
-    if(err)
+    if(err) {
       return callback(err);
+    }
 
-    if(result.filled)
+    if(result.filled) {
       return callback(undefined, true);
+    }
 
     if(!result.success) {
-      console.log('[poloniex] DEBUG OUTPUT, COULD NOT CANCEL', result);
       return callback(undefined, false);
     }
 
