@@ -307,9 +307,9 @@ class Trade{
 
   getMinimum(price) {
     if(this.minimalOrder.unit === 'currency')
-      return minimum = this.minimalOrder.amount / price;
+      return this.minimalOrder.amount / price;
     else
-      return minimum = this.minimalOrder.amount;
+      return this.minimalOrder.amount;
   }
 }
 
