@@ -142,11 +142,13 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.roundAmount = function(amount) {
   var precision = 100000000;
-  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
+
+  var parent = this;
+  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
 
   if(Number.isInteger(market.precision))
-    precision = 10 * market.precision;
-
+    precision = Math.pow(10, market.precision);
+ 
   amount *= precision;
   amount = Math.floor(amount);
   amount /= precision;
