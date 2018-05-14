@@ -194,7 +194,7 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(undefined, {price, amount, date});
   }.bind(this);
 
-  this.quadriga.api('lookup_oder', {id: order}, get);
+  this.quadriga.api('lookup_order', {id: order}, get);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
