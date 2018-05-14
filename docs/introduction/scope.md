@@ -21,7 +21,7 @@ Unfortunately this simple design can sometimes be limiting, here are some limita
 
 ## Execution strategy
 
-When you are using Gekko for a real tradebot Gekko will create orders at the exchange whenever your strategy signials an advice (long or short). If your strategy signal a long advice Gekko will try to buy as much "asset" as it can get with all your "currency" (if your strat is running on USD/BTC that would mean buying BTC with all your USD). As for creating the orders Gekko is conservative and stays on your side of the orderbook (this means you don not lose on the spread, slippage or taker fees). An example:
+When you are using Gekko for a real tradebot Gekko will create orders at the exchange whenever your strategy signals an advice (long or short). If your strategy signal a long advice Gekko will try to buy as much "asset" as it can get with all your "currency" (if your strat is running on USD/BTC that would mean buying BTC with all your USD). As for creating the orders Gekko is conservative and stays on your side of the orderbook (this means you don not lose on the spread, slippage or taker fees). An example:
 
 If your strategy signals a LONG signal and this is the current orderbook:
 
