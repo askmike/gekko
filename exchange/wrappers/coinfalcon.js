@@ -54,7 +54,7 @@ Trader.prototype.processResponse = function(method, args, next) {
     if(includes(err.message, recoverableErrors))
       return this.retry(method, args);
 
-    console.log('[cf] big error!', err);
+    console.log(new Date, '[cf] big error!', err);
 
     return next(err);
   }

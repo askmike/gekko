@@ -102,10 +102,17 @@ The callback expects an error and a `trades` object. Trades is an array of trade
 - an `amount` proprty (float) which represent the amount of [asset].
 - a `tid` property (float) which represents the tradeID.
 
+## Error handling
 
-### Recompiling Gekko UI
+It is the responsibility of the wrapper to handle errors and retry the call in case of a temporary error. Gekko exposes a retry helper you can use to implement an exponential backoff retry strategy. Your wrapper does need pass a proper error object explaining whether the call can be retried or not. If the error is fatal (for example private API calls with invalid API keys) the wrapper is expected to upstream this error. If the error is retryable (exchange is overloaded or a network error) an error should be passed with the property `notFatal` set to true. If the exchange replied with another error that might be temporary (for example an `Insufficiant funds` erorr right after Gekko canceled an order, which might be caused by the exchange not having updated the balance yet) the error object can be extended with an `retry` property indicating that the call can be retried for n times but after that the error should be considered fatal.
 
-Once you added your exchange you can use it with Gekko! However if you want the new exchange to show up in the web interface you need to recompile the frontend (so your updated `exchanges.js` file is used by the webapp). [Read here](https://gekko.wizb.it/docs/internals/gekko_ui.html#Developing-for-the-Gekko-UI-frontend) how to do that.
+For implementation refer to the bitfinex implementation, in a gist this is what a common flow looks like:
+
+- (async call) `exchange.buy`, then
+- handle the response and normalize the error so the retry helper understands it, then
+- the retry helper will determine whether the call needs to be retried, then
+    - based on the error it will retry (nonFatal or retry)
+    - if no error it will pass it to your handle function that normalizes the output
 
 ## Capabilities
 

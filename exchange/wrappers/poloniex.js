@@ -33,7 +33,8 @@ const recoverableErrors = [
   '500',
   '502',
   'Empty response',
-  'Please try again in a few minutes.'
+  'Please try again in a few minutes.',
+  'Nonce must be greater than'
 ];
 
 const includes = (str, list) => {
@@ -164,8 +165,10 @@ Trader.prototype.roundPrice = function(price) {
 
 Trader.prototype.buy = function(amount, price, callback) {
   const handle = (err, result) => {
-    if(err)
+    if(err) {
+      console.log(new Date, 'BUY ERR', err, result);
       return callback(err);
+    }
 
     callback(undefined, result.orderNumber);
   }
@@ -176,8 +179,10 @@ Trader.prototype.buy = function(amount, price, callback) {
 
 Trader.prototype.sell = function(amount, price, callback) {
   const handle = (err, result) => {
-    if(err)
+    if(err) {
+      console.log(new Date, 'SELL ERR', err, result);
       return callback(err);
+    }
 
     callback(undefined, result.orderNumber);
   }
@@ -198,7 +203,6 @@ Trader.prototype.checkOrder = function(id, callback) {
     }
 
     const order = _.find(result, function(o) { return o.orderNumber === id });
-
     if(!order) {
       // if the order is not open it's fully executed
       return callback(undefined, { executed: true, open: false });

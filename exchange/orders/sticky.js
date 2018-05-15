@@ -79,6 +79,9 @@ class StickyOrder extends BaseOrder {
       throw err;
     }
 
+    if(!id)
+      console.log('BLUP! no id...');
+
     // potentailly clean up old order
     if(
       this.id &&
@@ -213,6 +216,7 @@ class StickyOrder extends BaseOrder {
       return;
 
     if(
+      this.status === states.INITIALIZING ||
       this.status === states.SUBMITTED ||
       this.status === states.MOVING ||
       this.sticking
