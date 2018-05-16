@@ -220,12 +220,14 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const args = _.toArray(arguments);
 
   const handle = this.processResponse(this.cancelOrder, args, (err, res) => {
-    if(err)
+    if(err) {
+      if(err.message.includes('has wrong status.')) {
+        return callback(undefined, true);
+      }
       return callback(err);
+    }
 
-    // todo
-    const filled = false;
-    callback(false, filled);
+    callback(undefined, false);
   });
 
   this.coinfalcon.delete('user/orders/' + order).then(handle.success).catch(handle.failure);
