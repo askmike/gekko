@@ -142,16 +142,19 @@ Trader.prototype.getPortfolio = function(callback) {
 
 // This uses the base maker fee (0.1%), and does not account for BNB discounts
 Trader.prototype.getFee = function(callback) {
-  var makerFee = 0.1;
+  const makerFee = 0.1;
   callback(undefined, makerFee / 100);
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var setTicker = function(err, data) {
+  const setTicker = (err, data) => {
     if (err)
       return callback(err);
 
     var result = _.find(data, ticker => ticker.symbol === this.pair);
+
+    if(!result)
+      return callback(new Error(`Market ${this.pair} not found on Binance`));
 
     var ticker = {
       ask: parseFloat(result.askPrice),
@@ -161,8 +164,8 @@ Trader.prototype.getTicker = function(callback) {
     callback(undefined, ticker);
   };
 
-  let handler = (cb) => this.binance._makeRequest({}, this.handleResponse('getTicker', cb), 'api/v1/ticker/allBookTickers');
-  retry(retryForever, _.bind(handler, this), _.bind(setTicker, this));
+  const handler = cb => this.binance._makeRequest({}, this.handleResponse('getTicker', cb), 'api/v1/ticker/allBookTickers');
+  retry(retryForever, handler, setTicker);
 };
 
 // Effectively counts the number of decimal places, so 0.001 or 0.234 results in 3
@@ -203,15 +206,15 @@ Trader.prototype.isValidLot = function(price, amount) {
 }
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
-  var setOrder = function(err, data) {
+  const setOrder = (err, data) => {
     if (err) return callback(err);
 
-    var txid = data.orderId;
+    const txid = data.orderId;
 
     callback(undefined, txid);
   };
 
-  let reqData = {
+  const reqData = {
     symbol: this.pair,
     side: tradeType.toUpperCase(),
     type: 'LIMIT',
@@ -221,31 +224,45 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     timestamp: new Date().getTime()
   };
 
-  let handler = (cb) => this.binance.newOrder(reqData, this.handleResponse('addOrder', cb));
-  retry(retryCritical, _.bind(handler, this), _.bind(setOrder, this));
+  const handler = cb => this.binance.newOrder(reqData, this.handleResponse('addOrder', cb));
+  retry(retryCritical, handler, setOrder);
 };
 
 Trader.prototype.getOrder = function(order, callback) {
-  var get = function(err, data) {
+  const get = (err, data) => {
     if (err) return callback(err);
 
-    var price = parseFloat(data.price);
-    var amount = parseFloat(data.executedQty);
+    const trade = _.find(data, t => {
+      // note: the API returns a string after creating
+      return t.orderId == order;
+    });
+
+    if(!trade) {
+      return callback(new Error('Trade not found'));
+    }
+
+    const price = parseFloat(trade.price);
+    const amount = parseFloat(trade.qty);
     
-    // Data.time is a 13 digit millisecon unix time stamp.
+    // Data.time is a 13 digit millisecond unix time stamp.
     // https://momentjs.com/docs/#/parsing/unix-timestamp-milliseconds/ 
-    var date = moment(data.time);
+    const date = moment(trade.time);
 
-    callback(undefined, { price, amount, date });
-  }.bind(this);
+    const fees = {
+      [trade.commissionAsset]: +trade.commission
+    }
 
-  let reqData = {
+    callback(undefined, { price, amount, date, fees });
+  }
+
+  const reqData = {
     symbol: this.pair,
-    orderId: order,
+    // if this order was not part of the last 500 trades we won't find it..
+    limit: 500,
   };
 
-  let handler = (cb) => this.binance.queryOrder(reqData, this.handleResponse('getOrder', cb));
-  retry(retryCritical, _.bind(handler, this), _.bind(get, this));
+  const handler = cb => this.binance.myTrades(reqData, this.handleResponse('getOrder', cb));
+  retry(retryCritical, handler, get);
 };
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -266,8 +283,8 @@ Trader.prototype.checkOrder = function(order, callback) {
     if(
       status === 'CANCELED' ||
       status === 'REJECTED' ||
-      // for good measure: GB does
-      // not submit orders than can expire
+      // for good measure: GB does not
+      // submit orders that can expire yet
       status === 'EXPIRED'
     ) {
       return callback(undefined, { executed: false, open: false });
@@ -284,7 +301,7 @@ Trader.prototype.checkOrder = function(order, callback) {
     throw status;
   };
 
-  let reqData = {
+  const reqData = {
     symbol: this.pair,
     orderId: order,
   };
@@ -329,7 +346,7 @@ Trader.getCapabilities = function() {
     providesHistory: 'date',
     providesFullHistory: true,
     tid: 'tid',
-    tradable: true,
+    tradable: true
   };
 };
 

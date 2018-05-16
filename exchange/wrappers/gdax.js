@@ -225,11 +225,15 @@ Trader.prototype.getOrder = function(order, callback) {
   const result = (err, data) => {
     if (err) return callback(err);
 
-    var price = parseFloat(data.price);
-    var amount = parseFloat(data.filled_size);
-    var date = moment(data.done_at);
+    const price = parseFloat(data.price);
+    const amount = parseFloat(data.filled_size);
+    const date = moment(data.done_at);
+    const fees = {
+      // you always pay fee in the base currency on gdax
+      [this.currency]: +data.fill_fees,
+    }
 
-    callback(undefined, { price, amount, date });
+    callback(undefined, { price, amount, date, fees });
   };
 
   const fetch = cb =>

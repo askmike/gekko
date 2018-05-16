@@ -30,6 +30,58 @@ class StickyOrder extends BaseOrder {
     this.sticking = false;
   }
 
+  createSummary(next) {
+    console.log('createSummary');
+    if(!next)
+      next = _.noop;
+
+    const checkOrders = _.keys(this.orders)
+      .map(id => next => {
+        setTimeout(() => this.api.getOrder(id, next), this.timeout);
+      });
+
+    async.series(checkOrders, (err, trades) => {
+      if(err) {
+        return next(err);
+      }
+
+      let price = 0;
+      let amount = 0;
+      let date = moment(0);
+
+      _.each(trades, trade => {
+        // last fill counts
+        date = moment(trade.date);
+        price = ((price * amount) + (+trade.price * trade.amount)) / (+trade.amount + amount);
+        amount += +trade.amount;
+      });
+
+      const summary = {
+        price,
+        amount,
+        date,
+        side: this.side,
+        orders: trades.length
+      }
+
+      if(_.first(trades) && _.first(trades).fees) {
+        _.each(trades, trade => {
+          summary.fees = {};
+          _.each(trade.fees, (amount, currency) => {
+            if(!_.isNumber(summary.fees[currency])) {
+              summary.fees[currency] = amount;
+            } else {
+              summary.fees[currency] += amount;
+            }
+          });
+        });
+      }
+
+      this.emit('summary', summary);
+      next(undefined, summary);
+    });
+  }
+
   create(side, rawAmount, params = {}) {
     this.side = side;
 

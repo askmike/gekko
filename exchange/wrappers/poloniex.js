@@ -37,6 +37,12 @@ const recoverableErrors = [
   'Nonce must be greater than'
 ];
 
+// errors that might mean
+// the API call succeeded.
+const unknownResultErrors = [
+  'ETIMEDOUT',
+]
+
 const includes = (str, list) => {
   if(!_.isString(str))
     return false;
@@ -46,7 +52,6 @@ const includes = (str, list) => {
 
 Trader.prototype.processResponse = function(next, fn) {
   return (err, data) => {
-
     let error;
 
     if(err) {
@@ -71,6 +76,7 @@ Trader.prototype.processResponse = function(next, fn) {
     }
 
     if(error) {
+
       if(includes(error.message, recoverableErrors)) {
         error.notFatal = true;
       }
@@ -90,10 +96,50 @@ Trader.prototype.processResponse = function(next, fn) {
         error = undefined;
         data = { filled: true };
       }
+
+      if(fn === 'order') {
+        // we need to check whether the order was actually created
+        if(includes(error.message, unknownResultErrors)) {
+          setTimeout(() => {
+            this.findLastTrade(2, (err, lastTrade) => {
+              if(lastTrade) {
+                next(undefined, lastTrade);
+              } else {
+                next(error);
+              }
+            });
+
+          }, this.checkInterval);
+          return;
+        }
+      }
     }
 
     return next(error, data);
   }
+}
+
+Trader.prototype.findLastTrade = function(since, callback) {
+  const handle = (err, result) => {
+    if(err) {
+      next(err);
+    }
+
+    if(!result.length)
+      callback(undefined, undefined);
+
+    let order;
+    if(since) {
+      const threshold = moment().subtract(since, 'm');
+      order = _.find(result, o => moment.utc(o.date) > threshold);
+    } else {
+      order = _.last(result);
+    }
+
+    callback(undefined, order);
+  }
+  const fetch = next => this.poloniex.returnOpenOrders(this.currency, this.asset, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.getPortfolio = function(callback) {
@@ -166,28 +212,26 @@ Trader.prototype.roundPrice = function(price) {
 Trader.prototype.buy = function(amount, price, callback) {
   const handle = (err, result) => {
     if(err) {
-      console.log(new Date, 'BUY ERR', err, result);
       return callback(err);
     }
 
     callback(undefined, result.orderNumber);
   }
 
-  const fetch = next => this.poloniex.buy(this.currency, this.asset, price, amount, this.processResponse(next));
+  const fetch = next => this.poloniex.buy(this.currency, this.asset, price, amount, this.processResponse(next, 'order'));
   retry(null, fetch, handle);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
   const handle = (err, result) => {
     if(err) {
-      console.log(new Date, 'SELL ERR', err, result);
       return callback(err);
     }
 
     callback(undefined, result.orderNumber);
   }
 
-  const fetch = next => this.poloniex.sell(this.currency, this.asset, price, amount, this.processResponse(next));
+  const fetch = next => this.poloniex.sell(this.currency, this.asset, price, amount, this.processResponse(next, 'order'));
   retry(null, fetch, handle);
 }
 
@@ -232,7 +276,6 @@ Trader.prototype.getOrder = function(order, callback) {
       date = moment(trade.date);
       price = ((price * amount) + (+trade.rate * trade.amount)) / (+trade.amount + amount);
       amount += +trade.amount;
-
     });
 
     callback(err, {price, amount, date});
