@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const stats = require('../../core/stats');
+const statslite = require('stats-lite');
 const util = require('../../core/util');
 const ENV = util.gekkoEnv();
 
@@ -30,9 +30,10 @@ const PerformanceAnalyzer = function() {
 
   this.trades = 0;
 
-  this.sharpe = 0;
-
+  this.exposure = 0;
+  
   this.roundTrips = [];
+  this.losses = [];
   this.roundTrip = {
     entry: false,
     exit: false
@@ -144,14 +145,12 @@ PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
 
   this.deferredEmit('roundtrip', roundtrip);
 
-  // we need a cache for sharpe
-
-  // every time we have a new roundtrip
-  // update the cached sharpe ratio
-  this.sharpe = stats.sharpe(
-    this.roundTrips.map(r => r.profit),
-    perfConfig.riskFreeReturn
-  );
+  // update cached exposure
+  this.exposure = this.exposure + Date.parse(this.roundTrip.exit.date) - Date.parse(this.roundTrip.entry.date);
+  // track losses separately for downside report
+  if (roundtrip.exitBalance < roundtrip.entryBalance)
+    this.losses.push(roundtrip);
+  
 }
 
 PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
@@ -162,6 +161,15 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     this.dates.end.diff(this.dates.start)
   );
   const relativeProfit = this.balance / this.start.balance * 100 - 100;
+  
+  const percentExposure = this.exposure / (Date.parse(this.dates.end) - Date.parse(this.dates.start));
+
+  const sharpe = (relativeYearlyProfit - perfConfig.riskFreeReturn) 
+    / statslite.stdev(this.roundTrips.map(r => r.profit)) 
+    / Math.sqrt(this.trades / (this.trades - 2));
+  
+  const downside = statslite.percentile(this.losses.map(r => r.profit), 0.25)
+    * Math.sqrt(this.trades / (this.trades - 2));
 
   const report = {
     startTime: this.dates.start.utc().format('YYYY-MM-DD HH:mm:ss'),
@@ -180,7 +188,9 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     endPrice: this.endPrice,
     trades: this.trades,
     startBalance: this.start.balance,
-    sharpe: this.sharpe
+    exposure: percentExposure,
+    sharpe,
+    downside
   }
 
   report.alpha = report.profit - report.market;

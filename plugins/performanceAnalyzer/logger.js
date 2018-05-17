@@ -94,8 +94,7 @@ if(mode === 'backtest') {
     log.info(`(PROFIT REPORT) start time:\t\t\t ${report.startTime}`);
     log.info(`(PROFIT REPORT) end time:\t\t\t ${report.endTime}`);
     log.info(`(PROFIT REPORT) timespan:\t\t\t ${report.timespan}`);
-    if(report.sharpe)
-      log.info(`(PROFIT REPORT) sharpe ratio:\t\t\t ${report.sharpe}`);
+    log.info(`(PROFIT REPORT) exposure:\t\t\t ${report.exposure}`);
     log.info();
     log.info(`(PROFIT REPORT) start price:\t\t\t ${report.startPrice} ${this.currency}`);
     log.info(`(PROFIT REPORT) end price:\t\t\t ${report.endPrice} ${this.currency}`);
@@ -109,8 +108,11 @@ if(mode === 'backtest') {
       `(PROFIT REPORT) simulated yearly profit:\t ${report.yearlyProfit}`,
       `${this.currency} (${report.relativeYearlyProfit}%)`
     );
+  
+    log.info(`(PROFIT REPORT) sharpe ratio:\t\t\t ${report.sharpe}`);
+    log.info(`(PROFIT REPORT) expected downside:\t\t ${report.downside}`);
   }
-
+  
   Logger.prototype.handleRoundtrip = function(rt) {
     this.roundtrips.push(rt);
   }
