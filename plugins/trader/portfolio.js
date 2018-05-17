@@ -65,10 +65,12 @@ class Portfolio{
           return item;
         });
 
-      this.portfolio = portfolio;
-
-      if(_.isEmpty(this.portfolio))
+      if(_.isEmpty(this.portfolio)) {
+        this.portfolio = portfolio;
         this.emit('portfolioUpdate', this.convertPortfolio(this.conf.asset,this.conf.currency,this.ticker.bid));
+      }
+	  this.portfolio = portfolio;
+
 
       if(_.isFunction(callback))
         callback();
@@ -77,7 +79,7 @@ class Portfolio{
 
     this.exchange.getPortfolio(set);
   }
-  
+
   setFee(callback) {
     let set = (err, fee) => {
       this.fee = fee;
@@ -97,7 +99,7 @@ class Portfolio{
 
       if(err)
         util.die(err);
-      
+
       if(_.isFunction(callback))
         callback();
     }

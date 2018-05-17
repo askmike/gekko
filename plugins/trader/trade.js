@@ -156,7 +156,7 @@ class Trade{
       // if order to small
       if (!order.amount || order.amount < minimum) {
         return log.warn(
-          'wanted to buy',
+          'wanted to sell',
           this.currency,
           'but the amount is too small ',
           '(' + parseFloat(amount).toFixed(8) + ' @',

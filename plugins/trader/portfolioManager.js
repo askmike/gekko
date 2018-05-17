@@ -29,6 +29,11 @@ var Manager = function(conf) {
   // create a portfolio
   this.portfolio = new Portfolio(conf,this.exchange);
 
+  //setup event relay
+  this.portfolio.on('portfolioUpdate', portfolioUpdate => {
+    this.emit('portfolioUpdate', portfolioUpdate);
+  });
+
   // contains instantiated trade classes
   this.currentTrade = false
   this.tradeHistory = [];
@@ -41,9 +46,9 @@ util.makeEventEmitter(Manager);
 Manager.prototype.init = function(callback) {
   log.debug('portfolioManager : getting balance & fee from', this.exchange.name);
 
-  let prepare = () => {  
+  let prepare = () => {
     log.info('trading at', this.exchange.name, 'ACTIVE');
-    log.info(this.exchange.name, 'trading fee will be:', this.portfolio.fee * 100 + '%'); // Move fee into Exchange class?
+    log.info(this.exchange.name, 'trading fee will be:', this.portfolio.fee * 10000 + '%'); // Move fee into Exchange class?
     this.portfolio.logPortfolio();
     callback();
   }
@@ -83,7 +88,7 @@ Manager.prototype.newTrade = function(what) {
     this.tradeHistory.push(this.currentTrade)
   }
 
-  return this.currentTrade = new Trade({
+  this.currentTrade = new Trade({
     action: what,
     exchange:this.exchange,
     currency: this.conf.currency,
@@ -92,6 +97,13 @@ Manager.prototype.newTrade = function(what) {
     orderUpdateDelay: this.conf.orderUpdateDelay,
     keepAsset: (this.conf.keepAsset) ? this.conf.keepAsset : false
   })
+
+  //setup event relay
+  this.currentTrade.on('trade', trade => {
+    this.emit('trade', trade);
+  });
+
+  return this.currentTrade;
 };
 
 module.exports = Manager;
