@@ -1,8 +1,7 @@
 <template lang='jade'>
-.contain
-  dataset-picker.contain.my2(v-on:dataset='updateDataset')
+  dataset-picker.my2(v-on:dataset='updateDataset')
   .hr
-  strat-picker.contain.my2(v-on:stratConfig='updateStrat')
+  strat-picker.my2(v-on:stratConfig='updateStrat')
   .hr
   paper-trader(v-on:settings='updatePaperTrader')
   .hr
