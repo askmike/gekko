@@ -18,4 +18,4 @@ Since Gekko version 0.4 Gekko can launch a process which exposes a web (REST and
 - [Batch generation of configuration files](https://github.com/bettimms/multi-gekko)
 
 ### Plugins
-- [Store trades to Google SpreadSheet](https://github.com/RJPGriffin/google-forms-gekko-plugin)
+- [Store trades in Google SpreadSheet](https://github.com/RJPGriffin/google-forms-gekko-plugin)
