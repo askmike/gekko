@@ -20,6 +20,7 @@ const RetryError = function(message) {
   _.bindAll(this);
 
   this.name = "RetryError";
+  this.retry = 5;
   this.message = message;
 }
 RetryError.prototype = new Error();
