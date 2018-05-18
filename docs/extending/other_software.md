@@ -12,10 +12,10 @@ Since Gekko version 0.4 Gekko can launch a process which exposes a web (REST and
 
 ### UI mode
 - [Unofficial Material UI](https://github.com/H256/gekko-quasar-ui)
-- [Manage traders and watchers](https://github.com/CyborgDroid/gekko-python)
+- [Controlling bots](https://github.com/CyborgDroid/gekko-python)
 
 ### CLI mode
-- [Batch generate config files](https://github.com/bettimms/multi-gekko)
+- [Batch generation of configuration files](https://github.com/bettimms/multi-gekko)
 
 ### Plugins
 - [Store trades to Google SpreadSheet](https://github.com/RJPGriffin/google-forms-gekko-plugin)
