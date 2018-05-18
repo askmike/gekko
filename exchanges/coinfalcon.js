@@ -227,7 +227,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var url = "markets/" + this.pair + "/trades"
 
   if (since) {
-    url += '?since_time=' + (_.isString(since) ? since : since.format());
+    url += '?since_time=' + (_.isString(since) ? since : since.toISOString());
   }
 
   this.coinfalcon.get(url).then(success).catch(failure);
