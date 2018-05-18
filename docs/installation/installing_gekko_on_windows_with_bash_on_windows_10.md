@@ -47,7 +47,7 @@ Open up bash and install node.js: (taken from [here](https://nodejs.org/en/downl
 
 ```
 sudo apt-get update
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo apt-get install -y build-essential
 ```
@@ -67,25 +67,6 @@ git clone git://github.com/askmike/gekko.git
 cd gekko
 npm install --only=production
 ```
-
-## Restart Bash and install the correct version of TA-lib (taken from [here](https://github.com/askmike/gekko/issues/908#issuecomment-319657408))
-
-Restart Bash by closing it and reopening it. Then:
-
-```
-cd ~/gekko
-npm remove talib
-npm install talib@1.0.2
-```
-
-Note: If you do not restart Bash, you may receive an error like this:
-
-```
-: not foundram Files/nodejs/npm: 3: /mnt/c/Program Files/nodejs/npm:
-: not foundram Files/nodejs/npm: 5: /mnt/c/Program Files/nodejs/npm:
-/mnt/c/Program Files/nodejs/npm: 6: /mnt/c/Program Files/nodejs/npm: Syntax error: word unexpected (expecting "in")
-```
-
 
 ### Starting Gekko
 

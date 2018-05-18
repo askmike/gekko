@@ -37,10 +37,10 @@ method.update = function(candle) {
 // calculated parameters.
 method.log = function(candle) {
   var digits = 8;
-  var ppo = this.indicators.ppo;
+  var ppo = this.indicators.ppo.result;
   var result = ppo.ppo;
-  var signal = ppo.PPOsignal.result;
-  var hist = result - signal;
+  var signal = ppo.PPOsignal;
+  var hist = ppo.PPOhist;
   var momentumResult = this.indicators[momentumName][momentumName];
 
   log.debug('\t', 'PPO:', result.toFixed(digits));
@@ -51,10 +51,8 @@ method.log = function(candle) {
 }
 
 method.check = function() {
-  var ppo = this.indicators.ppo;
-  var result = ppo.ppo;
-  var signal = ppo.PPOsignal.result;
-  var hist = result - signal;
+  var ppo = this.indicators.ppo.result;
+  var hist = ppo.PPOhist;
 
   var value = this.indicators[momentumName][momentumName];
 

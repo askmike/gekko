@@ -1,4 +1,4 @@
-var Bitcoincoid = require('bitcoin-co-id'),
+var Bitcoincoid = require('bitcoin-co-id-update'),
    _ = require('lodash'),
    moment = require('moment'),
    log = require('../core/log');
@@ -253,7 +253,7 @@ Trader.getCapabilities = function () {
     slug: 'bitcoin-co-id',
     currencies: ['IDR', 'BTC'],
     assets: [
-      'BTC', 'BCH', 'BTG', 'ETH', 'ETC', 'LTC', 'NXT', 'WAVES', 'STR', 'XRP', 'XZC', 'BTS', 'DRK', 'DOGE', 'NEM'
+      "BTC", "BCH", "BTG", "ETH", "ETC", "LTC", "NXT", "WAVES", "STR", "XRP", "XZC", "BTS", "DRK", "DOGE", "NEM", "XZR", "DASH", "XLM", "XEM"
     ],
     markets: [
 
@@ -270,6 +270,7 @@ Trader.getCapabilities = function () {
       { pair: ['IDR', 'STR'], minimalOrder: { amount: 20, unit: 'asset' } }, // Listed as XLM
       { pair: ['IDR', 'XRP'], minimalOrder: { amount: 10, unit: 'asset' } },
       { pair: ['IDR', 'XZC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
+
 
       // BTC <-> XXXX
 

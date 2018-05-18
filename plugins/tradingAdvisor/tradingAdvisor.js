@@ -63,6 +63,9 @@ Actor.prototype.setupTradingMethod = function() {
   this.method
     .on('advice', this.relayAdvice);
 
+  this.method
+    .on('trade', this.processTrade);
+
   this.batcher
     .on('candle', this.processCustomCandle);
 }
@@ -77,6 +80,10 @@ Actor.prototype.processCandle = function(candle, done) {
 // propogate a custom sized candle to the trading method
 Actor.prototype.processCustomCandle = function(candle) {
   this.method.tick(candle);
+}
+
+Actor.prototype.processTrade = function(trade) {
+  this.method.processTrade(trade);
 }
 
 // pass through shutdown handler

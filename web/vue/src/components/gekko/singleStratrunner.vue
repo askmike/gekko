@@ -202,7 +202,7 @@ export default {
         this.candleFetch = 'fetched';
         // todo
         if(!res || res.error || !_.isArray(res))
-          console.log(res);
+          return console.log(res);
 
         this.candles = res.map(c => {
           c.start = moment.unix(c.start).utc().format();

@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.5.11",
+  "version": "0.5.14",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -17,8 +17,8 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
-    "binance": "^1.0.2",
-    "bitcoin-co-id": "0.0.1",
+    "binance": "^1.3.1",
+    "bitcoin-co-id-update": "0.0.2",
     "bitexthai": "^0.1.0",
     "bitfinex-api-node": "^1.2.0",
     "bitstamp": "^1.0.3",
@@ -27,7 +27,9 @@
     "btc-markets": "0.0.10",
     "cexio": "0.0.x",
     "co-fs": "^1.2.0",
-    "commander": "^2.9.0",
+    "coinfalcon": "^1.0.3",
+    "coingi": "^1.0.7",
+    "commander": "^2.13.0",
     "gdax": "^0.4.2",
     "gekko": "0.0.9",
     "gemini-exchange-coffee-api": "2.0.6",
@@ -41,7 +43,7 @@
     "kraken-api-es5": "^1.0.0",
     "lakebtc_nodejs": "0.1.x",
     "lodash": "2.x",
-    "moment": "2.19.3",
+    "moment": "^2.20.1",
     "node-wex": "^1.0.3",
     "node.bittrex.api": "^0.4.3",
     "okcoin-china": "0.0.7",
@@ -54,7 +56,7 @@
     "relieve": "^2.1.3",
     "retry": "^0.10.1",
     "semver": "5.4.1",
-    "sqlite3": "^3.1.8",
+    "sqlite3": "^3.1.13",
     "stats-lite": "^2.0.4",
     "tiny-promisify": "^0.1.1",
     "toml": "^2.3.0",
@@ -62,10 +64,12 @@
     "zaif.jp": "^0.1.4"
   },
   "devDependencies": {
-    "chai": "^2.0.0",
-    "mocha": "^2.1.1",
+    "chai": "^4.1.2",
+    "mocha": "^5.0.0",
     "proxyquire": "^1.7.10",
-    "sinon": "^1.12.2"
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "sinon": "^4.2.0"
   },
   "engines": {
     "node": ">=6.0"

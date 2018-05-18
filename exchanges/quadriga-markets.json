@@ -1,0 +1,136 @@
+{
+  "assets": [
+    "XBT",
+    "ETH",
+    "LTC",
+    "BCH",
+    "BTG"
+  ],
+  "currencies": [
+    "CAD",
+    "USD",
+    "XBT"
+  ],
+  "markets": [
+    {
+      "pair": [
+        "CAD",
+        "XBT"
+      ],
+      "book": "btc_cad",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "USD",
+        "XBT"
+      ],
+      "book": "btc_usd",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "CAD",
+        "BCH"
+      ],
+      "book": "bch_cad",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "BCH"
+      ],
+      "book": "bch_btc",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "CAD",
+        "ETH"
+      ],
+      "book": "eth_cad",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "ETH"
+      ],
+      "book": "eth_btc",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "CAD",
+        "LTC"
+      ],
+      "book": "ltc_cad",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "LTC"
+      ],
+      "book": "ltc_btc",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "CAD",
+        "BTG"
+      ],
+      "book": "btg_cad",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "BTG"
+      ],
+      "book": "btg_btc",
+      "minimalOrder": {
+        "amount": "0.0005",
+        "unit": "asset"
+      },
+      "precision": 8
+    }
+  ]
+}

@@ -6,7 +6,7 @@
   all enabled plugins are actually supported by that market.
 
   Read more here:
-  @link https://github.com/askmike/gekko/blob/stable/docs/internals/architecture.md
+  https://gekko.wizbit/docs/internals/architecture.html
 
 */
 

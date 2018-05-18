@@ -18,7 +18,7 @@ ipc.on('start', config => {
   scan(
     (err, ranges, reader) => {
       reader.close();
-      ipc.send('ranges', ranges)
+      ipc.send('ranges', ranges);
       process.exit(0);
     }
   );

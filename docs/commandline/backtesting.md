@@ -24,7 +24,7 @@ In your config set the `backtest.daterange` to `scan`. This will force Gekko to 
 
 ## Run
 
-    node gekko --backtest
+    node gekko --config config.js --backtest
 
 The result will be something like this:
 

@@ -43,7 +43,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
   var requiredHistory = config.tradingAdvisor.candleSize * config.tradingAdvisor.historySize;
   var Reader = require(dirs.plugins + config.adapter + '/reader');
-
+  
   this.reader = new Reader;
 
   log.info(
@@ -53,13 +53,18 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
   );
 
   var endTime = moment().utc().startOf('minute');
-  var idealStartTime = endTime.clone().subtract('m', requiredHistory);
+  var idealStartTime = endTime.clone().subtract(requiredHistory, 'm');
 
   this.reader.mostRecentWindow(idealStartTime, endTime, function(localData) {
     // now we know what data is locally available, what
     // data would we need from the exchange?
     if(!localData) {
       log.info('\tNo usable local data available, trying to get as much as possible from the exchange..');
+      var idealExchangeStartTime = idealStartTime.clone();
+      var idealExchangeStartTimeTS = idealExchangeStartTime.unix();
+    }
+    else if (idealStartTime.unix() < localData.from) {
+      log.info('\tLocal data is still too recent, trying to get as much as possible from the exchange');
       var idealExchangeStartTime = idealStartTime.clone();
       var idealExchangeStartTimeTS = idealExchangeStartTime.unix();
     }
@@ -90,9 +95,9 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
     var maxMinutesAgo = 4 * 60; // 4 hours
     if(minutesAgo > maxMinutesAgo) {
       log.info('\tPreventing Gekko from requesting', minutesAgo, 'minutes of history.');
-      idealExchangeStartTime = endTime.clone().subtract('minutes', maxMinutesAgo);
+      idealExchangeStartTime = endTime.clone().subtract(maxMinutesAgo, 'minutes');
       idealExchangeStartTimeTS = idealExchangeStartTime.unix();
-    }
+    } 
 
     log.debug('\tFetching exchange data since', this.ago(idealExchangeStartTimeTS))
     this.checkExchangeTrades(idealExchangeStartTime, function(err, exchangeData) {
@@ -141,7 +146,7 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
         var from = localData.from;
         var to = moment.unix(exchangeData.from).utc()
           .startOf('minute')
-          .subtract('minute', 1)
+          .subtract(1, 'minute')
           .unix();
 
         log.debug('\tSeeding with:');
@@ -178,7 +183,7 @@ Stitcher.prototype.checkExchangeTrades = function(since, next) {
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
   var exchangeConfig = config.watch;
-  
+
   // include trader config if trading is enabled
   if (_.isObject(config.trader) && config.trader.enabled) {
     exchangeConfig = _.extend(config.watch, config.trader);

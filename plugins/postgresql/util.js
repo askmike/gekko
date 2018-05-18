@@ -38,14 +38,14 @@ module.exports = {
   database: function () {
     return useSingleDatabase() ?
       config.postgresql.database :
-      config.watch.exchange.toLowerCase();
+      config.watch.exchange.toLowerCase().replace(/\-/g,'');
   },
 
   // returns table name which can be different if we use
   // single or multiple db setup.
   table: function (name) {
     if (useSingleDatabase()) {
-      name = watch.exchange + '_' + name;
+      name = watch.exchange.replace(/\-/g,'') + '_' + name;
     }
     var fullName = [name, settings.pair.join('_')].join('_');
     return useLowerCaseTableNames() ? fullName.toLowerCase() : fullName;

@@ -13,7 +13,7 @@ var Reader = function() {
   this.db = handle;
 }
 
-// returns the furtherst point (up to `from`) in time we have valid data from
+// returns the furthest point (up to `from`) in time we have valid data from
 Reader.prototype.mostRecentWindow = function(from, to, next) {
   to = to.unix();
   from = from.unix();
