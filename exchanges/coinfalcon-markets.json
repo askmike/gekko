@@ -4,7 +4,7 @@
     "ETH",
     "LTC",
     "BTC",
-    "XRB",
+    "NANO",
     "BCH",
     "TAU",
     "CRED",
@@ -30,7 +30,9 @@
     "REF",
     "ADA",
     "LDN",
-    "DOGE"
+    "DOGE",
+    "STQ",
+    "DASC"
   ],
   "currencies": [
     "BTC",
@@ -44,7 +46,7 @@
         "IOT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -55,7 +57,7 @@
         "ETH"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 0.00001,
         "order": 0
       }
@@ -66,7 +68,7 @@
         "LTC"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 0.00001,
         "order": 0
       }
@@ -77,7 +79,7 @@
         "BTC"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 0.01,
         "order": 0
       }
@@ -85,10 +87,10 @@
     {
       "pair": [
         "ETH",
-        "XRB"
+        "NANO"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -96,10 +98,10 @@
     {
       "pair": [
         "BTC",
-        "XRB"
+        "NANO"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -110,7 +112,7 @@
         "BCH"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 0.00001,
         "order": 0
       }
@@ -121,7 +123,7 @@
         "TAU"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -132,7 +134,7 @@
         "TAU"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -143,7 +145,7 @@
         "CRED"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 0.000001,
         "order": 0
       }
@@ -154,7 +156,7 @@
         "CRED"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 0.000001,
         "order": 0
       }
@@ -165,8 +167,8 @@
         "KIN"
       ],
       "minimalOrder": {
-        "amount": 0.1,
-        "price": 1e-8,
+        "amount": 1,
+        "price": 1e-10,
         "order": 0
       }
     },
@@ -176,7 +178,7 @@
         "KIN"
       ],
       "minimalOrder": {
-        "amount": 0.1,
+        "amount": 1,
         "price": 1e-8,
         "order": 0
       }
@@ -187,7 +189,7 @@
         "SPHTX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -198,7 +200,7 @@
         "SPHTX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -209,7 +211,7 @@
         "TRX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -220,7 +222,7 @@
         "TRX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -231,7 +233,7 @@
         "VEN"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -242,7 +244,7 @@
         "VEN"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -253,7 +255,7 @@
         "CRPT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -264,7 +266,7 @@
         "CRPT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -275,7 +277,7 @@
         "GNT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -286,7 +288,7 @@
         "GNT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -297,7 +299,7 @@
         "DCN"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -308,7 +310,7 @@
         "DCN"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -319,7 +321,7 @@
         "REBL"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -330,7 +332,7 @@
         "REBL"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -341,7 +343,7 @@
         "VIU"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -352,7 +354,7 @@
         "EBTC"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -363,7 +365,7 @@
         "EBTC"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -374,7 +376,7 @@
         "TRAC"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -385,7 +387,7 @@
         "TRAC"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -396,7 +398,7 @@
         "CHSB"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -407,7 +409,7 @@
         "CHSB"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -418,7 +420,7 @@
         "GRLC"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -429,7 +431,7 @@
         "GRLC"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -440,7 +442,7 @@
         "ECA"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -451,7 +453,7 @@
         "ECA"
       ],
       "minimalOrder": {
-        "amount": 0.00001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -462,7 +464,7 @@
         "XRP"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -473,7 +475,7 @@
         "XRP"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 1e-8,
         "price": 1e-8,
         "order": 0
       }
@@ -528,7 +530,7 @@
         "WAX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 0.01,
         "price": 1e-8,
         "order": 0
       }
@@ -539,7 +541,7 @@
         "WAX"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 0.01,
         "price": 1e-8,
         "order": 0
       }
@@ -649,7 +651,7 @@
         "IOT"
       ],
       "minimalOrder": {
-        "amount": 0.000001,
+        "amount": 0.00001,
         "price": 1e-8,
         "order": 0
       }
@@ -662,6 +664,83 @@
       "minimalOrder": {
         "amount": 0.00001,
         "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "STQ"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "STQ"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "IOT"
+      ],
+      "minimalOrder": {
+        "amount": 0.00001,
+        "price": 0.0001,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "DASC"
+      ],
+      "minimalOrder": {
+        "amount": 0.00001,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "DASC"
+      ],
+      "minimalOrder": {
+        "amount": 0.00001,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "DASC"
+      ],
+      "minimalOrder": {
+        "amount": 0.00001,
+        "price": 0.0001,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "NANO"
+      ],
+      "minimalOrder": {
+        "amount": 0.0001,
+        "price": 0.0001,
         "order": 0
       }
     }
