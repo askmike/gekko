@@ -161,6 +161,7 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     this.dates.end.diff(this.dates.start)
   );
   const relativeProfit = this.balance / this.start.balance * 100 - 100;
+  const relativeYearlyProfit = relativeProfit / timespan.asYears();
   
   const percentExposure = this.exposure / (Date.parse(this.dates.end) - Date.parse(this.dates.start));
 
@@ -182,7 +183,7 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     relativeProfit: relativeProfit,
 
     yearlyProfit: profit / timespan.asYears(),
-    relativeYearlyProfit: relativeProfit / timespan.asYears(),
+    relativeYearlyProfit,
 
     startPrice: this.startPrice,
     endPrice: this.endPrice,
