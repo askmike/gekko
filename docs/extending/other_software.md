@@ -4,9 +4,9 @@ Since Gekko version 0.4 Gekko can launch a process which exposes a web (REST and
 
 ## List
 ### Backtesters
-- [Gekko-BacktestTool](https://github.com/xFFFFF/GekkoBacktestTool)
 - [japonicus](https://github.com/Gab0/japonicus)
 - [gekkoga](https://github.com/gekkowarez/gekkoga)
+- [Gekko-BacktestTool](https://github.com/xFFFFF/GekkoBacktestTool)
 - [Gekko Automated Backtest](https://github.com/tommiehansen/gab)
 - [Gekko Warez Bruteforce Backtester](https://github.com/gekkowarez/bruteforce)
 
