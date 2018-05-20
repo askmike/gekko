@@ -45,7 +45,8 @@ const recoverableErrors = [
   '504',
   '503',
   '500',
-  '502'
+  '502',
+  '408'
 ];
 
 Trader.prototype.processResponse = function(method, args, next) {
