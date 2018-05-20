@@ -55,9 +55,10 @@ Trader.prototype.handleResponse = function(funcName, callback) {
 
     if(error) {
       const message = error.message;
+      console.log(new Date, 'ERROR!', funcName, message);
 
       // in case we just cancelled our balances might not have
-      // settled yet. Retry once manually
+      // settled yet, retry.
       if(
         funcName === 'submitOrder' &&
         message.includes('not enough exchange balance')

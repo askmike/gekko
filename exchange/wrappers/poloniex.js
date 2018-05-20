@@ -51,6 +51,11 @@ const includes = (str, list) => {
 }
 
 Trader.prototype.processResponse = function(next, fn, payload) {
+  // TODO: in very rare cases the callback is
+  // called twice (first on ETIMEDOUT later
+  // without error). Temp workaround.
+  next = _.once(next);
+
   return (err, data) => {
     let error;
 
@@ -97,7 +102,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
       ) {
         error = undefined;
         data = { unfilled: true };
-        console.log('UNKNOWN ORDER!');
+        console.log('UNKNOWN ORDER!', payload);
         process.exit();
       }
 
@@ -164,7 +169,7 @@ Trader.prototype.findLastOrder = function(since, side, callback) {
       return callback(err);
     }
 
-    result = result.filter(t => t.type === payload);
+    result = result.filter(t => t.type === side);
 
     if(!result.length) {
       return callback(undefined, undefined);
@@ -255,23 +260,15 @@ Trader.prototype.roundPrice = function(price) {
 }
 
 Trader.prototype.createOrder = function(side, amount, price, callback) {
-
-  // TODO: in very rare cases the callback is
-  // called twice (first on ETIMEDOUT later
-  // without error). Temp workaround.
-  callback = _.once(callback);
-
   const handle = (err, result) => {
     if(err) {
       return callback(err);
     }
 
-    console.log(new Date, '[poloniex.js] created order', result.orderNumber);
     callback(undefined, result.orderNumber);
   }
 
   const fetch = next => {
-    console.log(new Date, '[poloniex.js] creating order');
     this.poloniex[side](this.currency, this.asset, price, amount, this.processResponse(next, 'order', side))
   };
   retry(null, fetch, handle);  
@@ -286,26 +283,18 @@ Trader.prototype.sell = function(amount, price, callback) {
 }
 
 Trader.prototype.checkOrder = function(id, callback) {
-  // TODO: in very rare cases the callback is
-  // called twice (first on ETIMEDOUT later
-  // without error). Temp workaround.
-  callback = _.once(callback);
-
   const handle = (err, result) => {
 
     if(err) {
-      console.log(new Date, 'checkOrder final err', err);
       return callback(err);
     }
 
     if(result.completed) {
-      console.log(new Date, 'checkOrder IS COMPLETED');
       return callback(undefined, { executed: true, open: false });
     }
 
     const order = _.find(result, function(o) { return o.orderNumber === id });
     if(!order) {
-      console.log(new Date, 'checkOrder order not found', id, result);
       // if the order is not open it's fully executed
       return callback(undefined, { executed: true, open: false });
     }
@@ -321,8 +310,6 @@ Trader.prototype.getOrder = function(order, callback) {
   const handle = (err, result) => {
     if(err)
       return callback(err);
-
-    console.log('polo getOrder', result);
 
     var price = 0;
     var amount = 0;
@@ -341,19 +328,12 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(err, {price, amount, date});
   };
 
-  const fetch = next => this.poloniex.returnOrderTrades(order, this.processResponse(next, 'getOrder'));
+  const fetch = next => this.poloniex.returnOrderTrades(order, this.processResponse(next, 'getOrder', order));
   retry(null, fetch, handle);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  // TODO: in very rare cases the callback is
-  // called twice (first on ETIMEDOUT later
-  // without error). Temp workaround.
-  callback = _.once(callback);
-
-  console.log(new Date, '[poloniex.js] fetching cancel', order);
   const handle = (err, result) => {
-    console.log(new Date, '[poloniex.js] cancel fetch result', order, result);
     if(err) {
       return callback(err);
     }
