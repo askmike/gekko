@@ -28,8 +28,8 @@
     "gdax": "^0.7.0",
     "lodash": "^4.17.5",
     "moment": "^2.22.1",
-    "poloniex.js": "0.0.8",
     "request-promise": "^4.2.2",
-    "retry": "^0.12.0"
+    "retry": "^0.12.0",
+    "poloniex.js": "git://github.com/askmike/poloniex.js.git#69f5e254353e66d135070844fc3328efcbe3641c"
   }
 }
