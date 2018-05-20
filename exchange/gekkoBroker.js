@@ -38,7 +38,7 @@ class Broker {
         _.last(p.pair) === config.asset.toUpperCase();
     });
 
-    this.interval = api.interval || 1500;
+    this.interval = this.api.interval || 1500;
 
 //    this.market = new Market(config);
 

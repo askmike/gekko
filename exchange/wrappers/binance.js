@@ -232,25 +232,31 @@ Trader.prototype.getOrder = function(order, callback) {
   const get = (err, data) => {
     if (err) return callback(err);
 
-    const trade = _.find(data, t => {
+    const trade = _.filter(data, t => {
       // note: the API returns a string after creating
       return t.orderId == order;
     });
 
-    if(!trade) {
-      return callback(new Error('Trade not found'));
+    let price = 0;
+    let amount = 0;
+    let date = moment(0);
+
+    const fees = {};
+
+    if(!trade.length) {
+      return callback(new Error('Trades not found'));
     }
 
-    const price = parseFloat(trade.price);
-    const amount = parseFloat(trade.qty);
-    
-    // Data.time is a 13 digit millisecond unix time stamp.
-    // https://momentjs.com/docs/#/parsing/unix-timestamp-milliseconds/ 
-    const date = moment(trade.time);
+    _.each(result, trade => {
+      date = moment(trade.time);
+      price = ((price * amount) + (+trade.price * trade.qty)) / (+trade.qty + amount);
+      amount += +trade.amount;
 
-    const fees = {
-      [trade.commissionAsset]: +trade.commission
-    }
+      if(fees[trade.commissionAsset])
+        fees[trade.commissionAsset] += (+trade.commission);
+      else
+        fees[trade.commissionAsset] = (+trade.commission);
+    });
 
     callback(undefined, { price, amount, date, fees });
   }
