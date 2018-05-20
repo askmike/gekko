@@ -22,6 +22,8 @@ var Trader = function(config) {
   });
 
   this.coinfalcon = new CoinFalcon.Client(this.key, this.secret);
+
+  this.interval = 1500;
 };
 
 const includes = (str, list) => {
