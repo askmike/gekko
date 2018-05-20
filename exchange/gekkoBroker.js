@@ -38,6 +38,8 @@ class Broker {
         _.last(p.pair) === config.asset.toUpperCase();
     });
 
+    this.interval = api.interval || 1500;
+
 //    this.market = new Market(config);
 
     this.market = config.currency.toUpperCase() + config.asset.toUpperCase();
@@ -67,8 +69,11 @@ class Broker {
   syncPrivateData(callback) {
     async.series([
       this.setTicker,
+      next => setTimeout(next, this.interval),
       this.portfolio.setFee.bind(this.portfolio),
-      this.portfolio.setBalances.bind(this.portfolio)
+      next => setTimeout(next, this.interval),
+      this.portfolio.setBalances.bind(this.portfolio),
+      next => setTimeout(next, this.interval)
     ], callback);
   }
 
@@ -77,6 +82,7 @@ class Broker {
 
       if(err) {
         if(err.message) {
+          console.log(err.message);
           throw err;
         } else {
           console.log('err not wrapped in error:', err);

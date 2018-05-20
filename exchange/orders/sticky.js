@@ -31,7 +31,6 @@ class StickyOrder extends BaseOrder {
   }
 
   createSummary(next) {
-    console.log('createSummary');
     if(!next)
       next = _.noop;
 
@@ -128,6 +127,7 @@ class StickyOrder extends BaseOrder {
 
   handleCreate(err, id) {
     if(err) {
+      console.log(err.message);
       throw err;
     }
 
@@ -224,6 +224,7 @@ class StickyOrder extends BaseOrder {
       }
 
       // order got filled!
+      this.orders[this.id].filled = this.amount;
       this.sticking = false;
       this.emit('fill', this.amount);
       this.filled(this.price);
@@ -314,6 +315,7 @@ class StickyOrder extends BaseOrder {
     }
 
     if(
+      this.status === states.INITIALIZING ||
       this.status === states.SUBMITTED ||
       this.status === states.MOVING ||
       this.sticking
@@ -356,16 +358,15 @@ class StickyOrder extends BaseOrder {
 
     if(
       this.status === states.SUBMITTED ||
-      this.status === states.MOVING
+      this.status === states.MOVING ||
+      this.sticking
     ) {
       this.cancelling = true;
       return;
     }
-
     clearTimeout(this.timeout);
 
     this.api.cancelOrder(this.id, filled => {
-
       this.cancelling = false;
 
       if(filled) {

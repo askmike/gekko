@@ -18,8 +18,9 @@ const retryInstance = (options, checkFn, callback) => {
   const operation = retry.operation(options);
   operation.attempt(function(currentAttempt) {
     checkFn((err, result) => {
-      if(!err)
+      if(!err) {
         return callback(undefined, result);
+      }
 
       let maxAttempts = err.retry;
       if(maxAttempts === true)
@@ -29,8 +30,9 @@ const retryInstance = (options, checkFn, callback) => {
         return operation.retry(err);
       }
 
-      if(err.notFatal)
+      if(err.notFatal) {
         return operation.retry(err);
+      }
 
       callback(err, result);
     });
