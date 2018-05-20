@@ -222,6 +222,23 @@ Trader.prototype.getOrder = function(order_id, callback) {
     var amount = parseFloat(data.executed_amount);
     var date = moment.unix(data.timestamp);
 
+    const processPastTrade = (err, data) => {
+      if (err) return callback(err);
+
+      console.log('processPastTrade', data);
+      const trade = _.first(data);
+
+      const fees = {
+        [trade.fee_currency]: trade.fee_amount
+      }
+
+      callback(undefined, {price, amount, date, fees});
+    }
+
+    // we need another API call to fetch the fees
+    const feeFetcher = cb => this.bitfinex.past_trades(this.currency, {since: data.timestamp}, this.handleResponse('pastTrades', cb));
+    retry(null, feeFetcher, processPastTrade);
+
     callback(undefined, {price, amount, date});
   };
 
