@@ -158,14 +158,14 @@ class StickyOrder extends BaseOrder {
     this.sticking = false;
 
     // check whether we had an action pending
+    if(this.cancelling)
+      return this.cancel();
+
     if(this.movingLimit)
       return this.moveLimit();
 
     if(this.movingAmount)
       return this.moveAmount();
-
-    if(this.cancelling)
-      return this.cancel();
 
     // register check
     this.timeout = setTimeout(this.checkOrder, this.checkInterval);

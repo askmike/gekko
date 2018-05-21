@@ -232,25 +232,25 @@ Trader.prototype.getOrder = function(order, callback) {
   const get = (err, data) => {
     if (err) return callback(err);
 
-    const trade = _.filter(data, t => {
-      // note: the API returns a string after creating
-      return t.orderId == order;
-    });
-
     let price = 0;
     let amount = 0;
     let date = moment(0);
 
     const fees = {};
 
-    if(!trade.length) {
+    const trades = _.filter(data, t => {
+      // note: the API returns a string after creating
+      return t.orderId == order;
+    });
+
+    if(!trades.length) {
       return callback(new Error('Trades not found'));
     }
 
-    _.each(result, trade => {
+    _.each(trades, trade => {
       date = moment(trade.time);
       price = ((price * amount) + (+trade.price * trade.qty)) / (+trade.qty + amount);
-      amount += +trade.amount;
+      amount += +trade.qty;
 
       if(fees[trade.commissionAsset])
         fees[trade.commissionAsset] += (+trade.commission);
