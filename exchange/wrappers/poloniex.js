@@ -34,7 +34,8 @@ const recoverableErrors = [
   '502',
   'Empty response',
   'Please try again in a few minutes.',
-  'Nonce must be greater than'
+  'Nonce must be greater than',
+  'Internal error. Please try again.'
 ];
 
 // errors that might mean
