@@ -34,6 +34,13 @@ class StickyOrder extends BaseOrder {
     if(!next)
       next = _.noop;
 
+    if(
+      this.id &&
+      this.orders[this.id] &&
+      this.orders[this.id].filled === 0
+    )
+      delete this.orders[this.id];
+
     const checkOrders = _.keys(this.orders)
       .map(id => next => {
         setTimeout(() => this.api.getOrder(id, next), this.timeout);
@@ -133,6 +140,8 @@ class StickyOrder extends BaseOrder {
 
     if(!id)
       console.log('BLUP! no id...');
+
+    console.log(new Date, 'create', id);
 
     // potentailly clean up old order
     if(
@@ -353,6 +362,7 @@ class StickyOrder extends BaseOrder {
   }
 
   cancel() {
+    console.log(new Date, '[sticky] cancel init', this.side, this.id);
     if(this.completed)
       return;
 
@@ -365,14 +375,22 @@ class StickyOrder extends BaseOrder {
       return;
     }
     clearTimeout(this.timeout);
+    console.log(new Date, '[sticky] cancel fetch', this.id);
+    this.api.cancelOrder(this.id, (err, filled) => {
+      if(err) {
+        throw err;
+      }
 
-    this.api.cancelOrder(this.id, filled => {
+      console.log(new Date, '[sticky] cancel result:', {err, filled});
+
       this.cancelling = false;
 
       if(filled) {
         this.emit('fill', this.amount);
         return this.filled(this.price);
       }
+
+      console.log(new Date, '[sticky] cancel done');
 
       this.status = states.CANCELLED;
       this.emitStatus();
