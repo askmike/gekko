@@ -182,7 +182,7 @@ Trader.prototype.getOrder = function(order, callback) {
       return callback(err);
 
     const price = parseFloat(res.data.price);
-    const amount = parseFloat(res.data.size);
+    const amount = parseFloat(res.data.size_filled);
     const date = moment(res.data.created_at);
     callback(false, { price, amount, date });
   });
