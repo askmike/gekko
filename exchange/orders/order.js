@@ -17,6 +17,7 @@ class BaseOrder extends EventEmitter {
     this.status = states.INITIALIZING;
 
     this.completed = false;
+    this.completing = false;
 
     bindAll(this);
   }
