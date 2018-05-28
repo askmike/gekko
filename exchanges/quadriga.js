@@ -1,10 +1,9 @@
-const QuadrigaCX = require('quadrigacx');
-const moment = require('moment');
-const _ = require('lodash');
+var QuadrigaCX = require('quadrigacx');
+var moment = require('moment');
+var util = require('../core/util');
+var _ = require('lodash');
+var log = require('../core/log');
 
-const util = require('../core/util');
-const log = require('../core/log');
-const marketData = require('./quadriga-markets.json');
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -13,18 +12,14 @@ var Trader = function(config) {
     this.key = config.key;
     this.secret = config.secret;
     this.clientId = config.username;
-    this.asset = config.asset.toUpperCase();
-    this.currency = config.currency.toUpperCase();
+    this.asset = config.asset;
+    this.currency = config.currency;
   }
-  
+    
+  this.pair = this.asset.toLowerCase() + '_' + this.currency.toLowerCase(); 
   this.name = 'quadriga';
   this.since = null;
 
-  this.market = _.find(Trader.getCapabilities().markets, (market) => {
-    return market.pair[0] === this.currency && market.pair[1] === this.asset
-  });
-  this.pair = this.market.book;
-  
   this.quadriga = new QuadrigaCX(
     this.clientId ? this.clientId : "1",
     this.key ? this.key : "",
@@ -142,13 +137,11 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.roundAmount = function(amount) {
   var precision = 100000000;
-
-  var parent = this;
-  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
+  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
 
   if(Number.isInteger(market.precision))
-    precision = Math.pow(10, market.precision);
- 
+    precision = 10 * market.precision;
+
   amount *= precision;
   amount = Math.floor(amount);
   amount /= precision;
@@ -194,7 +187,7 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(undefined, {price, amount, date});
   }.bind(this);
 
-  this.quadriga.api('lookup_order', {id: order}, get);
+  this.quadriga.api('lookup_oder', {id: order}, get);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -238,9 +231,16 @@ Trader.getCapabilities = function () {
   return {
     name: 'Quadriga',
     slug: 'quadriga',
-    currencies: marketData.currencies,
-    assets: marketData.assets,
-    markets: marketData.markets,
+    currencies: ['CAD', 'USD', 'BTC'],
+    assets: ['BTC', 'ETH', 'LTC', 'BCH'],
+    markets: [
+      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+      { pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+      { pair: ['CAD', 'LTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+      { pair: ['CAD', 'BCH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
+    ],
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
     tid: 'tid',
