@@ -66,10 +66,10 @@
                 .grd-row-col-3-6 {{ round(report.balance) }}
               .grd-row
                 .grd-row-col-3-6 Market
-                .grd-row-col-3-6 {{ round(report.market) }} {{ data.watch.currency }}
+                .grd-row-col-3-6 {{round(report.market / 100 * report.startPrice)}} {{ data.watch.currency }} ({{ round(report.market) }} %)
               .grd-row
                 .grd-row-col-3-6 Profit
-                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }}
+                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }} ({{ round(report.relativeProfit) }} %)
               .grd-row
                 .grd-row-col-3-6 Alpha
                 .grd-row-col-3-6 {{ round(report.alpha) }} {{ data.watch.currency }}
