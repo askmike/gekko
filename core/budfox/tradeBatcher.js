@@ -1,5 +1,5 @@
 // 
-// Small wrapper that only propogates new trades.
+// Small wrapper that only propagates new trades.
 // 
 // Expects trade batches to be written like:
 // [

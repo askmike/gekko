@@ -1,7 +1,7 @@
 <template lang='jade'>
   div
-    h2.contain Backtest
-    .hr.contain
+    h2 Backtest
+    .hr
     config-builder(v-on:config='check')
     div(v-if='backtestable')
       .txt--center

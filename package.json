@@ -1,6 +1,6 @@
 {
   "name": "gekko",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "A bitcoin trading bot for auto trading at various exchanges",
   "keywords": [
     "trading",
@@ -18,7 +18,7 @@
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
     "binance": "^1.3.1",
-    "bitcoin-co-id": "0.0.1",
+    "bitcoin-co-id-update": "0.0.2",
     "bitexthai": "^0.1.0",
     "bitfinex-api-node": "^1.2.0",
     "bitstamp": "^1.0.3",
@@ -28,6 +28,7 @@
     "cexio": "0.0.x",
     "co-fs": "^1.2.0",
     "coinfalcon": "^1.0.3",
+    "coingi": "^1.0.7",
     "commander": "^2.13.0",
     "gdax": "^0.4.2",
     "gekko": "0.0.9",

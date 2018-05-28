@@ -33,17 +33,15 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: 'MACD',
-  candleSize: 1,
-  historySize: 3,
-  adapter: 'sqlite'
+  candleSize: 60,
+  historySize: 10,
 }
 
 // Exponential Moving Averages settings:
 config.DEMA = {
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
-  short: 10,
-  long: 21,
+  weight: 21,
   // amount of candles to remember and base initial EMAs on
   // the difference between the EMAs (to act as triggers)
   thresholds: {
@@ -308,10 +306,8 @@ config.ircbot = {
 
 config.telegrambot = {
   enabled: false,
-  emitUpdates: false,
   token: 'YOUR_TELEGRAM_BOT_TOKEN',
-  botName: 'gekkobot'
-}
+};
 
 config.twitter = {
     // sends pushbullets if true
@@ -436,7 +432,7 @@ config.postgresql = {
 config.mongodb = {
   path: 'plugins/mongodb',
   version: 0.1,
-  connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+  connectionString: 'mongodb://localhost/gekko', // connection to mongodb server
   dependencies: [{
     module: 'mongojs',
     version: '2.4.0'
@@ -452,6 +448,10 @@ config.mongodb = {
 
 config.backtest = {
   daterange: 'scan',
+// daterange: {
+//   from: "2018-03-01",
+//   to: "2018-04-28"
+//},
   batchSize: 50
 }
 
@@ -462,7 +462,8 @@ config.backtest = {
 config.importer = {
   daterange: {
     // NOTE: these dates are in UTC
-    from: "2017-11-01 00:00:00"
+    from: "2017-11-01 00:00:00",
+    to: "2017-11-20 00:00:00"
   }
 }
 

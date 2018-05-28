@@ -35,6 +35,7 @@ const PerformanceAnalyzer = function() {
   this.roundTrips = [];
   this.losses = [];
   this.roundTrip = {
+    id: 0,
     entry: false,
     exit: false
   }
@@ -106,17 +107,22 @@ PerformanceAnalyzer.prototype.registerRoundtripPart = function(trade) {
   }
 
   if(trade.action === 'buy') {
+    if (this.roundTrip.exit) {
+      this.roundTrip.id++;
+      this.roundTrip.exit = false
+    }
+
     this.roundTrip.entry = {
       date: trade.date,
       price: trade.price,
-      total: trade.portfolio.asset * trade.price,
+      total: trade.portfolio.currency + (trade.portfolio.asset * trade.price),
     }
     this.openRoundTrip = true;
   } else if(trade.action === 'sell') {
     this.roundTrip.exit = {
       date: trade.date,
       price: trade.price,
-      total: trade.portfolio.currency
+      total: trade.portfolio.currency + (trade.portfolio.asset * trade.price),
     }
     this.openRoundTrip = false;
 
@@ -126,6 +132,8 @@ PerformanceAnalyzer.prototype.registerRoundtripPart = function(trade) {
 
 PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
   var roundtrip = {
+    id: this.roundTrip.id,
+
     entryAt: this.roundTrip.entry.date,
     entryPrice: this.roundTrip.entry.price,
     entryBalance: this.roundTrip.entry.total,
@@ -140,7 +148,9 @@ PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
   roundtrip.pnl = roundtrip.exitBalance - roundtrip.entryBalance;
   roundtrip.profit = (100 * roundtrip.exitBalance / roundtrip.entryBalance) - 100;
 
-  this.roundTrips.push(roundtrip);
+  this.roundTrips[this.roundTrip.id] = roundtrip;
+
+  // this will keep resending roundtrips, that is not ideal.. what do we do about it?
   this.logger.handleRoundtrip(roundtrip);
 
   this.deferredEmit('roundtrip', roundtrip);

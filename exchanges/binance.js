@@ -30,12 +30,9 @@ var Trader = function(config) {
     secret: this.secret,
     timeout: 15000,
     recvWindow: 60000, // suggested by binance
-    disableBeautification: false
+    disableBeautification: false,
+    handleDrift: true,
   });
-
-  // Binance has tight timing requirements, this will ask their server for the time and store
-  // a drift value so we can calculate the most accurate timestamp possible form our system time
-  this.binance.startTimeSync();
 };
 
 var retryCritical = {
@@ -118,7 +115,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var setBalance = function(err, data) {
-    log.debug(`[binance.js] entering "setBalance" callback after api call, err: ${err}, data: ${data}`)
+    log.debug(`[binance.js] entering "setBalance" callback after api call, err: ${err} data: ${JSON.stringify(data)}`)
     if (err) return callback(err);
 
     var findAsset = function(item) {
@@ -165,7 +162,7 @@ Trader.prototype.getFee = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var setTicker = function(err, data) {
-    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${JSON.stringify(data)}`);
+    log.debug(`[binance.js] entering "getTicker" callback after api call, err: ${err} data: ${(data || []).length} symbols`);
     if (err) return callback(err);
 
     var findSymbol = function(ticker) {
@@ -255,7 +252,10 @@ Trader.prototype.getOrder = function(order, callback) {
 
     var price = parseFloat(data.price);
     var amount = parseFloat(data.executedQty);
-    var date = moment.unix(data.time);
+    
+    // Data.time is a 13 digit millisecon unix time stamp.
+    // https://momentjs.com/docs/#/parsing/unix-timestamp-milliseconds/ 
+    var date = moment(data.time);
 
     callback(undefined, { price, amount, date });
   }.bind(this);
@@ -301,7 +301,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   var cancel = function(err, data) {
     log.debug(`[binance.js] entering "cancelOrder" callback after api call, err ${err} data: ${JSON.stringify(data)}`);
     if (err) {
-      if(_.get(data, 'msg') === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
+      if(data && data.msg === 'UNKNOWN_ORDER') {  // this seems to be the response we get when an order was filled
         return callback(true); // tell the thing the order was already filled
       }
       return callback(err);

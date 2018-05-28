@@ -1,6 +1,6 @@
 // a leech market is "semi-realtime" and pulls out candles of a
-// database (which is expected to be updated reguraly, like with a
-// realtime market running in parralel).
+// database (which is expected to be updated regularly, like with a
+// realtime market running in parallel).
 
 const _ = require('lodash');
 const moment = require('moment');

@@ -8,10 +8,11 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 
 | Exchange             | Monitoring | Live Trading | Importing | Notes                    |
 | -------------------- |:----------:|:------------:|:---------:| ------------------------ |
+| [Binance][24]        | ✓          | ✓            | ✓         |                          |
 | [Poloniex][2]        | ✓          | ✓            | ✓         |                          |
 | [GDAX][3]            | ✓          | ✓            | ✓         |                          |
 | [BTCC][4]            | ✓          | ✓            | ✓         | (=BTCChina)              |
-| [Bitstamp][5]        | ✓          | ✓            | ✓         |                          |
+| [Bitstamp][5]        | ✓          | ✓            | ✕         |                          |
 | [Kraken][6]          | ✓          | ✓            | ✓         |                          |
 | [Bitfinex][7]        | ✓          | ✓            | ✓         |                          |
 | [Bittrex][8]         | ✓          | ✓            | ✕         |                          |
@@ -28,8 +29,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [lakeBTC][18]        | ✓          | ✕            | ✕         |                          |
 | [bx.in.th][19]       | ✓          | ✕            | ✕         |                          |
 | [bitcoin.co.id][22]  | ✓          | ✓            | ✕         |                          |
-| [Quadriga CX][23]    | ✓          | ✓            | ✕         |                          |
-| [Binance][24]        | ✓          | ✓            | ✓         |                          | |
+| [Quadriga CX][23]    | ✓          | ✓            | ✕         |                          | |
 
 [1]: ../features/backtesting.md
 [2]: https://poloniex.com
@@ -54,6 +54,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [21]: https://github.com/askmike/gekko/issues/288#issuecomment-223810974
 [22]: https://vip.bitcoin.co.id/
 [23]: https://quadrigacx.com/
-[24]: https://binance.com/
-[25]: https://coinfalcon.com/
+[24]: https://www.binance.com/?ref=11236330
+[25]: https://coinfalcon.com/?ref=CFJSTEXJQFFE
+
 

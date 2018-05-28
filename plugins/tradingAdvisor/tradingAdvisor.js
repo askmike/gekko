@@ -69,6 +69,9 @@ Actor.prototype.setupTradingMethod = function() {
       e => this.deferredEmit('stratUpdate', e)
     )
 
+  this.method
+    .on('trade', this.processTrade);
+
   this.batcher
     .on('candle', _candle => {
       const { id, ...candle } = _candle;
@@ -94,6 +97,10 @@ Actor.prototype.processCandle = function(candle, done) {
 // propogate a custom sized candle to the trading method
 Actor.prototype.emitStratCandle = function(candle) {
   this.method.tick(candle, this.next);
+}
+
+Actor.prototype.processTrade = function(trade) {
+  this.method.processTrade(trade);
 }
 
 // pass through shutdown handler

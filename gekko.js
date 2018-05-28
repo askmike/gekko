@@ -6,7 +6,7 @@
   If you are interested in how Gekko works, read more about Gekko's 
   architecture here:
 
-  https://gekko.wizbit/docs/internals/architecture.html
+  https://gekko.wizb.it/docs/internals/architecture.html
 
   Disclaimer:
 

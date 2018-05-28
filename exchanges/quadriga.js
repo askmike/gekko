@@ -1,9 +1,10 @@
-var QuadrigaCX = require('quadrigacx');
-var moment = require('moment');
-var util = require('../core/util');
-var _ = require('lodash');
-var log = require('../core/log');
+const QuadrigaCX = require('quadrigacx');
+const moment = require('moment');
+const _ = require('lodash');
 
+const util = require('../core/util');
+const log = require('../core/log');
+const marketData = require('./quadriga-markets.json');
 
 var Trader = function(config) {
   _.bindAll(this);
@@ -12,14 +13,18 @@ var Trader = function(config) {
     this.key = config.key;
     this.secret = config.secret;
     this.clientId = config.username;
-    this.asset = config.asset.toLowerCase();
-    this.currency = config.currency.toLowerCase();
+    this.asset = config.asset.toUpperCase();
+    this.currency = config.currency.toUpperCase();
   }
-    
-  this.pair = this.asset + '_' + this.currency; 
+  
   this.name = 'quadriga';
   this.since = null;
 
+  this.market = _.find(Trader.getCapabilities().markets, (market) => {
+    return market.pair[0] === this.currency && market.pair[1] === this.asset
+  });
+  this.pair = this.market.book;
+  
   this.quadriga = new QuadrigaCX(
     this.clientId ? this.clientId : "1",
     this.key ? this.key : "",
@@ -92,16 +97,16 @@ Trader.prototype.getPortfolio = function(callback) {
     if (data && data.error) return this.retry(this.getPortfolio, 'unable to get balance', args, data.error);
     if (err) return this.retry(this.getPortfolio, 'unable to get balance', args, err);
 
-    var assetAmount = parseFloat( data[this.asset + '_available'] );
-    var currencyAmount = parseFloat( data[this.currency + '_available'] );
+    var assetAmount = parseFloat( data[this.asset.toLowerCase() + '_available'] );
+    var currencyAmount = parseFloat( data[this.currency.toLowerCase() + '_available'] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
-      log.error(`Quadriga did not return balance for ${this.asset}, assuming 0.`);
+      log.error(`Quadriga did not return balance for ${this.asset.toLowerCase()}, assuming 0.`);
       assetAmount = 0;
     }
 
     if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
-      log.error(`Quadriga did not return balance for ${this.currency}, assuming 0.`);
+      log.error(`Quadriga did not return balance for ${this.currency.toLowerCase()}, assuming 0.`);
       currencyAmount = 0;
     }
 
@@ -137,11 +142,13 @@ Trader.prototype.getTicker = function(callback) {
 
 Trader.prototype.roundAmount = function(amount) {
   var precision = 100000000;
-  var market = this.getCapabilities().markets.find(function(market){ return market.pair[0] === this.currency && market.pair[1] === this.asset });
+
+  var parent = this;
+  var market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
 
   if(Number.isInteger(market.precision))
-    precision = 10 * market.precision;
-
+    precision = Math.pow(10, market.precision);
+ 
   amount *= precision;
   amount = Math.floor(amount);
   amount /= precision;
@@ -174,6 +181,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
 
 Trader.prototype.getOrder = function(order, callback) {
+  var args = _.toArray(arguments);
 
   var get = function(err, data) {
     if (data && data.error) return this.retry(this.getOrder, 'unable to get order', args, data.error);
@@ -186,7 +194,7 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(undefined, {price, amount, date});
   }.bind(this);
 
-  this.quadriga.api('lookup_oder', {id: order}, get);
+  this.quadriga.api('lookup_order', {id: order}, get);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
@@ -198,6 +206,8 @@ Trader.prototype.sell = function(amount, price, callback) {
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
+  var args = _.toArray(arguments);
+  
   var check = function(err, data) {
 
     if (data && data.error) return this.retry(this.checkOrder, 'unable to get order', args, data.error);
@@ -228,16 +238,9 @@ Trader.getCapabilities = function () {
   return {
     name: 'Quadriga',
     slug: 'quadriga',
-    currencies: ['CAD', 'USD', 'BTC'],
-    assets: ['BTC', 'ETH', 'LTC', 'BCH'],
-    markets: [
-      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-      { pair: ['CAD', 'ETH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-      { pair: ['CAD', 'BTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-      { pair: ['CAD', 'LTC'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-      { pair: ['CAD', 'BCH'], minimalOrder: { amount: 0.00001, unit: 'asset' }, precision: 8 },
-    ],
+    currencies: marketData.currencies,
+    assets: marketData.assets,
+    markets: marketData.markets,
     requires: ['key', 'secret', 'username'],
     providesHistory: false,
     tid: 'tid',

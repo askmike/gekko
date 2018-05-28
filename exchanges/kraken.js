@@ -187,8 +187,7 @@ Trader.prototype.roundAmount = function(amount) {
 };
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
-  amount = this.roundAmount(amount);
-  price = this.roundAmount(price); // but the link talks about rounding price... And I had the bug
+  price = this.roundAmount(price); // only round price, not amount
 
   log.debug('[kraken.js] (addOrder)', tradeType.toUpperCase(), amount, this.asset, '@', price, this.currency);
 

@@ -142,6 +142,38 @@
     },
     {
       "pair": [
+        "EUR",
+        "EOS"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "EOS"
+      ],
+      "book": "EOSEUR",
+      "minimalOrder": {
+        "amount": "3.0",
+        "unit": "asset"
+      },
+      "precision": 4
+    },
+    {
+      "pair": [
+        "USD",
+        "EOS"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "EOS"
+      ],
+      "book": "EOSUSD",
+      "minimalOrder": {
+        "amount": "3.0",
+        "unit": "asset"
+      },
+      "precision": 4
+    },
+    {
+      "pair": [
         "XBT",
         "EOS"
       ],
@@ -171,6 +203,38 @@
         "unit": "asset"
       },
       "precision": 4
+    },
+    {
+      "pair": [
+        "EUR",
+        "GNO"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "GNO"
+      ],
+      "book": "GNOEUR",
+      "minimalOrder": {
+        "amount": "0.03",
+        "unit": "asset"
+      },
+      "precision": 2
+    },
+    {
+      "pair": [
+        "USD",
+        "GNO"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "GNO"
+      ],
+      "book": "GNOUSD",
+      "minimalOrder": {
+        "amount": "0.03",
+        "unit": "asset"
+      },
+      "precision": 2
     },
     {
       "pair": [
@@ -526,6 +590,22 @@
     },
     {
       "pair": [
+        "USD",
+        "REP"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "XREP"
+      ],
+      "book": "XREPZUSD",
+      "minimalOrder": {
+        "amount": "0.3",
+        "unit": "asset"
+      },
+      "precision": 3
+    },
+    {
+      "pair": [
         "CAD",
         "XBT"
       ],
@@ -638,6 +718,38 @@
     },
     {
       "pair": [
+        "EUR",
+        "XLM"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "XXLM"
+      ],
+      "book": "XXLMZEUR",
+      "minimalOrder": {
+        "amount": "300",
+        "unit": "asset"
+      },
+      "precision": 6
+    },
+    {
+      "pair": [
+        "USD",
+        "XLM"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "XXLM"
+      ],
+      "book": "XXLMZUSD",
+      "minimalOrder": {
+        "amount": "300",
+        "unit": "asset"
+      },
+      "precision": 6
+    },
+    {
+      "pair": [
         "XBT",
         "XMR"
       ],
@@ -702,6 +814,22 @@
     },
     {
       "pair": [
+        "CAD",
+        "XRP"
+      ],
+      "prefixed": [
+        "ZCAD",
+        "XXRP"
+      ],
+      "book": "XXRPZCAD",
+      "minimalOrder": {
+        "amount": "30",
+        "unit": "asset"
+      },
+      "precision": 5
+    },
+    {
+      "pair": [
         "EUR",
         "XRP"
       ],
@@ -715,6 +843,22 @@
         "unit": "asset"
       },
       "precision": 5
+    },
+    {
+      "pair": [
+        "JPY",
+        "XRP"
+      ],
+      "prefixed": [
+        "ZJPY",
+        "XXRP"
+      ],
+      "book": "XXRPZJPY",
+      "minimalOrder": {
+        "amount": "30",
+        "unit": "asset"
+      },
+      "precision": 3
     },
     {
       "pair": [
@@ -758,6 +902,22 @@
         "XZEC"
       ],
       "book": "XZECZEUR",
+      "minimalOrder": {
+        "amount": "0.03",
+        "unit": "asset"
+      },
+      "precision": 3
+    },
+    {
+      "pair": [
+        "JPY",
+        "ZEC"
+      ],
+      "prefixed": [
+        "ZJPY",
+        "XZEC"
+      ],
+      "book": "XZECZJPY",
       "minimalOrder": {
         "amount": "0.03",
         "unit": "asset"

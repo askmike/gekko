@@ -1,5 +1,4 @@
-short = 10
-long = 21
+weight = 21
 
 [thresholds]
 down = -0.025

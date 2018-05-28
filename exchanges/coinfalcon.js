@@ -202,7 +202,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
       res.data,
       function(trade) {
         parsedTrades.push({
-          tid: trade.id,
+          tid: moment(trade.created_at).unix(), // Saving unix timestamp in tid as CoinFalcon has string uuid which can not be compared in importer
           date: moment(trade.created_at).unix(),
           price: parseFloat(trade.price),
           amount: parseFloat(trade.size),
@@ -227,7 +227,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   var url = "markets/" + this.pair + "/trades"
 
   if (since) {
-    url += '?since_time=' + (_.isString(since) ? since : since.format());
+    url += '?since_time=' + (_.isString(since) ? since : since.toISOString());
   }
 
   this.coinfalcon.get(url).then(success).catch(failure);

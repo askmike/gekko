@@ -178,10 +178,10 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
   let process = (err, data) => {
     if (err) return callback(err);
 
-    return callback();
+    return callback(undefined);
   }
 
-  let handler = (cb) => this.bitfinex.order_status(order_id, this.handleResponse('cancelOrder', cb));
+  let handler = (cb) => this.bitfinex.cancel_order(order_id, this.handleResponse('cancelOrder', cb));
   util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
 }
 
@@ -219,7 +219,9 @@ Trader.getCapabilities = function () {
     requires: ['key', 'secret'],
     tid: 'tid',
     providesFullHistory: true,
-    tradable: true
+    providesHistory: 'date',
+    tradable: true,
+    forceReorderDelay: true
   };
 }
 
