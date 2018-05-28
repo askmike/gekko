@@ -81,9 +81,9 @@ Actor.prototype.setupTradingMethod = function() {
 // process the 1m candles
 Actor.prototype.processCandle = function(candle, done) {
   this.candle = candle;
-  const completedBatches = this.batcher.write([candle]);
-  if(completedBatches) {
-    this.next = _.after(completedBatches, done);
+  const completedBatch = this.batcher.write([candle]);
+  if(completedBatch) {
+    this.next = done;
   } else {
     done();
     this.next = _.noop;
