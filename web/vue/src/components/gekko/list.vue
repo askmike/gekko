@@ -19,7 +19,7 @@
           td {{ gekko.watch.exchange }}
           td {{ gekko.watch.currency }}
           td {{ gekko.watch.asset }}
-          td 
+          td
             template(v-if='gekko.firstCandle') {{ fmt(gekko.firstCandle.start) }}
           td
             template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
@@ -38,6 +38,8 @@
           th duration
           th strategy
           th profit
+          th type
+          th trades
       tbody
         tr.clickable(v-for='gekko in stratrunners', v-on:click='$router.push({path: `live-gekkos/stratrunner/${gekko.id}`})')
           td {{ gekko.watch.exchange }}
@@ -51,6 +53,10 @@
           td
             template(v-if='!gekko.report') 0
             template(v-if='gekko.report') {{ round(gekko.report.profit) }} {{ gekko.watch.currency }}
+          td
+            template(v-if='gekko.trader') {{ gekko.trader }}
+          td
+            template(v-if='gekko.trades') {{ gekko.trades.length }}
     .hr
     h2 Start a new live Gekko
     router-link.btn--primary(to='/live-gekkos/new') Start a new live Gekko!

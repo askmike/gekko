@@ -223,6 +223,10 @@ config.adviceLogger = {
   muteSoft: true // disable advice printout if it's soft
 }
 
+config.eventLogger = {
+  enabled: false
+}
+
 config.pushover = {
   enabled: false,
   sendPushoverOnStart: false,
@@ -383,6 +387,17 @@ config.adviceWriter = {
   muteSoft: true,
 }
 
+config.backtestResultExporter = {
+  enabled: false,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -417,7 +432,7 @@ config.postgresql = {
 config.mongodb = {
   path: 'plugins/mongodb',
   version: 0.1,
-  connectionString: 'mongodb://mongodb/gekko', // connection to mongodb server
+  connectionString: 'mongodb://localhost/gekko', // connection to mongodb server
   dependencies: [{
     module: 'mongojs',
     version: '2.4.0'
@@ -433,6 +448,10 @@ config.mongodb = {
 
 config.backtest = {
   daterange: 'scan',
+// daterange: {
+//   from: "2018-03-01",
+//   to: "2018-04-28"
+//},
   batchSize: 50
 }
 
@@ -443,7 +462,8 @@ config.backtest = {
 config.importer = {
   daterange: {
     // NOTE: these dates are in UTC
-    from: "2017-11-01 00:00:00"
+    from: "2017-11-01 00:00:00",
+    to: "2017-11-20 00:00:00"
   }
 }
 

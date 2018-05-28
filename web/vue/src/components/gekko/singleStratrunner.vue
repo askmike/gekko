@@ -18,6 +18,9 @@
             .grd-row
               .grd-row-col-3-6 Asset
               .grd-row-col-3-6 {{ data.watch.asset }}
+            .grd-row
+              .grd-row-col-3-6 Type
+              .grd-row-col-3-6 {{ data.trader }}
           .grd-row-col-3-6
             h3 Runtime
             spinner(v-if='isLoading')
@@ -34,6 +37,12 @@
               .grd-row(v-if='data.lastCandle && data.firstCandle')
                 .grd-row-col-2-6 Amount of trades
                 .grd-row-col-4-6 {{ data.trades.length }}
+              .grd-row(v-if='data.strat && data.strat.tradingAdvisor && data.strat.tradingAdvisor.candleSize')
+                .grd-row-col-2-6 Candle size
+                .grd-row-col-4-6 {{ data.strat.tradingAdvisor.candleSize }}
+              .grd-row(v-if='data.strat && data.strat.tradingAdvisor && data.strat.tradingAdvisor.historySize')
+                .grd-row-col-2-6 History size
+                .grd-row-col-4-6 {{ data.strat.tradingAdvisor.historySize }}
         .grd-row
           .grd-row-col-3-6
             h3 Strategy
@@ -48,7 +57,7 @@
             template(v-if='!report')
               p
                 em Waiting for at least one trade..
-            template(v-if='report') 
+            template(v-if='report')
               .grd-row
                 .grd-row-col-3-6 Start balance
                 .grd-row-col-3-6 {{ round(report.startBalance) }}
@@ -57,15 +66,15 @@
                 .grd-row-col-3-6 {{ round(report.balance) }}
               .grd-row
                 .grd-row-col-3-6 Market
-                .grd-row-col-3-6 {{ round(report.market) }} {{ data.watch.currency }}
+                .grd-row-col-3-6 {{round(report.market / 100 * report.startPrice)}} {{ data.watch.currency }} ({{ round(report.market) }} %)
               .grd-row
                 .grd-row-col-3-6 Profit
-                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }}
+                .grd-row-col-3-6 {{ round(report.profit) }} {{ data.watch.currency }} ({{ round(report.relativeProfit) }} %)
               .grd-row
                 .grd-row-col-3-6 Alpha
                 .grd-row-col-3-6 {{ round(report.alpha) }} {{ data.watch.currency }}
         p(v-if='watcher')
-          em This strat runner gets data from 
+          em This strat runner gets data from
             router-link(:to='"/live-gekkos/watcher/" + watcher.id') this market watcher
           | .
       template(v-if='!isLoading')

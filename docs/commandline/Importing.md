@@ -18,7 +18,7 @@ In your config set the `importer.daterange` properties to the daterange you woul
 
 ## Run
 
-    node gekko --import
+    node gekko --config config.js --import
 
 The result will be something like this:
 

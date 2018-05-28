@@ -2,7 +2,7 @@
 var EMA = require('./EMA.js');
 
 var Indicator = function(config) {
-  this.input = 'price'
+  this.input = 'price';
   this.result = false;
   this.inner = new EMA(config.weight);
   this.outer = new EMA(config.weight);

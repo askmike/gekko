@@ -10,7 +10,7 @@ var Trader = function(config) {
         this.key = config.key;
         this.secret = config.secret;
     }
-    this.name = '[BitX]';
+    this.name = 'bitx';
     this.currency = config.currency;
     this.asset = config.asset;
     this.pair = config.asset + config.currency;
@@ -101,18 +101,17 @@ Trader.prototype.getPortfolio = function(callback) {
         var assetAmount = currencyAmount = assetHold = currencyHold = 0;
         _.forEach(data.balance, function(t) {
             if (this.asset === t.asset) {
-                assetAmount = t.balance;
-                assetHold = t.reserved;
+                assetAmount = +t.balance;
+                assetHold = +t.reserved;
             } else if (this.currency === t.asset) {
-                currencyAmount = t.balance;
-                currencyHold = t.reserved;
+                currencyAmount = +t.balance;
+                currencyHold = +t.reserved;
             }
         }.bind(this))
         //log.debug('result --> ', assetAmount, assetHold, currencyAmount, currencyHold);
-        //invert isNumber check... coz it's bugged??
         if (
-            _.isNumber(assetAmount) || _.isNaN(assetAmount) ||
-            _.isNumber(currencyAmount) || _.isNaN(currencyAmount)
+            !_.isNumber(assetAmount) || _.isNaN(assetAmount) ||
+            !_.isNumber(currencyAmount) || _.isNaN(currencyAmount)
         ) {
             return log.error('account balance error: Gekko is unable to trade with ', this.currency.toUpperCase(), ':', currencyAmount, ' or ', this.asset.toUpperCase(), ':', assetAmount);
         }
@@ -259,7 +258,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }.bind(this);
 
     if(moment.isMoment(since)) since = since.valueOf();
-    (_.isNumber(since) && since > 0) ? since : since = null;
+    (_.isNumber(since) && since > 0) ? since : since = 0;
 
     // log.debug(this.name, ': getTrades --- since: ', since);
     this.bitx.getTrades({ since: since, pair: this.pair }, process);

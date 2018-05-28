@@ -1,11 +1,11 @@
 <template lang='jade'>
-.contain
-  dataset-picker.contain.my2(v-on:dataset='updateDataset')
-  .hr
-  strat-picker.contain.my2(v-on:stratConfig='updateStrat')
-  .hr
-  paper-trader(v-on:settings='updatePaperTrader')
-  .hr
+  div
+    dataset-picker.my2(v-on:dataset='updateDataset')
+    .hr
+    strat-picker.my2(v-on:stratConfig='updateStrat')
+    .hr
+    paper-trader(v-on:settings='updatePaperTrader')
+    .hr
 </template>
 
 <script>
@@ -66,9 +66,20 @@ export default {
         {
           backtest: {
             daterange: this.range
+          },
+          backtestResultExporter: {
+            enabled: true,
+            writeToDisk: false,
+            data: {
+              stratUpdates: false,
+              roundtrips: true,
+              stratCandles: true,
+              stratCandleProps: ['close'],
+              trades: true
+            }
           }
         },
-        { performanceAnalyzer: this.performanceAnalyzer }
+        { performanceAnalyzer: this.performanceAnalyzer },
       );
 
       config.valid = this.validConfig(config);

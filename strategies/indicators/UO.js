@@ -35,7 +35,7 @@ Indicator.prototype.update = function(candle) {
 
   var first = this.firstHigh.result / this.firstLow.result;
   var second = this.secondHigh.result / this.secondLow.result;
-  var third = this.thirdHigh.result / this.secondLow.result;
+  var third = this.thirdHigh.result / this.thirdLow.result;
 
   this.uo = 100 * (this.firstWeight * first + this.secondWeight * second + this.thirdWeight * third) / (this.firstWeight + this.secondWeight + this.thirdWeight);
 

@@ -19,7 +19,7 @@ var fetcher = new Fetcher(config.watch);
 var fetch = () => {
   fetcher.import = true;
   log.debug('[CoinFalcon] Getting trades from: ', from);
-  fetcher.getTrades(from, handleFetch);
+  fetcher.getTrades(from, handleFetch, true);
 };
 
 var handleFetch = (unk, trades) => {
