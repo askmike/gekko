@@ -193,18 +193,25 @@ var plugins = [
     modes: ['realtime']
   },
   {
-    name: 'event logger',
+    name: 'Event logger',
     description: 'Logs all gekko events.',
     slug: 'eventLogger',
     async: false,
     modes: ['realtime', 'backtest']
   },
-    {
-    name: 'backtest result export',
+  {
+    name: 'Backtest result export',
     description: 'Exports the results of a gekko backtest',
     slug: 'backtestResultExporter',
     async: false,
     modes: ['backtest']
+  },
+  {
+    name: 'Child to parent',
+    description: 'Relays events from the child to the parent process',
+    slug: 'childToParent',
+    async: false,
+    modes: ['realtime']
   }
 ];
 

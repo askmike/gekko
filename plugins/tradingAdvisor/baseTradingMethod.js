@@ -178,8 +178,8 @@ Base.prototype.propogateTick = function(candle) {
   });
 
   // are we totally finished?
-  var done = this.age === this.processedTicks;
-  if(done && this.finishCb)
+  const completed = this.age === this.processedTicks;
+  if(completed && this.finishCb)
     this.finishCb();
 }
 

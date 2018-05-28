@@ -10,7 +10,6 @@ const util = require(__dirname + '/../util');
 
 const MarketFetcher = require('./marketFetcher');
 const dirs = util.dirs();
-const cp = require(dirs.core + 'cp');
 
 const Manager = function(config) {
 

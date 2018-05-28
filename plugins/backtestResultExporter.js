@@ -1,3 +1,6 @@
+// Small plugin that subscribes to some events, stores
+// them and sends it to the parent process.
+
 const log = require('../core/log');
 const _ = require('lodash');
 const util = require('../core/util.js');
@@ -5,7 +8,7 @@ const config = util.getConfig();
 const moment = require('moment');
 const fs = require('fs');
 
-var Actor = function() {
+const BacktestResultExporter = function() {
   this.performanceReport;
   this.roundtrips = [];
   this.stratUpdates = [];
@@ -29,7 +32,7 @@ var Actor = function() {
   _.bindAll(this);
 }
 
-Actor.prototype.processStratCandle = function(candle) {
+BacktestResultExporter.prototype.processStratCandle = function(candle) {
   let strippedCandle;
 
   if(!this.candleProps) {
@@ -47,7 +50,7 @@ Actor.prototype.processStratCandle = function(candle) {
   this.stratCandles.push(strippedCandle);
 };
 
-Actor.prototype.processRoundtrip = function(roundtrip) {
+BacktestResultExporter.prototype.processRoundtrip = function(roundtrip) {
   this.roundtrips.push({
     ...roundtrip,
     entryAt: roundtrip.entryAt.unix(),
@@ -55,25 +58,25 @@ Actor.prototype.processRoundtrip = function(roundtrip) {
   });
 };
 
-Actor.prototype.processTradeCompleted = function(trade) {
+BacktestResultExporter.prototype.processTradeCompleted = function(trade) {
   this.trades.push({
     ...trade,
     date: trade.date.unix()
   });
 };
 
-Actor.prototype.processStratUpdate = function(stratUpdate) {
+BacktestResultExporter.prototype.processStratUpdate = function(stratUpdate) {
   this.stratUpdates.push({
     ...stratUpdate,
     date: stratUpdate.date.unix()
   });
 }
 
-Actor.prototype.processPerformanceReport = function(performanceReport) {
+BacktestResultExporter.prototype.processPerformanceReport = function(performanceReport) {
   this.performanceReport = performanceReport;
 }
 
-Actor.prototype.finalize = function(done) {
+BacktestResultExporter.prototype.finalize = function(done) {
   const backtest = {
     performanceReport: this.performanceReport
   };
@@ -98,7 +101,7 @@ Actor.prototype.finalize = function(done) {
     done();
 };
 
-Actor.prototype.writeToDisk = function(next) {
+BacktestResultExporter.prototype.writeToDisk = function(next) {
   const now = moment().format('YYYY-MM-DD HH:mm:ss');
   const filename = `backtest-${config.tradingAdvisor.method}-${now}.log`;
   fs.writeFile(
@@ -113,4 +116,4 @@ Actor.prototype.writeToDisk = function(next) {
   );
 }
 
-module.exports = Actor;
+module.exports = BacktestResultExporter;
