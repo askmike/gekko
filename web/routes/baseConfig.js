@@ -6,8 +6,8 @@ var config = {};
 //                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-config.silent = false;
-config.debug = true;
+config.silent = true;
+config.debug = false;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING TRADING ADVICE
@@ -22,6 +22,17 @@ config.candleWriter = {
 config.adviceWriter = {
   enabled: false,
   muteSoft: true,
+}
+
+config.backtestResultExporter = {
+  enabled: true,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
 }
 
 config.trader = {

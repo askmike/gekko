@@ -18,37 +18,26 @@ const PaperTrader = function() {
   this.portfolio = {
     asset: calcConfig.simulationBalance.asset,
     currency: calcConfig.simulationBalance.currency,
-    balance: false
+  }
+
+  this.balance = false;
+
+  if(this.portfolio.asset > 0) {
+    this.exposed = true;
   }
 }
 
-// teach our paper trader events
-util.makeEventEmitter(PaperTrader);
-
-PaperTrader.prototype.relayTrade = function(advice) {
-  var what = advice.recommendation;
-  var price = advice.candle.close;
-  var at = advice.candle.start;
-
-  let action;
-  if(what === 'short')
-    action = 'sell';
-  else if(what === 'long')
-    action = 'buy';
-  else
-    return;
-
-  this.emit('trade', {
-    action,
-    price,
-    portfolio: _.clone(this.portfolio),
-    balance: this.portfolio.currency + this.price * this.portfolio.asset,
-    date: at
+PaperTrader.prototype.relayPortfolioChange = function() {
+  this.deferredEmit('portfolioChange', {
+    asset: this.portfolio.asset,
+    currency: this.portfolio.currency
   });
 }
 
-PaperTrader.prototype.relayPortfolio = function() {
-  this.emit('portfolioUpdate', _.clone(this.portfolio));
+PaperTrader.prototype.relayPortfolioValueChange = function() {
+  this.deferredEmit('portfolioValueChange', {
+    balance: this.getBalance()
+  });
 }
 
 PaperTrader.prototype.extractFee = function(amount) {
@@ -60,8 +49,7 @@ PaperTrader.prototype.extractFee = function(amount) {
 }
 
 PaperTrader.prototype.setStartBalance = function() {
-  this.portfolio.balance = this.portfolio.currency + this.price * this.portfolio.asset;
-  this.relayPortfolio();
+  this.balance = this.getBalance();
 }
 
 // after every succesfull trend ride we hopefully end up
@@ -69,38 +57,82 @@ PaperTrader.prototype.setStartBalance = function() {
 // calculates Gekko's profit in %.
 PaperTrader.prototype.updatePosition = function(advice) {
   let what = advice.recommendation;
-  let price = advice.candle.close;
+
+  let executionPrice;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   if(what === 'long') {
-    this.portfolio.asset += this.extractFee(this.portfolio.currency / price);
+    this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
+    executionPrice = this.extractFee(this.price);
     this.portfolio.currency = 0;
     this.trades++;
+    this.exposed = true;
   }
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   else if(what === 'short') {
-    this.portfolio.currency += this.extractFee(this.portfolio.asset * price);
+    this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
+    executionPrice = this.price + this.price - this.extractFee(this.price);
     this.portfolio.asset = 0;
+    this.exposed = false;
     this.trades++;
   }
+
+  return executionPrice;
+}
+
+PaperTrader.prototype.getBalance = function() {
+  return this.portfolio.currency + this.price * this.portfolio.asset;
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
-  if(advice.recommendation === 'soft')
+  let action;
+  if(advice.recommendation === 'short')
+    action = 'sell';
+  else if(advice.recommendation === 'long')
+    action = 'buy';
+  else
     return;
 
-  this.updatePosition(advice);
-  this.relayTrade(advice);
+  this.tradeId = _.uniqueId();
+
+  this.deferredEmit('tradeInitiated', {
+    id: this.tradeId,
+    action,
+    portfolio: _.clone(this.portfolio),
+    balance: this.getBalance(),
+    date: advice.date,
+  });
+
+  const executionPrice = this.updatePosition(advice);
+
+  this.relayPortfolioChange();
+  this.relayPortfolioValueChange();
+
+  this.deferredEmit('tradeCompleted', {
+    id: this.tradeId,
+    action,
+    price: executionPrice,
+    portfolio: this.portfolio,
+    balance: this.getBalance(),
+    date: advice.date
+  });
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
 
-  if(!this.portfolio.balance)
+  if(!this.balance) {
     this.setStartBalance();
+    this.relayPortfolioChange();
+    this.relayPortfolioValueChange();
+  }
+
+  if(this.exposed) {
+    this.relayPortfolioValueChange();
+  }
 
   done();
 }

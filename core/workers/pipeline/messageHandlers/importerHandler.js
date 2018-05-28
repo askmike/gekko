@@ -3,10 +3,10 @@ module.exports = cb => {
   return {
     message: message => {
 
-      if(message.type === 'update')
+      if(message.event === 'marketUpdate')
         cb(null, {
           done: false,
-          latest: message.latest
+          latest: message.payload
         })
 
       else if(message.type === 'error') {

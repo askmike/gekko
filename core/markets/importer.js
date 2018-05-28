@@ -4,7 +4,6 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + 'log');
 var moment = require('moment');
-var cp = require(dirs.core + 'cp');
 
 var adapter = config[config.adapter];
 var daterange = config.importer.daterange;
@@ -107,7 +106,6 @@ Market.prototype.processTrades = function(trades) {
   if(_.size(trades)) {
     let lastAtTS = _.last(trades).date;
     let lastAt = moment.unix(lastAtTS).utc().format();
-    cp.update(lastAt);
   }
 
   setTimeout(this.get, 1000);

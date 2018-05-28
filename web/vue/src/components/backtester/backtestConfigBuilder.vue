@@ -66,9 +66,20 @@ export default {
         {
           backtest: {
             daterange: this.range
+          },
+          backtestResultExporter: {
+            enabled: true,
+            writeToDisk: false,
+            data: {
+              stratUpdates: false,
+              roundtrips: true,
+              stratCandles: true,
+              stratCandleProps: ['close'],
+              trades: true
+            }
           }
         },
-        { performanceAnalyzer: this.performanceAnalyzer }
+        { performanceAnalyzer: this.performanceAnalyzer },
       );
 
       config.valid = this.validConfig(config);

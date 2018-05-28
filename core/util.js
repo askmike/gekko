@@ -98,11 +98,18 @@ var util = {
     else if(_gekkoEnv === 'child-process')
       var log = m => process.send({type: 'error', error: m});
 
+    var instanceName;
+
+    if(util.gekkoEnv() === 'standalone')
+      instanceName = 'Gekko';
+    else
+      instanceName = 'This Gekko instance';
+
     if(m) {
       if(soft) {
         log('\n ERROR: ' + m + '\n\n');
       } else {
-        log('\n\nGekko encountered an error and can\'t continue');
+        log(`\n${instanceName} encountered an error and can\'t continue`);
         log('\nError:\n');
         log(m, '\n\n');
         log('\nMeta debug info:\n');

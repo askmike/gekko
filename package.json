@@ -72,7 +72,7 @@
     "sinon": "^4.2.0"
   },
   "engines": {
-    "node": ">=6.0"
+    "node": ">=8.11.2"
   },
   "license": "MIT",
   "repository": {

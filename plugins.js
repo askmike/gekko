@@ -38,7 +38,7 @@ var plugins = [
     slug: 'tradingAdvisor',
     async: true,
     modes: ['realtime', 'backtest'],
-    emits: ['advice'],
+    emits: ['advice', 'stratWarmupCompleted', 'stratCandle', 'stratUpdate'],
     path: config => 'tradingAdvisor/tradingAdvisor.js',
   },
   {
@@ -143,6 +143,7 @@ var plugins = [
     slug: 'performanceAnalyzer',
     async: false,
     modes: ['realtime', 'backtest'],
+    emits: ['roundtrip', 'roundtripUpdate', 'performanceUpdate'],
     path: config => 'performanceAnalyzer/performanceAnalyzer.js',
   },
   {
@@ -188,6 +189,27 @@ var plugins = [
     name: 'IFTTT',
     description: 'Sends trades to IFTTT webhook.',
     slug: 'ifttt',
+    async: false,
+    modes: ['realtime']
+  },
+  {
+    name: 'Event logger',
+    description: 'Logs all gekko events.',
+    slug: 'eventLogger',
+    async: false,
+    modes: ['realtime', 'backtest']
+  },
+  {
+    name: 'Backtest result export',
+    description: 'Exports the results of a gekko backtest',
+    slug: 'backtestResultExporter',
+    async: false,
+    modes: ['backtest']
+  },
+  {
+    name: 'Child to parent',
+    description: 'Relays events from the child to the parent process',
+    slug: 'childToParent',
     async: false,
     modes: ['realtime']
   }

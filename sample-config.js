@@ -223,6 +223,10 @@ config.adviceLogger = {
   muteSoft: true // disable advice printout if it's soft
 }
 
+config.eventLogger = {
+  enabled: false
+}
+
 config.pushover = {
   enabled: false,
   sendPushoverOnStart: false,
@@ -381,6 +385,17 @@ config.candleWriter = {
 config.adviceWriter = {
   enabled: false,
   muteSoft: true,
+}
+
+config.backtestResultExporter = {
+  enabled: false,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
