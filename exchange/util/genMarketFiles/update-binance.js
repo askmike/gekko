@@ -3,6 +3,7 @@ const fs = require('fs');
 const request = require('request-promise');
 const Promise = require('bluebird');
 
+
 let getOrderMinSize = currency => {
   if (currency === 'BTC') return 0.001;
   else if (currency === 'ETH') return 0.01;
@@ -25,8 +26,8 @@ request(options)
       throw new Error('Unable to fetch product list, response was empty');
     }
 
-    let assets = _.unique(_.map(body.data, market => market.baseAsset));
-    let currencies = _.unique(_.map(body.data, market => market.quoteAsset));
+    let assets = _.uniqBy(_.map(body.data, market => market.baseAsset));
+    let currencies = _.uniqBy(_.map(body.data, market => market.quoteAsset));
     let pairs = _.map(body.data, market => {
       return {
         pair: [market.quoteAsset, market.baseAsset],
@@ -41,7 +42,7 @@ request(options)
     return { assets: assets, currencies: currencies, markets: pairs };
   })
   .then(markets => {
-    fs.writeFileSync('../../exchanges/binance-markets.json', JSON.stringify(markets, null, 2));
+    fs.writeFileSync('../../wrappers/binance-marskets.json', JSON.stringify(markets, null, 2));
     console.log(`Done writing Binance market data`);
   })
   .catch(err => {

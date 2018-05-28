@@ -67,19 +67,23 @@ This should create a buy / sell order at the exchange for [amount] of [asset] at
 
     this.exchange.getOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `order`. Order is an object with properties `price`, `amount` and `date`. Price is the (volume weighted) average price of all trades necesarry to execute the order. Amount is the amount of currency traded and Date is a moment object of the last trade part of this order.
+Will only be called on orders that have been completed. The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `order`. Order is an object with properties `price`, `amount` and `date`. Price is the (volume weighted) average price of all trades necesarry to execute the order. Amount is the amount of currency traded and Date is a moment object of the last trade part of this order.
 
 ### checkOrder
 
     this.exchange.checkOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`. Filled is a boolean that is true when the order is already filled and false when it is not. Currently partially filled orders should be treated as not filled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and a `result` object. The result object will have two or three properties:
+
+- `open`: whether this order is currently in the orderbook.
+- `completed`: whether this order has executed (filled completely).
+- `filledAmount`: the amount of the order that has been filled. This property is only needed when both `open` is true and `completed` is false.
 
 ### cancelOrder
 
     this.exchange.cancelOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameterer `err`.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameterers `err` and `filled`, `filled` last one should be true if the order was filled before it could be cancelled.
 
 ## Trading method's expectations
 
@@ -89,20 +93,26 @@ The trading method analyzes exchange data to determine what to do. The trading m
 
     this.watcher.getTrades(since, callback, descending);
 
-
 If since is truthy, Gekko requests as much trades as the exchange can give (up to ~10,000 trades, if the exchange supports more you can [create an importer](../features/importing.md)).
 
 The callback expects an error and a `trades` object. Trades is an array of trade objects in chronological order (0 is older trade, 1 is newer trade). Each trade object needs to have:
 
 - a `date` property (unix timestamp in either string or int)
-- a `price` property (float) which represents the price in [currency] per 1 [asset]. `
+- a `price` property (float) which represents the price in [currency] per 1 [asset].
 - an `amount` proprty (float) which represent the amount of [asset].
 - a `tid` property (float) which represents the tradeID.
 
+## Error handling
 
-### Recompiling Gekko UI
+It is the responsibility of the wrapper to handle errors and retry the call in case of a temporary error. Gekko exposes a retry helper you can use to implement an exponential backoff retry strategy. Your wrapper does need pass a proper error object explaining whether the call can be retried or not. If the error is fatal (for example private API calls with invalid API keys) the wrapper is expected to upstream this error. If the error is retryable (exchange is overloaded or a network error) an error should be passed with the property `notFatal` set to true. If the exchange replied with another error that might be temporary (for example an `Insufficiant funds` erorr right after Gekko canceled an order, which might be caused by the exchange not having updated the balance yet) the error object can be extended with an `retry` property indicating that the call can be retried for n times but after that the error should be considered fatal.
 
-Once you added your exchange you can use it with Gekko! However if you want the new exchange to show up in the web interface you need to recompile the frontend (so your updated `exchanges.js` file is used by the webapp). [Read here](https://gekko.wizb.it/docs/internals/gekko_ui.html#Developing-for-the-Gekko-UI-frontend) how to do that.
+For implementation refer to the bitfinex implementation, in a gist this is what a common flow looks like:
+
+- (async call) `exchange.buy`, then
+- handle the response and normalize the error so the retry helper understands it, then
+- the retry helper will determine whether the call needs to be retried, then
+    - based on the error it will retry (nonFatal or retry)
+    - if no error it will pass it to your handle function that normalizes the output
 
 ## Capabilities
 

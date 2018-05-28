@@ -55,6 +55,6 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [22]: https://vip.bitcoin.co.id/
 [23]: https://quadrigacx.com/
 [24]: https://www.binance.com/?ref=11236330
-[25]: https://coinfalcon.com/?ref=CFJSTEXJQFFE
+[25]: https://coinfalcon.com/?ref=CFJSQBMXZZDS
 
 

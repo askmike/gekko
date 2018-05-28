@@ -1,15 +1,14 @@
-var Gdax = require('gdax');
-var _ = require('lodash');
-var moment = require('moment');
+const Gdax = require('gdax');
+const _ = require('lodash');
+const moment = require('moment');
 
-const util = require('../core/util');
-const Errors = require('../core/error');
-const log = require('../core/log');
+const errors = require('../exchangeErrors');
+const retry = require('../exchangeUtils').retry;
 
 const BATCH_SIZE = 100;
 const QUERY_DELAY = 350;
 
-var Trader = function(config) {
+const Trader = function(config) {
   _.bindAll(this);
 
   this.post_only = true;
@@ -40,7 +39,6 @@ var Trader = function(config) {
   }
 
   this.gdax_public = new Gdax.PublicClient(
-    this.pair,
     this.use_sandbox ? this.api_sandbox_url : undefined
   );
   this.gdax = new Gdax.AuthenticatedClient(
@@ -51,59 +49,58 @@ var Trader = function(config) {
   );
 };
 
-var retryCritical = {
-  retries: 10,
-  factor: 1.2,
-  minTimeout: 10 * 1000,
-  maxTimeout: 60 * 1000,
-};
+const recoverableErrors = [
+  'SOCKETTIMEDOUT',
+  'TIMEDOUT',
+  'CONNRESET',
+  'CONNREFUSED',
+  'NOTFOUND',
+  'Rate limit exceeded',
+  'Response code 5'
+];
 
-var retryForever = {
-  forever: true,
-  factor: 1.2,
-  minTimeout: 10 * 1000,
-  maxTimeout: 300 * 1000,
-};
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
 
-// Probably we need to update these string
-var recoverableErrors = new RegExp(
-  /(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Rate limit exceeded|Response code 5)/
-);
+  return _.some(list, item => str.includes(item));
+}
 
-Trader.prototype.processError = function(funcName, error) {
-  if (!error) return undefined;
-
-  if (!error.message.match(recoverableErrors)) {
-    log.error(
-      `[gdax.js] (${funcName}) returned an irrecoverable error: ${
-        error.message
-      }`
-    );
-    return new Errors.AbortError('[gdax.js] ' + error.message);
-  }
- 
-  log.debug(
-    `[gdax.js] (${funcName}) returned an error, retrying: ${error.message}`
-  );
-  return new Errors.RetryError('[gdax.js] ' + error.message);
-};
-
-Trader.prototype.handleResponse = function(funcName, callback) {
+Trader.prototype.processResponse = function(method, next) {
   return (error, response, body) => {
-    if (body && !_.isEmpty(body.message)) error = new Error(body.message);
-    else if (
+    if(!error && body && !_.isEmpty(body.message)) {
+      error = new Error(body.message);
+    }
+
+    if(
       response &&
       response.statusCode < 200 &&
       response.statusCode >= 300
-    )
+    ) {
       error = new Error(`Response code ${response.statusCode}`);
+    }
 
-    return callback(this.processError(funcName, error), body);
-  };
-};
+    if(error) {
+      if(includes(error.message, recoverableErrors)) {
+        error.notFatal = true;
+      }
+
+      if(
+        ['buy', 'sell'].includes(method) &&
+        error.message.includes('Insufficient funds')
+      ) {
+        error.retry = 10;
+      }
+
+      return next(error);
+    }
+
+    return next(undefined, body);
+  }
+}
 
 Trader.prototype.getPortfolio = function(callback) {
-  var result = function(err, data) {
+  const result = (err, data) => {
     if (err) return callback(err);
 
     var portfolio = data.map(function(account) {
@@ -115,117 +112,148 @@ Trader.prototype.getPortfolio = function(callback) {
     callback(undefined, portfolio);
   };
 
-  let handler = cb =>
-    this.gdax.getAccounts(this.handleResponse('getPortfolio', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.getAccounts(this.processResponse('getPortfolio', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.getTicker = function(callback) {
-  var result = function(err, data) {
+  const result = (err, data) => {
     if (err) return callback(err);
     callback(undefined, { bid: +data.bid, ask: +data.ask });
   };
 
-  let handler = cb =>
-    this.gdax_public.getProductTicker(this.handleResponse('getTicker', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax_public.getProductTicker(this.pair, this.processResponse('getTicker', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.getFee = function(callback) {
   //https://www.gdax.com/fees
-  const fee = this.asset == 'BTC' ? 0.0025 : 0.003;
+  // const fee = this.asset == 'BTC' ? 0.0025 : 0.003;
+  const fee = 0;
 
   //There is no maker fee, not sure if we need taker fee here
   //If post only is enabled, gdax only does maker trades which are free
   callback(undefined, this.post_only ? 0 : fee);
 };
 
+Trader.prototype.roundPrice = function(price) {
+  return this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2);
+}
+
+Trader.prototype.roundAmount = function(amount) {
+  return this.getMaxDecimalsNumber(amount);
+}
+
 Trader.prototype.buy = function(amount, price, callback) {
-  var buyParams = {
+  const buyParams = {
     price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
     post_only: this.post_only,
   };
 
-  var result = (err, data) => {
-    if (err) return callback(err);
+  const result = (err, data) => {
+    if (err) {
+      console.log({buyParams}, err.message);
+      return callback(err);
+    }
     callback(undefined, data.id);
   };
 
-  let handler = cb =>
-    this.gdax.buy(buyParams, this.handleResponse('buy', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.buy(buyParams, this.processResponse('buy', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.sell = function(amount, price, callback) {
-  var sellParams = {
+  const sellParams = {
     price: this.getMaxDecimalsNumber(price, this.currency == 'BTC' ? 5 : 2),
     size: this.getMaxDecimalsNumber(amount),
     product_id: this.pair,
     post_only: this.post_only,
   };
 
-  var result = function(err, data) {
-    if (err) return callback(err);
+  const result = (err, data) => {
+    if (err) {
+      console.log({sellParams}, err.message);
+      return callback(err);
+    }
+
+    if(data.message && data.message.includes('Insufficient funds')) {
+      err = new Error(data.message);
+      err.retryOnce = true;
+      return callback(err);
+    }
+
     callback(undefined, data.id);
   };
 
-  let handler = cb =>
-    this.gdax.sell(sellParams, this.handleResponse('sell', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.sell(sellParams, this.processResponse('sell', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.checkOrder = function(order, callback) {
-  var result = function(err, data) {
+  const result = (err, data) => {
     if (err) return callback(err);
 
+    // @link:
+    // https://stackoverflow.com/questions/48132078/available-gdax-order-statuses-and-meanings
     var status = data.status;
-    if (status == 'done') {
-      return callback(undefined, true);
-    } else if (status == 'rejected') {
-      return callback(undefined, false);
-    } else if (status == 'pending') {
-      return callback(undefined, false);
+    if(status == 'pending') {
+      // technically not open yet, but will be soon
+      return callback(undefined, { executed: false, open: true, filledAmount: 0 });
+    } if (status === 'done' || status === 'settled') {
+      return callback(undefined, { executed: true, open: false });
+    } else if (status === 'rejected') {
+      return callback(undefined, { executed: false, open: false });
+    } else if(status === 'open' || status === 'active') {
+      return callback(undefined, { executed: false, open: true, filledAmount: parseFloat(data.filled_size) });
     }
-    callback(undefined, false);
+
+    callback(new Error('Unknown status ' + status));
   };
 
-  let handler = cb =>
-    this.gdax.getOrder(order, this.handleResponse('checkOrder', cb));
-  util.retryCustom(retryCritical, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.getOrder(order, this.processResponse('checkOrder', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.getOrder = function(order, callback) {
-  var result = function(err, data) {
+  const result = (err, data) => {
     if (err) return callback(err);
 
-    var price = parseFloat(data.price);
-    var amount = parseFloat(data.filled_size);
-    var date = moment(data.done_at);
+    const price = parseFloat(data.price);
+    const amount = parseFloat(data.filled_size);
+    const date = moment(data.done_at);
+    const fees = {
+      // you always pay fee in the base currency on gdax
+      [this.currency]: +data.fill_fees,
+    }
 
-    callback(undefined, { price, amount, date });
+    callback(undefined, { price, amount, date, fees });
   };
 
-  let handler = cb =>
-    this.gdax.getOrder(order, this.handleResponse('getOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.getOrder(order, this.processResponse('getOrder', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
   // callback for cancelOrder should be true if the order was already filled, otherwise false
-  var result = function(err, data) {
+  const result = (err, data) => {
     if(err) {
-      log.error('Error cancelling order:', err);
-      return callback(true);  // need to catch the specific error but usually an error on cancel means it was filled
+      return callback(null, true);  // need to catch the specific error but usually an error on cancel means it was filled
     }
 
-    return callback(false);
+    return callback(null, false);
   };
 
-  let handler = cb =>
-    this.gdax.cancelOrder(order, this.handleResponse('cancelOrder', cb));
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(result, this));
+  const fetch = cb =>
+    this.gdax.cancelOrder(order, this.processResponse('cancelOrder', cb));
+  retry(null, fetch, result);
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -257,13 +285,14 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           setTimeout(() => {
             let handler = cb =>
               this.gdax_public.getProductTrades(
+                this.pair,
                 {
                   after: last.trade_id - BATCH_SIZE * lastScan,
                   limit: BATCH_SIZE,
                 },
-                this.handleResponse('getTrades', cb)
+                this.processResponse('getTrades', cb)
               );
-            util.retryCustom(
+            retry(
               retryForever,
               _.bind(handler, this),
               _.bind(process, this)
@@ -297,10 +326,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           setTimeout(() => {
             let handler = cb =>
               this.gdax_public.getProductTrades(
+                this.pair,
                 { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
-                this.handleResponse('getTrades', cb)
+                this.processResponse('getTrades', cb)
               );
-            util.retryCustom(
+            retry(
               retryForever,
               _.bind(handler, this),
               _.bind(process, this)
@@ -326,10 +356,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     if (this.scanbackTid) {
       let handler = cb =>
         this.gdax_public.getProductTrades(
+          this.pair,
           { after: this.scanbackTid + BATCH_SIZE + 1, limit: BATCH_SIZE },
-          this.handleResponse('getTrades', cb)
+          this.processResponse('getTrades', cb)
         );
-      util.retryCustom(
+      retry(
         retryForever,
         _.bind(handler, this),
         _.bind(process, this)
@@ -342,10 +373,11 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   let handler = cb =>
     this.gdax_public.getProductTrades(
+      this.pair,
       { limit: BATCH_SIZE },
-      this.handleResponse('getTrades', cb)
+      this.processResponse('getTrades', cb)
     );
-  util.retryCustom(retryForever, _.bind(handler, this), _.bind(process, this));
+  retry(retryForever, _.bind(handler, this), _.bind(process, this));
 };
 
 Trader.prototype.getMaxDecimalsNumber = function(number, decimalLimit = 8) {

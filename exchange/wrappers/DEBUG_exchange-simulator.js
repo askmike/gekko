@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const moment = require('moment');
-const log = require('../core/log');
 
 const TREND_DURATION = 1000;
 
