@@ -88,12 +88,6 @@ Trader.prototype.processResponse = function(next, fn, payload) {
 
     if(error) {
 
-      console.log(new Date, 'error, fn:', fn);
-
-      if(fn === 'cancelOrder' || fn === 'order' || fn === 'checkOrder') {
-        console.log(new Date, 'ERROR!', fn, error.message);
-      }
-
       if(includes(error.message, recoverableErrors)) {
         error.notFatal = true;
       }
