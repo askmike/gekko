@@ -40,8 +40,6 @@ class Broker {
 
     this.interval = this.api.interval || 1500;
 
-//    this.market = new Market(config);
-
     this.market = config.currency.toUpperCase() + config.asset.toUpperCase();
 
     if(config.private)

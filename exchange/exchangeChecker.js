@@ -8,8 +8,8 @@ const Checker = function() {
 }
 
 Checker.prototype.getExchangeCapabilities = function(slug) {
-  if(!fs.existsSync('./wrappers/' + slug + '.js'))
-    throw new errors.ExchangeError(`Gekko does not know exchange "${slug}"`);
+  if(!fs.existsSync(__dirname + '/wrappers/' + slug + '.js'))
+    throw new errors.ExchangeError(`Gekko does not know the exchange "${slug}"`);
 
   return require('./wrappers/' + slug).getCapabilities();
 }
@@ -29,10 +29,10 @@ Checker.prototype.cantMonitor = function(conf) {
 
   var name = exchange.name;
 
-  if(!_.contains(exchange.currencies, conf.currency))
+  if(!_.includes(exchange.currencies, conf.currency))
     return 'Gekko only supports the currencies [ ' + exchange.currencies.join(', ') + ' ] at ' + name + ' (not ' + conf.currency + ')';
 
-  if(!_.contains(exchange.assets, conf.asset))
+  if(!_.includes(exchange.assets, conf.asset))
     return 'Gekko only supports the assets [ ' + exchange.assets.join(', ') + ' ]  at ' + name + ' (not ' + conf.asset + ')';
 
   var pair = _.find(exchange.markets, function(p) {

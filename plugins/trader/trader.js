@@ -4,35 +4,60 @@ var config = util.getConfig();
 var dirs = util.dirs();
 
 var log = require(dirs.core + 'log');
-var Manager = require('./portfolioManager');
+var Broker = require(dirs.gekko + '/exchange/gekkoBroker');
 
 var Trader = function(next) {
-  _.bindAll(this);
 
-  this.manager = new Manager(_.extend(config.trader, config.watch));
-  this.manager.init(next);
+  this.brokerConfig = {
+    ...config.trader,
+    ...config.watch,
+    private: true
+  }
 
-  let sendPortfolio = false;
-
-  this.manager.on('trade', trade => {
-
-    if(!sendPortfolio && this.initialPortfolio) {
-      this.emit('portfolioUpdate', this.initialPortfolio);
-      sendPortfolio = true;
-    }
-
-    this.emit('trade', trade);
+  this.broker = new Broker(this.brokerConfig);
+  this.broker.syncPrivateData(() => {
+    this.setPortfolio(this.broker.ticker.bid);
+    log.info('\t', 'Portfolio:');
+    log.info('\t\t', this.portfolio.currency, this.brokerConfig.currency);
+    log.info('\t\t', this.portfolio.asset, this.brokerConfig.asset);
+    log.info('\t', 'Balance:');
+    log.info('\t\t', this.balance, this.brokerConfig.currency);
+    next();
   });
 
-  this.manager.once('portfolioUpdate', portfolioUpdate => {
-    this.initialPortfolio = portfolioUpdate;
-  })
+  this.sendInitialPortfolio = false;
 }
 
 // teach our trader events
 util.makeEventEmitter(Trader);
 
-Trader.prototype.processCandle = (candle, done) => done();
+Trader.prototype.setPortfolio = function(price) {
+  this.portfolio = {
+    currency: _.find(
+      this.broker.portfolio.balances,
+      b => b.name === this.brokerConfig.asset
+    ).amount,
+    asset: _.find(
+      this.broker.portfolio.balances,
+      b => b.name === this.brokerConfig.currency
+    ).amount
+  }
+  this.balance = this.portfolio.currency + this.portfolio.asset * price;
+}
+
+Trader.prototype.processCandle = (candle, done) => {
+  if(!this.sendInitialPortfolio) {
+    this.sendInitialPortfolio = true;
+    this.setBalance(candle.close);
+    this.deferredEmit('portfolioChange', {
+      asset: this.portfolio.asset,
+      currency: this.portfolio.currency
+    });
+    this.deferredEmit('portfolioValueChange', {
+      balance: this.balance
+    });
+  }
+}
 
 Trader.prototype.processAdvice = function(advice) {
   if(advice.recommendation == 'long') {
