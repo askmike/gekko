@@ -57,6 +57,10 @@ class StickyOrder extends BaseOrder {
       let date = moment(0);
 
       _.each(trades, trade => {
+        if(!trade) {
+          return;
+        }
+
         // last fill counts
         date = moment(trade.date);
         price = ((price * amount) + (+trade.price * trade.amount)) / (+trade.amount + amount);
@@ -72,8 +76,13 @@ class StickyOrder extends BaseOrder {
       }
 
       if(_.first(trades) && _.first(trades).fees) {
+        summary.fees = {};
+
         _.each(trades, trade => {
-          summary.fees = {};
+          if(!trade) {
+            return;
+          }
+
           _.each(trade.fees, (amount, currency) => {
             if(!_.isNumber(summary.fees[currency])) {
               summary.fees[currency] = amount;
