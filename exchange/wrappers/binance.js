@@ -205,6 +205,18 @@ Trader.prototype.isValidLot = function(price, amount) {
   return amount * price >= this.market.minimalOrder.order;
 }
 
+Trader.prototype.outbidPrice = function(price, isUp) {
+  let newPrice;
+
+  if(isUp) {
+    newPrice = price + this.market.minimalOrder.price;
+  } else {
+    newPrice = price - this.market.minimalOrder.price;
+  }
+
+  return this.roundPrice(newPrice);
+}
+
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   const setOrder = (err, data) => {
     if (err) return callback(err);

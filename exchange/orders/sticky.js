@@ -4,14 +4,13 @@
       - if limit is not specified always at bbo.
       - if limit is specified the price is either limit or the bbo (whichever is comes first)
     - it will readjust the order:
-      - if overtake is true it will overbid the current bbo <- TODO
-      - if overtake is false it will stick to current bbo when this moves
+      - if outbid is true it will outbid the current bbo (on supported exchanges)
+      - if outbid is false it will stick to current bbo when this moves
     - If the price moves away from the order it will "stick to" the top
 
   TODO:
     - specify move behaviour (create new one first and cancel old order later?)
     - native move
-    - if overtake is true it will overbid the current bbo
 */
 
 const _ = require('lodash');
@@ -98,6 +97,44 @@ class StickyOrder extends BaseOrder {
     });
   }
 
+  calculatePrice(ticker) {
+    if(this.side === 'buy') {
+      if(ticker.bid >= this.limit) {
+        return this.limit;
+      }
+
+      if(!this.outbid) {
+        return ticker.bid;
+      }
+
+      const outbidPrice = this.api.outbidPrice(ticker.bid, true);
+
+      if(outbidPrice <= this.limit) {
+        return outbidPrice;
+      } else {
+        return this.limit;
+      }
+
+    } else if(this.side === 'sell') {
+
+      if(ticker.ask <= this.limit) {
+        return this.limit;
+      }
+
+      if(!this.outbid) {
+        return ticker.ask;
+      }
+
+      const outbidPrice = this.api.outbidPrice(ticker.ask, false);
+
+      if(outbidPrice >= this.limit) {
+        return outbidPrice;
+      } else {
+        return this.limit;
+      }
+    }
+  }
+
   create(side, rawAmount, params = {}) {
     if(this.completed || this.completing) {
       return false;
@@ -124,12 +161,10 @@ class StickyOrder extends BaseOrder {
 
     this.orders = {};
 
-    // note: currently always sticks to max BBO, does not overtake
-    if(side === 'buy')
-      this.price = Math.min(this.data.ticker.bid, this.limit);
-    else
-      this.price = Math.max(this.data.ticker.ask, this.limit);
+    this.outbid = params.outbid && _.isFunction(this.api.outbidPrice);
 
+    this.price = this.calculatePrice(this.data.ticker);
+    
     this.createOrder();
 
     return this;
@@ -230,15 +265,11 @@ class StickyOrder extends BaseOrder {
 
           this.ticker = ticker;
 
-          let top;
-          if(this.side === 'buy')
-            top = Math.min(ticker.bid, this.limit);
-          else
-            top = Math.max(ticker.ask, this.limit);
-
+          const bookSide = this.side === 'buy' ? 'bid' : 'ask';
           // note: might be string VS float
-          if(top != this.price)
-            return this.move(top);
+          if(ticker[bookSide] != this.price) {
+            return this.move(this.calculatePrice(ticker));
+          }
 
           this.timeout = setTimeout(this.checkOrder, this.checkInterval);
           this.sticking = false;
@@ -306,9 +337,10 @@ class StickyOrder extends BaseOrder {
       limit = this.moveLimitTo;
     }
 
-    if(this.limit === this.api.roundPrice(limit))
+    if(this.limit === this.api.roundPrice(limit)) {
       // effectively nothing changed
       return false;
+    }
 
     if(
       this.status === states.INITIALIZING ||

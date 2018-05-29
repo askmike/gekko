@@ -175,6 +175,18 @@ Trader.prototype.roundPrice = function(price) {
   return round(price, rounding);
 }
 
+Trader.prototype.outbidPrice = function(price, isUp) {
+  let newPrice;
+
+  if(isUp) {
+    newPrice = price + this.market.minimalOrder.price;
+  } else {
+    newPrice = price - this.market.minimalOrder.price;
+  }
+
+  return this.roundPrice(newPrice);
+}
+
 Trader.prototype.getOrder = function(order, callback) {
   const args = _.toArray(arguments);
   const handle = this.processResponse(this.getOrder, args, (err, res) => {
