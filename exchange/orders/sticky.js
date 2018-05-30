@@ -296,6 +296,39 @@ class StickyOrder extends BaseOrder {
     });
   }
 
+  // returns true if the order was fully filled
+  // handles partial fills on cancels calls
+  // on exchanges that support it.
+  handleCancel(filled, data) {
+    // it got filled before we could cancel
+    if(filled) {
+      this.orders[this.id].filled = this.amount;
+      this.emit('fill', this.amount);
+      this.filled(this.price);
+      return true;
+    }
+
+    // if we have data on partial fills
+    // check whether we had a partial fill
+    if(_.isObject(data)) {
+      let amountFilled = data.filled;
+
+      if(!amountFilled && data.remaining) {
+        const alreadyFilled = this.calculateFilled();
+        const orderAmount = this.api.roundAmount(this.amount - alreadyFilled);
+        amountFilled = this.api.roundAmount(orderAmount - data.remaining);
+      }
+
+      if(amountFilled > this.orders[this.id].filled) {
+        console.log('something got filled trying to cancel!', {orderAmount, remaining: data.remaining, amountFilled, alreadyFilled});
+        this.orders[this.id].filled = amountFilled;
+        this.emit('fill', this.calculateFilled());
+      }
+    }
+
+    return false;
+  }
+
   move(price) {
     if(this.completed || this.completing) {
       return false;
@@ -304,12 +337,10 @@ class StickyOrder extends BaseOrder {
     this.status = states.MOVING;
     this.emitStatus();
 
-    this.api.cancelOrder(this.id, (err, filled) => {
+    this.api.cancelOrder(this.id, (err, filled, data) => {
       // it got filled before we could cancel
-      if(filled) {
-        this.orders[this.id].filled = this.amount;
-        this.emit('fill', this.amount);
-        return this.filled(this.price);
+      if(this.handleCancel(filled, data)) {
+        return;
       }
 
       // update to new price
@@ -418,11 +449,14 @@ class StickyOrder extends BaseOrder {
     this.movingAmount = false;
     this.sticking = true;
 
-    this.api.cancelOrder(this.id, filled => {
+    this.api.cancelOrder(this.id, (err, filled, data) => {
+      if(err) {
+        throw err;
+      }
 
-      if(filled) {
-        this.emit('fill', this.amount);
-        return this.filled(this.price);
+      // it got filled before we could cancel
+      if(this.handleCancel(filled, data)) {
+        return;
       }
 
       this.createOrder();
@@ -453,10 +487,9 @@ class StickyOrder extends BaseOrder {
 
       this.cancelling = false;
 
-      if(filled) {
-        this.orders[this.id].filled = this.amount;
-        this.emit('fill', this.amount);
-        return this.filled(this.price);
+      // it got filled before we could cancel
+      if(this.handleCancel(filled, data)) {
+        return;
       }
 
       this.status = states.CANCELLED;
