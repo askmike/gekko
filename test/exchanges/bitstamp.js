@@ -29,6 +29,8 @@ var dirs = util.dirs();
 
 var TRADES = require('./data/bitstamp_trades.json');
 
+return; // TEMP
+
 var FakeExchange = function() {};
 FakeExchange.prototype = {
   transactions: function(since, handler, descending) {
