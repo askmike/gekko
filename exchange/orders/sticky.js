@@ -480,7 +480,7 @@ class StickyOrder extends BaseOrder {
 
     this.completing = true;
     clearTimeout(this.timeout);
-    this.api.cancelOrder(this.id, (err, filled) => {
+    this.api.cancelOrder(this.id, (err, filled, data) => {
       if(err) {
         throw err;
       }
