@@ -1,15 +1,14 @@
 /*
   The sticky order is an advanced order:
-    - It is created at max price X
+    - It is created at a limit price of X
       - if limit is not specified always at bbo.
-      - if limit is specified the price is either limit or the bbo (whichever is comes first)
+      - if limit is specified the price is either limit or the bbo (whichever is more favorable)
     - it will readjust the order:
       - if outbid is true it will outbid the current bbo (on supported exchanges)
       - if outbid is false it will stick to current bbo when this moves
     - If the price moves away from the order it will "stick to" the top
 
   TODO:
-    - specify move behaviour (create new one first and cancel old order later?)
     - native move
 */
 
@@ -29,72 +28,39 @@ class StickyOrder extends BaseOrder {
     this.sticking = false;
   }
 
-  createSummary(next) {
-    if(!this.completed)
-      console.log(new Date, 'createSummary BUT ORDER NOT COMPLETED!');
+  create(side, rawAmount, params = {}) {
+    if(this.completed || this.completing) {
+      return false;
+    }
 
-    if(!next)
-      next = _.noop;
+    this.side = side;
 
-    const checkOrders = _.keys(this.orders)
-      .map(id => next => {
+    this.amount = this.api.roundAmount(rawAmount);
 
-        if(!this.orders[id].filled) {
-          return next();
-        }
+    if(side === 'buy') {
+      if(params.limit)
+        this.limit = this.api.roundPrice(params.limit);
+      else
+        this.limit = Infinity;
+    } else {
+      if(params.limit)
+        this.limit = this.api.roundPrice(params.limit);
+      else
+        this.limit = -Infinity;
+    }
 
-        setTimeout(() => this.api.getOrder(id, next), this.timeout);
-      });
+    this.status = states.SUBMITTED;
+    this.emitStatus();
 
-    async.series(checkOrders, (err, trades) => {
-      if(err) {
-        return next(err);
-      }
+    this.orders = {};
 
-      let price = 0;
-      let amount = 0;
-      let date = moment(0);
+    this.outbid = params.outbid && _.isFunction(this.api.outbidPrice);
 
-      _.each(trades, trade => {
-        if(!trade) {
-          return;
-        }
+    this.price = this.calculatePrice(this.data.ticker);
 
-        // last fill counts
-        date = moment(trade.date);
-        price = ((price * amount) + (+trade.price * trade.amount)) / (+trade.amount + amount);
-        amount += +trade.amount;
-      });
+    this.createOrder();
 
-      const summary = {
-        price,
-        amount,
-        date,
-        side: this.side,
-        orders: trades.length
-      }
-
-      if(_.first(trades) && _.first(trades).fees) {
-        summary.fees = {};
-
-        _.each(trades, trade => {
-          if(!trade) {
-            return;
-          }
-
-          _.each(trade.fees, (amount, currency) => {
-            if(!_.isNumber(summary.fees[currency])) {
-              summary.fees[currency] = amount;
-            } else {
-              summary.fees[currency] += amount;
-            }
-          });
-        });
-      }
-
-      this.emit('summary', summary);
-      next(undefined, summary);
-    });
+    return this;
   }
 
   calculatePrice(ticker) {
@@ -133,41 +99,6 @@ class StickyOrder extends BaseOrder {
         return this.limit;
       }
     }
-  }
-
-  create(side, rawAmount, params = {}) {
-    if(this.completed || this.completing) {
-      return false;
-    }
-
-    this.side = side;
-
-    this.amount = this.api.roundAmount(rawAmount);
-
-    if(side === 'buy') {
-      if(params.limit)
-        this.limit = this.api.roundPrice(params.limit);
-      else
-        this.limit = Infinity;
-    } else {
-      if(params.limit)
-        this.limit = this.api.roundPrice(params.limit);
-      else
-        this.limit = -Infinity;
-    }
-
-    this.status = states.SUBMITTED;
-    this.emitStatus();
-
-    this.orders = {};
-
-    this.outbid = params.outbid && _.isFunction(this.api.outbidPrice);
-
-    this.price = this.calculatePrice(this.data.ticker);
-    
-    this.createOrder();
-
-    return this;
   }
 
   createOrder() {
@@ -497,6 +428,74 @@ class StickyOrder extends BaseOrder {
 
       this.finish(false);
     })
+  }
+
+  createSummary(next) {
+    if(!this.completed)
+      console.log(new Date, 'createSummary BUT ORDER NOT COMPLETED!');
+
+    if(!next)
+      next = _.noop;
+
+    const checkOrders = _.keys(this.orders)
+      .map(id => next => {
+
+        if(!this.orders[id].filled) {
+          return next();
+        }
+
+        setTimeout(() => this.api.getOrder(id, next), this.timeout);
+      });
+
+    async.series(checkOrders, (err, trades) => {
+      if(err) {
+        return next(err);
+      }
+
+      let price = 0;
+      let amount = 0;
+      let date = moment(0);
+
+      _.each(trades, trade => {
+        if(!trade) {
+          return;
+        }
+
+        // last fill counts
+        date = moment(trade.date);
+        price = ((price * amount) + (+trade.price * trade.amount)) / (+trade.amount + amount);
+        amount += +trade.amount;
+      });
+
+      const summary = {
+        price,
+        amount,
+        date,
+        side: this.side,
+        orders: trades.length
+      }
+
+      if(_.first(trades) && _.first(trades).fees) {
+        summary.fees = {};
+
+        _.each(trades, trade => {
+          if(!trade) {
+            return;
+          }
+
+          _.each(trade.fees, (amount, currency) => {
+            if(!_.isNumber(summary.fees[currency])) {
+              summary.fees[currency] = amount;
+            } else {
+              summary.fees[currency] += amount;
+            }
+          });
+        });
+      }
+
+      this.emit('summary', summary);
+      next(undefined, summary);
+    });
   }
  
 }

@@ -85,23 +85,81 @@ Trader.prototype.processCandle = function(candle, done) {
 }
 
 Trader.prototype.processAdvice = function(advice) {
-  if(advice.recommendation == 'long') {
+  const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
+
+  let amount;
+
+  if(direction === 'buy') {
+
+    amount = this.portfolio.currency * this.price * 0.95;
+
+    if(this.exposed) {
+      log.info('NOT buying, already exposed');
+      return this.deferredEmit('tradeAborted', {
+        action: direction,
+        portfolio: this.portfolio,
+        balance: this.balance
+      });
+    }
+
+    if(amount < this.broker.marketConfig.minimalOrder.amount) {
+      log.info('NOT buying, not enough', this.brokerConfig.currency);
+      return this.deferredEmit('tradeAborted', {
+        action: direction,
+        portfolio: this.portfolio,
+        balance: this.balance
+      });
+    }
+
     log.info(
       'Trader',
       'Received advice to go long.',
       'Buying ', this.brokerConfig.asset
     );
-  } else if(advice.recommendation == 'short') {
+
+  } else if(direction === 'sell') {
+
+    amount = this.portfolio.asset * 0.95;
+
+    if(!this.exposed) {
+      log.info('NOT selling, already no exposure');
+      return this.deferredEmit('tradeAborted', {
+        action: direction,
+        portfolio: this.portfolio,
+        balance: this.balance
+      });
+    }
+
+    if(amount < this.broker.marketConfig.minimalOrder.amount) {
+      log.info('NOT selling, not enough', this.brokerConfig.currency);
+      return this.deferredEmit('tradeAborted', {
+        action: direction,
+        portfolio: this.portfolio,
+        balance: this.balance
+      });
+    }
+
     log.info(
       'Trader',
       'Received advice to go short.',
       'Selling ', this.brokerConfig.asset
     );
   }
+
+  this.createOrder(direction, amount);
 }
 
-Trader.prototype.createOrder = function(side) {
+Trader.prototype.createOrder = function(side, amount) {
+  const type = 'sticky';
+  this.order = this.broker.createOrder(type, side, amount);
 
+  this.order.on('filled', f => console.log('filled', f));
+  this.order.on('completed', () => {
+    this.order.createSummary((err, summary) => {
+      console.log('summary:', summary);
+      this.order = null;
+    })
+  });
 }
 
 module.exports = Trader;
