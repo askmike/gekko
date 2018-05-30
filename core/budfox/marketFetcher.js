@@ -6,23 +6,24 @@
 // - `trades batch` - all new trades.
 // - `trade` - the most recent trade after every fetch
 
-var _ = require('lodash');
-var moment = require('moment');
-var utc = moment.utc;
-var util = require(__dirname + '/../util');
+const _ = require('lodash');
+const moment = require('moment');
+const utc = moment.utc;
+const util = require(__dirname + '/../util');
+const dirs = util.dirs();
 
-var config = util.getConfig();
-var log = require(util.dirs().core + 'log');
-var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+const config = util.getConfig();
+const log = require(dirs.core + 'log');
+const exchangeChecker = require(dirs.gekko + 'exchange/exchangeChecker');
 
-var TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
+const TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
 
-var Fetcher = function(config) {
+const Fetcher = function(config) {
   if(!_.isObject(config))
     throw 'TradeFetcher expects a config';
 
-  var exchangeName = config.watch.exchange.toLowerCase();
-  var DataProvider = require(util.dirs().gekko + 'exchanges/' + exchangeName);
+  const exchangeName = config.watch.exchange.toLowerCase();
+  const DataProvider = require(util.dirs().gekko + 'exchange/wrappers/' + exchangeName);
   _.bindAll(this);
 
   // Create a public dataProvider object which can retrieve live

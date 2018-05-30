@@ -45,10 +45,10 @@ Trader.prototype.setPortfolio = function(price) {
   this.balance = this.portfolio.currency + this.portfolio.asset * price;
 }
 
-Trader.prototype.processCandle = (candle, done) => {
+Trader.prototype.processCandle = function(candle, done) {
   if(!this.sendInitialPortfolio) {
     this.sendInitialPortfolio = true;
-    this.setBalance(candle.close);
+    this.setPortfolio(candle.close);
     this.deferredEmit('portfolioChange', {
       asset: this.portfolio.asset,
       currency: this.portfolio.currency

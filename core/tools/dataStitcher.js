@@ -18,9 +18,14 @@ Stitcher.prototype.ago = function(ts) {
 }
 
 Stitcher.prototype.verifyExchange = function() {
-  var exchangeChecker = require(dirs.core + 'exchangeChecker');
-  var slug = config.watch.exchange.toLowerCase();
-  var exchange = exchangeChecker.getExchangeCapabilities(slug);
+  const exchangeChecker = require(dirs.gekko + 'exchange/exchangeChecker');
+  const slug = config.watch.exchange.toLowerCase();
+  let exchange;
+  try {
+    exchange = exchangeChecker.getExchangeCapabilities(slug);
+  } catch(e) {
+    util.die(e.message);
+  }
 
   if(!exchange)
     util.die(`Unsupported exchange: ${slug}`);
