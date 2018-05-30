@@ -56,7 +56,8 @@ const recoverableErrors = [
   'CONNREFUSED',
   'NOTFOUND',
   'Rate limit exceeded',
-  'Response code 5'
+  'Response code 5',
+  'GDAX is currently under maintenance.'
 ];
 
 const includes = (str, list) => {
@@ -91,6 +92,8 @@ Trader.prototype.processResponse = function(method, next) {
       ) {
         error.retry = 10;
       }
+
+      console.log(error.message);
 
       return next(error);
     }

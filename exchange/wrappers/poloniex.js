@@ -36,7 +36,8 @@ const recoverableErrors = [
   'Empty response',
   'Please try again in a few minutes.',
   'Nonce must be greater than',
-  'Internal error. Please try again.'
+  'Internal error. Please try again.',
+  'Connection timed out. Please try again.'
 ];
 
 // errors that might mean
