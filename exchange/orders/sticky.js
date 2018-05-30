@@ -109,7 +109,7 @@ class StickyOrder extends BaseOrder {
 
       const outbidPrice = this.api.outbidPrice(ticker.bid, true);
 
-      if(outbidPrice <= this.limit) {
+      if(outbidPrice <= this.limit && outbidPrice < ticker.ask) {
         return outbidPrice;
       } else {
         return this.limit;
@@ -127,7 +127,7 @@ class StickyOrder extends BaseOrder {
 
       const outbidPrice = this.api.outbidPrice(ticker.ask, false);
 
-      if(outbidPrice >= this.limit) {
+      if(outbidPrice >= this.limit && outbidPrice > ticker.bid) {
         return outbidPrice;
       } else {
         return this.limit;
