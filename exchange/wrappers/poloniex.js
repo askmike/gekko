@@ -99,7 +99,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
       ) {
         error = undefined;
         data = { unfilled: true };
-        console.log('UNKNOWN ORDER!', payload);
+        console.log(new Date, 'UNKNOWN ORDER!', payload);
         process.exit();
       }
 
@@ -114,7 +114,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
 
         // it might be cancelled
         else if(includes(error.message, unknownResultErrors)) {
-          return setTimeout(() => {
+          setTimeout(() => {
             this.getOpenOrders((err, orders) => {
               if(err) {
                 return next(error);
@@ -124,34 +124,35 @@ Trader.prototype.processResponse = function(next, fn, payload) {
 
               // the cancel did not work since the order still exists
               if(order) {
+                error.notFatal = true;
                 return next(error);
               }
 
               next(undefined, {success: 1});
             });
           }, this.checkInterval);
+          return;
         }
       }
 
       if(fn === 'order') {
+
+        if(includes(error.message, ['Not enough'])) {
+          error.retry = 2;
+        }
+
         // we need to check whether the order was actually created
         if(includes(error.message, unknownResultErrors)) {
           return setTimeout(() => {
             this.findLastOrder(2, payload, (err, lastTrade) => {
               if(lastTrade) {
-                console.log(new Date, 'create order passing lastTrade', lastTrade);
                 return next(undefined, lastTrade);
               }
 
-              console.log(new Date, 'create order, ETIMEDOUT');
               next(error);
             });
 
           }, this.checkInterval);
-        }
-
-        if(includes(error.message, ['Not enough'])) {
-          error.retry = 2;
         }
       }
     }
@@ -249,7 +250,7 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.roundAmount = function(amount) {
-  return +amount;
+  return _.floor(amount, 8);
 }
 
 Trader.prototype.roundPrice = function(price) {
@@ -308,9 +309,9 @@ Trader.prototype.getOrder = function(order, callback) {
     if(err)
       return callback(err);
 
-    var price = 0;
-    var amount = 0;
-    var date = moment(0);
+    let price = 0;
+    let amount = 0;
+    let date = moment(0);
 
     if(result.unfilled) {
       return callback(null, {price, amount, date});
@@ -322,7 +323,18 @@ Trader.prototype.getOrder = function(order, callback) {
       amount += +trade.amount;
     });
 
-    callback(err, {price, amount, date});
+    const fees = {};
+    const feePercent = _.first(result).fee;
+
+    if(_.first(result).type === 'sell') {
+      const fee = price * amount * _.first(result).fee;
+      fees[this.currency] = fee;
+    } else {
+      const fee = amount * _.first(result).fee;
+      fees[this.asset] = fee;
+    }
+
+    callback(err, {price, amount, date, fees, feePercent});
   };
 
   const fetch = next => this.poloniex.returnOrderTrades(order, this.processResponse(next, 'getOrder', order));
@@ -343,7 +355,13 @@ Trader.prototype.cancelOrder = function(order, callback) {
       return callback(undefined, false);
     }
 
-    callback(undefined, false);
+    let data;
+
+    if(result.amount) {
+      data = { remaining: result.amount };
+    }
+
+    callback(undefined, false, data);
   };
   
   const fetch = next => this.poloniex.cancelOrder(this.currency, this.asset, order, this.processResponse(next, 'cancelOrder', order));
