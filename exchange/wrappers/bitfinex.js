@@ -82,7 +82,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         funcName === 'checkOrder' &&
         message.includes('Not Found')
       ) {
-        error.retry = 25;
+        error.retry = 5;
         return callback(error);
       }
 
@@ -222,6 +222,11 @@ Trader.prototype.getOrder = function(order_id, callback) {
     var price = parseFloat(data.avg_execution_price);
     var amount = parseFloat(data.executed_amount);
     var date = moment.unix(data.timestamp);
+
+    // TEMP: Thu May 31 14:49:34 CEST 2018
+    // the `past_trades` call is not returning
+    // any data.
+    return callback(undefined, {price, amount, date});
 
     const processPastTrade = (err, data) => {
       if (err) return callback(err);

@@ -30,6 +30,7 @@ var Trader = function(next) {
   });
 
   this.sendInitialPortfolio = false;
+  this.cancellingOrder = false;
 
   _.bindAll(this);
 }
@@ -38,6 +39,7 @@ var Trader = function(next) {
 util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
+  log.debug('syncing portfolio');
   this.broker.syncPrivateData(() => {
     this.price = this.broker.ticker.bid;
     this.setPortfolio();
@@ -59,6 +61,7 @@ Trader.prototype.setPortfolio = function() {
   this.balance = this.portfolio.currency + this.portfolio.asset * this.price;
   this.exposure = (this.portfolio.asset * this.price) / this.balance;
   this.exposed = this.exposure > 0.1;
+  log.debug('setting portfolio to:', this.portfolio, this.balance, this.exposure);
 }
 
 Trader.prototype.processCandle = function(candle, done) {
@@ -87,11 +90,25 @@ Trader.prototype.processCandle = function(candle, done) {
 Trader.prototype.processAdvice = function(advice) {
   const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
 
+  if(this.order) {
+    if(this.order.side === direction) {
+      return log.info('ignoring advice: already in the process to', direction);
+    }
+
+    if(this.cancellingOrder) {
+      return log.info('ignoring advice: already cancelling previous', this.order.side, 'order');
+    }
+
+    log.info('Received advice to', direction, 'however Gekko is already in the process to', this.order.side);
+    log.info('Canceling', this.order.side, 'order first');
+    return this.cancelOrder(() => this.processAdvice(advice));
+  }
+
+
   let amount;
 
   if(direction === 'buy') {
-
-    amount = this.portfolio.currency * this.price * 0.95;
+    amount = this.portfolio.currency / this.price * 0.95;
 
     if(this.exposed) {
       log.info('NOT buying, already exposed');
@@ -158,7 +175,28 @@ Trader.prototype.createOrder = function(side, amount) {
     this.order.createSummary((err, summary) => {
       console.log('summary:', summary);
       this.order = null;
+      this.sync(_.noop);
     })
+  });
+}
+
+Trader.prototype.cancelOrder = function(next) {
+
+  if(!this.order) {
+    return next();
+  }
+
+  this.cancellingOrder = true;
+
+  this.order.removeAllListeners();
+  this.order.cancel();
+  this.order.once('completed', () => {
+    this.order.createSummary((err, summary) => {
+      log.info({err, summary});
+      this.order = null;
+      this.cancellingOrder = false;
+      this.sync(next);
+    });
   });
 }
 
