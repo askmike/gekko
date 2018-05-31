@@ -302,7 +302,8 @@ Trader.getCapabilities = function () {
     providesFullHistory: true,
     providesHistory: 'date',
     tradable: true,
-    forceReorderDelay: true
+    forceReorderDelay: true,
+    gekkoBroker: 0.6
   };
 }
 

@@ -1,12 +1,12 @@
-var _ = require('lodash');
-var util = require('../../core/util.js');
-var config = util.getConfig();
-var dirs = util.dirs();
+const _ = require('lodash');
+const util = require('../../core/util.js');
+const config = util.getConfig();
+const dirs = util.dirs();
 
-var log = require(dirs.core + 'log');
-var Broker = require(dirs.gekko + '/exchange/gekkoBroker');
+const log = require(dirs.core + 'log');
+const Broker = require(dirs.gekko + '/exchange/gekkoBroker');
 
-var Trader = function(next) {
+const Trader = function(next) {
 
   this.brokerConfig = {
     ...config.trader,
@@ -15,6 +15,11 @@ var Trader = function(next) {
   }
 
   this.broker = new Broker(this.brokerConfig);
+
+  if(!this.broker.capabilities.gekkoBroker) {
+    util.die('This exchange is not yet supported');
+  }
+
   this.sync(() => {
     log.info('\t', 'Portfolio:');
     log.info('\t\t', this.portfolio.currency, this.brokerConfig.currency);
@@ -43,7 +48,9 @@ Trader.prototype.sync = function(next) {
   this.broker.syncPrivateData(() => {
     this.price = this.broker.ticker.bid;
     this.setPortfolio();
-    next();
+    if(next) {
+      next();
+    }
   });
 }
 
@@ -60,7 +67,7 @@ Trader.prototype.setPortfolio = function() {
   }
   this.balance = this.portfolio.currency + this.portfolio.asset * this.price;
   this.exposure = (this.portfolio.asset * this.price) / this.balance;
-  this.exposed = this.exposure > 0.1;
+  this.exposed = this.exposure > 0.1; // if more than 10%
   log.debug('setting portfolio to:', this.portfolio, this.balance, this.exposure);
 }
 
@@ -170,12 +177,13 @@ Trader.prototype.createOrder = function(side, amount) {
   const type = 'sticky';
   this.order = this.broker.createOrder(type, side, amount);
 
-  this.order.on('filled', f => console.log('filled', f));
+  this.order.on('filled', f => log.debug('[ORDER]', side, 'total filled:', f));
+  this.order.on('statusChange', s => log.debug('[ORDER] statusChange:', s));
   this.order.on('completed', () => {
     this.order.createSummary((err, summary) => {
-      console.log('summary:', summary);
+      log.info('[ORDER] summary:', summary);
       this.order = null;
-      this.sync(_.noop);
+      this.sync();
     })
   });
 }

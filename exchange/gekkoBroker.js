@@ -2,7 +2,7 @@
   The broker manages all communicatinn with the exchange, delegating:
 
   - the management of the portfolio to the portfolioManager
-  - the management of actual trades to orders.
+  - the management of actual trades to "orders".
 */
 
 const _ = require('lodash');
@@ -33,7 +33,9 @@ class Broker {
 
     this.api = new API(config);
 
-    this.marketConfig = _.find(API.getCapabilities().markets, (p) => {
+    this.capabilities = API.getCapabilities();
+
+    this.marketConfig = _.find(this.capabilities.markets, (p) => {
       return _.first(p.pair) === config.currency.toUpperCase() &&
         _.last(p.pair) === config.asset.toUpperCase();
     });

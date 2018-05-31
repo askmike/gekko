@@ -364,7 +364,8 @@ Trader.getCapabilities = function() {
     providesHistory: 'date',
     providesFullHistory: true,
     tid: 'tid',
-    tradable: true
+    tradable: true,
+    gekkoBroker: 0.6
   };
 };
 
