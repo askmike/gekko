@@ -57,7 +57,10 @@ const recoverableErrors = [
   'NOTFOUND',
   'Rate limit exceeded',
   'Response code 5',
-  'GDAX is currently under maintenance.'
+  'GDAX is currently under maintenance.',
+  'HTTP 408 Error',
+  'HTTP 504 Error',
+  'socket hang up'
 ];
 
 const includes = (str, list) => {

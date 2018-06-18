@@ -251,7 +251,6 @@ class StickyOrder extends BaseOrder {
       }
 
       if(amountFilled > this.orders[this.id].filled) {
-        console.log('something got filled trying to cancel!', {orderAmount, remaining: data.remaining, amountFilled, alreadyFilled});
         this.orders[this.id].filled = amountFilled;
         this.emit('fill', this.calculateFilled());
       }
