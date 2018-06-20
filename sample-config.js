@@ -218,13 +218,11 @@ config.trader = {
   orderUpdateDelay: 1, // Number of minutes to adjust unfilled order prices
 }
 
-config.adviceLogger = {
-  enabled: false,
-  muteSoft: true // disable advice printout if it's soft
-}
-
 config.eventLogger = {
-  enabled: false
+  enabled: false,
+  // optionally pass a whitelist of events to log, if not past
+  // the eventLogger will log _all_ events.
+  // whitelist: ['portfolioChange', 'portfolioValueChange']
 }
 
 config.pushover = {
