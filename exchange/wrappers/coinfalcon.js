@@ -47,9 +47,9 @@ const recoverableErrors = [
   '500',
   '502',
   '408',
-
-  // The timestamp 1527996378 is invalid, current timestamp is 1527996441.
-  'is invalid, current timestamp is'
+  // "The timestamp 1527996378 is invalid, current timestamp is 1527996441."
+  'is invalid, current timestamp is',
+  'EHOSTUNREACH'
 ];
 
 Trader.prototype.processResponse = function(method, args, next) {

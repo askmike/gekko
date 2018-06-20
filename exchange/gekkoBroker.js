@@ -82,7 +82,7 @@ class Broker {
 
       if(err) {
         if(err.message) {
-          console.log(err.message);
+          console.log(this.api.name, err.message);
           throw err;
         } else {
           console.log('err not wrapped in error:', err);
