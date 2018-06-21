@@ -38,7 +38,7 @@
         router-link(to='/backtest') backtest
         |  with your new data!
     div(v-if='!data').txt--center
-      h2 ERROR: Uknown import
+      h2 ERROR: Unknown import
       p 
         I don't know this import..
 </template>
