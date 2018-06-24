@@ -43,6 +43,8 @@ var Base = function(settings) {
   this.asyncTick = false;
   this.deferredTicks = [];
 
+  this.propogatedAdvices = 0;
+
   this.completedWarmup = false;
 
   this.asyncIndicatorRunner = new AsyncIndicatorRunner();
@@ -80,7 +82,6 @@ var Base = function(settings) {
 
 // teach our base trading method events
 util.makeEventEmitter(Base);
-
 
 Base.prototype.tick = function(candle, done) {
   this.age++;
@@ -222,6 +223,7 @@ Base.prototype.advice = function(newPosition) {
   this._prevAdvice = newPosition;
 
   this.emit('advice', {
+    id: 'advice-' + (++this.propogatedAdvices),
     recommendation: newPosition
   });
 }
