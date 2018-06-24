@@ -14,6 +14,8 @@ const Trader = function(next) {
     private: true
   }
 
+  this.propogatedTrades = 0;
+
   this.broker = new Broker(this.brokerConfig);
 
   if(!this.broker.capabilities.gekkoBroker) {
@@ -67,7 +69,9 @@ Trader.prototype.setPortfolio = function() {
   }
   this.balance = this.portfolio.currency + this.portfolio.asset * this.price;
   this.exposure = (this.portfolio.asset * this.price) / this.balance;
-  this.exposed = this.exposure > 0.1; // if more than 10%
+
+  // if more than 10% of balance is in asset we are exposed
+  this.exposed = this.exposure > 0.1;
   log.debug('setting portfolio to:', this.portfolio, this.balance, this.exposure);
 }
 
@@ -111,15 +115,17 @@ Trader.prototype.processAdvice = function(advice) {
     return this.cancelOrder(() => this.processAdvice(advice));
   }
 
+  const id = 'trade-' + (++this.propogatedTrades);
 
   let amount;
 
   if(direction === 'buy') {
-    amount = this.portfolio.currency / this.price * 0.95;
 
     if(this.exposed) {
       log.info('NOT buying, already exposed');
       return this.deferredEmit('tradeAborted', {
+        id,
+        advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance
@@ -129,11 +135,15 @@ Trader.prototype.processAdvice = function(advice) {
     if(amount < this.broker.marketConfig.minimalOrder.amount) {
       log.info('NOT buying, not enough', this.brokerConfig.currency);
       return this.deferredEmit('tradeAborted', {
+        id,
+        advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance
       });
     }
+
+    amount = this.portfolio.currency / this.price * 0.95;
 
     log.info(
       'Trader',
@@ -143,11 +153,11 @@ Trader.prototype.processAdvice = function(advice) {
 
   } else if(direction === 'sell') {
 
-    amount = this.portfolio.asset * 0.95;
-
     if(!this.exposed) {
       log.info('NOT selling, already no exposure');
       return this.deferredEmit('tradeAborted', {
+        id,
+        advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance
@@ -157,11 +167,15 @@ Trader.prototype.processAdvice = function(advice) {
     if(amount < this.broker.marketConfig.minimalOrder.amount) {
       log.info('NOT selling, not enough', this.brokerConfig.currency);
       return this.deferredEmit('tradeAborted', {
+        id,
+        advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance
       });
     }
+
+    amount = this.portfolio.asset * 0.95;
 
     log.info(
       'Trader',
@@ -170,11 +184,20 @@ Trader.prototype.processAdvice = function(advice) {
     );
   }
 
-  this.createOrder(direction, amount);
+  this.createOrder(direction, amount, advice, id);
 }
 
-Trader.prototype.createOrder = function(side, amount) {
+Trader.prototype.createOrder = function(side, amount, advice, id) {
   const type = 'sticky';
+
+  this.deferredEmit('tradeInitiated', {
+    id,
+    advice_id: advice.id,
+    action: side,
+    portfolio: this.portfolio,
+    balance: this.balance
+  });
+
   this.order = this.broker.createOrder(type, side, amount);
 
   this.order.on('filled', f => log.debug('[ORDER]', side, 'total filled:', f));
@@ -183,12 +206,24 @@ Trader.prototype.createOrder = function(side, amount) {
     this.order.createSummary((err, summary) => {
       log.info('[ORDER] summary:', summary);
       this.order = null;
-      this.sync();
+      this.sync(() => {
+        this.deferredEmit('tradeCompleted', {
+          id,
+          advice_id: advice.id,
+          action: summary.side,
+          cost: 'todo!',
+          amount: summary.amount,
+          price: summary.price,
+          portfolio: this.portfolio,
+          balance: this.balance,
+          date: summary.date
+        });
+      });
     })
   });
 }
 
-Trader.prototype.cancelOrder = function(next) {
+Trader.prototype.cancelOrder = function(id, advice, next) {
 
   if(!this.order) {
     return next();
@@ -199,12 +234,8 @@ Trader.prototype.cancelOrder = function(next) {
   this.order.removeAllListeners();
   this.order.cancel();
   this.order.once('completed', () => {
-    this.order.createSummary((err, summary) => {
-      log.info({err, summary});
-      this.order = null;
-      this.cancellingOrder = false;
-      this.sync(next);
-    });
+    // todo!
+    throw 'a';
   });
 }
 
