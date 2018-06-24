@@ -25,6 +25,8 @@ const PaperTrader = function() {
   if(this.portfolio.asset > 0) {
     this.exposed = true;
   }
+
+  this.propogatedTrades = 0;
 }
 
 PaperTrader.prototype.relayPortfolioChange = function() {
@@ -58,29 +60,32 @@ PaperTrader.prototype.setStartBalance = function() {
 PaperTrader.prototype.updatePosition = function(advice) {
   let what = advice.recommendation;
 
-  let executionPrice;
+  let cost;
+  let amount;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   if(what === 'long') {
+    cost = (1 - this.fee) * this.portfolio.currency;
     this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
-    executionPrice = this.extractFee(this.price);
+    amount = this.portfolio.asset;
     this.portfolio.currency = 0;
-    this.trades++;
     this.exposed = true;
+    this.trades++;
   }
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
   else if(what === 'short') {
+    cost = (1 - this.fee) * (this.portfolio.asset * this.price);
     this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
-    executionPrice = this.price + this.price - this.extractFee(this.price);
+    amount = this.portfolio.currency / this.price;
     this.portfolio.asset = 0;
     this.exposed = false;
     this.trades++;
   }
 
-  return executionPrice;
+  return { cost, amount };
 }
 
 PaperTrader.prototype.getBalance = function() {
@@ -96,25 +101,29 @@ PaperTrader.prototype.processAdvice = function(advice) {
   else
     return;
 
-  this.tradeId = _.uniqueId();
+  this.tradeId = 'trade-' + (++this.propogatedTrades);
 
   this.deferredEmit('tradeInitiated', {
     id: this.tradeId,
+    advice_id: advice.id,
     action,
     portfolio: _.clone(this.portfolio),
     balance: this.getBalance(),
     date: advice.date,
   });
 
-  const executionPrice = this.updatePosition(advice);
+  const cost = this.updatePosition(advice);
 
   this.relayPortfolioChange();
   this.relayPortfolioValueChange();
 
   this.deferredEmit('tradeCompleted', {
     id: this.tradeId,
+    advice_id: advice.id,
     action,
-    price: executionPrice,
+    cost,
+    amount,
+    price: this.price,
     portfolio: this.portfolio,
     balance: this.getBalance(),
     date: advice.date
