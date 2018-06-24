@@ -21,6 +21,8 @@ var Trader = function(config) {
   this.currency = config.currency;
   this.pair = this.asset + this.currency;
   this.bitfinex = new Bitfinex.RESTv1({apiKey: this.key, apiSecret: this.secret, transform: true});
+
+  this.interval = 2000;
 }
 
 const includes = (str, list) => {
@@ -37,7 +39,6 @@ const recoverableErrors = [
   'CONNRESET',
   'CONNREFUSED',
   'NOTFOUND',
-  '429',
   '443',
   '504',
   '503',
@@ -89,6 +90,11 @@ Trader.prototype.handleResponse = function(funcName, callback) {
       if(includes(message, recoverableErrors)) {
         error.notFatal = true;
         return callback(error);
+      }
+
+      if(includes(message, 'Too Many Requests')) {
+        error.notFatal = true;
+        error.backoffDelay = 5000;
       }
     }
 

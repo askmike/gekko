@@ -31,6 +31,10 @@ const retryInstance = (options, checkFn, callback) => {
       }
 
       if(err.notFatal) {
+        if(err.backoffDelay) {
+          return setTimeout(() => operation.retry(err), err.backoffDelay);
+        }
+
         return operation.retry(err);
       }
 

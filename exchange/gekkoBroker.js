@@ -44,8 +44,9 @@ class Broker {
 
     this.market = config.currency.toUpperCase() + config.asset.toUpperCase();
 
-    if(config.private)
+    if(config.private) {
       this.portfolio = new Portfolio(config, this.api);
+    }
 
     bindAll(this);
   }
