@@ -1,3 +1,11 @@
+const message = `
+Unfortunately the 0.6 pre release does not include a working UI yet. See this link for more details and the current status:
+
+https://forum.gekko.wizb.it/thread-57279.html
+`;
+
+throw message;
+
 const config = require('./vue/UIconfig');
 
 const koa = require('koa');
