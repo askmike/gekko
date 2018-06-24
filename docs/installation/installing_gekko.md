@@ -35,6 +35,11 @@ Once you have Gekko downloaded you need to install the dependencies, open your t
 
     npm install --only=production
 
+We also need to install Gekko Broker's dependencies, run:
+
+    cd exchange
+    npm install --only=production
+
 ## Starting Gekko
 
 After all the above you can start Gekko by running the following in your terminal:
