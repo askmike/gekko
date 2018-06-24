@@ -108,7 +108,8 @@ and will start signaling advice.
 - Example:
       {
         recommendation: [position to take, either long or short],
-        date: [moment object of this advice]
+        date: [moment object of this advice],
+        id: [string identifying this unique trade]
       }
 
 ### tradeInitiated event
@@ -118,7 +119,8 @@ and will start signaling advice.
 - Subscribe: You can subscribe to this event by registering the `processTradeInitiated` method.
 - Example:
       {
-        id: [number identifying this unique trade]
+        id: [string identifying this unique trade],
+        adviceId: [number specifying the advice id this trade is based on],
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency, asset and total balance],
@@ -132,7 +134,8 @@ and will start signaling advice.
 - Subscribe: You can subscribe to this event by registering the `processTradeAborted` method.
 - Example:
       {
-        id: [number identifying this unique trade]
+        id: [string identifying this unique trade],
+        adviceId: [number specifying the advice id this trade is based on],
         action: [either "buy" or "sell"],
         date: [moment object, exchange time trade completed at],
         reason: [string explaining why the trade was aborted]
@@ -145,10 +148,12 @@ and will start signaling advice.
 - Subscribe: You can subscribe to this event by registering the `processTradeCompleted` method.
 - Example:
       {
-        id: [number identifying this unique trade]
+        id: [string identifying this unique trade],
+        adviceId: [number specifying the advice id this trade is based on],
         action: [either "buy" or "sell"],
         price: [number, average price that was sold at],
-        cost: [ideal execution cost - ],
+        amount: [number, how much asset was trades (excluding "cost")],
+        cost: [number the amount in currency representing fee, slippage and other execution costs],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency and asset],
         balance: [number, total worth of portfolio]
@@ -178,7 +183,7 @@ and will start signaling advice.
 ### performanceReport event
 
 - What: An object containing a summary of the performance of the "tradebot" (advice signals + execution).
-- When: At the same time as every new candle.
+- When: Once every new candle.
 - Subscribe: You can subscribe to this event by registering the `processPerformanceReport` method.
 - Example:
       {
@@ -199,13 +204,14 @@ and will start signaling advice.
         sharpe: -2.676305165560598
       }
 
-### roundtrip event
+### roundtripInitiated event
 
-- What: A summary of a completed roundtrip (buy + sell signal).
-- When: After every roundtrip: a completed sell trade event that superceded a buy sell trade event.
-- Subscribe: You can subscribe to this event by registering the `processRoundtrip` method.
+- What: A summary of a started roundtrip.
+- When: After every tradeCompleted with action `buy`.
+- Subscribe: You can subscribe to this event by registering the `processRoundtripInitiated` method.
 - Example:
       {
+        id: [string identifying this roundtrip],
         entryAt: Moment<'2017-03-25 19:41:00'>,
         entryPrice: 10.21315498,
         entryBalance: 98.19707799420277,
@@ -220,14 +226,34 @@ and will start signaling advice.
 ### roundtripUpdate event
 
 - What: An updated summary of a currently open roundtrip.
-- When: After every candle for as long as the bot is in a long position.
+- When: On every candle for as long as the bot is in a long position.
 - Subscribe: You can subscribe to this event by registering the `processRoundtripUpdate` method.
 - Example:
       {
+        id: [string identifying this roundtrip],
         at: Moment<'2017-03-25 19:41:00'>,
         duration: 3600000,
         uPnl: -0.2278603942027786,
         uProfit: -0.2320439659276161,
+      }
+
+### roundtrip event
+
+- What: A summary of a completed roundtrip (buy + sell signal).
+- When: After every roundtrip: a completed sell trade event that superceded a buy sell trade event.
+- Subscribe: You can subscribe to this event by registering the `processRoundtrip` method.
+- Example:
+      {
+        id: [string identifying this roundtrip],
+        entryAt: Moment<'2017-03-25 19:41:00'>,
+        entryPrice: 10.21315498,
+        entryBalance: 98.19707799420277,
+        exitAt: Moment<'2017-03-25 19:41:00'>
+        exitPrice: 10.22011632,
+        exitBalance: 97.9692176,
+        duration: 3600000,
+        pnl: -0.2278603942027786,
+        profit: -0.2320439659276161,
       }
 
 ### marketStart event
