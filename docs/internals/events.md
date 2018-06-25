@@ -141,6 +141,20 @@ and will start signaling advice.
         reason: [string explaining why the trade was aborted]
       }
 
+### tradeCanceled event
+
+- What: An object singaling the fact that the a trade orginially initiated was now cancelled
+- When: At the same time as the advice event if the trader will NOT try to trade.
+- Subscribe: You can subscribe to this event by registering the `processTradeCanceled` method.
+- Example:
+      {
+        id: [string identifying this unique trade],
+        adviceId: [number specifying the advice id this trade is based on],
+        action: [either "buy" or "sell"],
+        date: [moment object, exchange time trade completed at],
+        reason: [string explaining why the trade was aborted]
+      }
+
 ### tradeCompleted event
 
 - What: Details of a completed trade.

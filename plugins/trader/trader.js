@@ -101,6 +101,8 @@ Trader.prototype.processCandle = function(candle, done) {
 Trader.prototype.processAdvice = function(advice) {
   const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
 
+  const id = 'trade-' + (++this.propogatedTrades);
+
   if(this.order) {
     if(this.order.side === direction) {
       return log.info('ignoring advice: already in the process to', direction);
@@ -112,10 +114,8 @@ Trader.prototype.processAdvice = function(advice) {
 
     log.info('Received advice to', direction, 'however Gekko is already in the process to', this.order.side);
     log.info('Canceling', this.order.side, 'order first');
-    return this.cancelOrder(() => this.processAdvice(advice));
+    return this.cancelOrder(id, advice, () => this.processAdvice(advice));
   }
-
-  const id = 'trade-' + (++this.propogatedTrades);
 
   let amount;
 
@@ -128,9 +128,12 @@ Trader.prototype.processAdvice = function(advice) {
         advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
-        balance: this.balance
+        balance: this.balance,
+        reason: "Portfolio already in position."
       });
     }
+
+    amount = this.portfolio.currency / this.price * 0.95;
 
     if(amount < this.broker.marketConfig.minimalOrder.amount) {
       log.info('NOT buying, not enough', this.brokerConfig.currency);
@@ -139,11 +142,10 @@ Trader.prototype.processAdvice = function(advice) {
         advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
-        balance: this.balance
+        balance: this.balance,
+        reason: "Not enough to trade."
       });
     }
-
-    amount = this.portfolio.currency / this.price * 0.95;
 
     log.info(
       'Trader',
@@ -160,9 +162,12 @@ Trader.prototype.processAdvice = function(advice) {
         advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
-        balance: this.balance
+        balance: this.balance,
+        reason: "Portfolio already in position."
       });
     }
+
+    amount = this.portfolio.asset * 0.95;
 
     if(amount < this.broker.marketConfig.minimalOrder.amount) {
       log.info('NOT selling, not enough', this.brokerConfig.currency);
@@ -171,11 +176,10 @@ Trader.prototype.processAdvice = function(advice) {
         advice_id: advice.id,
         action: direction,
         portfolio: this.portfolio,
-        balance: this.balance
+        balance: this.balance,
+        reason: "Not enough to trade."
       });
     }
-
-    amount = this.portfolio.asset * 0.95;
 
     log.info(
       'Trader',
@@ -207,11 +211,17 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
       log.info('[ORDER] summary:', summary);
       this.order = null;
       this.sync(() => {
+
+        let cost = undefined;
+        if(summary.feePerc) {
+          cost = summary.feePerc / 100 * summary.amount * summary.price;
+        }
+
         this.deferredEmit('tradeCompleted', {
           id,
           advice_id: advice.id,
           action: summary.side,
-          cost: 'todo!',
+          cost,
           amount: summary.amount,
           price: summary.price,
           portfolio: this.portfolio,
@@ -231,11 +241,18 @@ Trader.prototype.cancelOrder = function(id, advice, next) {
 
   this.cancellingOrder = true;
 
+  const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
+
   this.order.removeAllListeners();
   this.order.cancel();
   this.order.once('completed', () => {
-    // todo!
-    throw 'a';
+    this.deferredEmit('tradeCanceled', {
+      id,
+      advice_id: advice.id,
+      action: direction,
+      date: moment()
+    });
+    this.sync(next);
   });
 }
 

@@ -150,7 +150,6 @@ PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
 
   this.roundTrips[this.roundTrip.id] = roundtrip;
 
-  // this will keep resending roundtrips, that is not ideal.. what do we do about it?
   this.logger.handleRoundtrip(roundtrip);
 
   this.deferredEmit('roundtrip', roundtrip);

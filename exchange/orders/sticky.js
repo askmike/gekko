@@ -492,6 +492,20 @@ class StickyOrder extends BaseOrder {
         });
       }
 
+      if(_.first(trades) && _.first(trades).feePerc) {
+        summary.feePerc = 0;
+        let amount = 0;
+
+        _.each(trades, trade => {
+          if(!trade || !trade.feePerc) {
+            return;
+          }
+
+          summary.feePerc = ((summary.feePerc * amount) + (+trade.feePerc * trade.amount)) / (+trade.amount + amount);
+          amount += +trade.amount;
+        });
+      }
+
       this.emit('summary', summary);
       next(undefined, summary);
     });
