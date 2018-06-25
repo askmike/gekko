@@ -2,6 +2,7 @@ const _ = require('lodash');
 const util = require('../../core/util.js');
 const config = util.getConfig();
 const dirs = util.dirs();
+const moment = require('moment');
 
 const log = require(dirs.core + 'log');
 const Broker = require(dirs.gekko + '/exchange/gekkoBroker');
