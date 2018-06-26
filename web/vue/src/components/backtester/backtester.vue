@@ -1,6 +1,6 @@
 <template lang='jade'>
   div
-    h2 Backtest
+    h2.contain Backtest
     .hr
     config-builder(v-on:config='check')
     div(v-if='backtestable')
@@ -53,11 +53,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.contain {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
