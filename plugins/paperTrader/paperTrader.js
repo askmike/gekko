@@ -112,7 +112,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     date: advice.date,
   });
 
-  const cost = this.updatePosition(advice);
+  const { cost, amount } = this.updatePosition(advice);
 
   this.relayPortfolioChange();
   this.relayPortfolioValueChange();
