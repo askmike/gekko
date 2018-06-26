@@ -42,7 +42,7 @@ request(options)
     return { assets: assets, currencies: currencies, markets: pairs };
   })
   .then(markets => {
-    fs.writeFileSync('../../wrappers/binance-marskets.json', JSON.stringify(markets, null, 2));
+    fs.writeFileSync('../../wrappers/binance-markets.json', JSON.stringify(markets, null, 2));
     console.log(`Done writing Binance market data`);
   })
   .catch(err => {
