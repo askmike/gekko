@@ -56,6 +56,12 @@ input {
   background-color: rgba(250,250,250,.99);
 }
 
+.contain {
+  width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .btn--primary {
   display: inline-block;
   margin-right: 12px;

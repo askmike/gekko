@@ -1,11 +1,3 @@
-const message = `
-Unfortunately the 0.6 pre release does not include a working UI yet. See this link for more details and the current status:
-
-https://forum.gekko.wizb.it/thread-57279.html
-`;
-
-throw message;
-
 const config = require('./vue/UIconfig');
 
 const koa = require('koa');
@@ -25,6 +17,9 @@ const wss = new WebSocketServer({ server: server });
 
 const cache = require('./state/cache');
 const ListManager = require('./state/listManager');
+
+const nodeCommand = _.last(process.argv[1].split('/'));
+const isDevServer = nodeCommand === 'server' || nodeCommand === 'server.js';
 
 // broadcast function
 const broadcast = data => {
@@ -105,8 +100,7 @@ server.listen(config.api.port, config.api.host, '::', () => {
 
   // only open a browser when running `node gekko`
   // this prevents opening the browser during development
-  let nodeCommand = _.last(process.argv[1].split('/'));
-  if(nodeCommand === 'gekko' && !config.headless) {
+  if(!isDevServer && !config.headless) {
     opn(location)
       .catch(err => {
         console.log('Something went wrong when trying to open your web browser. UI is running on ' + location + '.');
