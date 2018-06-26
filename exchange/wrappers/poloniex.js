@@ -373,7 +373,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   const firstFetch = !!since;
   const args = _.toArray(arguments);
 
-  const handle = this.processResponse(this.sell, args, (err, result) => {
+  const handle = (err, result) => {
     if(err)
       return callback(err);
 
@@ -397,7 +397,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     });
 
     callback(null, result.reverse());
-  });
+  };
 
   var params = {
     currencyPair: this.pair
@@ -406,7 +406,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
   if(since)
     params.start = since.unix();
 
-  this.poloniex._public('returnTradeHistory', params, handle);
+  const fetch = next => this.poloniex._public('returnTradeHistory', params, this.processResponse(next, 'getTrades', since));
+  retry(null, fetch, handle);
 }
 
 Trader.getCapabilities = function () {
