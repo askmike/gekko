@@ -1,7 +1,6 @@
 const _ = require('lodash');
 
 const cache = require('../state/cache');
-const broadcast = cache.get('broadcast');
 const Logger = require('../state/logger');
 const apiKeyManager= cache.get('apiKeyManager');
 const gekkoManager = cache.get('gekkos');
@@ -34,11 +33,6 @@ module.exports = function *() {
   }
 
   const state = gekkoManager.add({config, mode});
-  
-  broadcast({
-    type: 'new_gekko',
-    state
-  });
 
   console.log('Gekko', state.id, 'started');
 

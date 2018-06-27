@@ -48,8 +48,10 @@ GekkoManager.prototype.add = function({mode, config}) {
     type,
     logType,
     active: true,
-    initialEvents: {},
-    latestEvents: {},
+    events: {
+      initial: {},
+      latest: {}
+    },
     start: moment()
   }
 
@@ -65,6 +67,12 @@ GekkoManager.prototype.add = function({mode, config}) {
     config.trader.key = '[REDACTED]';
     config.trader.secret = '[REDACTED]';
   }
+
+  broadcast({
+    type: 'new_gekko',
+    id,
+    state
+  });
 
   return state;
 }
@@ -91,8 +99,9 @@ GekkoManager.prototype.handleRawEvent = function(id) {
 
 GekkoManager.prototype.handleGekkoEvent = function(id, event) {
   this.gekkos[id] = reduceState(this.gekkos[id], event);
+  console.log(event);
   broadcast({
-    type: 'gekko_update',
+    type: 'gekko_event',
     id,
     event
   });

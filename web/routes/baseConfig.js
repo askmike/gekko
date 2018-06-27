@@ -19,10 +19,6 @@ config.tradingAdvisor = {
 config.candleWriter = {
   enabled: false
 }
-config.adviceWriter = {
-  enabled: false,
-  muteSoft: true,
-}
 
 config.backtestResultExporter = {
   enabled: false,
