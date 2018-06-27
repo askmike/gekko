@@ -1,8 +1,6 @@
 // manages a list of things that change over time
 // used for:
 // - The currently running imports
-// - The currently running gekko watchers
-// - The live gekkos
 // - etc..
 const _ = require('lodash');
 
@@ -25,6 +23,11 @@ ListManager.prototype.update = function(id, updates) {
     return false;
   _.merge(item, updates);
   return true;
+}
+
+// get an item from the list
+ListManager.prototype.get = function(id) {
+  return this._list.find(i => i.id === id);
 }
 
 // push a value to a array property of an item

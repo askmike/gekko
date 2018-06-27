@@ -83,6 +83,7 @@ export default {
       );
 
       config.valid = this.validConfig(config);
+      config.backtestResultExporter.enabled = true;
 
       return config;
     }

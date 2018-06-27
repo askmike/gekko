@@ -12,7 +12,7 @@ config.silent = false;
 util.setConfig(config);
 
 module.exports = function *() {
-  const exchangesDir = yield fs.readdir(gekkoRoot + 'exchanges');
+  const exchangesDir = yield fs.readdir(gekkoRoot + 'exchange/wrappers/');
   const exchanges = exchangesDir
     .filter(f => _.last(f, 3).join('') === '.js')
     .map(f => f.slice(0, -3));
@@ -23,7 +23,7 @@ module.exports = function *() {
     let Trader = null;
 
     try {
-      Trader = require(gekkoRoot + 'exchanges/' + exchange);
+      Trader = require(gekkoRoot + 'exchange/wrappers/' + exchange);
     } catch (e) {
       return;
     }

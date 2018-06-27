@@ -6,8 +6,8 @@ var config = {};
 //                          GENERAL SETTINGS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-config.silent = true;
-config.debug = false;
+config.silent = false;
+config.debug = true;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING TRADING ADVICE
@@ -25,7 +25,7 @@ config.adviceWriter = {
 }
 
 config.backtestResultExporter = {
-  enabled: true,
+  enabled: false,
   writeToDisk: false,
   data: {
     stratUpdates: false,
@@ -33,6 +33,10 @@ config.backtestResultExporter = {
     stratCandles: true,
     trades: true
   }
+}
+
+config.childToParent = {
+  enabled: false,
 }
 
 config.trader = {

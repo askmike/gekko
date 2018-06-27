@@ -16,7 +16,6 @@ const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server: server });
 
 const cache = require('./state/cache');
-const ListManager = require('./state/listManager');
 
 const nodeCommand = _.last(process.argv[1].split('/'));
 const isDevServer = nodeCommand === 'server' || nodeCommand === 'server.js';
@@ -39,9 +38,12 @@ const broadcast = data => {
 }
 cache.set('broadcast', broadcast);
 
+const ListManager = require('./state/listManager');
+const GekkoManager = require('./state/gekkoManager');
+
 // initialize lists and dump into cache
 cache.set('imports', new ListManager);
-cache.set('gekkos', new ListManager);
+cache.set('gekkos', new GekkoManager);
 cache.set('apiKeyManager', require('./apiKeyManager'));
 
 // setup API routes
