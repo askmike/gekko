@@ -55,7 +55,7 @@ GekkoManager.prototype.add = function({mode, config}) {
 
   this.gekkos[id] = state;
 
-  this.loggers[id] = new Logger(logType);
+  this.loggers[id] = new Logger(id);
 
   // start the actual instance
   pipelineRunner(mode, config, this.handleRawEvent(id));
@@ -77,12 +77,12 @@ GekkoManager.prototype.handleRawEvent = function(id) {
       return this.handleFatalError(id);
     }
 
-    if(!event || !event.type) {
-      return;
+    if(event.log) {
+      return logger.write(event.message);
     }
 
-    if(event.log) {
-      return logger.write(event.log);
+    if(!event || !event.type) {
+      return;
     }
 
     this.handleGekkoEvent(id, event);
@@ -96,7 +96,6 @@ GekkoManager.prototype.handleGekkoEvent = function(id, event) {
     id,
     event
   });
-  console.log(this.gekkos[id]);
 }
 
 

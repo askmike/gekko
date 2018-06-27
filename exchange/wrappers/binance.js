@@ -48,7 +48,7 @@ var retryForever = {
   maxTimeout: 30 * 1000
 };
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Error -1021|Response code 429|Response code 5)/);
+var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Error -1021|Response code 429|Response code 5|ETIMEDOUT)/);
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
@@ -71,7 +71,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
 };
 
 Trader.prototype.getTrades = function(since, callback, descending) {
-  var processResults = function(err, data) {
+  const processResults = (err, data) => {
     if (err) return callback(err);
 
     var parsedTrades = [];
@@ -106,8 +106,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     reqData.endTime = endTs > nowTs ? nowTs : endTs;
   }
 
-  let handler = (cb) => this.binance.aggTrades(reqData, this.handleResponse('getTrades', cb));
-  retry(retryForever, _.bind(handler, this), _.bind(processResults, this));
+  const fetch = cb => this.binance.aggTrades(reqData, this.handleResponse('getTrades', cb));
+  retry(retryForever, fetch, processResults);
 };
 
 Trader.prototype.getPortfolio = function(callback) {
