@@ -114,14 +114,17 @@ var pipeline = (settings) => {
           // if a plugin wants to listen
           // to something disabled
           if(!emitters[sub.emitter]) {
-            return log.warn([
-              plugin.meta.name,
-              'wanted to listen to the',
-              sub.emitter + ',',
-              'however the',
-              sub.emitter,
-              'is disabled.'
-            ].join(' '));
+            if(!plugin.meta.greedy) {
+              log.warn([
+                plugin.meta.name,
+                'wanted to listen to the',
+                sub.emitter + ',',
+                'however the',
+                sub.emitter,
+                'is disabled.'
+              ].join(' '));
+            }
+            return;
           }
 
           // attach handler
