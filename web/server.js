@@ -1,4 +1,4 @@
-const config = require('./vue/UIconfig');
+const config = require('./vue/public/UIconfig');
 
 const koa = require('koa');
 const serve = require('koa-static');
