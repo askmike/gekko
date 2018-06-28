@@ -1,6 +1,5 @@
-// Redux inspired reducer, reduces an event into a gekko state.
-// NOTE: this does mutate.
-// NOTE2: this is used by the backend as well as the frontend.
+// Redux/vuex inspired reducer, reduces an event into a gekko state.
+// NOTE: this is used by the backend as well as the frontend.
 
 const moment = require('moment');
 
@@ -12,24 +11,58 @@ const reduce = (state, event) => {
   const type = event.type;
   const payload = event.payload;
 
-  state.latestUpdate = moment();
+  state = {
+    ...state,
+    latestUpdate: moment()
+  }
 
   if(trackAllEvents.includes(type)) {
-    if(!state.events[type])
-      state.events[type] = [];
-
-    state.events[type].push(payload);
+    if(!state.events[type]) {
+      state = {
+        ...state,
+        events: {
+          ...state.events,
+          [type]: [ payload ]
+        }
+      }
+    } else {
+      state = {
+        ...state,
+        events: {
+          ...state.events,
+          [type]: [ ...state.events[type], payload ]
+        }
+      }
+    }
   }
 
   if(!state.events.initial[type] && !skipInitialEvents.includes(type)) {
-    state.events.initial[type] = payload;
+    state = {
+      ...state,
+      events: {
+        ...state.events,
+        initial: {
+          ...state.events.initial,
+          [type]: payload
+        }
+      }
+    }
   }
 
   if(!skipLatestEvents.includes(type)) {
-    state.events.latest[type] = payload;
+    state = {
+      ...state,
+      events: {
+        ...state.events,
+        latest: {
+          ...state.events.latest,
+          [type]: payload
+        }
+      }
+    }
   }
 
   return state;
 }
 
-module.exports = reduce;
+export default reduce;
