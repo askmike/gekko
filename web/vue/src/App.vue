@@ -14,7 +14,7 @@ export default {
 }
 </script>
 
-<template lang='jade'>
+<template lang='pug'>
   #app
     top
     .fill

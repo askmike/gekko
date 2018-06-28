@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   div(v-if='active')
     #modal-background
     #modal.modal

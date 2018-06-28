@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   .contain.py2
     .text(v-html='text')
     .hr

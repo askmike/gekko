@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
 .grd.contain
   h3 Add an API key
   p Make sure that the API key has the permissions to create and cancel orders and view balances.

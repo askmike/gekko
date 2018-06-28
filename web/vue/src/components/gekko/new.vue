@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   div.contain.my2
     h3 Start a new gekko
     gekko-config-builder(v-on:config='updateConfig')
@@ -25,11 +25,9 @@ export default {
     }
   },
   computed: {
-    watchers: function() {
-      return this.$store.state.watchers;
-    },
-    stratrunners: function() {
-      return this.$store.state.stratrunners;
+    gekkos: function() {
+      console.log('computed gekkos');
+      return this.$store.state.gekkos;
     },
     watchConfig: function() {
       let raw = _.pick(this.config, 'watch', 'candleWriter');
@@ -61,7 +59,7 @@ export default {
           .unix();
 
         const available = moment
-          .utc(this.existingMarketWatcher.firstCandle.start)
+          .utc(this.existingMarketWatcher.events.initial.candle.start)
           .unix();
 
         startAt = moment.unix(Math.max(optimal, available)).utc().format();
@@ -78,14 +76,15 @@ export default {
     },
     existingMarketWatcher: function() {
       const market = Vue.util.extend({}, this.watchConfig.watch);
-      return _.find(this.watchers, {watch: market});
+      console.log({config: {watch: market}}, _.find(this.gekkos, {config: {watch: market}}));
+      return _.find(this.gekkos, {config: {watch: market}});
     },
     exchange: function() {
       return this.watchConfig.watch.exchange;
     },
     existingTradebot: function() {
       return _.find(
-        this.stratrunners.filter(s => s.trader === 'tradebot'),
+        this.gekkos.filter(g => g.logType === 'tradebot'),
         { watch: { exchange: this.exchange } }
       );
     },
@@ -96,10 +95,15 @@ export default {
   watch: {
     // start the stratrunner
     existingMarketWatcher: function(val, prev) {
+      console.log('watching... 1');
       if(!this.pendingStratrunner)
         return;
 
-      if(val && val.firstCandle && val.lastCandle) {
+      const gekko = this.existingMarketWatcher;
+
+      console.log('watching...', gekko);
+
+      if(gekko.events.latest.candle) {
         this.pendingStratrunner = false;
 
         this.startGekko((err, resp) => {
@@ -155,15 +159,18 @@ export default {
       } else {
 
         if(this.existingMarketWatcher) {
+          console.log(1);
           // the specified market is already being watched,
           // just start a gekko!
           this.startGekko(this.routeToGekko);
           
         } else {
+          console.log(2);
           // the specified market is not yet being watched,
           // we need to create a watcher
           this.startWatcher((err, resp) => {
-            this.pendingStratrunner = true;
+            console.log(3, resp.id);
+            this.pendingStratrunner = resp.id;
             // now we just wait for the watcher to be properly initialized
             // (see the `watch.existingMarketWatcher` method)
           });

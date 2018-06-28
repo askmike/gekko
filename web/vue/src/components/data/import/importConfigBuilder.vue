@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
 .grd.contain
   .grd-row
     .grd-row-col-3-6.mx1

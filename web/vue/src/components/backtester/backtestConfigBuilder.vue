@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   div
     dataset-picker.my2(v-on:dataset='updateDataset').contain
     .hr

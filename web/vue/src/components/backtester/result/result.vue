@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   div
     .hr.contain
     div.contain
