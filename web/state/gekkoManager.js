@@ -82,7 +82,7 @@ GekkoManager.prototype.handleRawEvent = function(id) {
 
   return (err, event) => {
     if(err) {
-      return this.handleFatalError(id);
+      return this.handleFatalError(id, err);
     }
 
     if(event.log) {
@@ -99,7 +99,6 @@ GekkoManager.prototype.handleRawEvent = function(id) {
 
 GekkoManager.prototype.handleGekkoEvent = function(id, event) {
   this.gekkos[id] = reduceState(this.gekkos[id], event);
-  console.log(event);
   broadcast({
     type: 'gekko_event',
     id,
@@ -107,9 +106,13 @@ GekkoManager.prototype.handleGekkoEvent = function(id, event) {
   });
 }
 
-
-GekkoManager.prototype.handleFatalError = function(id) {
+GekkoManager.prototype.handleFatalError = function(id, err) {
   const state = this.gekkos[id];
+
+  // TODO: if this was a market watcher AND
+  // if there were leechers attached figure out
+  // whether it is safe to simply start a new
+  // watcher.
 
   if(!state || state.errored)
     return;
@@ -118,11 +121,13 @@ GekkoManager.prototype.handleFatalError = function(id) {
   state.active = false;
   console.error('RECEIVED ERROR IN GEKKO INSTANCE', id);
   console.error(err);
-  return broadcast({
+  broadcast({
     type: 'gekko_error',
     id,
     error: err
   });
+
+  this.delete(id);
 }
 
 GekkoManager.prototype.stop = function(id) {
@@ -130,7 +135,12 @@ GekkoManager.prototype.stop = function(id) {
 }
 
 GekkoManager.prototype.delete = function(id) {
-  // todo
+  this.finishedGekkos = this.gekkos[id];
+  delete this.gekkos[id];
+  broadcast({
+    type: 'gekko_delete',
+    id
+  });
 }
 
 GekkoManager.prototype.list = function() {

@@ -15,3 +15,9 @@ export const updateGekko = (state, update) => {
   state.gekkos[update.id] = reduceState(state.gekkos[update.id], update.event);
   return state;
 }
+
+export const deleteGekko = (state, gekko) => {
+  state.finishehdGekkos[gekko.id] = state.gekkos[gekko.id];
+  delete state.gekkos[gekko.id];
+  return state;
+}

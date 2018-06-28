@@ -11,11 +11,7 @@ const init = () => {
 }
 
 const sync = () => {
-
-  bus.$on('new_gekko', data => {
-    store.commit('addGekko', data.state);
-  });
-
+  bus.$on('new_gekko', data => store.commit('addGekko', data.state));
   bus.$on('gekko_event', data => store.commit('updateGekko', data));
 }
 
