@@ -1,4 +1,5 @@
 var _ = require('lodash');
+const log = require('../../core/log');
 var config = require('../../core/util.js').getConfig();
 
 var handle = require('./handle');
@@ -42,24 +43,27 @@ Store.prototype.writeCandles = function() {
     return;
   }
 
-  var stmt = `
-  INSERT INTO ${postgresUtil.table('candles')}
-  (start, open, high,low, close, vwp, volume, trades)
-  select $1, $2, $3, $4, $5, $6, $7, $8
-  WHERE NOT EXISTS (select id from ${postgresUtil.table('candles')} where start=$1);
-  `;
-
+  //log.debug('Writing candles to DB!');
   _.each(this.cache, candle => {
-    this.db.query(stmt,[
-      candle.start.unix(),
-      candle.open,
-      candle.high,
-      candle.low,
-      candle.close,
-      candle.vwp,
-      candle.volume,
-      candle.trades
-    ]);
+    var stmt =  `
+    BEGIN; 
+    LOCK TABLE candles_eur_eth IN SHARE ROW EXCLUSIVE MODE; 
+    INSERT INTO candles_eur_eth 
+    (start, open, high,low, close, vwp, volume, trades) 
+    VALUES 
+    (${candle.start.unix()}, ${candle.open}, ${candle.high}, ${candle.low}, ${candle.close}, ${candle.vwp}, ${candle.volume}, ${candle.trades}) 
+    ON CONFLICT ON CONSTRAINT candles_eur_eth_start_key 
+    DO NOTHING; 
+    COMMIT; 
+    `;
+  
+    this.db.query(stmt, (err, res) => {
+      if (err) {
+        log.debug(err.stack)
+      } else {
+        //log.debug(res)
+      }
+    });
   });
 
   this.cache = [];

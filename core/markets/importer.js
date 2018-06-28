@@ -9,17 +9,18 @@ var gekkoEnv = util.gekkoEnv();
 var adapter = config[config.adapter];
 var daterange = config.importer.daterange;
 
-var from = moment.utc(daterange.from);
+var from = moment(daterange.from);
 
 if(daterange.to) {
-  var to = moment.utc(daterange.to);
+  var to = moment(daterange.to);
 } else {
-  var to = moment().utc();
+  var to = moment();
   log.debug(
     'No end date specified for importing, setting to',
-    to.format('YYYY-MM-DD HH:mm:ss')
+    to.format()
   );
 }
+log.debug(to.format());
 
 if(!from.isValid())
   util.die('invalid `from`');

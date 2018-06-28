@@ -1,6 +1,8 @@
-var _ = require('lodash');
-var fs = require('fs');
-var pg = require('pg');
+const _ = require('lodash');
+const fs = require('fs');
+const pg = require('pg');
+//const pg = new Pool();
+//var pg = require('pg');
 
 var util = require('../../core/util.js');
 var config = util.getConfig();
@@ -31,20 +33,26 @@ var dbName = postgresUtil.database();
 
 var mode = util.gekkoMode();
 
-var connectionString = config.postgresql.connectionString+"/postgres";
+var connectionString = config.postgresql.connectionString;
 
-var checkClient = new pg.Client(connectionString);
-var client = new pg.Client(config.postgresql.connectionString+"/"+dbName);
+var checkClient = new pg.Pool({
+  connectionString: connectionString+'/postgres',
+});
+var pool = new pg.Pool({
+  connectionString: connectionString+'/'+dbName,
+});
 
 /* Postgres does not have 'create database if not exists' so we need to check if the db exists first.
 This requires connecting to the default postgres database first. Your postgres user will need appropriate rights. */
-checkClient.connect(function(err){
-  if(err){
-    util.die(err);
-  }
+//checkClient.connect(function(err){
+  //if(err){
+    //util.die(err);
+  //}
+checkClient.connect((err, client, done) => {  
   log.debug("Check database exists: "+dbName);
-  query = checkClient.query("select count(*) from pg_catalog.pg_database where datname = $1",[dbName], 
+  const query = client.query("select count(*) from pg_catalog.pg_database where datname = $1",[dbName], 
     (err, res) => {
+      done();
       if(err) {
         util.die(err);
       }
@@ -52,11 +60,13 @@ checkClient.connect(function(err){
         log.debug("Database "+dbName+" does not exist");
         if(mode === 'realtime') { //create database if not found
           log.debug("Creating database "+dbName);
-          checkClient.query("CREATE DATABASE "+dbName,function(err){
+          client.query("CREATE DATABASE "+dbName,function(err){
+            done();
             if(err){
               util.die(err);
-            }else{
-              client.connect(function(err){
+            } else{
+              client.connect((err, client, done) => {
+                done();
                 if(err){
                   util.die(err);
                 }
@@ -71,15 +81,17 @@ checkClient.connect(function(err){
         }
       }else{ //database exists
         log.debug("Database exists: "+dbName);
-        client.connect(function(err){
-          checkClient.end();
+        
+        pool.connect((err, client, done) => {
+          done();
           if(err){
             util.die(err);
           }
           log.debug("Postgres connected to "+dbName);
         });
+        
       }  
     });
 });
 
-module.exports = client;
+module.exports = pool;
