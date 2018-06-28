@@ -5,7 +5,7 @@ const promisify = require('tiny-promisify');
 const broadcast = require('./cache').get('broadcast');
 const Logger = require('./logger');
 const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
-const reduceState = require('./reduceState');
+const reduceState = require('./reduceState.js');
 
 const GekkoManager = function() {
   this.gekkos = {};
@@ -99,6 +99,7 @@ GekkoManager.prototype.handleRawEvent = function(id) {
 
 GekkoManager.prototype.handleGekkoEvent = function(id, event) {
   this.gekkos[id] = reduceState(this.gekkos[id], event);
+  console.log(event);
   broadcast({
     type: 'gekko_event',
     id,

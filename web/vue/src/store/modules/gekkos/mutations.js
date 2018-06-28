@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import reduceState from '../../../../../state/reduceState'
+// import reduceState from '../../../../../state/reduceState.js'
+const reduceState = require('../../../../../state/reduceState');
 
 export const syncGekkos = (state, gekkos) => {
   state.gekkos = gekkos;

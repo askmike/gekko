@@ -1,8 +1,6 @@
 // Redux/vuex inspired reducer, reduces an event into a gekko state.
 // NOTE: this is used by the backend as well as the frontend.
 
-const moment = require('moment');
-
 const skipInitialEvents = ['marketUpdate'];
 const skipLatestEvents = ['marketStart'];
 const trackAllEvents = ['tradeCompleted', 'advice', 'roundtrip'];
@@ -13,7 +11,7 @@ const reduce = (state, event) => {
 
   state = {
     ...state,
-    latestUpdate: moment()
+    latestUpdate: new Date()
   }
 
   if(trackAllEvents.includes(type)) {
@@ -65,4 +63,5 @@ const reduce = (state, event) => {
   return state;
 }
 
-export default reduce;
+// export default reduce;
+module.exports = reduce;
