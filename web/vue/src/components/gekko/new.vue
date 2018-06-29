@@ -4,7 +4,7 @@
     gekko-config-builder(v-on:config='updateConfig')
     .hr
     .txt--center(v-if='config.valid')
-      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='start') Start
+      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Start
 </template>
 
 <script>
@@ -98,14 +98,12 @@ export default {
 
       const gekko = this.existingMarketWatcher;
 
-      console.log('watching...', gekko);
-
       if(gekko.events.latest.candle) {
         this.pendingStratrunner = false;
 
         this.startGekko((err, resp) => {
           this.$router.push({
-            path: `/live-gekkos/stratrunner/${resp.id}`
+            path: `/live-gekkos/${resp.id}`
           });
         });
       }
@@ -176,7 +174,7 @@ export default {
         return console.error(err, resp.error);
 
       this.$router.push({
-        path: `/live-gekkos/stratrunner/${resp.id}`
+        path: `/live-gekkos/${resp.id}`
       });
     },
     startWatcher: function(next) {
