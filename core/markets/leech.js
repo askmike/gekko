@@ -9,7 +9,7 @@ const util = require('../util');
 const dirs = util.dirs();
 const config = util.getConfig();
 
-const exchangeChecker = require(dirs.core + 'exchangeChecker');
+const exchangeChecker = require(dirs.gekko + 'exchange/exchangeChecker');
 
 const adapter = config[config.adapter];
 const Reader = require(dirs.gekko + adapter.path + '/reader');
@@ -74,7 +74,6 @@ Market.prototype.processCandles = function(err, candles) {
     return;
   }
 
-
   // TODO:
   // verify that the correct amount of candles was passed:
   //
@@ -85,8 +84,6 @@ Market.prototype.processCandles = function(err, candles) {
     c.start = moment.unix(c.start).utc();
     this.push(c);
   }, this);
-
-  this.sendStartAt(_.first(candles));
 
   this.latestTs = _.last(candles).start.unix() + 1;
 }
