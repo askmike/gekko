@@ -16,15 +16,15 @@
           th duration
       tbody
         tr.clickable(v-for='gekko in watchers', v-on:click='$router.push({path: `live-gekkos/watcher/${gekko.id}`})')
-          td {{ gekko.watch.exchange }}
-          td {{ gekko.watch.currency }}
-          td {{ gekko.watch.asset }}
+          td {{ gekko.config.watch.exchange }}
+          td {{ gekko.config.watch.currency }}
+          td {{ gekko.config.watch.asset }}
           td
-            template(v-if='gekko.firstCandle') {{ fmt(gekko.firstCandle.start) }}
+            template(v-if='gekko.events.initial.candle') {{ fmt(gekko.events.initial.candle.start) }}
           td
-            template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
+            template(v-if='gekko.events.latest.candle') {{ fmt(gekko.events.latest.candle.start) }}
           td
-            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
+            template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
     h3 Strat runners
     .text(v-if='!stratrunners.length')
       p You are currently not running any strategies.
@@ -37,19 +37,19 @@
           th last update
           th duration
           th strategy
-          th profit
+          th PnL
           th type
           th trades
       tbody
         tr.clickable(v-for='gekko in stratrunners', v-on:click='$router.push({path: `live-gekkos/stratrunner/${gekko.id}`})')
-          td {{ gekko.watch.exchange }}
-          td {{ gekko.watch.currency }}
-          td {{ gekko.watch.asset }}
+          td {{ gekko.config.watch.exchange }}
+          td {{ gekko.config.watch.currency }}
+          td {{ gekko.config.watch.asset }}
           td
-            template(v-if='gekko.lastCandle') {{ fmt(gekko.lastCandle.start) }}
+            template(v-if='gekko.events.latest.candle') {{ fmt(gekko.events.latest.candle.start) }}
           td
-            template(v-if='gekko.firstCandle && gekko.lastCandle') {{ timespan(gekko.lastCandle.start, gekko.firstCandle.start) }}
-          td {{ gekko.strat.name }}
+            template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
+          td {{ gekko.config.tradingAdvisor.method }}
           td
             template(v-if='!gekko.report') 0
             template(v-if='gekko.report') {{ round(gekko.report.profit) }} {{ gekko.watch.currency }}
@@ -99,10 +99,20 @@ export default {
   },
   computed: {
     stratrunners: function() {
-      return []; //this.$store.state.stratrunners
+      return _.values(this.$store.state.gekkos)
+        .filter(g => {
+          if(g.logType === 'papertrader')
+            return true;
+
+          if(g.logType === 'tradebot')
+            return true;
+
+          return false;
+        });
     },
     watchers: function() {
-      return []; //this.$store.state.watchers
+      return _.values(this.$store.state.gekkos)
+        .filter(g => g.logType === 'watcher')
     }
   },
   methods: {

@@ -26,7 +26,6 @@ export default {
   },
   computed: {
     gekkos: function() {
-      console.log('computed gekkos');
       return this.$store.state.gekkos;
     },
     watchConfig: function() {
@@ -76,7 +75,6 @@ export default {
     },
     existingMarketWatcher: function() {
       const market = Vue.util.extend({}, this.watchConfig.watch);
-      console.log({config: {watch: market}}, _.find(this.gekkos, {config: {watch: market}}));
       return _.find(this.gekkos, {config: {watch: market}});
     },
     exchange: function() {
@@ -95,7 +93,6 @@ export default {
   watch: {
     // start the stratrunner
     existingMarketWatcher: function(val, prev) {
-      console.log('watching... 1');
       if(!this.pendingStratrunner)
         return;
 
@@ -159,17 +156,14 @@ export default {
       } else {
 
         if(this.existingMarketWatcher) {
-          console.log(1);
           // the specified market is already being watched,
           // just start a gekko!
           this.startGekko(this.routeToGekko);
           
         } else {
-          console.log(2);
           // the specified market is not yet being watched,
           // we need to create a watcher
           this.startWatcher((err, resp) => {
-            console.log(3, resp.id);
             this.pendingStratrunner = resp.id;
             // now we just wait for the watcher to be properly initialized
             // (see the `watch.existingMarketWatcher` method)

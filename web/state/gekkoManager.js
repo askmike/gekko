@@ -99,7 +99,6 @@ GekkoManager.prototype.handleRawEvent = function(id) {
 
 GekkoManager.prototype.handleGekkoEvent = function(id, event) {
   this.gekkos[id] = reduceState(this.gekkos[id], event);
-  console.log(event);
   broadcast({
     type: 'gekko_event',
     id,
@@ -139,7 +138,7 @@ GekkoManager.prototype.delete = function(id) {
   this.finishedGekkos = this.gekkos[id];
   delete this.gekkos[id];
   broadcast({
-    type: 'gekko_delete',
+    type: 'delete_gekko',
     id
   });
 }
