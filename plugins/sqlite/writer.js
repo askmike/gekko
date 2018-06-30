@@ -49,10 +49,11 @@ Store.prototype.upsertTables = function() {
 }
 
 Store.prototype.writeCandles = function() {
+  console.log(this.cache);
   if(_.isEmpty(this.cache))
     return;
 
-  var transaction = function() {
+  const transaction = () => {
     this.db.run("BEGIN TRANSACTION");
 
     var stmt = this.db.prepare(`
@@ -81,11 +82,13 @@ Store.prototype.writeCandles = function() {
 
     stmt.finalize();
     this.db.run("COMMIT");
+    // TEMP: should fix https://forum.gekko.wizb.it/thread-57279-post-59194.html#pid59194
+    this.db.run("pragma wal_checkpoint;");
     
     this.cache = [];
   }
 
-  this.db.serialize(_.bind(transaction, this));
+  this.db.serialize(transaction);
 }
 
 var processCandle = function(candle, done) {
