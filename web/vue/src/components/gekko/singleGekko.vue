@@ -74,7 +74,10 @@
               .grd-row
                 .grd-row-col-3-6 Alpha
                 .grd-row-col-3-6 {{ round(report.alpha) }} {{ config.watch.currency }}
-        p(v-if='isStratrunner')
+        p(v-if='!watcher') WARNING: stale gekko, not attached to a watcher, please report 
+          a(href='https://github.com/askmike/gekko/issues') here
+          | .
+        p(v-if='isStratrunner && watcher')
           em This gekko gets market data from 
             router-link(:to='"/live-gekkos/" + watcher.id') this market watcher
           | .
@@ -222,7 +225,7 @@ export default {
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
-    getCandles: function() {
+    getCandles: _.throttle(function() {
       this.candleFetch = 'fetching';
 
       let to = this.data.events.latest.candle.start;
@@ -252,7 +255,7 @@ export default {
           return c;
         });
       })
-    }
+    }, 1000 * 30)
   }
 }
 </script>

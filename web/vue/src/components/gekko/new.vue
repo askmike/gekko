@@ -5,6 +5,7 @@
     .hr
     .txt--center(v-if='config.valid')
       a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Start
+      spinner(v-if='pendingStratrunner')
 </template>
 
 <script>
@@ -13,10 +14,12 @@ import _ from 'lodash'
 import Vue from 'vue'
 import { post } from '../../tools/ajax'
 import gekkoConfigBuilder from './gekkoConfigBuilder.vue'
+import spinner from '../global/blockSpinner.vue'
 
 export default {
   components: {
-    gekkoConfigBuilder
+    gekkoConfigBuilder,
+    spinner
   },
   data: () => {
     return {
