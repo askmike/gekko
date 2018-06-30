@@ -49,7 +49,6 @@ Store.prototype.upsertTables = function() {
 }
 
 Store.prototype.writeCandles = function() {
-  console.log(this.cache);
   if(_.isEmpty(this.cache))
     return;
 

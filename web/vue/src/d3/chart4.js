@@ -13,7 +13,7 @@ export default function(_data, _trades, _height) {
 
   const data = _data.map(c => {
     return {
-      price: c.close,
+      price: c.open,
       date: moment.utc(c.start).toDate()
     }
   });

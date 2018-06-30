@@ -74,7 +74,7 @@
               .grd-row
                 .grd-row-col-3-6 Alpha
                 .grd-row-col-3-6 {{ round(report.alpha) }} {{ config.watch.currency }}
-        p(v-if='!watcher') WARNING: stale gekko, not attached to a watcher, please report 
+        p(v-if='isStratrunner && !watcher') WARNING: stale gekko, not attached to a watcher, please report 
           a(href='https://github.com/askmike/gekko/issues') here
           | .
         p(v-if='isStratrunner && watcher')
@@ -145,7 +145,7 @@ export default {
       return _.get(this, 'data.events.initial');
     },
     trades: function() {
-      return _.get(this, 'data.events.trades') || [];
+      return _.get(this, 'data.events.tradeCompleted') || [];
     },
     roundtrips: function() {
       return _.get(this, 'data.events.roundtrip') || [];
@@ -210,14 +210,7 @@ export default {
   },
   watch: {
     'data.events.latest.candle.start': function() {
-      this.candleFetch = 'dirty';
-    },
-    data: function(val, prev) {
-      if(this.isLoading)
-        return;
-
-      if(this.candleFetch !== 'fetched' )
-        this.getCandles();
+      setTimeout(this.getCandles, _.random(100, 2000));
     }
   },
   methods: {
@@ -225,7 +218,15 @@ export default {
     humanizeDuration: (n) => window.humanizeDuration(n),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
-    getCandles: _.throttle(function() {
+    getCandles: function() {
+      if(this.isLoading) {
+        return;
+      }
+
+      if(this.candleFetch === 'fetching') {
+        return;
+      }
+
       this.candleFetch = 'fetching';
 
       let to = this.data.events.latest.candle.start;
@@ -255,7 +256,7 @@ export default {
           return c;
         });
       })
-    }, 1000 * 30)
+    }
   }
 }
 </script>

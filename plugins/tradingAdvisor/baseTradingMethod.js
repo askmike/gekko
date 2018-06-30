@@ -177,7 +177,7 @@ Base.prototype.propogateTick = function(candle) {
   });
 
   this.emit('stratUpdate', {
-    date: candle.start,
+    date: candle.start.clone(),
     indicators
   });
 

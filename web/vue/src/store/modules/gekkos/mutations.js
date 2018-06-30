@@ -25,10 +25,10 @@ export const updateGekko = (state, update) => {
 
 export const deleteGekko = (state, id) => {
   state.finishedGekkos = {
-    ...state.finishehdGekkos,
+    ...state.finishedGekkos,
     [id]: state.gekkos[id]
   }
 
-  state.gekkos = _.omit(state.gekkos, id)
+  state.gekkos = _.omit(state.gekkos, id);
   return state;
 }
