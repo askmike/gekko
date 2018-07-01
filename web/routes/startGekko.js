@@ -34,7 +34,5 @@ module.exports = function *() {
 
   const state = gekkoManager.add({config, mode});
 
-  console.log('Gekko', state.id, 'started');
-
   this.body = state;
 }

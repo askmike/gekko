@@ -245,17 +245,19 @@ export default {
         candleSize
       };
 
-      post('getCandles', config, (err, res) => {
-        this.candleFetch = 'fetched';
-        // todo
-        if(!res || res.error || !_.isArray(res))
-          return console.log(res);
+      setTimeout(() => {
+        post('getCandles', config, (err, res) => {
+          this.candleFetch = 'fetched';
+          // todo
+          if(!res || res.error || !_.isArray(res))
+            return console.log(res);
 
-        this.candles = res.map(c => {
-          c.start = moment.unix(c.start).utc().format();
-          return c;
-        });
-      })
+          this.candles = res.map(c => {
+            c.start = moment.unix(c.start).utc().format();
+            return c;
+          });
+        })
+      }, _.random(150, 2500));
     }
   }
 }

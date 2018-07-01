@@ -4,11 +4,13 @@ const promisify = require('tiny-promisify');
 
 const broadcast = require('./cache').get('broadcast');
 const Logger = require('./logger');
-const pipelineRunner = promisify(require('../../core/workers/pipeline/parent'));
+const pipelineRunner = require('../../core/workers/pipeline/parent');
 const reduceState = require('./reduceState.js');
+const now = () => moment().format('YYYY-MM-DD-HH-mm');
 
 const GekkoManager = function() {
   this.gekkos = {};
+  this.instances = {};
   this.loggers = {};
 
   this.finishedGekkos = {};
@@ -34,9 +36,8 @@ GekkoManager.prototype.add = function({mode, config}) {
       logType = 'papertrader';
   }
 
-  const now = moment().format('YYYY-MM-DD-HH-mm');
   const n = (Math.random() + '').slice(3);
-  const id = `${now}-${logType}-${n}`;
+  const id = `${now()}-${logType}-${n}`;
 
   // make sure we catch events happening inside te gekko instance
   config.childToParent.enabled = true;
@@ -48,6 +49,7 @@ GekkoManager.prototype.add = function({mode, config}) {
     type,
     logType,
     active: true,
+    stopped: false,
     events: {
       initial: {},
       latest: {}
@@ -60,13 +62,15 @@ GekkoManager.prototype.add = function({mode, config}) {
   this.loggers[id] = new Logger(id);
 
   // start the actual instance
-  pipelineRunner(mode, config, this.handleRawEvent(id));
+  this.instances[id] = pipelineRunner(mode, config, this.handleRawEvent(id));
 
   // after passing API credentials to the actual instance we mask them
   if(logType === 'trader') {
     config.trader.key = '[REDACTED]';
     config.trader.secret = '[REDACTED]';
   }
+
+  console.log(`${now()} Gekko ${id} started.`);
 
   broadcast({
     type: 'new_gekko',
@@ -109,12 +113,7 @@ GekkoManager.prototype.handleGekkoEvent = function(id, event) {
 GekkoManager.prototype.handleFatalError = function(id, err) {
   const state = this.gekkos[id];
 
-  // TODO: if this was a market watcher AND
-  // if there were leechers attached figure out
-  // whether it is safe to simply start a new
-  // watcher.
-
-  if(!state || state.errored)
+  if(!state || state.errored || state.stopped)
     return;
 
   state.errored = true;
@@ -128,14 +127,73 @@ GekkoManager.prototype.handleFatalError = function(id, err) {
   });
 
   this.delete(id);
+
+  if(state.logType === 'watcher') {
+    this.handleWatcherError(state, id);
+  }
+}
+
+// There might be leechers depending on this watcher, if so
+// figure out it we can safely start a new watcher without
+// the leechers noticing.
+GekkoManager.prototype.handleWatcherError = function(state, id) {
+  console.log(`${now()} A gekko watcher crashed.`);
+  if(!state.events.latest.candle) {
+    console.log(`${now()} was unable to start.`);
+  }
+
+  const latestCandleTime = state.events.latest.candle.start
+  const leechers = _.values(this.gekkos)
+    .filter(gekko => {
+      if(gekko.type !== 'leech') {
+        return false;
+      }
+
+      if(_.isEqual(gekko.config.watch, state.config.watch)) {
+        return true;
+      }
+    });
+
+  if(leechers.length) {
+    console.log(`${now()} ${leechers.length} leecher(s) were depending on this watcher.`);
+    if(moment().diff(latestCandleTime, 'm') < 60) {
+      console.log(`${now()} Watcher had recent data, starting a new one.`);
+      setTimeout(() => {
+        const mode = 'realtime';
+        const config = state.config;
+        this.add({mode, config});
+      })
+    } else {
+      console.log(`${now()} Watcher did not have recent data, killing its leechers.`);
+      leechers.forEach(leecher => this.stop(leecher.id));
+    }
+
+  }
 }
 
 GekkoManager.prototype.stop = function(id) {
-  // todo
+  if(!this.gekkos[id])
+    return false;
+
+  console.log(`${now()} stopping Gekko ${id}`);
+
+  this.gekkos[id].stopped = true;
+  this.gekkos[id].active = false;
+
+  // todo: graceful shutdown (via gekkoStream's
+  // finish function).
+  this.instances[id].kill();
+
+  broadcast({
+    type: 'gekko_stopped',
+    id
+  });
+
+  return true;
 }
 
 GekkoManager.prototype.delete = function(id) {
-  this.finishedGekkos = this.gekkos[id];
+  this.finishedGekkos[id] = this.gekkos[id];
   delete this.gekkos[id];
   broadcast({
     type: 'delete_gekko',
