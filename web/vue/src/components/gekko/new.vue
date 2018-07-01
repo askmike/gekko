@@ -85,8 +85,14 @@ export default {
     },
     existingTradebot: function() {
       return _.find(
-        this.gekkos.filter(g => g.logType === 'tradebot'),
-        { watch: { exchange: this.exchange } }
+        this.gekkos,
+        g => {
+          if(g.logType === 'watcher' && g.config.watch.exchange === this.exchange) {
+            return true;
+          }
+
+          return false;
+        }
       );
     },
     availableApiKeys: function() {

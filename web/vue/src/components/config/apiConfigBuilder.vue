@@ -5,7 +5,7 @@
   .grd-row
     .grd-row-col-3-6.mx1
       h3 Exchange
-      exchange-picker.contain(v-on:exchange='updateExchange', only-tradable='true')
+      exchange-picker(v-on:exchange='updateExchange', only-tradable='true')
     .grd-row-col-3-6.mx1
       h3 Credentials
       template(v-for='cred in requires')
