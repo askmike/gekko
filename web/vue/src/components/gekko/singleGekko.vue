@@ -5,6 +5,10 @@
       p Gekko doesn't know what gekko this is...
     div(v-if='data')
       h2.contain Gekko {{ type }}
+      div(v-if='isArchived', class='contain brdr--mid-gray p1 bg--orange')
+        | This is an archived Gekko, it is currently not running anymore.
+      div(v-if='data.errorMessage', class='contain brdr--mid-gray p1 bg--orange')
+        | This is Gekko crashed with the following error: {{ data.errorMessage }}
       .grd.contain
         .grd-row
           .grd-row-col-3-6
@@ -57,7 +61,8 @@
             h3 Profit report
             template(v-if='!report')
               p
-                em Waiting for at least one trade..
+                em(v-if='isArchived') This Gekko never executed a trade..
+                em(v-if='!isArchived') Waiting for at least one trade..
             template(v-if='report')
               .grd-row
                 .grd-row-col-3-6 Start balance
@@ -74,7 +79,7 @@
               .grd-row
                 .grd-row-col-3-6 Alpha
                 .grd-row-col-3-6 {{ round(report.alpha) }} {{ config.watch.currency }}
-        p(v-if='isStratrunner && !watcher') WARNING: stale gekko, not attached to a watcher, please report 
+        p(v-if='isStratrunner && !watcher && !isArchived') WARNING: stale gekko, not attached to a watcher, please report 
           a(href='https://github.com/askmike/gekko/issues') here
           | .
         p(v-if='isStratrunner && watcher')
@@ -125,13 +130,16 @@ export default {
     gekkos: function() {
       return this.$store.state.gekkos;
     },
+    archivedGekkos: function() {
+      return this.$store.state.archivedGekkos;
+    },
     data: function() {
       if(!this.gekkos)
         return false;
       if(_.has(this.gekkos, this.id))
         return this.gekkos[this.id];
-      if(_.has(this.finishedGekkos, this.id))
-        return this.finishedGekkos[this.id];
+      if(_.has(this.archivedGekkos, this.id))
+        return this.archivedGekkos[this.id];
 
       return false;
     },
@@ -158,6 +166,9 @@ export default {
     },
     isStratrunner: function() {
       return this.type !== 'watcher';
+    },
+    isArchived: function() {
+      return this.stopped;
     },
     chartData: function() {
       return {
@@ -245,10 +256,13 @@ export default {
         candleSize
       };
 
+      // We timeout because of 2 reasons:
+      // - In case we get a batch of candles we only fetch once
+      // - This way we give the db (mostly sqlite) some time to write
+      //   the result before we query it.
       setTimeout(() => {
         post('getCandles', config, (err, res) => {
           this.candleFetch = 'fetched';
-          // todo
           if(!res || res.error || !_.isArray(res))
             return console.log(res);
 

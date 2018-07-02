@@ -6,14 +6,14 @@ const broadcast = require('./cache').get('broadcast');
 const Logger = require('./logger');
 const pipelineRunner = require('../../core/workers/pipeline/parent');
 const reduceState = require('./reduceState.js');
-const now = () => moment().format('YYYY-MM-DD-HH-mm');
+const now = () => moment().format('YYYY-MM-DD HH:mm');
 
 const GekkoManager = function() {
   this.gekkos = {};
   this.instances = {};
   this.loggers = {};
 
-  this.finishedGekkos = {};
+  this.archivedGekkos = {};
 }
 
 GekkoManager.prototype.add = function({mode, config}) {
@@ -36,8 +36,9 @@ GekkoManager.prototype.add = function({mode, config}) {
       logType = 'papertrader';
   }
 
+  const date = now().replace(' ', '-').replace(':', '-');
   const n = (Math.random() + '').slice(3);
-  const id = `${now()}-${logType}-${n}`;
+  const id = `${date}-${logType}-${n}`;
 
   // make sure we catch events happening inside te gekko instance
   config.childToParent.enabled = true;
@@ -50,6 +51,8 @@ GekkoManager.prototype.add = function({mode, config}) {
     logType,
     active: true,
     stopped: false,
+    errored: false,
+    errorMessage: false,
     events: {
       initial: {},
       latest: {}
@@ -73,7 +76,7 @@ GekkoManager.prototype.add = function({mode, config}) {
   console.log(`${now()} Gekko ${id} started.`);
 
   broadcast({
-    type: 'new_gekko',
+    type: 'gekko_new',
     id,
     state
   });
@@ -117,7 +120,7 @@ GekkoManager.prototype.handleFatalError = function(id, err) {
     return;
 
   state.errored = true;
-  state.active = false;
+  state.errorMessage = err;
   console.error('RECEIVED ERROR IN GEKKO INSTANCE', id);
   console.error(err);
   broadcast({
@@ -126,7 +129,7 @@ GekkoManager.prototype.handleFatalError = function(id, err) {
     error: err
   });
 
-  this.delete(id);
+  this.archive(id);
 
   if(state.logType === 'watcher') {
     this.handleWatcherError(state, id);
@@ -142,7 +145,10 @@ GekkoManager.prototype.handleWatcherError = function(state, id) {
     console.log(`${now()} was unable to start.`);
   }
 
-  const latestCandleTime = state.events.latest.candle.start
+  let latestCandleTime = moment.unix(0);
+  if(state.events.latest && state.events.latest.candle) {
+    latestCandleTime = state.events.latest.candle.start;
+  }
   const leechers = _.values(this.gekkos)
     .filter(gekko => {
       if(gekko.type !== 'leech') {
@@ -157,12 +163,13 @@ GekkoManager.prototype.handleWatcherError = function(state, id) {
   if(leechers.length) {
     console.log(`${now()} ${leechers.length} leecher(s) were depending on this watcher.`);
     if(moment().diff(latestCandleTime, 'm') < 60) {
-      console.log(`${now()} Watcher had recent data, starting a new one.`);
+      console.log(`${now()} Watcher had recent data, starting a new one in a minute.`);
+      // after a minute try to start a new one again..
       setTimeout(() => {
         const mode = 'realtime';
         const config = state.config;
         this.add({mode, config});
-      })
+      }, 1000 * 60);
     } else {
       console.log(`${now()} Watcher did not have recent data, killing its leechers.`);
       leechers.forEach(leecher => this.stop(leecher.id));
@@ -189,20 +196,25 @@ GekkoManager.prototype.stop = function(id) {
     id
   });
 
+  this.archive(id);
+
   return true;
 }
 
-GekkoManager.prototype.delete = function(id) {
-  this.finishedGekkos[id] = this.gekkos[id];
+GekkoManager.prototype.archive = function(id) {
+  this.archivedGekkos[id] = this.gekkos[id];
+  this.archivedGekkos[id].stopped = true;
+  this.archivedGekkos[id].active = false;
   delete this.gekkos[id];
+
   broadcast({
-    type: 'delete_gekko',
+    type: 'gekko_archived',
     id
   });
 }
 
 GekkoManager.prototype.list = function() {
-  return this.gekkos;
+  return { live: this.gekkos, archive: this.archivedGekkos };
 }
 
 module.exports = GekkoManager;

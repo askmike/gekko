@@ -11,9 +11,13 @@ const init = () => {
 }
 
 const sync = () => {
-  bus.$on('new_gekko', data => store.commit('addGekko', data.state));
+  bus.$on('gekko_new', data => store.commit('addGekko', data.state));
   bus.$on('gekko_event', data => store.commit('updateGekko', data));
-  bus.$on('delete_gekko', data => store.commit('deleteGekko', data.id));
+  bus.$on('gekko_archived', data => store.commit('archiveGekko', data.id));
+  bus.$on('gekko_error', data => store.commit('errorGekko', data));
+
+  // unused:
+  // bus.$on('gekko_stopped', data => store.commit('stopGekko', data.id));
 }
 
 export default function() {

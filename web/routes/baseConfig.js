@@ -35,10 +35,6 @@ config.childToParent = {
   enabled: false,
 }
 
-config.trader = {
-  orderUpdateDelay: 1 // Number of minutes to adjust unfilled order prices
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

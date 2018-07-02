@@ -25,7 +25,7 @@ export default new Vuex.Store({
     },
     imports: [],
     gekkos: {},
-    finishedGekkos: {},
+    archivedGekkos: {},
     connection: {
       disconnected: false,
       reconnected: false

@@ -1,6 +1,5 @@
 <template lang='pug'>
   .contain.py2
-    .text(v-html='text')
     .hr
     h3 Market watchers
     .text(v-if='!watchers.length')
@@ -11,6 +10,7 @@
           th exchange
           th currency
           th asset
+          th status
           th started at
           th last update
           th duration
@@ -19,6 +19,7 @@
           td {{ gekko.config.watch.exchange }}
           td {{ gekko.config.watch.currency }}
           td {{ gekko.config.watch.asset }}
+          td {{ status(gekko) }}
           td
             template(v-if='gekko.events.initial.candle') {{ fmt(gekko.events.initial.candle.start) }}
           td
@@ -34,7 +35,7 @@
           th exchange
           th currency
           th asset
-          th last update
+          th status
           th duration
           th strategy
           th PnL
@@ -45,8 +46,7 @@
           td {{ gekko.config.watch.exchange }}
           td {{ gekko.config.watch.currency }}
           td {{ gekko.config.watch.asset }}
-          td
-            template(v-if='gekko.events.latest.candle') {{ fmt(gekko.events.latest.candle.start) }}
+          td {{ status(gekko) }}
           td
             template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
           td {{ gekko.config.tradingAdvisor.method }}
@@ -63,25 +63,10 @@
 </template>
 
 <script>
-
-import marked from '../../tools/marked'
 // global moment
 // global humanizeDuration
 
-const text = marked(`
-
-## Live Gekko
-
-Run your strategy against the live market!
-
-`);
-
 export default {
-  data: () => {
-    return {
-      text
-    }
-  },
   created: function() {
     this.timer = setInterval(() => {
       this.now = moment();
@@ -92,7 +77,6 @@ export default {
   },
   data: () => {
     return {
-      text,
       timer: false,
       now: moment()
     }
@@ -100,18 +84,20 @@ export default {
   computed: {
     stratrunners: function() {
       return _.values(this.$store.state.gekkos)
-        .filter(g => {
-          if(g.logType === 'papertrader')
-            return true;
+        .concat(_.values(this.$store.state.archivedGekkos))
+          .filter(g => {
+            if(g.logType === 'papertrader')
+              return true;
 
-          if(g.logType === 'tradebot')
-            return true;
+            if(g.logType === 'tradebot')
+              return true;
 
-          return false;
-        });
+            return false;
+          })
     },
     watchers: function() {
       return _.values(this.$store.state.gekkos)
+        .concat(_.values(this.$store.state.archivedGekkos))
         .filter(g => g.logType === 'watcher')
     }
   },
@@ -122,6 +108,16 @@ export default {
     round: n => (+n).toFixed(3),
     timespan: function(a, b) {
       return this.humanizeDuration(this.moment(a).diff(this.moment(b)))
+    },
+    status: state => {
+      if(state.errored)
+        return 'errored';
+      if(state.stopped)
+        return 'stopped';
+      if(state.active)
+        return 'running';
+
+      console.log('unknown state:', state);
     }
   }
 }

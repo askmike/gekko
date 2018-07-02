@@ -5,6 +5,10 @@ module.exports = done => {
 
   return {
     message: message => {
+      if(message.type === 'error') {
+        done(message.error);
+      }
+
       if(message.backtest) {
         done(null, message.backtest);
       }

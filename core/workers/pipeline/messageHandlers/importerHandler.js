@@ -11,7 +11,6 @@ module.exports = cb => {
 
       else if(message.type === 'error') {
         cb(message.error);
-        console.error(message.error);
       }
 
       else if(message.type === 'log')
