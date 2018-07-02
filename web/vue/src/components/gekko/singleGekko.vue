@@ -48,6 +48,10 @@
                 .grd-row
                   .grd-row-col-2-6 History size
                   .grd-row-col-4-6 {{ config.tradingAdvisor.historySize }}
+        div(v-if='warmupRemaining', class='contain brdr--mid-gray p1 bg--orange')
+          | This stratrunner is still warming for the next 
+          i {{ warmupRemaining }}
+          | , it will not trade until it is warmed up.
         .grd-row(v-if='isStratrunner')
           .grd-row-col-3-6
             h3 Strategy
@@ -172,6 +176,18 @@ export default {
     isArchived: function() {
       return this.data.stopped;
     },
+    warmupRemaining: function() {
+      if(this.initialEvents.stratWarmupCompleted) {
+        return false;
+      }
+
+      const warmupTime = _.get(this.config, 'tradingAdvisor.candleSize') * _.get(this.config, 'tradingAdvisor.historySize');
+
+      return humanizeDuration(
+        moment(this.initialEvents.candle.start).add(warmupTime, 'm').diff(moment()),
+        { largest: 2 }
+      );
+    },
     chartData: function() {
       return {
         candles: this.candles,
@@ -242,7 +258,7 @@ export default {
   },
   methods: {
     round: n => (+n).toFixed(5),
-    humanizeDuration: (n) => window.humanizeDuration(n),
+    humanizeDuration: (n, x) => window.humanizeDuration(n, x),
     moment: mom => moment.utc(mom),
     fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
     getCandles: function() {

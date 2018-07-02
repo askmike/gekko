@@ -2,7 +2,7 @@
 // NOTE: this is used by the backend as well as the frontend.
 
 const skipInitialEvents = ['marketUpdate'];
-const skipLatestEvents = ['marketStart'];
+const skipLatestEvents = ['marketStart', 'stratWarmupCompleted'];
 const trackAllEvents = ['tradeCompleted', 'advice', 'roundtrip'];
 
 const reduce = (state, event) => {
