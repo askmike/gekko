@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const moment = require('moment');
-const promisify = require('tiny-promisify');
 
 const broadcast = require('./cache').get('broadcast');
 const Logger = require('./logger');

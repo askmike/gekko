@@ -3,6 +3,10 @@ import _ from 'lodash';
 const reduceState = require('../../../../../state/reduceState');
 
 export const syncGekkos = (state, data) => {
+  if(!data) {
+    return state;
+  }
+
   state.gekkos = data.live;
   state.archivedGekkos = data.archive;
   return state;
@@ -17,7 +21,7 @@ export const addGekko = (state, gekko) => {
 }
 
 export const updateGekko = (state, update) => {
-  if(!_.has(state.gekkos, update.id)) {
+  if(!update.id || !_.has(state.gekkos, update.id)) {
     return console.error('cannot update unknown gekko..');;
   }
 
@@ -30,7 +34,6 @@ export const updateGekko = (state, update) => {
 
 export const archiveGekko = (state, id) => {
   if(!_.has(state.gekkos, id)) {
-    console.log(id, state.gekkos);
     return console.error('cannot archive unknown gekko..');
   }
 

@@ -16,9 +16,9 @@ restPath = basePath + 'api/';
 
 // ws API path
 if(config.ssl) {
-  wsPath = `wss://${endpoint}/api`;
+  wsPath = `wss://${endpoint}api`;
 } else {
-  wsPath = `ws://${endpoint}/api`;
+  wsPath = `ws://${endpoint}api`;
 }
 
 export {

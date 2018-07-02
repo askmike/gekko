@@ -82,7 +82,9 @@
         p(v-if='isStratrunner && !watcher && !isArchived') WARNING: stale gekko, not attached to a watcher, please report 
           a(href='https://github.com/askmike/gekko/issues') here
           | .
-        p(v-if='isStratrunner && watcher')
+        p(v-if='!isArchived')
+          a(v-on:click='stopGekko', class='w100--s my1 btn--red') Stop Gekko
+        p(v-if='isStratrunner && watcher && !isArchived')
           em This gekko gets market data from 
             router-link(:to='"/live-gekkos/" + watcher.id') this market watcher
           | .
@@ -168,7 +170,7 @@ export default {
       return this.type !== 'watcher';
     },
     isArchived: function() {
-      return this.stopped;
+      return this.data.stopped;
     },
     chartData: function() {
       return {
@@ -218,6 +220,20 @@ export default {
         return _.isEqual(watch, g.config.watch);
       });
     },
+    hasLeechers: function() {
+      if(this.isStratrunner) {
+        return false;
+      }
+
+      let watch = Vue.util.extend({}, this.data.config.watch);
+
+      return _.find(this.gekkos, g => {
+        if(g.id === this.id)
+          return false;
+
+        return _.isEqual(watch, g.config.watch);
+      });
+    }
   },
   watch: {
     'data.events.latest.candle.start': function() {
@@ -272,6 +288,17 @@ export default {
           });
         })
       }, _.random(150, 2500));
+    },
+    stopGekko: function() {
+      if(this.hasLeechers) {
+        return alert('This Gekko is fetching market data for multiple stratrunners, stop these first.');
+      }
+
+      confirm('Are you sure you want to stop this Gekko?');
+
+      post('stopGekko', { id: this.data.id }, (err, res) => {
+        console.log('stopped gekko');
+      })
     }
   }
 }

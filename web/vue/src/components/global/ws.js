@@ -21,7 +21,7 @@ const info = {
 
 
 export const connect = () => {
-  socket = new ReconnectingWebSocket(wsPath);
+  socket = new ReconnectingWebSocket(wsPath, null, { maxReconnectInterval: 4000 });
 
   setTimeout(() => {
     // in case we cannot connect
