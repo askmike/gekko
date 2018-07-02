@@ -1,9 +1,8 @@
 <template lang='pug'>
   .contain.py2
-    .hr
     h3 Market watchers
     .text(v-if='!watchers.length')
-      p You are currently not watching any markets.
+      p You don't have any market watchers.
     table.full.clickable(v-if='watchers.length')
       thead
         tr
@@ -28,7 +27,7 @@
             template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
     h3 Strat runners
     .text(v-if='!stratrunners.length')
-      p You are currently not running any strategies.
+      p You don't have any stratrunners.
     table.full(v-if='stratrunners.length')
       thead
         tr
