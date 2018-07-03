@@ -774,7 +774,18 @@ Whenever a gekko received a fatal error and crashed.
 
 ### gekko_archived
 
-Whenever the server does not consider the instance to be relevant anymore, fires after a gekko has been stopped or had a fatal error.
+Whenever the server does not consider the instance to be relevant anymore, fires after a gekko has been stopped or had a fatal error. After this event the gekko instance is placed in an in memory archive. It will stay here stale (as it won't be updated) until it's deleted.
+
+```
+{
+    "type": "gekko_stopped",
+    "id": "2018-07-03-16-37-watcher-938815758693549"
+}
+```
+
+### gekko_deleted
+
+Whenever am archived gekko instance got deleted.
 
 ```
 {

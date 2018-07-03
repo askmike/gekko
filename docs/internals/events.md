@@ -8,8 +8,6 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 
     (WARN): Paper Trader wanted to listen to the tradingAdvisor, however the tradingAdvisor is disabled.
 
-*NOTE: Events describe async communication about what is happening, it's hard to guarentee the proper order of events during backtests which pipe in historical candles as fast as the plugins can consume them. Stabalizing this is a work in progress but expect things to break until proper behaviour has been validated under a variaty of platform circumstances (OS, hardware, etc).*
-
 ## List of events emitted by standard plugins
 
 - [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
