@@ -237,10 +237,11 @@ Trader.prototype.getOrder = function(order, callback) {
     const date = moment(data.done_at);
     const fees = {
       // you always pay fee in the base currency on gdax
-      [this.currency]: +data.fill_fees,
+      [this.currency]: +data.fill_fees
     }
+    const feePercent = +data.fill_fees / price / amount * 100;
 
-    callback(undefined, { price, amount, date, fees });
+    callback(undefined, { price, amount, date, fees, feePercent });
   };
 
   const fetch = cb =>

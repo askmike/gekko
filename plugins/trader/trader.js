@@ -213,18 +213,21 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
       this.order = null;
       this.sync(() => {
 
-        let cost = undefined;
-        if(summary.feePerc) {
-          cost = summary.feePerc / 100 * summary.amount * summary.price;
+        let cost;
+        if(_.isNumber(summary.feePercent)) {
+          cost = summary.feePercent / 100 * summary.amount * summary.price;
         }
 
         let effectivePrice;
-        if(summary.feePerc) {
+        if(_.isNumber(summary.feePercent)) {
           if(side === 'buy') {
-            effectivePrice = summary.price * (1 + summary.feePerc / 100);
+            effectivePrice = summary.price * (1 + summary.feePercent / 100);
           } else {
-            effectivePrice = summary.price * (1 - summary.feePerc / 100);
+            effectivePrice = summary.price * (1 - summary.feePercent / 100);
           }
+        } else {
+          log.debug('WARNING: exchange did not provide fee information, assuming no fees..');
+          effectivePrice = summary.price;
         }
 
         this.deferredEmit('tradeCompleted', {
@@ -237,7 +240,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
           portfolio: this.portfolio,
           balance: this.balance,
           date: summary.date,
-          feePercent: summary.feePerc,
+          feePercent: summary.feePercent,
           effectivePrice
         });
       });

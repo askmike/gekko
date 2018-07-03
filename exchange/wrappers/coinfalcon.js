@@ -199,7 +199,9 @@ Trader.prototype.getOrder = function(order, callback) {
     const price = parseFloat(res.data.price);
     const amount = parseFloat(res.data.size_filled);
     const date = moment(res.data.created_at);
-    callback(false, { price, amount, date });
+    const fees = {};
+    const feePercent = 0;
+    callback(false, { price, amount, date, fees, feePercent });
   });
 
   this.coinfalcon.get('user/orders/' + order).then(handle.success).catch(handle.failure);

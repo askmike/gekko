@@ -270,7 +270,29 @@ Trader.prototype.getOrder = function(order, callback) {
         fees[trade.commissionAsset] = (+trade.commission);
     });
 
-    callback(undefined, { price, amount, date, fees });
+    let feePercent;
+    if(_.keys(fees).length === 1) {
+      if(fees.BNB && this.asset !== 'BNB' && this.currency !== 'BNB') {
+        // we paid fees in BNB, right now that means the fee is always 5 basepoints.
+        // we cannot calculate since we do not have the BNB rate.
+        feePercent = 0.05;
+      } else {
+        if(fees[this.asset]) {
+          feePercent = fees[this.asset] / amount * 100;
+        } else if(fees.currency) {
+          feePercent = fees[this.currency] / price / amount * 100;
+        } else {
+          // assume base fee of 10 basepoints
+          feePercent = 0.1;
+        }
+      }
+    } else {
+      // we paid fees in multiple currencies?
+      // assume base fee of 10 basepoints
+      feePercent = 0.1;
+    }
+
+    callback(undefined, { price, amount, date, fees, feePercent });
   }
 
   const reqData = {
