@@ -19,7 +19,6 @@ const info = {
   connected: false
 }
 
-
 export const connect = () => {
   socket = new ReconnectingWebSocket(wsPath, null, { maxReconnectInterval: 4000 });
 
@@ -54,7 +53,7 @@ export const connect = () => {
     bus.$emit('WS_STATUS_CHANGE', info);
   }
   socket.onmessage = function(message) {
-    let payload = JSON.parse(message.data);
+    const payload = JSON.parse(message.data);
     bus.$emit(payload.type, payload);
   };
 }
