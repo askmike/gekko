@@ -5,7 +5,7 @@ The Gekko project has three major components:
  - [Actual Gekko instance](./architecture.md)
  - A nodejs server that:
    - starts and manages gekkos
-   - broadcasts all updates to all gekkos
+   - broadcasts all updates from all gekkos and tracks their overall state
    - has API calls to query and manage historical data (by importing more for example)
  - [A web UI (vue frontend project)](./gekko_ui.md)
 
@@ -15,10 +15,10 @@ The server exposes two different APIs: A websocket API to push gekko updates and
 
 When you run `node gekko --ui` it will automatically start a server. You can also do this manually by running:
 
-    cd web
+    cd gekko/web
     node server
 
-The server will now run on the port configured in `gekko/web/vue/public/UIConfig.js` (under api.host.port).
+The server will now run on the host/port configured in `gekko/web/vue/public/UIConfig.js` (under api.host).
 
 ## REST API
 
@@ -58,7 +58,7 @@ Get all strategies known to this Gekko. The value of the `params` key is a TOML 
     "name": "MACD",
     "params": "short = 10\nlong = 21\nsignal = 9\n\n[thresholds]\ndown = -0.025\nup = 0.025\npersistence = 1"
   },
-  ...
+  // etc.
 ]
 ```
 
@@ -346,7 +346,7 @@ Perform a backtest.
 
 **request**
 
-*(a valid gekko config file)*
+*(a valid gekko config object)*
 
 Tweak the `config.backtestResultExporter.data` object to control what is included in the output. For example skip `stratCandles` if you only care about the final profit report. This way the server won't include megabytes of candle data in the output.
 
@@ -459,7 +459,7 @@ Tweak the `config.backtestResultExporter.data` object to control what is include
     "trades": [
         {
             "id": "trade-1",
-            "advice_id": "advice-1",
+            "adviceId": "advice-1",
             "action": "buy",
             "cost": 0.30000000000000027,
             "amount": 1.01420229,
@@ -482,7 +482,7 @@ Start a data import.
 
 **request**
 
-*(a valid gekko config file)*
+*(a valid gekko config object)*
 
 
 ```
@@ -528,9 +528,9 @@ Start a gekko instance
 
 **request**
 
-*(a valid gekko config file)*
+*(a valid gekko config object)*
 
-In order to start a stratRunner, pass a config file that includes plugins required for a stratrunner (such as, paperTrader, tradingAdvisor and performanceAnalyzer).
+In order to start a stratRunner, pass a config object that includes plugins required for a stratrunner (such as paperTrader, tradingAdvisor and performanceAnalyzer).
 
 ```
 {
