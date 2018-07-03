@@ -49,8 +49,8 @@
                   .grd-row-col-2-6 History size
                   .grd-row-col-4-6 {{ config.tradingAdvisor.historySize }}
         div(v-if='warmupRemaining', class='contain brdr--mid-gray p1 bg--orange')
-          | This stratrunner is still warming for the next 
-          i {{ warmupRemaining }}
+          | This stratrunner is still warming up for the next 
+          i {{ warmupRemaining.replace(',', ' and ') }}
           | , it will not trade until it is warmed up.
         .grd-row(v-if='isStratrunner')
           .grd-row-col-3-6
@@ -177,7 +177,15 @@ export default {
       return this.data.stopped;
     },
     warmupRemaining: function() {
+      if(!this.isStratrunner) {
+        return false;
+      }
+
       if(this.initialEvents.stratWarmupCompleted) {
+        return false;
+      }
+
+      if(!this.initialEvents.candle) {
         return false;
       }
 
