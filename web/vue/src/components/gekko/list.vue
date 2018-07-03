@@ -50,12 +50,12 @@
             template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
           td {{ gekko.config.tradingAdvisor.method }}
           td
-            template(v-if='!gekko.report') 0
-            template(v-if='gekko.report') {{ round(gekko.report.profit) }} {{ gekko.watch.currency }}
+            template(v-if='!report(gekko)') 0
+            template(v-if='report(gekko)') {{ round(report(gekko).profit) }} {{ report(gekko).currency }}
           td {{ gekko.logType }}
           td
-            template(v-if='!gekko.events.trades') 0
-            template(v-if='gekko.events.trades') {{ gekko.events.trades.length }}
+            template(v-if='!gekko.events.tradeCompleted') 0
+            template(v-if='gekko.events.tradeCompleted') {{ gekko.events.tradeCompleted.length }}
     .hr
     h2 Start a new live Gekko
     router-link.btn--primary(to='/live-gekkos/new') Start a new live Gekko!
@@ -117,6 +117,9 @@ export default {
         return 'running';
 
       console.log('unknown state:', state);
+    },
+    report: state => {
+      return _.get(state, 'events.latest.performanceReport');
     }
   }
 }

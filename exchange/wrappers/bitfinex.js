@@ -56,7 +56,6 @@ Trader.prototype.handleResponse = function(funcName, callback) {
 
     if(error) {
       const message = error.message;
-      console.log(new Date, 'ERROR!', funcName, message);
 
       // in case we just cancelled our balances might not have
       // settled yet, retry.

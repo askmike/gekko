@@ -73,7 +73,6 @@ Trader.prototype.setPortfolio = function() {
 
   // if more than 10% of balance is in asset we are exposed
   this.exposed = this.exposure > 0.1;
-  log.debug('setting portfolio to:', this.portfolio, `(total of ${this.balance} ${this.brokerConfig.currency})`);
 }
 
 Trader.prototype.processCandle = function(candle, done) {
