@@ -20,7 +20,7 @@ To configure a plugin, open up your `config.js` file with a text editor and conf
 
 If you want Gekko to provide automated trading advice you need to configure this in Gekko. Note that this is a different plugin than the  "trader" which is a responsible for actually creating orders based on this advice. (So if you want automated trading you need both this advice as well as the auto trader).
 
-Documentation about strategies in Gekko can be found [here](../strategies/example_strategies.md).
+Documentation about strategies in Gekko can be found [here](../strategies/introduction.md).
 
 ### Trader
 

@@ -23,7 +23,7 @@ Example Markets that come included with Gekko are:
 
 A GekkoStream is nothing more than a collection of [plugins](../commandline/plugins.md). Plugins are simple modules that can subscribe to events, and do something based on event data. The most basic event every GekkoStream has is the "candle" event, this event comes from the market.
 
-However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [strategy](../strategies/example_strategies) that will be fed candle data. As soon as the strategy suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `paperTrader` is a plugin that simulates trading using these advices, the `trader` is a plugin that creates real market orders based on these advices. You can decide to only turn the `paperTrader` on or to turn the `trader` on (you now have a live trading bot).
+However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [strategy](../strategies/introduction.md) that will be fed candle data. As soon as the strategy suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `paperTrader` is a plugin that simulates trading using these advices, the `trader` is a plugin that creates real market orders based on these advices. You can decide to only turn the `paperTrader` on or to turn the `trader` on (you now have a live trading bot).
 
 When you run a backtest using Gekko the following things happen:
 

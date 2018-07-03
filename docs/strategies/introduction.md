@@ -1,10 +1,10 @@
-# Example Strategies
+# Gekko Strategies
 
 Gekko uses [technical analysis indicators](http://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp) inside **strategies**.
 
-This investment advice is going to be either **long** or **short**.
+This investment advice is going to be either **long** or **short**. Long indicates that Gekko the asset should be bought and short indicates that it should be sold.
 
-Below you can find simple and limited trading methods that come with Gekko. These strategies come with Gekko and serve as examples, for any serious usage we recommend you [write your own](./creating_a_strategy.md).
+Below you can find simple and examplary strategies that come with Gekko. These strategies come with Gekko and serve as examples, **for anything that involves real money we recommend you [write your own](./creating_a_strategy.md).**
 
 Gekko currently comes with the following example strategies:
 
@@ -19,12 +19,12 @@ Gekko currently comes with the following example strategies:
 
 ### DEMA
 
-This method uses `Exponential Moving Average crossovers` to determine the current trend the
+This strategy uses `Exponential Moving Average crossovers` to determine the current trend the
 market is in. Using this information it will suggest to ride the trend. Note that this is
 not MACD because it just checks whether the longEMA and shortEMA are [threshold]% removed
 from eachother.
 
-This method is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this method in [his topic](https://bitcointalk.org/index.php?topic=60501.0) or [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages).
+This strategy is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this strategy in [his topic](https://bitcointalk.org/index.php?topic=60501.0) or [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages).
 
 You can configure the following parameters:
 
@@ -43,7 +43,7 @@ You can configure the following parameters:
 
 ### MACD
 
-This method is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_convergence_divergence_macd).
+This strategy is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_convergence_divergence_macd).
 
 You can configure the following parameters:
 
@@ -144,6 +144,8 @@ You can configure the following parameters:
 
 ### talib-macd
 
+Similar to the default MACD strategy, this showcases how to add a TA-lib indicator to a strategy.
+
 You can configure the following parameters:
 
     [parameters]
@@ -156,6 +158,8 @@ You can configure the following parameters:
     up = 0.025
 
 ### tulip-macd
+
+Similar to the default MACD strategy, this showcases how to add a Tulip indicator to a strategy.
 
 You can configure the following parameters:
 
