@@ -66,6 +66,8 @@ If you installed Gekko via git, simply run:
 
     git pull
     npm install --only=production
+    cd exchange
+    npm install --only=production
 
 ## Run gekko in background 
 If you access Pi headless via SSH, you have to use a software like tmux to run Gekko in background

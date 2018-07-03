@@ -12,7 +12,7 @@ To get Gekko running you need to do the following:
 
 - install nodejs
 - download Gekko
-- install Gekko's dependencies
+- install Gekko & Gekko Broker dependencies
 
 ## Installing nodejs
 
