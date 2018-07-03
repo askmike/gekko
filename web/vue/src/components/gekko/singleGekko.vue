@@ -88,6 +88,8 @@
           | .
         p(v-if='!isArchived')
           a(v-on:click='stopGekko', class='w100--s my1 btn--red') Stop Gekko
+        p(v-if='isArchived')
+          a(v-on:click='deleteGekko', class='w100--s my1 btn--red') Delete Gekko
         p(v-if='isStratrunner && watcher && !isArchived')
           em This gekko gets market data from 
             router-link(:to='"/live-gekkos/" + watcher.id') this market watcher
@@ -178,6 +180,10 @@ export default {
     },
     warmupRemaining: function() {
       if(!this.isStratrunner) {
+        return false;
+      }
+
+      if(this.isArchived) {
         return false;
       }
 
@@ -318,11 +324,28 @@ export default {
         return alert('This Gekko is fetching market data for multiple stratrunners, stop these first.');
       }
 
-      confirm('Are you sure you want to stop this Gekko?');
+      if(!confirm('Are you sure you want to stop this Gekko?')) {
+        return;
+      }
 
       post('stopGekko', { id: this.data.id }, (err, res) => {
         console.log('stopped gekko');
-      })
+      });
+    },
+    deleteGekko: function() {
+      if(!this.isArchived) {
+        return alert('This Gekko is still running, stop it first!');
+      }
+
+      if(!confirm('Are you sure you want to delete this Gekko?')) {
+        return;
+      }
+
+      post('deleteGekko', { id: this.data.id }, (err, res) => {
+        this.$router.push({
+          path: `/live-gekkos/`
+        });
+      });
     }
   }
 }

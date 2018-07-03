@@ -87,7 +87,7 @@ export default {
       return _.find(
         this.gekkos,
         g => {
-          if(g.logType === 'watcher' && g.config.watch.exchange === this.exchange) {
+          if(g.logType === 'tradebot' && g.config.watch.exchange === this.exchange) {
             return true;
           }
 

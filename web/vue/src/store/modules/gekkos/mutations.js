@@ -66,3 +66,12 @@ export const errorGekko = (state, data) => {
 
   return state;
 }
+
+export const deleteGekko = (state, id) => {
+  if(!_.has(state.archivedGekkos, id)) {
+    return console.error('cannot delete unknown gekko..');
+  }
+
+  state.archivedGekkos = _.omit(state.archivedGekkos, id);
+  return state;
+}

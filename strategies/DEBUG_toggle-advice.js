@@ -22,8 +22,10 @@ var method = {
     log.info('iteration:', i);
     
     if(i % settings.each === 0) {
+      log.debug('trigger SHORT');
       this.advice('short');
     } else if(i % settings.each === settings.each / 2) {
+      log.debug('trigger LONG');
       this.advice('long');
     }
 
