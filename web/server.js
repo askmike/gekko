@@ -70,6 +70,7 @@ router.post('/api/backtest', require(ROUTE('backtest')));
 router.post('/api/import', require(ROUTE('import')));
 router.post('/api/startGekko', require(ROUTE('startGekko')));
 router.post('/api/stopGekko', require(ROUTE('stopGekko')));
+router.post('/api/deleteGekko', require(ROUTE('deleteGekko')));
 router.post('/api/getCandles', require(ROUTE('getCandles')));
 
 

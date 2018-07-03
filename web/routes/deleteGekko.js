@@ -1,7 +1,7 @@
 const cache = require('../state/cache');
 const gekkoManager = cache.get('gekkos');
 
-// stops a Gekko
+// Deletes a gekko
 // requires a post body with an id
 module.exports = function *() {
 
@@ -12,11 +12,10 @@ module.exports = function *() {
     return;
   }
 
-  let stopped = gekkoManager.stop(id);
-
-  if(!stopped) {
-    this.body = { status: 'not ok' }
-    return; 
+  try {
+    gekkoManager.delete(id);
+  } catch(e) {
+    this.body = { status: e.message }
   }
 
   this.body = { status: 'ok' };

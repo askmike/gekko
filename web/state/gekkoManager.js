@@ -212,6 +212,39 @@ GekkoManager.prototype.archive = function(id) {
   });
 }
 
+GekkoManager.prototype.delete = function(id) {
+  if(this.gekkos[id]) {
+    throw new Error('Cannot delete a running Gekko, stop it first.');
+  }
+
+  if(!this.archivedGekkos[id]) {
+    throw new Error('Cannot delete unknown Gekko.');
+  }
+
+  console.log(`${now()} deleting Gekko ${id}`);
+
+  broadcast({
+    type: 'gekko_deleted',
+    id
+  });
+
+  delete this.archivedGekkos[id];
+
+  return true;
+}
+
+GekkoManager.prototype.archive = function(id) {
+  this.archivedGekkos[id] = this.gekkos[id];
+  this.archivedGekkos[id].stopped = true;
+  this.archivedGekkos[id].active = false;
+  delete this.gekkos[id];
+
+  broadcast({
+    type: 'gekko_archived',
+    id
+  });
+}
+
 GekkoManager.prototype.list = function() {
   return { live: this.gekkos, archive: this.archivedGekkos };
 }

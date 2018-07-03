@@ -17,7 +17,8 @@ const sync = () => {
   bus.$on('gekko_error', data => store.commit('errorGekko', data));
 
   // unused:
-  // bus.$on('gekko_stopped', data => store.commit('stopGekko', data.id));
+  // bus.$on('gekko_stopped', data => store.commit('x', data.id));
+  // bus.$on('gekko_deleted', data => store.commit('x', data.id));
 }
 
 export default function() {
