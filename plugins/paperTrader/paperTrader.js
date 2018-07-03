@@ -62,6 +62,7 @@ PaperTrader.prototype.updatePosition = function(advice) {
 
   let cost;
   let amount;
+  let effectivePrice;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
@@ -70,6 +71,8 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
     amount = this.portfolio.asset;
     this.portfolio.currency = 0;
+    effectivePrice = this.price * (1 + this.fee);
+
     this.exposed = true;
     this.trades++;
   }
@@ -81,11 +84,13 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
     amount = this.portfolio.currency / this.price;
     this.portfolio.asset = 0;
+    effectivePrice = this.price * (1 - this.fee);
+
     this.exposed = false;
     this.trades++;
   }
 
-  return { cost, amount };
+  return { cost, amount, effectivePrice };
 }
 
 PaperTrader.prototype.getBalance = function() {
@@ -105,28 +110,30 @@ PaperTrader.prototype.processAdvice = function(advice) {
 
   this.deferredEmit('tradeInitiated', {
     id: this.tradeId,
-    advice_id: advice.id,
+    adviceId: advice.id,
     action,
     portfolio: _.clone(this.portfolio),
     balance: this.getBalance(),
     date: advice.date,
   });
 
-  const { cost, amount } = this.updatePosition(advice);
+  const { cost, amount, effectivePrice } = this.updatePosition(advice);
 
   this.relayPortfolioChange();
   this.relayPortfolioValueChange();
 
   this.deferredEmit('tradeCompleted', {
     id: this.tradeId,
-    advice_id: advice.id,
+    adviceId: advice.id,
     action,
     cost,
     amount,
     price: this.price,
     portfolio: this.portfolio,
     balance: this.getBalance(),
-    date: advice.date
+    date: advice.date,
+    effectivePrice,
+    feePercent: this.fee * 100
   });
 }
 

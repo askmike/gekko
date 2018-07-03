@@ -168,7 +168,9 @@ and will start signaling advice.
         cost: [number the amount in currency representing fee, slippage and other execution costs],
         date: [moment object, exchange time trade completed at],
         portfolio: [object containing amount in currency and asset],
-        balance: [number, total worth of portfolio]
+        balance: [number, total worth of portfolio],
+        feePercent: [the cost in fees],
+        effectivePrice: [executed price - fee percent, if effective price of buy is below that of sell you are ALWAYS in profit.]
       }
 
 ### portfolioChange event

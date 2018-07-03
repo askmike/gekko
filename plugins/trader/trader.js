@@ -126,7 +126,7 @@ Trader.prototype.processAdvice = function(advice) {
       log.info('NOT buying, already exposed');
       return this.deferredEmit('tradeAborted', {
         id,
-        advice_id: advice.id,
+        adviceId: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance,
@@ -140,7 +140,7 @@ Trader.prototype.processAdvice = function(advice) {
       log.info('NOT buying, not enough', this.brokerConfig.currency);
       return this.deferredEmit('tradeAborted', {
         id,
-        advice_id: advice.id,
+        adviceId: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance,
@@ -160,7 +160,7 @@ Trader.prototype.processAdvice = function(advice) {
       log.info('NOT selling, already no exposure');
       return this.deferredEmit('tradeAborted', {
         id,
-        advice_id: advice.id,
+        adviceId: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance,
@@ -174,7 +174,7 @@ Trader.prototype.processAdvice = function(advice) {
       log.info('NOT selling, not enough', this.brokerConfig.currency);
       return this.deferredEmit('tradeAborted', {
         id,
-        advice_id: advice.id,
+        adviceId: advice.id,
         action: direction,
         portfolio: this.portfolio,
         balance: this.balance,
@@ -197,7 +197,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
 
   this.deferredEmit('tradeInitiated', {
     id,
-    advice_id: advice.id,
+    adviceId: advice.id,
     action: side,
     portfolio: this.portfolio,
     balance: this.balance
@@ -218,16 +218,27 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
           cost = summary.feePerc / 100 * summary.amount * summary.price;
         }
 
+        let effectivePrice;
+        if(summary.feePerc) {
+          if(side === 'buy') {
+            effectivePrice = summary.price * (1 + summary.feePerc / 100);
+          } else {
+            effectivePrice = summary.price * (1 - summary.feePerc / 100);
+          }
+        }
+
         this.deferredEmit('tradeCompleted', {
           id,
-          advice_id: advice.id,
+          adviceId: advice.id,
           action: summary.side,
           cost,
           amount: summary.amount,
           price: summary.price,
           portfolio: this.portfolio,
           balance: this.balance,
-          date: summary.date
+          date: summary.date,
+          feePercent: summary.feePerc,
+          effectivePrice
         });
       });
     })
@@ -249,7 +260,7 @@ Trader.prototype.cancelOrder = function(id, advice, next) {
   this.order.once('completed', () => {
     this.deferredEmit('tradeCanceled', {
       id,
-      advice_id: advice.id,
+      adviceId: advice.id,
       action: direction,
       date: moment()
     });
