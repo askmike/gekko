@@ -4,9 +4,9 @@ The Gekko project has three major components:
 
  - [Actual Gekko instance](./architecture.md)
  - A nodejs server that:
-  - starts and manages gekkos
-  - broadcasts all updates to all gekkos
-  - has API calls to query and manage historical data (by importing more for example)
+   - starts and manages gekkos
+   - broadcasts all updates to all gekkos
+   - has API calls to query and manage historical data (by importing more for example)
  - [A web UI (vue frontend project)](./gekko_ui.md)
 
 The nodejs server can also be used standalone as a webserver in combination with your own software (such as a new UI, a mobile app or a higher level backtester), see [other software](../extending/other_software.md) for examples).
@@ -785,7 +785,7 @@ Whenever the server does not consider the instance to be relevant anymore, fires
 
 ### gekko_deleted
 
-Whenever am archived gekko instance got deleted.
+Whenever an archived gekko instance got deleted.
 
 ```
 {
