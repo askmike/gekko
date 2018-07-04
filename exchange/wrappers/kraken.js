@@ -43,6 +43,13 @@ const recoverableErrors = [
   'Empty response'
 ];
 
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
+
+  return _.some(list, item => str.includes(item));
+}
+
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, body) => {
 
@@ -67,7 +74,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   const startTs = since ? moment(since).valueOf() : null;
 
-  const handle = function(err, trades) {
+  const handle = (err, trades) => {
     if (err) return callback(err);
 
     var parsedTrades = [];
@@ -140,7 +147,7 @@ Trader.prototype.getFee = function(callback) {
 };
 
 Trader.prototype.getTicker = function(callback) {
-  const fetch = (err, data) => {
+  const handle = (err, data) => {
     if (err) return callback(err);
 
     const result = data.result[this.pair];
@@ -157,21 +164,11 @@ Trader.prototype.getTicker = function(callback) {
 };
 
 Trader.prototype.roundAmount = function(amount) {
-  // Prevent "You incorrectly entered one of fields."
-  // because of more than 8 decimals.
-  // Specific precision by pair https://blog.kraken.com/post/1278/announcement-reducing-price-precision-round-2
+  return _.floor(amount, this.market.amountPrecision);
+};
 
-  let precision = 100000000;
-  const parent = this;
-  const market = Trader.getCapabilities().markets.find(function(market){ return market.pair[0] === parent.currency && market.pair[1] === parent.asset });
-
-  if(Number.isInteger(market.precision))
-    precision = Math.pow(10, market.precision);
-
-  amount *= precision;
-  amount = Math.floor(amount);
-  amount /= precision;
-  return amount;
+Trader.prototype.roundPrice = function(amount) {
+  return _.round(amount, this.market.pricePrecision);
 };
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
@@ -180,6 +177,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   const handle = (err, data) => {
     if(err) return callback(err);
     
+    console.log(data.result);
     const txid = data.result.txid[0];
 
     callback(undefined, txid);
@@ -214,6 +212,27 @@ Trader.prototype.getOrder = function(order, callback) {
     const amount = parseFloat( data.result[ order ].vol_exec );
     const date = moment.unix( data.result[ order ].closetm );
 
+    // TODO: figure out fees, kraken is reporting 0 fees:
+    // { 'OF6L2D-6LIKD-4OOHR7':
+    //   { refid: null,
+    //     userref: 0,
+    //     status: 'closed',
+    //     reason: null,
+    //     opentm: 1530694339.8116,
+    //     closetm: 1530694402.9572,
+    //     starttm: 0,
+    //     expiretm: 0,
+    //     descr: [Object],
+    //     vol: '0.00500000',
+    //     vol_exec: '0.00500000',
+    //     cost: '27.9',
+    //     fee: '0',
+    //     price: '5595.0',
+    //     stopprice: '0.00000',
+    //     limitprice: '0.00000',
+    //     misc: '',
+    //     oflags: 'fciq' } } }
+
     callback(undefined, {price, amount, date});
   };
 
@@ -224,12 +243,16 @@ Trader.prototype.getOrder = function(order, callback) {
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
-  const handle =(err, data) => {
+  const handle = (err, data) => {
     if(err) return callback(err);
 
     const result = data.result[order];
-    const stillThere = result.status === 'open' || result.status === 'pending';
-    callback(undefined, !stillThere);
+
+    callback(undefined, {
+      executed: result.vol === result.vol_exec,
+      open: result.status === 'open',
+      filledAmount: +result.vol_exec
+    });
   };
 
   const reqData = {txid: order};
@@ -240,6 +263,19 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order, callback) {
   const reqData = {txid: order};
+
+  const handle = (err, data) => {
+    if(err) {
+      if(err.message.includes('Unknown order')) {
+        console.log('[kraken] unable to cancel order, it did not exist anymore', order);
+        return callback(undefined, true);
+      }
+
+      return callback(err)
+    }
+
+    callback(undefined, false);
+  }
 
   const fetch = cb => this.kraken.api('CancelOrder', reqData, this.handleResponse('cancelOrder', cb));
   retry(null, fetch, handle);
