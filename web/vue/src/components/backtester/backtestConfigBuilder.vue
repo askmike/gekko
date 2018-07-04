@@ -1,10 +1,10 @@
-<template lang='jade'>
+<template lang='pug'>
   div
-    dataset-picker.my2(v-on:dataset='updateDataset')
+    dataset-picker.my2(v-on:dataset='updateDataset').contain
     .hr
-    strat-picker.my2(v-on:stratConfig='updateStrat')
+    strat-picker.my2(v-on:stratConfig='updateStrat').contain
     .hr
-    paper-trader(v-on:settings='updatePaperTrader')
+    paper-trader(v-on:settings='updatePaperTrader').contain
     .hr
 </template>
 
@@ -66,12 +66,24 @@ export default {
         {
           backtest: {
             daterange: this.range
+          },
+          backtestResultExporter: {
+            enabled: true,
+            writeToDisk: false,
+            data: {
+              stratUpdates: false,
+              roundtrips: true,
+              stratCandles: true,
+              stratCandleProps: ['open'],
+              trades: true
+            }
           }
         },
-        { performanceAnalyzer: this.performanceAnalyzer }
+        { performanceAnalyzer: this.performanceAnalyzer },
       );
 
       config.valid = this.validConfig(config);
+      config.backtestResultExporter.enabled = true;
 
       return config;
     }

@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   .contain.roundtrips
     h2 Roundtrips
     table(v-if='roundtrips.length')
@@ -36,7 +36,7 @@ export default {
   methods: {
     diff: n => moment.duration(n).humanize(),
     humanizeDuration: (n) => window.humanizeDuration(n),
-    fmt: mom => moment.utc(mom).format('YYYY-MM-DD HH:mm'),
+    fmt: mom => moment(mom).utc().format('YYYY-MM-DD HH:mm'),
     round: n => (+n).toFixed(3),
   },
 }

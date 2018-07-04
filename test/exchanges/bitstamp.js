@@ -29,6 +29,8 @@ var dirs = util.dirs();
 
 var TRADES = require('./data/bitstamp_trades.json');
 
+return; // TEMP
+
 var FakeExchange = function() {};
 FakeExchange.prototype = {
   transactions: function(since, handler, descending) {
@@ -44,7 +46,7 @@ spoofer = {
 }
 
 describe('exchanges/bitstamp', function() {
-  var Bitstamp = proxyquire(dirs.exchanges + 'bitstamp', spoofer);
+  var Bitstamp = proxyquire(dirs.gekko + 'exchange/wrappers/bitstamp', spoofer);
   var bs;
 
   it('should instantiate', function() {

@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
 .grd
   .px1
     h3 Paper trader

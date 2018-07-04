@@ -15,6 +15,8 @@ var dirs = util.dirs();
 var providerName = config.watch.exchange.toLowerCase();
 var providerPath = util.dirs().gekko + 'exchanges/' + providerName;
 
+return; // TEMP
+
 var mf;
 
 var spoofer = {};

@@ -1,9 +1,9 @@
-<template lang='jade'>
+<template lang='pug'>
 .grd.contain
   .grd-row
     .grd-row-col-3-6.mx1
       h3 Market
-      market-picker.contain(v-on:market='updateMarketConfig', :only-tradable='isTradebot')
+      market-picker(v-on:market='updateMarketConfig', :only-tradable='isTradebot')
     .grd-row-col-3-6.mx1
       type-picker(v-on:type='updateType')
   template(v-if='type !== "market watcher"')

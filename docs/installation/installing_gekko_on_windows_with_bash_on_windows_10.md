@@ -66,6 +66,8 @@ The easiest way to download Gekko is to use Git:
 git clone git://github.com/askmike/gekko.git
 cd gekko
 npm install --only=production
+cd exchange
+npm install --only=production
 ```
 
 ### Starting Gekko

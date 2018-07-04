@@ -8,7 +8,6 @@ module.exports = cb => {
 
       if(message.type === 'error') {
         cb(message.error);
-        console.error(message.error);
       }
 
       else

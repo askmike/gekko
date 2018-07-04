@@ -50,6 +50,15 @@ process.on('message', function(m) {
 });
 
 process.on('disconnect', function() {
-  console.log("disconnect");
+  console.log('disconnect');
   process.exit(-1);
 })
+
+process
+  .on('unhandledRejection', (message, p) => {
+    process.send({type: 'error', message: message});
+  })
+  .on('uncaughtException', err => {
+    process.send({type: 'error', error: err});
+    process.exit(1);
+  });

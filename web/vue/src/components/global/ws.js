@@ -9,9 +9,6 @@ var socket = null;
 export const bus = new Vue();
 
 bus.$on('gekko_update', data => console.log(data))
-bus.$on('gekko_error', data => {
-  alert('GEKKO ERROR: ' + data.error);
-})
 
 bus.$on('import_update', data => console.log(data))
 bus.$on('import_error', data => {
@@ -22,9 +19,8 @@ const info = {
   connected: false
 }
 
-
 export const connect = () => {
-  socket = new ReconnectingWebSocket(wsPath);
+  socket = new ReconnectingWebSocket(wsPath, null, { maxReconnectInterval: 4000 });
 
   setTimeout(() => {
     // in case we cannot connect
@@ -57,7 +53,8 @@ export const connect = () => {
     bus.$emit('WS_STATUS_CHANGE', info);
   }
   socket.onmessage = function(message) {
-    let payload = JSON.parse(message.data);
+    const payload = JSON.parse(message.data);
+    // console.log('ws message:', payload);
     bus.$emit(payload.type, payload);
   };
 }

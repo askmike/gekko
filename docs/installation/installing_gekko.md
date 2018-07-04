@@ -12,7 +12,7 @@ To get Gekko running you need to do the following:
 
 - install nodejs
 - download Gekko
-- install Gekko's dependencies
+- install Gekko & Gekko Broker dependencies
 
 ## Installing nodejs
 
@@ -33,6 +33,11 @@ Alternatively you can manually download the latest stable version of Gekko on th
 
 Once you have Gekko downloaded you need to install the dependencies, open your terminal and navigate to the gekko folder and run:
 
+    npm install --only=production
+
+We also need to install Gekko Broker's dependencies, run:
+
+    cd exchange
     npm install --only=production
 
 ## Starting Gekko

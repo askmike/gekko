@@ -1,6 +1,6 @@
 // http://tobiasahlin.com/spinkit/
 
-<template lang='jade'>
+<template lang='pug'>
 .spinner
   .rect1
   .rect2

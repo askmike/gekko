@@ -82,6 +82,7 @@ const handleCandles = (err, data) => {
     DONE = true;
 
   batcher.write(data);
+  batcher.flush();
 
   if(DONE) {
     reader.close();

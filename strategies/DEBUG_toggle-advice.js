@@ -1,6 +1,6 @@
 var settings = {
   wait: 0,
-  each: 6
+  each: 10
 };
 
 // -------
@@ -14,17 +14,20 @@ var method = {
   init: _.noop,
   update: _.noop,
   log: _.noop,
-  check: function() {
+  check: function(candle) {
 
     if(settings.wait > i)
       return;
 
     log.info('iteration:', i);
     
-    if(i % settings.each === 0)
+    if(i % settings.each === 0) {
+      log.debug('trigger SHORT');
       this.advice('short');
-    else if(i % settings.each === settings.each / 2)
+    } else if(i % settings.each === settings.each / 2) {
+      log.debug('trigger LONG');
       this.advice('long');
+    }
 
     // if(i % 2 === 0)
     //   this.advice('long');

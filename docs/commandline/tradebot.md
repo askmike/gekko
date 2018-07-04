@@ -16,7 +16,10 @@ First, set up Gekko for commandline usage (see [this document](./about_the_comma
 - `candleWriter` - (optional) also store market data to disk.
 - `tradingAdvisor` - configure the strategy and candle properties.
 - `trader` - configure Gekko access to your exchange account.
+- `performanceAnalyzer` - enable.
 
-Turn off the paperTrader (to not get conflicting profit reports).
+Turn off the paperTrader (there can only be 1 trade plugin active per instance).
 
-Once done, run Gekko in live mode.
+Once done, run Gekko like so:
+
+    node gekko --config your-config-file.js

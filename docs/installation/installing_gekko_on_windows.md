@@ -42,6 +42,11 @@ Install Gekko's dependencies:
 
     npm install --only=production
 
+Install Gekko Broker's dependencies:
+
+    cd exchange
+    npm install --only=production
+
 ### Install Tulip Indicators
 
 If you are using Windows you will need to install python and the VC++ 2015 build tool, the easiest way to do this is through node as an administrator:

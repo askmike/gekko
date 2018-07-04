@@ -11,7 +11,7 @@ Communicaton between those two components is handled by Node.JS' [Stream API](ht
 
 ## A Market
 
-All markets in Gekko eventually output `candle` data. Where these candles come from and how old they are does not matter to the GekkoStream they get piped into. On default Gekko looks for markets in the [`core/markets/` directory](https://github.com/askmike/gekko/tree/stable/core/markets) (but changing that is [not too hard](https://github.com/askmike/gekko/blob/72a858339afb5a856179c716ec4ea13070a6c87c/gekko.js#L48-L49)). The top orange block in the picture is a BudFox market (the default).
+All markets in Gekko eventually output `candle` data. Where these candles come from and how old they are does not matter to the GekkoStream they get piped into. On default Gekko looks for markets in the [`core/markets/` directory](https://github.com/askmike/gekko/tree/stable/core/markets). The top orange block in the picture is a BudFox market (the default semi-realtime market that gets live data from exchanges).
 
 Example Markets that come included with Gekko are:
 
@@ -23,7 +23,7 @@ Example Markets that come included with Gekko are:
 
 A GekkoStream is nothing more than a collection of [plugins](../commandline/plugins.md). Plugins are simple modules that can subscribe to events, and do something based on event data. The most basic event every GekkoStream has is the "candle" event, this event comes from the market.
 
-However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [trading method](https://github.com/askmike/gekko/blob/stable/docs/Trading_methods.md) that will be fed candle data. As soon as the trading method suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `paperTrader` is a plugin that simulates trading using these advices, the `trader` is a plugin that creates real market orders based on these advices. You can decide to only turn the `paperTrader` on or to turn the `trader` on (you now have a live trading bot).
+However **plugins are allowed to broadcast their own events, which other plugins can subscribe to**. An example of this is the `tradingAdvisor` plugin. This plugin will implement a [strategy](../strategies/introduction.md) that will be fed candle data. As soon as the strategy suggests to take a certain position in the market ("I detect an uptrend, I advice to go **long**") it will broadcast an `advice` event. The `paperTrader` is a plugin that simulates trading using these advices, the `trader` is a plugin that creates real market orders based on these advices. You can decide to only turn the `paperTrader` on or to turn the `trader` on (you now have a live trading bot).
 
 When you run a backtest using Gekko the following things happen:
 
@@ -35,7 +35,7 @@ When you run a backtest using Gekko the following things happen:
 
 ## Plugins & Adapters
 
-Those two core components describe the majority of Gekko's flow. A lot "core functionality" like saving candles to disk are simply plugins that push all candles to a database adapter.
+Those two core components describe the majority of Gekko's flow. A lot "core functionality" like saving candles to disk are simply plugins that push all candles to a database.
 
 ## Seperated architecture
 

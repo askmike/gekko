@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
 div.contain
   h2 Config
   .hr

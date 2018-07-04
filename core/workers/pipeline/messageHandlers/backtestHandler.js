@@ -1,41 +1,25 @@
-// listen to all messages and internally queue
-// all candles and trades, when done report them
-// all back at once
+// Relay the backtest message it when it comes in.
 
 module.exports = done => {
-  var trades = [];
-  var roundtrips = []
-  var candles = [];
-  var report = false;
+  let backtest;
 
   return {
     message: message => {
+      if(message.type === 'error') {
+        done(message.error);
+      }
 
-      if(message.type === 'candle')
-        candles.push(message.candle);
-
-      else if(message.type === 'trade')
-        trades.push(message.trade);
-
-      else if(message.type === 'roundtrip')
-        roundtrips.push(message.roundtrip);
-
-      else if(message.type === 'report')
-        report = message.report;
-
-      else if(message.log)
-        console.log(message.log);
+      if(message.backtest) {
+        done(null, message.backtest);
+      }
     },
     exit: status => {
-      if(status !== 0)
-        done('Child process has died.');
-      else
-        done(null, {
-          trades: trades,
-          candles: candles,
-          report: report,
-          roundtrips: roundtrips
-        });
+      if(status !== 0) {
+        if(backtest)
+          console.error('Child process died after finishing backtest');
+        else
+          done('Child process has died.');
+      }
     }
   }
 }

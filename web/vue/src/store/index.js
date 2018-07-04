@@ -3,8 +3,7 @@ import Vuex from 'vuex'
 import _ from 'lodash'
 
 import * as importMutations from './modules/imports/mutations'
-import * as watchMutations from './modules/watchers/mutations'
-import * as stratrunnerMutations from './modules/stratrunners/mutations'
+import * as gekkoMutations from './modules/gekkos/mutations'
 import * as notificationMutations from './modules/notifications/mutations'
 import * as configMutations from './modules/config/mutations'
 
@@ -15,8 +14,7 @@ const debug = process.env.NODE_ENV !== 'production'
 let mutations = {};
 
 _.merge(mutations, importMutations);
-_.merge(mutations, watchMutations);
-_.merge(mutations, stratrunnerMutations);
+_.merge(mutations, gekkoMutations);
 _.merge(mutations, notificationMutations);
 _.merge(mutations, configMutations);
 
@@ -26,8 +24,8 @@ export default new Vuex.Store({
       connected: true, // assume we will connect
     },
     imports: [],
-    stratrunners: [],
-    watchers: [],
+    gekkos: {},
+    archivedGekkos: {},
     connection: {
       disconnected: false,
       reconnected: false

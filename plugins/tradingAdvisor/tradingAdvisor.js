@@ -36,8 +36,6 @@ var Actor = function(done) {
     done();
 }
 
-util.makeEventEmitter(Actor);
-
 Actor.prototype.setupTradingMethod = function() {
 
   if(!fs.existsSync(dirs.methods + this.methodName + '.js'))
@@ -61,25 +59,44 @@ Actor.prototype.setupTradingMethod = function() {
 
   this.method = new Consultant(tradingSettings);
   this.method
-    .on('advice', this.relayAdvice);
+    .on('advice', this.relayAdvice)
+    .on(
+      'stratWarmupCompleted',
+      e => this.deferredEmit('stratWarmupCompleted', e)
+    )
+    .on(
+      'stratUpdate',
+      e => this.deferredEmit('stratUpdate', e)
+    )
 
   this.method
     .on('trade', this.processTrade);
 
   this.batcher
-    .on('candle', this.processCustomCandle);
+    .on('candle', _candle => {
+      const { id, ...candle } = _candle;
+      this.deferredEmit('stratCandle', candle);
+      this.emitStratCandle(candle);
+    });
 }
 
 // HANDLERS
 // process the 1m candles
 Actor.prototype.processCandle = function(candle, done) {
-  this.batcher.write([candle]);
-  done();
+  this.candle = candle;
+  const completedBatch = this.batcher.write([candle]);
+  if(completedBatch) {
+    this.next = done;
+  } else {
+    done();
+    this.next = _.noop;
+  }
+  this.batcher.flush();
 }
 
 // propogate a custom sized candle to the trading method
-Actor.prototype.processCustomCandle = function(candle) {
-  this.method.tick(candle);
+Actor.prototype.emitStratCandle = function(candle) {
+  this.method.tick(candle, this.next);
 }
 
 Actor.prototype.processTrade = function(trade) {
@@ -93,7 +110,8 @@ Actor.prototype.finish = function(done) {
 
 // EMITTERS
 Actor.prototype.relayAdvice = function(advice) {
-  this.emit('advice', advice);
+  advice.date = this.candle.start.clone().add(1, 'minute');
+  this.deferredEmit('advice', advice);
 }
 
 

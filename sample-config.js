@@ -215,12 +215,13 @@ config.trader = {
   secret: '',
   username: '', // your username, only required for specific exchanges.
   passphrase: '', // GDAX, requires a passphrase.
-  orderUpdateDelay: 1, // Number of minutes to adjust unfilled order prices
 }
 
-config.adviceLogger = {
+config.eventLogger = {
   enabled: false,
-  muteSoft: true // disable advice printout if it's soft
+  // optionally pass a whitelist of events to log, if not past
+  // the eventLogger will log _all_ events.
+  // whitelist: ['portfolioChange', 'portfolioValueChange']
 }
 
 config.pushover = {
@@ -381,6 +382,17 @@ config.candleWriter = {
 config.adviceWriter = {
   enabled: false,
   muteSoft: true,
+}
+
+config.backtestResultExporter = {
+  enabled: false,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

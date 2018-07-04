@@ -1,4 +1,4 @@
-var UIconfig = require('../vue/UIconfig');
+var UIconfig = require('../vue/public/UIconfig');
 
 var config = {};
 
@@ -19,13 +19,20 @@ config.tradingAdvisor = {
 config.candleWriter = {
   enabled: false
 }
-config.adviceWriter = {
+
+config.backtestResultExporter = {
   enabled: false,
-  muteSoft: true,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    roundtrips: true,
+    stratCandles: true,
+    trades: true
+  }
 }
 
-config.trader = {
-  orderUpdateDelay: 1 // Number of minutes to adjust unfilled order prices
+config.childToParent = {
+  enabled: false,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

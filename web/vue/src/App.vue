@@ -14,7 +14,7 @@ export default {
 }
 </script>
 
-<template lang='jade'>
+<template lang='pug'>
   #app
     top
     .fill
@@ -54,6 +54,12 @@ input {
   margin-bottom: 2rem;
   height: 10px;
   background-color: rgba(250,250,250,.99);
+}
+
+.contain {
+  width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .btn--primary {

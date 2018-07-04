@@ -1,4 +1,3 @@
-var Poloniex = require("poloniex.js");
 var util = require('../../core/util.js');
 var _ = require('lodash');
 var moment = require('moment');

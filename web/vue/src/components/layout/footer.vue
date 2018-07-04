@@ -1,4 +1,4 @@
-<template lang='jade'>
+<template lang='pug'>
   footer.p2.bg--off-white
     .contain
       p
