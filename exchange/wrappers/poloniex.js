@@ -162,7 +162,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
 }
 
 Trader.prototype.findLastOrder = function(since, side, callback) {
-  this.getOpenOrders((err, result) => {
+  const handle = (err, result) => {
     if(err) {
       return callback(err);
     }
@@ -182,7 +182,10 @@ Trader.prototype.findLastOrder = function(since, side, callback) {
     }
 
     callback(undefined, order);
-  });
+  };
+
+  const fetch = next => this.poloniex.getOpenOrders(this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.getOpenOrders = function(callback) {
