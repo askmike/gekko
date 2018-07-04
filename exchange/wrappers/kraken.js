@@ -58,9 +58,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
     }
 
     if(error) {
-      console.log('error!', error);
       if(includes(error.message, recoverableErrors)) {
-        console.log('is recoverable!');
         error.notFatal = true;
       }
 
