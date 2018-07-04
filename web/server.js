@@ -82,7 +82,7 @@ router.post('/api/getCandles', require(ROUTE('getCandles')));
 
 app
   .use(cors())
-  .use(serve(WEBROOT + 'vue'))
+  .use(serve(WEBROOT + 'vue/dist'))
   .use(bodyParser())
   .use(require('koa-logger')())
   .use(router.routes())

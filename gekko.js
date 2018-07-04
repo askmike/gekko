@@ -39,14 +39,7 @@ console.log('\tI\'m gonna make you rich, Bud Fox.', '\n\n');
 
 const dirs = util.dirs();
 
-if(util.launchUI()){
-  const message = `
-  Unfortunately the 0.6 pre release does not include a working UI yet. See this link for more details and the current status:
-
-  https://forum.gekko.wizb.it/thread-57279.html
-  `;
-
-  throw message;
+if(util.launchUI()) {
   return require(util.dirs().web + 'server');
 }
 
