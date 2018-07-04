@@ -1,6 +1,6 @@
 # Gekko Broker
 
-Order execution library for bitcoin and crypto exchanges. This library is Gekko's execution engine for all live orders (simulated orders go through the paper trader, which is a separate module). This library is intended for developers of trading systems in need for advanced order types on multiple exchanges over a unified API.
+Order execution library for bitcoin and crypto exchanges. This library is Gekko's execution engine for all live orders (simulated orders do not through Gekko Broker, they go through the paper trader). This library is intended for developers of trading systems in need for advanced order types on multiple exchanges over a unified API.
 
 ## Introduction
 
@@ -10,7 +10,7 @@ This library allows you to:
 
 - Get basic market data
   - ticker (BBO)
-  - orderbook (TODO)
+  - ~orderbook~ (TODO)
   - historical trades
 - Get portfolio data
 - Do an (advanced) order:
@@ -30,7 +30,7 @@ This library allows you to:
 
 ## Status
 
-Early WIP. All communication is via the REST APIs of exhanges. Not all exchanges are supported.
+Early WIP. All communication is via the REST APIs of exchanges. Not all exchanges are supported.
 
 Currently supported exchanges:
 
@@ -38,20 +38,21 @@ Currently supported exchanges:
 - GDAX
 - Poloniex
 - Coinfalcon
+- Kraken
 
 ## Order types
 
 This library aims to offer advanced order types, even on exchanges that do not natively support them by tracking the market and supplimenting native order support on specific exchanges.
 
-WIP:
+Working:
 
 - Base orders
-  - Limit Order
   - [Sticky Order](./sticky_order.md)
 
 TODO:
 
 - Base orders:
+  - Limit Order
   - Market Order
 - Triggers:
   - Stop

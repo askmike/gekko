@@ -12,7 +12,7 @@ The current API documentation is currently located [here](../extending/add_an_ex
 
 ## Wrapper API Changelog
 
-### Gekko 0.5 to Gekko Broker 0.6
+### Gekko 0.5.x to Gekko (Broker) 0.6.0
 
 NOTE: this API design might still have minor changes leading up to the release of Gekko 0.6. See [this thread](https://forum.gekko.wizb.it/thread-57279-post-59207.html) for more information.
 
