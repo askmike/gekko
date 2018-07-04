@@ -62,6 +62,11 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         error.notFatal = true;
       }
 
+      if(includes(error.message, 'Rate limit exceeded')) {
+        error.notFatal = true;
+        error.backoffDelay = 1000;
+      }
+
       return callback(error);
     }
 
