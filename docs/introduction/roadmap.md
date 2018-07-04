@@ -6,16 +6,7 @@ This is a small selection of things currently on the roadmap:
 
 ## Current TODO
 
-- [UI] Improve management and display of live gekkos ([#911](https://github.com/askmike/gekko/issues/911) - [askmike](https://github.com/askmike))
-- Simplify config ([#956](https://github.com/askmike/gekko/issues/956) - [cassvail](https://github.com/cassvail))
-- fix BTC Markets exchange ([#936](https://github.com/askmike/gekko/pull/936) - [anotherkabab](https://github.com/anotherkabab))
-
-## Major active discussions
-
-- [UI] Draw indicators results in the UI ([#793](https://github.com/askmike/gekko/pull/793) - [askmike](https://github.com/askmike))
-- Store roundtrips in CSV ([#978](https://github.com/askmike/gekko/issues/978))
-- Integrating Machine Learning AI into to Gekko ([#789](https://github.com/askmike/gekko/issues/789))
-
------
-
-Note that besides this list there are a big number of smaller issues and bugfixes happening constantly. See the [issue tracker](https://github.com/askmike/gekko/issues) and [the forum](https://gekko.forum.wizb.it) for more details.
+- Improve stability of new event and backtest engine
+- Port the old supported exchanges to Gekko Broker
+- new UI, see [here](https://forum.gekko.wizb.it/thread-1429-post-58996.html)
+- advanced orders from your strategy (Take Profit and Stop Loss)
