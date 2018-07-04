@@ -62,7 +62,7 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         error.notFatal = true;
       }
 
-      if(includes(error.message, 'Rate limit exceeded')) {
+      if(includes(error.message, ['Rate limit exceeded'])) {
         error.notFatal = true;
         error.backoffDelay = 1000;
       }
@@ -179,8 +179,7 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
   const handle = (err, data) => {
     if(err) return callback(err);
-    
-    console.log(data.result);
+
     const txid = data.result.txid[0];
 
     callback(undefined, txid);
