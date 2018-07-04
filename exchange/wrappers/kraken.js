@@ -1,4 +1,4 @@
-const Kraken = require('kraken-api-es5');
+const Kraken = require('kraken-api');
 const moment = require('moment');
 const _ = require('lodash');
 
