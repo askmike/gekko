@@ -103,11 +103,11 @@ let assetPairsPromise = request({
 
 Promise.all([assetPromise, assetPairsPromise])
   .then(results => {
-    let assets = _.unique(_.map(results[1], market => {
+    let assets = _.uniq(_.map(results[1], market => {
       return results[0][market.base].altname;
     }));
 
-    let currencies = _.unique(_.map(results[1], market => {
+    let currencies = _.uniq(_.map(results[1], market => {
       return results[0][market.quote].altname;
     }));
 
@@ -124,14 +124,15 @@ Promise.all([assetPromise, assetPairsPromise])
           amount: getMinTradeSize(market.base),
           unit: 'asset',
         },
-        precision: market.pair_decimals
+        pricePrecision: market.pair_decimals,
+        amountPrecision: market.lot_decimals
       };
     });
 
     return { assets: assets, currencies: currencies, markets: markets };
   })
   .then(markets => {
-    fs.writeFileSync('../../exchanges/kraken-markets.json', JSON.stringify(markets, null, 2));
+    fs.writeFileSync('../../wrappers/kraken-markets.json', JSON.stringify(markets, null, 2));
     console.log(`Done writing Kraken market data`);
   })
   .catch(err => {
