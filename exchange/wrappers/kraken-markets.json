@@ -651,7 +651,7 @@
       ],
       "book": "XXBTZCAD",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "0.002",
         "unit": "asset"
       },
       "pricePrecision": 1,
@@ -668,7 +668,7 @@
       ],
       "book": "XXBTZEUR",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "0.002",
         "unit": "asset"
       },
       "pricePrecision": 1,
@@ -685,7 +685,7 @@
       ],
       "book": "XXBTZGBP",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "0.002",
         "unit": "asset"
       },
       "pricePrecision": 1,
@@ -702,7 +702,7 @@
       ],
       "book": "XXBTZJPY",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "0.002",
         "unit": "asset"
       },
       "pricePrecision": 0,
@@ -719,7 +719,7 @@
       ],
       "book": "XXBTZUSD",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "0.002",
         "unit": "asset"
       },
       "pricePrecision": 1,
