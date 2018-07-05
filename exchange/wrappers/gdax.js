@@ -267,7 +267,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   var lastScan = 0;
 
-  var process = function(err, data) {
+  const handle = function(err, data) {
     if (err) return callback(err);
 
     var result = _.map(data, function(trade) {
@@ -379,13 +379,13 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     }
   }
 
-  let handler = cb =>
+  const fetch = cb =>
     this.gdax_public.getProductTrades(
       this.pair,
       { limit: BATCH_SIZE },
       this.processResponse('getTrades', cb)
     );
-  retry(retryForever, _.bind(handler, this), _.bind(process, this));
+  retry(null, fetch, handle);
 };
 
 Trader.prototype.getMaxDecimalsNumber = function(number, decimalLimit = 8) {
