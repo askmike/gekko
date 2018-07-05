@@ -374,8 +374,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         _.bind(process, this)
       );
     } else {
-      console.log('Scanning back in the history needed...');
-      console.log(moment.utc(since).format());
+      console.log('Scanning back in the history needed...', since);
     }
   }
 
