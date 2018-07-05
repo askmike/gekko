@@ -28,7 +28,7 @@ Gekko.prototype = Object.create(Writable.prototype, {
   constructor: { value: Gekko }
 });
 
-if(config.debug) {
+if(config.debug && mode !== 'importer') {
   // decorate with more debug information
   Gekko.prototype._write = function(chunk, encoding, _done) {
 
