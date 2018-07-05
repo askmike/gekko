@@ -289,7 +289,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         if (moment.utc(last.time) < moment.utc(since)) {
           this.scanbackTid = last.trade_id;
         } else {
-          log.debug('Scanning backwards...' + last.time);
+          console.log('Scanning backwards...' + last.time);
           setTimeout(() => {
             let handler = cb =>
               this.gdax_public.getProductTrades(
@@ -315,7 +315,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
       if (this.scanbackTid) {
         // if scanbackTid is set we need to move forward again
-        log.debug(
+        console.log(
           'Backwards: ' +
             last.time +
             ' (' +
@@ -348,7 +348,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           this.scanback = false;
           this.scanbackTid = 0;
 
-          log.debug('Scan finished: data found:' + this.scanbackResults.length);
+          console.log('Scan finished: data found:' + this.scanbackResults.length);
           callback(null, this.scanbackResults);
 
           this.scanbackResults = [];
@@ -374,8 +374,8 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         _.bind(process, this)
       );
     } else {
-      log.debug('Scanning back in the history needed...');
-      log.debug(moment.utc(since).format());
+      console.log('Scanning back in the history needed...');
+      console.log(moment.utc(since).format());
     }
   }
 
