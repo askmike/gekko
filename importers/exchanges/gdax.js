@@ -33,7 +33,7 @@ Fetcher.prototype.getTrades = function(sinceTid, callback) {
     callback(null, result.reverse());
   };
 
-  const fetch = cb => this.gdax_public.getProductTrades({ after: sinceTid, limit: BATCH_SIZE }, this.processResponse('getTrades', cb));
+  const fetch = cb => this.gdax_public.getProductTrades(this.pair, { after: sinceTid, limit: BATCH_SIZE }, this.processResponse('getTrades', cb));
   retry(null, fetch, handle);
 };
 
@@ -64,12 +64,12 @@ Fetcher.prototype.findFirstTrade = function(sinceTs, callback) {
     }
 
     setTimeout(() => {
-      const fetch = cb => this.gdax_public.getProductTrades({ after: nextScanId, limit: 1 }, this.processResponse('getTrades', cb));
+      const fetch = cb => this.gdax_public.getProductTrades(this.pair, { after: nextScanId, limit: 1 }, this.processResponse('getTrades', cb));
       retry(null, fetch, handle);
     }, QUERY_DELAY);
   }
 
-  const fetch = cb => this.gdax_public.getProductTrades({ limit: 1 }, this.processResponse('getTrades', cb));
+  const fetch = cb => this.gdax_public.getProductTrades(this.pair, { limit: 1 }, this.processResponse('getTrades', cb));
   retry(null, fetch, handle);
 }
 
