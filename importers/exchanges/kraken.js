@@ -4,7 +4,6 @@ var moment = require('moment');
 
 var util = require('../../core/util.js');
 var log = require('../../core/log');
-var Errors = require('../../core/error.js')
 
 var config = util.getConfig();
 
