@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const pg = require('pg');
-//const pg = new Pool();
-//var pg = require('pg');
 
 var util = require('../../core/util.js');
 var config = util.getConfig();

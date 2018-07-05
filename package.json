@@ -61,8 +61,6 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.0.0",
-    "mongojs": "^2.6.0",
-    "pg": "^7.4.3",
     "proxyquire": "^1.7.10",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
