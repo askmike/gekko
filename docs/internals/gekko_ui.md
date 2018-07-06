@@ -3,14 +3,7 @@
 When you launch Gekko UI, you start a basic nodejs webserver with 3 components:
 
 - It will serve frontend (HTML/CSS/JS) files for frontend written as a [vuejs app](https://vuejs.org/) (v2.5.16).
-- It will will handle API requests as [koa](http://koajs.com/) (v1) routes.
-- It will start a websocket server used to broadcast messages in realtime (used for long lived processes Importing and Live Gekkos for example).
-
-**Warning: The UI and the APIs are anything but stable.**
-
-## Gekko UI configurables
-
-By default Gekko UI is setup up so it runs locally on your own machine, if you want to run Gekko anywhere else please configure the GekkoUI config [todo: link] to your liking.
+- It will will handle API requests as [koa](http://koajs.com/) (v1) routes, it will also start a websocket server used to broadcast messages in realtime (used for long lived processes Importing and Live Gekkos for example). The server API documentation can be found [here](./server_api.md).
 
 ## Gekko UI Frontend
 
@@ -48,11 +41,16 @@ After this you can launch a hot reload version of the app which will automatical
     cd vue
     npm run serve
 
-Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/build.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node server` commmand (on default http://localhost:3000/api) 
+Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/js/app.xxx.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node server` commmand (on default http://localhost:3000/api).
 
-### Recompiling the Gekko UI frontend
 
-When you are done developing and adding your contributions by recompiling the app:
+If you have configured Gekko to run on non standards ports (using the UIconfig), you can have your config applied to the development environment by copying `gekko/web/vue/dist/UIconfig.js` to `gekko/web/vue/public/UIconfig.js`.
+
+### Compiling the Gekko UI frontend
+
+*Note: as part of the compilation process Gekko will reset the UIconfig in both `gekko/web/vue/dist/UIconfig.js` and `gekko/web/vue/public/UIconfig.js`. Only compile if you are ready to lose your personal changes.*
+
+When you are done developing you can compile the app using these instructions:
 
     # path to vue app
     cd gekko/web/vue
