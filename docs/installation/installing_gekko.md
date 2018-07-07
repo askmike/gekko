@@ -1,5 +1,7 @@
 # Installing Gekko
 
+*NOTE: unfortunately installing and managing Gekko is hard. You will need to touch the commandline and install a few developer tools. I am creating an official Gekko service called [Gekko Plus](https://gekkoplus.com/) that will NOT require any installation.*
+
 - *Windows user? Please see the doc [installing Gekko on windows](./installing_gekko_on_windows.md) instead.*
 - *Docker user? You can run Gekko in a docker container, see [installing Gekko using Docker](./installing_gekko_using_docker.md) instead.*
 - *Server user? In order to run Gekko headless, see [configuring Gekko on a server](./configuring_gekko_on_a_server.md) instead.*
@@ -7,6 +9,7 @@
 Here is a video of me explaining how to install Gekko the easiest way possible:
 
 [![screen shot 2017-04-20 at 00 03 45](https://cloud.githubusercontent.com/assets/969743/25205894/e7f4ea64-255c-11e7-891b-28c080a9fbf2.png)](https://www.youtube.com/watch?v=R68IwVujju8)
+
 
 To get Gekko running you need to do the following:
 

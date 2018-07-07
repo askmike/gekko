@@ -1,4 +1,6 @@
-# Installing Gekko on a server
+# Configuring Gekko on a server
+
+*NOTE: unfortunately configuring Gekko to run on a server is hard. Unless you are running in a completely trusted network (home network) you WILL need to get an SSL certificate, upstream Gekko through a webserver, etc. I am creating an official Gekko service called [Gekko Plus](https://gekkoplus.com/) that will NOT require any of this stuff.*
 
 Gekko runs great headless (on a server, raspberry PI) but the default configuration assumes that you will be using a browser from the same machine to access the interface.
 
