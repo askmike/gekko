@@ -10,6 +10,7 @@
 
 - enable Bash on Windows 10
 - install nodejs
+- install git
 - download and install Gekko and its dependencies
 - edit the handle.js file
 - install the correct version of TA-lib
@@ -79,3 +80,7 @@ Your browser should automatically open with the UI. If it doesn't, manually brow
 ### Stopping Gekko
 
 In bash hold `ctrl` + `c`.
+
+### Updating Gekko
+
+See the [updating Gekko](./updating_gekko.md) doc.

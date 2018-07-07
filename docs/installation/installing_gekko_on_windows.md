@@ -66,3 +66,7 @@ Your browser should automatically open with the UI. If it doesn't, manually brow
 ### Stopping Gekko
 
 In the command line hold `ctrl` + `c`.
+
+### Updating Gekko
+
+See the [updating Gekko](./updating_gekko.md) doc.

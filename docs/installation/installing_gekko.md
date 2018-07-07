@@ -2,7 +2,7 @@
 
 - *Windows user? Please see the doc [installing Gekko on windows](./installing_gekko_on_windows.md) instead.*
 - *Docker user? You can run Gekko in a docker container, see [installing Gekko using Docker](./installing_gekko_using_docker.md) instead.*
-- *Server user? In order to run Gekko headless, see [installing Gekko on a server](./installing_gekko_on_a_server.md) instead.*
+- *Server user? In order to run Gekko headless, see [configuring Gekko on a server](./configuring_gekko_on_a_server.md) instead.*
 
 Here is a video of me explaining how to install Gekko the easiest way possible:
 
@@ -11,12 +11,17 @@ Here is a video of me explaining how to install Gekko the easiest way possible:
 To get Gekko running you need to do the following:
 
 - install nodejs
+- install git
 - download Gekko
 - install Gekko & Gekko Broker dependencies
 
 ## Installing nodejs
 
 Gekko requires [nodejs](https://nodejs.org/en/) to be installed. Go ahead and install this if it's not already (Gekko requires at least version 6). We advice to download the current LTS.
+
+## Installing git
+
+As part of Gekko's installation process git is used, see [this guide](https://www.linode.com/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/) for installation instructions. If you do not already have git on your system.
 
 ## Downloading Gekko
 
@@ -48,9 +53,4 @@ After all the above you can start Gekko by running the following in your termina
 
 ## Updating Gekko
 
-If you installed Gekko via git, simply run:
-
-    git pull
-    npm install --only=production
-
-If you downloaded the zip you can just download the new version. If you want to move historical data over (for backtesting purposes), copy the contents of the `history` folder found inside the gekko folder. If you have written your own strategies, don't forget to move them over as well.
+See the [updating Gekko](./updating_gekko) doc.
