@@ -36,7 +36,7 @@ export default {
   methods: {
     diff: n => moment.duration(n).humanize(),
     humanizeDuration: (n) => window.humanizeDuration(n),
-    fmt: mom => moment(mom).utc().format('YYYY-MM-DD HH:mm'),
+    fmt: mom => moment.unix(mom).utc().format('YYYY-MM-DD HH:mm'),
     round: n => (+n).toFixed(3),
   },
 }
