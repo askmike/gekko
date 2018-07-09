@@ -67,6 +67,8 @@ Actor.prototype.setupTradingMethod = function() {
     .on(
       'stratUpdate',
       e => this.deferredEmit('stratUpdate', e)
+    ).on('stratNotification',
+      e => this.deferredEmit('stratNotification', e)
     )
 
   this.method

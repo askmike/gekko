@@ -14,6 +14,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [stratWarmupCompleted](#stratWarmupCompleted-event): When the strategy is done warming up.
 - [advice](#advice-event): Every time the trading strategy is fed a new candle.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed a new strat candle.
+- [stratNotification](#stratNotification-event): Every time the strategy emit new strategy notification.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
 - [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
@@ -97,6 +98,18 @@ and will start signaling advice.
           mymacd: [number, result of running this indicator over current candle]
         }
       }
+
+### stratNotification event
+
+- What: An object describing new notification from your strategy
+- When: when the strategy emit using `this.notify()` function
+- Subscribe: You can subscribe to this event by registering the `stratNotification` method.
+- Example:
+      {
+        date: [moment object of the start time of the candle],
+        content: [String content notification in strategy]
+      }
+
 
 ### advice event
 

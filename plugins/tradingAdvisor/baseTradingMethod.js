@@ -228,6 +228,13 @@ Base.prototype.advice = function(newPosition) {
   });
 }
 
+Base.prototype.notify = function(content) {
+  this.emit('stratNotification', {
+    content,
+    date: new Date(),
+  })
+}
+
 Base.prototype.finish = function(done) {
   // Because the trading method might be async we need
   // to be sure we only stop after all candles are
