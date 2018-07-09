@@ -8,7 +8,10 @@ const retry = require('../exchangeUtils').retry;
 const Binance = require('binance');
 
 var Trader = function(config) {
-  _.bindAll(this);
+  _.bindAll(this, [
+    'roundAmount',
+    'roundPrice'
+  ]);
 
   if (_.isObject(config)) {
     this.key = config.key;

@@ -194,6 +194,8 @@ Trader.prototype.processAdvice = function(advice) {
 Trader.prototype.createOrder = function(side, amount, advice, id) {
   const type = 'sticky';
 
+  log.debug('Creating order to', side, amount, this.brokerConfig.asset);
+
   this.deferredEmit('tradeInitiated', {
     id,
     adviceId: advice.id,

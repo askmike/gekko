@@ -64,39 +64,42 @@ class StickyOrder extends BaseOrder {
   }
 
   calculatePrice(ticker) {
+
+    const r = this.api.roundPrice;
+
     if(this.side === 'buy') {
       if(ticker.bid >= this.limit) {
-        return this.limit;
+        return r(this.limit);
       }
 
       if(!this.outbid) {
-        return ticker.bid;
+        return r(ticker.bid);
       }
 
       const outbidPrice = this.api.outbidPrice(ticker.bid, true);
 
       if(outbidPrice <= this.limit && outbidPrice < ticker.ask) {
-        return outbidPrice;
+        return r(outbidPrice);
       } else {
-        return this.limit;
+        return r(this.limit);
       }
 
     } else if(this.side === 'sell') {
 
       if(ticker.ask <= this.limit) {
-        return this.limit;
+        return r(this.limit);
       }
 
       if(!this.outbid) {
-        return ticker.ask;
+        return r(ticker.ask);
       }
 
       const outbidPrice = this.api.outbidPrice(ticker.ask, false);
 
       if(outbidPrice >= this.limit && outbidPrice > ticker.bid) {
-        return outbidPrice;
+        return r(outbidPrice);
       } else {
-        return this.limit;
+        return r(this.limit);
       }
     }
   }
