@@ -43,7 +43,7 @@ Once you have Gekko downloaded you need to install the dependencies, open your t
 	
 ## Configure your Pi as a headless server
 
-    cd web/vue
+    cd web/vue/dist
     nano UIconfig.js
 
 Set headless to true
