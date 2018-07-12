@@ -65,6 +65,11 @@ var subscriptions = [
     handler: 'processTradeCancelled'
   },
   {
+    emitter: 'trader',
+    event: 'tradeErrored',
+    handler: 'processTradeErrored'
+  },
+  {
     emitter: ['trader', 'paperTrader'],
     event: 'portfolioChange',
     handler: 'processPortfolioChange'

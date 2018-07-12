@@ -19,7 +19,8 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
 - [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper 
 trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
-- [tradeCancelled](#tradeCancelled-event): Every time the live trader was unable to trade.
+- [tradeErrored](#tradeErrored-event): Every time the live trader was unable to execute an initialized.
+- [tradeCancelled](#tradeCancelled-event): Every time the live trader cancelled a not yet executed trade.
 - [portfolioChange](#portfolioChange-event): Every time the content of the portfolio has changed.
 - [portfolioValueChange](#portfolioValueChange-event): Every time value of the portfolio has changed.
 - [performanceReport](#performanceReport-event): Every time the profit report was updated.
@@ -157,13 +158,24 @@ and will start signaling advice.
 ### tradeCancelled event
 
 - What: An object singaling the fact that the a trade orginially initiated was now cancelled
-- When: After a tradeInitiated event
+- When: After a receiving a tradeInitiated event and than a advice event (without a tradeCompleted event between them).
 - Subscribe: You can subscribe to this event by registering the `processTradeCancelled` method.
 - Example:
       {
         id: [string identifying this unique trade],
         adviceId: [number specifying the advice id this trade is based on],
-        action: [either "buy" or "sell"],
+        date: [moment object, exchange time trade completed at]
+      }
+
+### tradeErrored event
+
+- What: An object singaling the fact that the a trade orginially initiated was now cancelled
+- When: After a tradeInitiated event
+- Subscribe: You can subscribe to this event by registering the `processTradeErrored` method.
+- Example:
+      {
+        id: [string identifying this unique trade],
+        adviceId: [number specifying the advice id this trade is based on],
         date: [moment object, exchange time trade completed at],
         reason: [string explaining why the trade was aborted]
       }

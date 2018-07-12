@@ -206,8 +206,23 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
 
   this.order = this.broker.createOrder(type, side, amount);
 
-  this.order.on('filled', f => log.debug('[ORDER]', side, 'total filled:', f));
+  this.order.on('filled', f => log.debug('[ORDER] partial', side, ' fill, total filled:', f));
   this.order.on('statusChange', s => log.debug('[ORDER] statusChange:', s));
+
+  this.order.on('error', e => {
+    log.error('[ORDER] Gekko received error from GB:', e.message);
+    log.debug(e);
+    this.order = null;
+    this.cancellingOrder = false;
+
+    this.deferredEmit('tradeErrored', {
+      id,
+      adviceId: advice.id,
+      date: moment(),
+      reason: e.message
+    });
+
+  });
   this.order.on('completed', () => {
     this.order.createSummary((err, summary) => {
       log.info('[ORDER] summary:', summary);
@@ -257,15 +272,12 @@ Trader.prototype.cancelOrder = function(id, advice, next) {
 
   this.cancellingOrder = true;
 
-  const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
-
   this.order.removeAllListeners();
   this.order.cancel();
   this.order.once('completed', () => {
-    this.deferredEmit('tradeCanceled', {
+    this.deferredEmit('tradeCancelled', {
       id,
       adviceId: advice.id,
-      action: direction,
       date: moment()
     });
     this.sync(next);
