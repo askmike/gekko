@@ -1,7 +1,7 @@
 var settings = {
   wait: 0,
-  advice: 'short'
-  // advice: 'long'
+  // advice: 'short'
+  advice: 'long'
 };
 
 // -------
