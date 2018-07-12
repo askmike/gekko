@@ -26,6 +26,13 @@ class StickyOrder extends BaseOrder {
 
     // global async lock
     this.sticking = false;
+
+    // bound helpers
+    this.roundPrice = this.api.roundPrice.bind(this.api);
+    this.roundAmount = this.api.roundAmount.bind(this.api);
+    if(_.isFunction(this.api.outbidPrice)) {
+      this.outbidPrice = this.api.outbidPrice.bind(this.api);
+    }
   }
 
   create(side, rawAmount, params = {}) {
@@ -35,16 +42,16 @@ class StickyOrder extends BaseOrder {
 
     this.side = side;
 
-    this.amount = this.api.roundAmount(rawAmount);
+    this.amount = this.roundAmount(rawAmount);
 
     if(side === 'buy') {
       if(params.limit)
-        this.limit = this.api.roundPrice(params.limit);
+        this.limit = this.roundPrice(params.limit);
       else
         this.limit = Infinity;
     } else {
       if(params.limit)
-        this.limit = this.api.roundPrice(params.limit);
+        this.limit = this.roundPrice(params.limit);
       else
         this.limit = -Infinity;
     }
@@ -54,7 +61,7 @@ class StickyOrder extends BaseOrder {
 
     this.orders = {};
 
-    this.outbid = params.outbid && _.isFunction(this.api.outbidPrice);
+    this.outbid = params.outbid && _.isFunction(this.outbidPrice);
 
     this.price = this.calculatePrice(this.data.ticker);
 
@@ -65,7 +72,7 @@ class StickyOrder extends BaseOrder {
 
   calculatePrice(ticker) {
 
-    const r = this.api.roundPrice;
+    const r = this.roundPrice;
 
     if(this.side === 'buy') {
       if(ticker.bid >= this.limit) {
@@ -76,7 +83,7 @@ class StickyOrder extends BaseOrder {
         return r(ticker.bid);
       }
 
-      const outbidPrice = this.api.outbidPrice(ticker.bid, true);
+      const outbidPrice = this.outbidPrice(ticker.bid, true);
 
       if(outbidPrice <= this.limit && outbidPrice < ticker.ask) {
         return r(outbidPrice);
@@ -94,7 +101,7 @@ class StickyOrder extends BaseOrder {
         return r(ticker.ask);
       }
 
-      const outbidPrice = this.api.outbidPrice(ticker.ask, false);
+      const outbidPrice = this.outbidPrice(ticker.ask, false);
 
       if(outbidPrice >= this.limit && outbidPrice > ticker.bid) {
         return r(outbidPrice);
@@ -113,7 +120,7 @@ class StickyOrder extends BaseOrder {
 
     this.submit({
       side: this.side,
-      amount: this.api.roundAmount(this.amount - alreadyFilled),
+      amount: this.roundAmount(this.amount - alreadyFilled),
       price: this.price,
       alreadyFilled
     });
@@ -229,6 +236,19 @@ class StickyOrder extends BaseOrder {
     });
   }
 
+  // global error handler
+  handleError(error) {
+    if(!error) {
+      return false;
+    }
+
+    console.log(new Date, '[sticky order] FATAL ERROR', error.message);
+    console.log(new Date, error);
+    this.emit('error', error);
+
+    return true;
+  }
+
   // returns true if the order was fully filled
   // handles partial fills on cancels calls
   // on exchanges that support it.
@@ -248,8 +268,8 @@ class StickyOrder extends BaseOrder {
 
       if(!amountFilled && data.remaining) {
         const alreadyFilled = this.calculateFilled();
-        const orderAmount = this.api.roundAmount(this.amount - alreadyFilled);
-        amountFilled = this.api.roundAmount(orderAmount - data.remaining);
+        const orderAmount = this.roundAmount(this.amount - alreadyFilled);
+        amountFilled = this.roundAmount(orderAmount - data.remaining);
       }
 
       if(amountFilled > this.orders[this.id].filled) {
@@ -276,7 +296,7 @@ class StickyOrder extends BaseOrder {
       }
 
       // update to new price
-      this.price = this.api.roundPrice(price);
+      this.price = this.roundPrice(price);
 
       this.createOrder();
     });
@@ -300,7 +320,7 @@ class StickyOrder extends BaseOrder {
       limit = this.moveLimitTo;
     }
 
-    if(this.limit === this.api.roundPrice(limit)) {
+    if(this.limit === this.roundPrice(limit)) {
       // effectively nothing changed
       return false;
     }
@@ -316,7 +336,7 @@ class StickyOrder extends BaseOrder {
       return;
     }
 
-    this.limit = this.api.roundPrice(limit);
+    this.limit = this.roundPrice(limit);
 
     clearTimeout(this.timeout);
 
@@ -342,11 +362,11 @@ class StickyOrder extends BaseOrder {
     if(!amount)
       amount = this.moveAmountTo;
 
-    if(this.amount === this.api.roundAmount(amount))
+    if(this.amount === this.roundAmount(amount))
       // effectively nothing changed
       return true;
 
-    if(this.calculateFilled() > this.api.roundAmount(amount)) {
+    if(this.calculateFilled() > this.roundAmount(amount)) {
       // the amount is now below how much we have
       // already filled.
       this.filled();
@@ -364,7 +384,7 @@ class StickyOrder extends BaseOrder {
       return;
     }
 
-    this.amount = this.api.roundAmount(amount - this.calculateFilled());
+    this.amount = this.roundAmount(amount - this.calculateFilled());
 
     if(this.amount < this.data.market.minimalOrder.amount) {
       if(this.calculateFilled()) {
