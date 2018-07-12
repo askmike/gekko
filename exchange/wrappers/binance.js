@@ -7,7 +7,7 @@ const retry = require('../exchangeUtils').retry;
 
 const Binance = require('binance');
 
-var Trader = function(config) {
+const Trader = function(config) {
   _.bindAll(this, [
     'roundAmount',
     'roundPrice'
@@ -37,21 +37,24 @@ var Trader = function(config) {
   });
 };
 
-var retryCritical = {
-  retries: 10,
-  factor: 1.2,
-  minTimeout: 1 * 1000,
-  maxTimeout: 30 * 1000
-};
+const recoverableErrors = [
+  'SOCKETTIMEDOUT',
+  'TIMEDOUT',
+  'CONNRESET',
+  'CONNREFUSED',
+  'NOTFOUND',
+  'Error -1021',
+  'Response code 429',
+  'Response code 5',
+  'ETIMEDOUT'
+];
 
-var retryForever = {
-  forever: true,
-  factor: 1.2,
-  minTimeout: 10 * 1000,
-  maxTimeout: 30 * 1000
-};
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
 
-var recoverableErrors = new RegExp(/(SOCKETTIMEDOUT|TIMEDOUT|CONNRESET|CONNREFUSED|NOTFOUND|Error -1021|Response code 429|Response code 5|ETIMEDOUT)/);
+  return _.some(list, item => str.includes(item));
+}
 
 Trader.prototype.processError = function(funcName, error) {
   if (!error) return undefined;
@@ -67,6 +70,18 @@ Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, body) => {
     if (body && body.code) {
       error = new Error(`Error ${body.code}: ${body.msg}`);
+    }
+
+    if(error) {
+      if(_.isString(error)) {
+        error = new Error(error);
+      }
+
+      if(includes(error.message, recoverableErrors)) {
+        error.notFatal = true;
+      }
+
+      return callback(error);
     }
 
     return callback(this.processError(funcName, error), body);

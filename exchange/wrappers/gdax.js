@@ -9,8 +9,6 @@ const BATCH_SIZE = 100;
 const QUERY_DELAY = 350;
 
 const Trader = function(config) {
-  _.bindAll(this);
-
   this.post_only = true;
   this.use_sandbox = false;
   this.name = 'GDAX';

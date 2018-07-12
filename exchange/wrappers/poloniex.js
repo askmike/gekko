@@ -100,7 +100,6 @@ Trader.prototype.processResponse = function(next, fn, payload) {
         error = undefined;
         data = { unfilled: true };
         console.log(new Date, 'UNKNOWN ORDER!', payload);
-        process.exit();
       }
 
       if(fn === 'cancelOrder') {
