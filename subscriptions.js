@@ -60,6 +60,11 @@ var subscriptions = [
     handler: 'processTradeCompleted'
   },
   {
+    emitter: 'trader',
+    event: 'tradeCancelled',
+    handler: 'processTradeCancelled'
+  },
+  {
     emitter: ['trader', 'paperTrader'],
     event: 'portfolioChange',
     handler: 'processPortfolioChange'
@@ -70,17 +75,17 @@ var subscriptions = [
     handler: 'processPortfolioValueChange'
   },
   {
-    emitter: ['performanceAnalyzer'],
+    emitter: 'performanceAnalyzer',
     event: 'performanceReport',
     handler: 'processPerformanceReport'
   },
   {
-    emitter: ['performanceAnalyzer'],
+    emitter: 'performanceAnalyzer',
     event: 'roundtripUpdate',
     handler: 'processRoundtripUpdate'
   },
   {
-    emitter: ['performanceAnalyzer'],
+    emitter: 'performanceAnalyzer',
     event: 'roundtrip',
     handler: 'processRoundtrip'
   },

@@ -17,7 +17,9 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 - [stratNotification](#stratNotification-event): Every time the strategy emit new strategy notification.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
-- [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
+- [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper 
+trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
+- [tradeCancelled](#tradeCancelled-event): Every time the live trader was unable to trade.
 - [portfolioChange](#portfolioChange-event): Every time the content of the portfolio has changed.
 - [portfolioValueChange](#portfolioValueChange-event): Every time value of the portfolio has changed.
 - [performanceReport](#performanceReport-event): Every time the profit report was updated.
@@ -152,11 +154,11 @@ and will start signaling advice.
         reason: [string explaining why the trade was aborted]
       }
 
-### tradeCanceled event
+### tradeCancelled event
 
 - What: An object singaling the fact that the a trade orginially initiated was now cancelled
-- When: At the same time as the advice event if the trader will NOT try to trade.
-- Subscribe: You can subscribe to this event by registering the `processTradeCanceled` method.
+- When: After a tradeInitiated event
+- Subscribe: You can subscribe to this event by registering the `processTradeCancelled` method.
 - Example:
       {
         id: [string identifying this unique trade],
