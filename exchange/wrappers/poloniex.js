@@ -183,8 +183,7 @@ Trader.prototype.findLastOrder = function(since, side, callback) {
     callback(undefined, order);
   };
 
-  const fetch = next => this.poloniex.getOpenOrders(this.processResponse(next));
-  retry(null, fetch, handle);
+  this.getOpenOrders(handle);
 }
 
 Trader.prototype.getOpenOrders = function(callback) {
