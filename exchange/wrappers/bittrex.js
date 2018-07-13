@@ -1,8 +1,6 @@
-var Bittrex = require('node.bittrex.api');
-var util = require('../core/util.js');
-var _ = require('lodash');
-var moment = require('moment');
-var log = require('../core/log');
+const Bittrex = require('node.bittrex.api');
+const _ = require('lodash');
+const moment = require('moment');
 
 // Helper methods
 function joinCurrencies(currencyA, currencyB){
@@ -10,15 +8,14 @@ function joinCurrencies(currencyA, currencyB){
 }
 
 var Trader = function(config) {
-  _.bindAll(this);
-
   if(!config.key) {
-    // no api key defined -> we need to set a dummy key, otherwise the Bittrex module will not work even for public requests
+    // no api key defined -> we need to set a
+    // dummy key, otherwise the Bittrex module
+    // will not work even for public requests.
     config.key = 'dummyApiKey';
     config.secret = 'dummyApiKey';
   }
 
-  // override if cmd line mode (not --ui)
   if(_.isObject(config)) {
     this.key = config.key;
     this.secret = config.secret;

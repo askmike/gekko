@@ -41,7 +41,6 @@
     "lodash": "2.x",
     "moment": "^2.20.1",
     "node-wex": "^1.0.3",
-    "node.bittrex.api": "^0.4.3",
     "okcoin-china": "0.0.7",
     "opn": "^4.0.2",
     "promisify-node": "^0.4.0",
