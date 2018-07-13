@@ -64,8 +64,8 @@ You can implement the EMA like so:
 
 
 ### PPO
-> **What is the 'Percentage Price Oscillator - PPO'** 
-> "The percentage price oscillator (PPO) is a technical momentum indicator showing the relationship between two moving averages." 
+> **What is the 'Percentage Price Oscillator - PPO'**
+> "The percentage price oscillator (PPO) is a technical momentum indicator showing the relationship between two moving averages."
 
 *[More info on investopedia](https://www.investopedia.com/terms/p/ppo.asp).*
 
@@ -120,4 +120,3 @@ You can implement the EMA like so:
 > "A technical indicator that uses the weighted average of three different time periods to reduce the volatility and false transaction signals that are associated with many other indicators that mainly rely on a single time period"
 
 *[More info on investopedia](https://www.investopedia.com/terms/u/ultimateoscillator.asp).*
-

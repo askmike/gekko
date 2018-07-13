@@ -8,7 +8,7 @@ Before updating your local version of Gekko it's good to keep a few things in mi
 - Check the changelog (found in the [releases page](https://github.com/askmike/gekko/releases)) for breaking changes) regarding:
   - (in case you changed the UIconfig) for changes in the UIconfig.
   - (in case you were using non standard strategies) strategy API, to make sure your strategies will run in the new version.
-  - any other breaking changes specifified inside the release log (such as required node and or browser versions).
+  - any other breaking changes specified inside the release log (such as required node and or browser versions).
 
 ## Updating
 

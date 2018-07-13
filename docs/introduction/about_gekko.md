@@ -8,7 +8,7 @@ Gekko is a **free and open source** Bitcoin TA trading and backtesting platform 
 
 ## The gist
 
-Gekko is a tool that makes it very easy to automate your own trading stragies.
+Gekko is a tool that makes it very easy to automate your own trading strategies.
 
 ![gist of gekko](https://gekko.wizb.it/_static/gekko-gist.png)
 
@@ -26,7 +26,7 @@ Gekko comes with some [example strategies](../strategies/introduction.md) (which
 
 ## Automated Trading platform
 
-Gekko can watch the realtime markets, automatically excecuting and evaluating your strategies in the process. Whilst doing this Gekko will store all market data it sees, this makes it possible to later simulate trading strategies against historical data to see whether they would have been profitable (backtesting).
+Gekko can watch the realtime markets, automatically executing and evaluating your strategies in the process. Whilst doing this Gekko will store all market data it sees, this makes it possible to later simulate trading strategies against historical data to see whether they would have been profitable (backtesting).
 
 ## Limitations
 

@@ -42,7 +42,7 @@ Currently supported exchanges:
 
 ## Order types
 
-This library aims to offer advanced order types, even on exchanges that do not natively support them by tracking the market and supplimenting native order support on specific exchanges.
+This library aims to offer advanced order types, even on exchanges that do not natively support them by tracking the market and supplementing native order support on specific exchanges.
 
 Working:
 

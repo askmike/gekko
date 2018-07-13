@@ -14,4 +14,4 @@ If you look at the following backtest result:
 
 ![screen shot of backtesting at an illiquid market](https://cloud.githubusercontent.com/assets/969743/24840243/8f307022-1d61-11e7-9964-e6614d7433ea.png)
 
-You can see a lot of "spikes" of the price moving up and down. These are not actually price fluctiations but simply trades that happen on both sides of the orderbook (a bid is taken then an ask is taken). How far it jumps up and down is the spread (between the asks and the bids). In these cases the statistics from the simulation won't be very accurate (unless you configured a higher slippage to account for the spread). This is unfortunately a limitation in Gekko's backtesting model.
+You can see a lot of "spikes" of the price moving up and down. These are not actually price fluctuations but simply trades that happen on both sides of the orderbook (a bid is taken then an ask is taken). How far it jumps up and down is the spread (between the asks and the bids). In these cases the statistics from the simulation won't be very accurate (unless you configured a higher slippage to account for the spread). This is unfortunately a limitation in Gekko's backtesting model.

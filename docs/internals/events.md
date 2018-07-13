@@ -1,6 +1,6 @@
 # Events
 
-As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between seperate components (like plugins). This makes the codebase scalable, testable and it seperates concerns.
+As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between separate components (like plugins). This makes the codebase scalable, testable and it separates concerns.
 
 if you run the Gekko UI events are relayed between core components as well as broadcasted (via the UI server) to the web UI. This means that all events broadcasted by any plugin automatically end up in the web UI.
 
@@ -10,14 +10,14 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 
 ## List of events emitted by standard plugins
 
-- [candle](#candle-event): Every time Gekko calculas a new one minute candle from the market.
+- [candle](#candle-event): Every time Gekko calculates a new one minute candle from the market.
 - [stratWarmupCompleted](#stratWarmupCompleted-event): When the strategy is done warming up.
 - [advice](#advice-event): Every time the trading strategy is fed a new candle.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed a new strat candle.
 - [stratNotification](#stratNotification-event): Every time the strategy emit new strategy notification.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
 - [tradeCompleted](#tradeCompleted-event): Every time a trading plugin (either the live trader or the paper trader) has completed a trade.
-- [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper 
+- [tradeAborted](#tradeAborted-event): Every time a trading plugin (either the live trader or the paper trader) has NOT acted on new advice (due to insufficient funds or a similar reason).
 trader) has NOT acted on new advice (due to unsufficiant funds or a similar reason).
 - [tradeErrored](#tradeErrored-event): Every time the live trader was unable to execute an initialized.
 - [tradeCancelled](#tradeCancelled-event): Every time the live trader cancelled a not yet executed trade.
@@ -37,9 +37,9 @@ Beside those there are also two additional market events that are only emitted w
 - When: In liquid markets roughly every minute.
 - Subscribe: Your plugin can subscribe to this event by registering the `processCandle` method.
 - Async: When subscribing to this event the second argument will be a callback which you are expected to call when done handling this event.
-- Notes: 
+- Notes:
   - Depending on the gekko configuration these candles might be historical on startup. If this is a concern for consumers, make sure to deal with this properly.
-  - In illiquid markets (of less than a trade per minute) Gekko will caculate these candles in batches and a few might come at the same time.
+  - In illiquid markets (of less than a trade per minute) Gekko will calculate these candles in batches and a few might come at the same time.
   - These are always one minute candles, this is the lowest level of market data flowing through a gekko stream.
 - Example:
       {
@@ -72,7 +72,7 @@ and will start signaling advice.
 - When: when the strategy is initialized is started.
 - Subscribe: You can subscribe to this event by registering the `processStratCandle` method.
 - Notes:
-  - This is the candle that the strategy sees: if you configured the candleSize to 60 (minutes) this event will containt a 60 minute candle.
+  - This is the candle that the strategy sees: if you configured the candleSize to 60 (minutes) this event will contain a 60 minute candle.
   - Strat Candles are emitted while the strategy is still warming up (before the `stratWarmupCompleted` event).
 - Example:
       {
@@ -90,7 +90,7 @@ and will start signaling advice.
 ### stratUpdate event
 
 - What: An object describing updated state of the strategy based on a new strat candle.
-- When: when the strategy has 
+- When: when the strategy has
 - Subscribe: You can subscribe to this event by registering the `processStratUpdate` method.
 - Notes:
   - Strat updates are emitted while the strategy is still warming up (before the `stratWarmupCompleted` event).
@@ -128,7 +128,7 @@ and will start signaling advice.
 
 ### tradeInitiated event
 
-- What: An object singaling that a new trade will be executed.
+- What: An object signaling that a new trade will be executed.
 - When: At the same time as the advice event if the trader will try to trade.
 - Subscribe: You can subscribe to this event by registering the `processTradeInitiated` method.
 - Example:
@@ -143,7 +143,7 @@ and will start signaling advice.
 
 ### tradeAborted event
 
-- What: An object singaling the fact that the trader will ignore the advice.
+- What: An object signaling the fact that the trader will ignore the advice.
 - When: At the same time as the advice event if the trader will NOT try to trade.
 - Subscribe: You can subscribe to this event by registering the `processTradeAborted` method.
 - Example:
@@ -157,9 +157,9 @@ and will start signaling advice.
 
 ### tradeCancelled event
 
-- What: An object singaling the fact that the a trade orginially initiated was now cancelled
+- What: An object signaling the fact that the a trade originally initiated was now cancelled.
 - When: After a receiving a tradeInitiated event and than a advice event (without a tradeCompleted event between them).
-- Subscribe: You can subscribe to this event by registering the `processTradeCancelled` method.
+- Subscribe: You can subscribe to this event by registering the `processTradeCanceled` method.
 - Example:
       {
         id: [string identifying this unique trade],
@@ -312,4 +312,3 @@ and will start signaling advice.
 - Subscribe: Your plugin can subscribe to this event by registering the `processMarketUpdate` method.
 - Example:
       [moment object describing the date of the latest market data]
-

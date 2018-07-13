@@ -588,7 +588,7 @@ Stop a gekko instance
 
 ```
 {
-    "status": "ok"  
+    "status": "ok"
 }
 ```
 
@@ -663,7 +663,7 @@ Load candles directly from the database.
 
 ## Websocket API
 
-A websocket server is started at the basepath of the API. Connecting to it means you'll receive update messages. Messages you send to the server via theh websocket connection are completely ignored, to control the server use the REST API instead.
+A websocket server is started at the basepath of the API. Connecting to it means you'll receive update messages. Messages you send to the server via the websocket connection are completely ignored, to control the server use the REST API instead.
 
 The possible messages are:
 

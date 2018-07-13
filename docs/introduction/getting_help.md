@@ -4,7 +4,7 @@ Are you getting stuck installing or using Gekko? Are you struggling with underst
 
 ## Online community
 
-If you have trouble with anything specific or you want to provide any type of feedback the online communty is the place to be. You can find the community at:
+If you have trouble with anything specific or you want to provide any type of feedback the online community is the place to be. You can find the community at:
 
 1. [The online webforum](https://forum.gekko.wizb.it)
 2. [The discord channel](https://discord.gg/26wMygt)
@@ -22,4 +22,4 @@ These communities are the place for things like:
 
 ## Technical discussion
 
-The links above are always the first place to go to when discussing new features. But if you've found a clear bug or you want to **keep the complete discussion 100% technical (meaning completely code and architecture related)** you can use the [bug tracker on github](https://github.com/askmike/gekko/issues). Note that we are trying to keep all other discussions out of the bug tracker to keep the whole thing managable :)
+The links above are always the first place to go to when discussing new features. But if you've found a clear bug or you want to **keep the complete discussion 100% technical (meaning completely code and architecture related)** you can use the [bug tracker on github](https://github.com/askmike/gekko/issues). Note that we are trying to keep all other discussions out of the bug tracker to keep the whole thing manageable :)

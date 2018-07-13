@@ -28,7 +28,7 @@ As part of Gekko's installation process git is used, see [this guide](https://ww
 
 ## Downloading Gekko
 
-The recommanded way of downloading Gekko is by using git. This makes keeping Gekko up to date a lot easier. Run this in a terminal:
+The recommended way of downloading Gekko is by using git. This makes keeping Gekko up to date a lot easier. Run this in a terminal:
 
     git clone git://github.com/askmike/gekko.git -b stable
     cd gekko
