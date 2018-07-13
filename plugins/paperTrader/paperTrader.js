@@ -10,7 +10,13 @@ const watchConfig = config.watch;
 const PaperTrader = function() {
   _.bindAll(this);
 
-  this.fee = 1 - (calcConfig['fee' + calcConfig.feeUsing.charAt(0).toUpperCase() + calcConfig.feeUsing.slice(1)] + calcConfig.slippage) / 100;
+  if(calcConfig.feeUsing === 'maker') {
+    this.rawFee = calcConfig.feeMaker;
+  } else {
+    this.rawFee = calcConfig.feeTaker;
+  }
+
+  this.fee = 1 - this.rawFee / 100;
 
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
@@ -132,7 +138,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     balance: this.getBalance(),
     date: advice.date,
     effectivePrice,
-    feePercent: this.fee * 100
+    feePercent: this.rawFee
   });
 }
 
