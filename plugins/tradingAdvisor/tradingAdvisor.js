@@ -72,7 +72,7 @@ Actor.prototype.setupTradingMethod = function() {
     )
 
   this.method
-    .on('trade', this.processTrade);
+    .on('tradeCompleted', this.processTradeCompleted);
 
   this.batcher
     .on('candle', _candle => {
@@ -101,7 +101,7 @@ Actor.prototype.emitStratCandle = function(candle) {
   this.method.tick(candle, this.next);
 }
 
-Actor.prototype.processTrade = function(trade) {
+Actor.prototype.processTradeCompleted = function(trade) {
   this.method.processTrade(trade);
 }
 
