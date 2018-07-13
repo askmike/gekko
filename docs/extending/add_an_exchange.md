@@ -76,7 +76,7 @@ Will only be called on orders that have been completed. The order will be someth
 The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and a `result` object. The result object will have two or three properties:
 
 - `open`: whether this order is currently in the orderbook.
-- `completed`: whether this order has executed (filled completely).
+- `executed`: whether this order has executed (filled completely).
 - `filledAmount`: the amount of the order that has been filled. This property is only needed when both `open` is true and `completed` is false.
 
 ### cancelOrder
