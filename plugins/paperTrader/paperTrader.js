@@ -62,7 +62,6 @@ PaperTrader.prototype.updatePosition = function(advice) {
 
   let cost;
   let amount;
-  let effectivePrice;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
@@ -71,7 +70,6 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
     amount = this.portfolio.asset;
     this.portfolio.currency = 0;
-    effectivePrice = this.price * (1 + this.fee);
 
     this.exposed = true;
     this.trades++;
@@ -84,11 +82,12 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
     amount = this.portfolio.currency / this.price;
     this.portfolio.asset = 0;
-    effectivePrice = this.price * (1 - this.fee);
 
     this.exposed = false;
     this.trades++;
   }
+
+  const effectivePrice = this.price * this.fee;
 
   return { cost, amount, effectivePrice };
 }

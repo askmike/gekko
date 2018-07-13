@@ -14,6 +14,9 @@ var method = {
   init: _.noop,
   update: _.noop,
   log: _.noop,
+  processTrade: function(trade) {
+    console.log('TRADE RECEIVED BY processTrade:', trade);
+  },
   check: function(candle) {
 
     if(settings.wait > i)
