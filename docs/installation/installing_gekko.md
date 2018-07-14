@@ -56,4 +56,4 @@ After all the above you can start Gekko by running the following in your termina
 
 ## Updating Gekko
 
-See the [updating Gekko](./updating_gekko) doc.
+See the [updating Gekko](./updating_gekko.md) doc.
