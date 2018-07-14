@@ -15,6 +15,9 @@ Before updating your local version of Gekko it's good to keep a few things in mi
 Run the following commands inside the Gekko directory:
 
     git checkout stable
+    # alternatively you can also run the latest development
+    # build, like so:
+    # git checkout develop
     git pull
     npm install --only=production
     cd exchange
