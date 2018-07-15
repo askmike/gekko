@@ -403,7 +403,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const cancel = (err, data) => {
     if (err) {
       // when the order was filled
-      if(data && data.msg === 'UNKNOWN_ORDER') {
+      if(err.message.includes('UNKNOWN_ORDER')) {
         return callback(undefined, true);
       }
       return callback(err);

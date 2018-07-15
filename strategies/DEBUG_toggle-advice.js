@@ -1,6 +1,6 @@
 var settings = {
   wait: 0,
-  each: 10
+  each: 6
 };
 
 // -------
