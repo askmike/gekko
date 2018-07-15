@@ -1,6 +1,6 @@
 # Exchanges
 
-*This is a technical document about adding a new exchange to Gekko.*
+*This is a technical document about adding a new exchange to Gekko and Gekko Broker.*
 
 Gekko arranges all communication about when assets need to be bought or sold between the *strategy* and *Gekko Broker*. All differences between the different API's are abstracted away just below Gekko Broker inside an "exchange wrapper". This document describes all requirements for adding a new exchange wrapper (adding exchange support to Gekko).
 
@@ -10,7 +10,7 @@ When you add a new exchange to Gekko you need to expose an object that has metho
 
 It is advised to use a npm module to query an exchange. This will separate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://www.npmjs.com/package/bitstamp)).
 
-Finally Gekko needs to know how it can interact with the exchange, so add a static method `getCapabilities()` that returns it's properties. The meaning of the properties are described [here](#capabilities).
+Finally Gekko needs to know how it can interact with the exchange, so add a static method `getCapabilities()` that returns it's properties. They are all described [here](#capabilities).
 
 ## Gekko Broker's expectations
 
