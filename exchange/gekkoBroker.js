@@ -20,6 +20,20 @@ class Broker {
   constructor(config) {
     this.config = config;
 
+    if(config.private) {
+      if(this.cantTrade()) {
+        throw this.cantTrade();
+      }
+    } else {
+      if(this.cantMonitor()) {
+        throw this.cantMonitor();
+      }
+    }
+
+    if(config.private && this.cantTrade()) {
+      throw this.cantTrade();
+    }
+
     this.orders = {
       // contains current open orders
       open: [],
@@ -53,6 +67,10 @@ class Broker {
 
   cantTrade() {
     return checker.cantTrade(this.config);
+  }
+
+  cantMonitor() {
+    return checker.cantMonitor(this.config);
   }
 
   sync(callback) {
