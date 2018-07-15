@@ -4,7 +4,7 @@ Order execution library for bitcoin and crypto exchanges. This library is Gekko'
 
 ## Introduction
 
-This library makes it easy to do (advanced) orders all crypto exchanges where Gekko can live trade at. See the complete list here: https://gekko.wizb.it/docs/introduction/supported_exchanges.html
+This library makes it easy to do (advanced) orders all crypto exchanges where Gekko can live trade at. See the complete list [here](https://gekko.wizb.it/docs/introduction/supported_exchanges.html).
 
 This library allows you to:
 
@@ -32,13 +32,17 @@ This library allows you to:
 
 Early WIP. All communication is via the REST APIs of exchanges. Not all exchanges are supported.
 
-Currently supported exchanges:
+Currently fully supported exchanges:
 
 - Binance
 - GDAX
 - Poloniex
 - Coinfalcon
 - Kraken
+
+Currently exchanges with limited support:
+
+- bittrex
 
 ## Order types
 

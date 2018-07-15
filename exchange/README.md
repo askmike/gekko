@@ -1,3 +1,3 @@
 # Gekko Broker
 
-see [the docs](../docs/gekko-broker/introduction.md).
+see [the docs](https://gekko.wizb.it/docs/gekko-broker/introduction.html).
