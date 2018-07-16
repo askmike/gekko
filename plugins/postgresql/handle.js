@@ -45,7 +45,7 @@ const pool = new pg.Pool({
 // user will need appropriate rights.
 checkClient.connect((err, client, done) => {
   log.debug("Check database exists: " + dbName);
-  const query = client.query("select count(*) from pg_catalog.pg_database where datname = $1",[dbName], 
+  client.query("select count(*) from pg_catalog.pg_database where datname = $1", [dbName],
     (err, res) => {
       if(err) {
         util.die(err);
@@ -55,7 +55,7 @@ checkClient.connect((err, client, done) => {
         // database exists
         log.debug("Database exists: " + dbName);
         log.debug("Postgres connection pool is ready, db " + dbName);
-        upsertTables(done);
+        upsertTables(client, done);
         return;
       }
 
@@ -67,23 +67,23 @@ checkClient.connect((err, client, done) => {
         util.die(`History does not exist for exchange ${config.watch.exchange}.`);
       }
 
-      createDatabase(done);
+      createDatabase(client, done);
     });
 });
 
 
-const createDatabase = next => {
+const createDatabase = (client, next) => {
   client.query("CREATE DATABASE " + dbName, err => {
     if(err) {
       util.die(err);
     }
 
     log.debug("Postgres connection pool is ready, db " + dbName);
-    upsertTables(next);
+    upsertTables(client, next);
   });
 }
 
-const upsertTables = next => {
+const upsertTables = (client, next) => {
   const upsertQuery =
     `CREATE TABLE IF NOT EXISTS
     ${postgresUtil.table('candles')} (
@@ -98,17 +98,14 @@ const upsertTables = next => {
       trades INTEGER NOT NULL
     );`;
 
-
-  pool.connect((err, client, done) => {
+  client.query(upsertQuery, (err) => {
     if(err) {
       util.die(err);
     }
-    client.query(upsertQuery, (err) => {
-      next();
-    });
+
+    next();
   });
 }
-
 
 
 module.exports = pool;
