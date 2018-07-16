@@ -44,6 +44,10 @@ const pool = new pg.Pool({
 // postgres database first. Your postgres
 // user will need appropriate rights.
 checkClient.connect((err, client, done) => {
+  if(err) {
+    util.die(err);
+  }
+
   log.debug("Check database exists: " + dbName);
   client.query("select count(*) from pg_catalog.pg_database where datname = $1", [dbName],
     (err, res) => {
