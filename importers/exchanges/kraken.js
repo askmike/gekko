@@ -1,4 +1,3 @@
-var KrakenClient = require('kraken-api-es5')
 var _ = require('lodash');
 var moment = require('moment');
 
