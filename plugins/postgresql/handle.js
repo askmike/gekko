@@ -55,7 +55,7 @@ checkClient.connect((err, client, done) => {
         util.die(err);
       }
 
-      if(res.rows[0].count !== 0) {
+      if(res.rows[0].count !== '0') {
         // database exists
         log.debug("Database exists: " + dbName);
         log.debug("Postgres connection pool is ready, db " + dbName);
