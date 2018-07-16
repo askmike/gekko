@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const fs = require('fs');
-const pg = require('pg');
 
 const util = require('../../core/util.js');
 const config = util.getConfig();
@@ -22,6 +21,8 @@ const cannotLoad = pluginHelper.cannotLoad(pluginMock);
 if(cannotLoad){
   util.die(cannotLoad);
 }
+
+const pg = require('pg');
 
 const plugins = require(util.dirs().gekko + 'plugins');
 
