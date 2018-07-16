@@ -2,41 +2,41 @@ const _ = require('lodash');
 const fs = require('fs');
 const pg = require('pg');
 
-var util = require('../../core/util.js');
-var config = util.getConfig();
-var dirs = util.dirs();
+const util = require('../../core/util.js');
+const config = util.getConfig();
+const dirs = util.dirs();
 
-var log = require(util.dirs().core + 'log');
-var postgresUtil = require('./util');
+const log = require(util.dirs().core + 'log');
+const postgresUtil = require('./util');
 
-var adapter = config.postgresql;
+const adapter = config.postgresql;
 
 // verify the correct dependencies are installed
-var pluginHelper = require(dirs.core + 'pluginUtil');
-var pluginMock = {
+const pluginHelper = require(dirs.core + 'pluginUtil');
+const pluginMock = {
   slug: 'postgresql adapter',
   dependencies: config.postgresql.dependencies
 };
 
-var cannotLoad = pluginHelper.cannotLoad(pluginMock);
+const cannotLoad = pluginHelper.cannotLoad(pluginMock);
 if(cannotLoad){
   util.die(cannotLoad);
 }
 
-var plugins = require(util.dirs().gekko + 'plugins');
+const plugins = require(util.dirs().gekko + 'plugins');
 
-var version = adapter.version;
+const version = adapter.version;
 
-var dbName = postgresUtil.database();
+const dbName = postgresUtil.database();
 
-var mode = util.gekkoMode();
+const mode = util.gekkoMode();
 
-var connectionString = config.postgresql.connectionString;
+const connectionString = config.postgresql.connectionString;
 
-var checkClient = new pg.Pool({
+const checkClient = new pg.Pool({
   connectionString: connectionString+'/postgres',
 });
-var pool = new pg.Pool({
+const pool = new pg.Pool({
   connectionString: connectionString+'/'+dbName,
 });
 
