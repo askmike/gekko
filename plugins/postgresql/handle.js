@@ -59,7 +59,8 @@ checkClient.connect((err, client, done) => {
         // database exists
         log.debug("Database exists: " + dbName);
         log.debug("Postgres connection pool is ready, db " + dbName);
-        upsertTables(client, done);
+        upsertTables();
+        done();
         return;
       }
 
@@ -75,19 +76,19 @@ checkClient.connect((err, client, done) => {
     });
 });
 
-
-const createDatabase = (client, next) => {
+const createDatabase = (client, done) => {
   client.query("CREATE DATABASE " + dbName, err => {
     if(err) {
       util.die(err);
     }
 
     log.debug("Postgres connection pool is ready, db " + dbName);
-    upsertTables(client, next);
+    done();
+    upsertTables();
   });
 }
 
-const upsertTables = (client, next) => {
+const upsertTables = () => {
   const upsertQuery =
     `CREATE TABLE IF NOT EXISTS
     ${postgresUtil.table('candles')} (
@@ -102,12 +103,10 @@ const upsertTables = (client, next) => {
       trades INTEGER NOT NULL
     );`;
 
-  client.query(upsertQuery, (err) => {
+  pool.query(upsertQuery, (err) => {
     if(err) {
       util.die(err);
     }
-
-    next();
   });
 }
 
