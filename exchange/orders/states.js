@@ -22,7 +22,9 @@ const states = {
   CANCELLED: 'CANCELLED',
 
   // Order was rejected by the exchange
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+
+  ERROR: 'ERROR'
 }
 
 module.exports = states;

@@ -127,13 +127,13 @@ class StickyOrder extends BaseOrder {
   }
 
   handleCreate(err, id) {
-    if(err) {
-      console.log('handleCreate', err.message);
-      throw err;
+    if(this.handleError(err)) {
+      return;
     }
 
-    if(!id)
+    if(!id) {
       console.log('BLUP! no id...');
+    }
 
     // potentailly clean up old order
     if(
@@ -180,9 +180,8 @@ class StickyOrder extends BaseOrder {
     this.sticking = true;
 
     this.api.checkOrder(this.id, (err, result) => {
-      if(err) {
-        console.log(new Date, 'error creating:', err.message);
-        throw err;
+      if(this.handleError(err)) {
+        return;
       }
 
       if(result.open) {
@@ -244,8 +243,11 @@ class StickyOrder extends BaseOrder {
 
     console.log(new Date, '[sticky order] FATAL ERROR', error.message);
     console.log(new Date, error);
-    this.emit('error', error);
+    this.status = states.ERROR;
+    this.emitStatus();
+    this.error = error;
 
+    this.emit('error', error);
     return true;
   }
 
