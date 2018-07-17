@@ -6,7 +6,7 @@ Gekko arranges all communication about when assets need to be bought or sold bet
 
 ## Gekko's expectations
 
-When you add a new exchange to Gekko you need to expose an object that has methods to query the exchange. This exchange file needs to reside in `gekko/exchange/wrappers` and the filename is the slug of the exchange name + `.js`. So for example the exchange for Bitstamp is explained in `gekko/exchange/wrappers/poloniex.js`.
+When you add a new exchange to Gekko you need to expose an object that has methods to query the exchange. This exchange file needs to reside in `gekko/exchange/wrappers` and the filename is the slug of the exchange name + `.js`. So for example the exchange for Binance is explained in `gekko/exchange/wrappers/binance.js`.
 
 It is advised to use a npm module to query an exchange. This will separate the abstract API calls from the Gekko specific stuff (In the case of Bitstamp there was no module yet, so I [created one](https://www.npmjs.com/package/bitstamp)).
 
