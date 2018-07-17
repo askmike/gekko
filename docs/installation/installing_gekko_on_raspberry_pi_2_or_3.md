@@ -40,10 +40,12 @@ This will download the latest stable version of Gekko, remove the final `-b stab
 Once you have Gekko downloaded you need to install the dependencies, open your terminal and navigate to the gekko folder and run:
 
     npm install --only=production
+    cd exchange
+    npm install --only=production
 
 ## Configure your Pi as a headless server
 
-    cd web/vue
+    cd web/vue/dist
     nano UIconfig.js
 
 Set headless to true
