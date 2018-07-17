@@ -325,7 +325,7 @@ Trader.prototype.getOrder = function(order, callback) {
     });
 
     const fees = {};
-    const feePercent = _.first(result).fee;
+    const feePercent = _.first(result).fee * 100;
 
     if(_.first(result).type === 'sell') {
       const fee = price * amount * _.first(result).fee;
