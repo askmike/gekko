@@ -181,7 +181,7 @@ class StickyOrder extends BaseOrder {
 
     this.api.checkOrder(this.id, (err, result) => {
       if(err) {
-        console.log(new Date, 'error creating:', err.message);
+        console.log(new Date, 'error checking:', this.id, err.message);
         throw err;
       }
 

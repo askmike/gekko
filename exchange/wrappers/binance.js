@@ -77,6 +77,12 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         return callback(false, {filled: true});
       }
 
+      if(funcName === 'checkOrder' && error.message.includes('Order does not exist.')) {
+        // order got filled in full before it could be
+        // cancelled, meaning it was NOT cancelled.
+        return callback(false, {filled: true});
+      }
+
       return callback(error);
     }
 
@@ -360,7 +366,14 @@ Trader.prototype.sell = function(amount, price, callback) {
 Trader.prototype.checkOrder = function(order, callback) {
 
   const check = (err, data) => {
-    if (err) return callback(err);
+    if (err) {
+      return callback(err);
+    }
+
+    if(data.filled === true) {
+      // binance responsed with order not found
+      return callback(undefined, { executed: true, open: false });
+    }
 
     const status = data.status;
 
