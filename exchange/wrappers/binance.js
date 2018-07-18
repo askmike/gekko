@@ -56,16 +56,6 @@ const includes = (str, list) => {
   return _.some(list, item => str.includes(item));
 }
 
-Trader.prototype.processError = function(funcName, error) {
-  if (!error) return undefined;
-
-  if (!error.message || !error.message.match(recoverableErrors)) {
-    return new Errors.AbortError('[binance.js] ' + error.message || error);
-  }
-
-  return new Errors.RetryError('[binance.js] ' + error.message || error);
-};
-
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, body) => {
     if (body && body.code) {
@@ -81,10 +71,16 @@ Trader.prototype.handleResponse = function(funcName, callback) {
         error.notFatal = true;
       }
 
+      if(funcName === 'cancelOrder' && error.message.includes('UNKNOWN_ORDER')) {
+        // order got filled in full before it could be
+        // cancelled, meaning it was NOT cancelled.
+        return callback(false, {filled: true});
+      }
+
       return callback(error);
     }
 
-    return callback(this.processError(funcName, error), body);
+    return callback(undefined, body);
   }
 };
 
@@ -399,16 +395,17 @@ Trader.prototype.checkOrder = function(order, callback) {
 };
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  // callback for cancelOrder should be true if the order was already filled, otherwise false
+
   const cancel = (err, data) => {
-    if (err) {
-      // when the order was filled
-      if(err.message.includes('UNKNOWN_ORDER')) {
-        return callback(undefined, true);
-      }
+    if(err) {
       return callback(err);
     }
-    callback(undefined, false);
+
+    if(data && data.filled) {
+      return callback(undefined, true);
+    }
+
+    return callback(undefined, false);
   };
 
   let reqData = {
