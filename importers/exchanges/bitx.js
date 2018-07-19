@@ -1,96 +1,111 @@
 const moment = require('moment');
 const util = require('../../core/util.js');
 const _ = require('lodash');
-const log = require('../../core/log');
+const retry = require('../../exchange/exchangeUtils').retry;
 
-var config = util.getConfig();
-var dirs = util.dirs();
-
-var Fetcher = require(dirs.exchanges + 'bitx');
+const config = util.getConfig();
+const dirs = util.dirs();
+const Fetcher = require(dirs.exchanges + 'bitx');
 
 util.makeEventEmitter(Fetcher);
 
 var end = false;
 var from = false;
-var next = false;
-const REQUEST_INTERVAL = 15 * 1000;
+const REQUEST_INTERVAL = 5 * 1000;
 
 Fetcher.prototype.getTrades = function(since, callback, descending) {
-    let retryCritical = {
-        retries: 10,
-        factor: 1.25,
-        minTimeout: REQUEST_INTERVAL,
-        maxTimeout: REQUEST_INTERVAL * 10
-    };
+  const recoverableErrors = [
+    'SOCKETTIMEDOUT',
+    'TIMEDOUT',
+    'CONNRESET',
+    'CONNREFUSED',
+    'NOTFOUND'
+  ];
 
-    let handleResponse = (callback) => {
-        return (error, body) => {
-            if (body && !_.isEmpty(body.code)) {
-                error = new Error(`ERROR ${body.code}: ${body.msg}`);
-            }
-            if(error) log.error('ERROR:', error.message, 'Retrying...');
-            return callback(error, body);
+  const processResponse = function(funcName, callback) {
+    return (error, body) => {
+      if (!error && !body) {
+        error = new Error('Empty response');
+      }
+
+      if (error) {
+        console.log(funcName, 'processResponse received ERROR:', error.message);
+        if (includes(error.message, recoverableErrors)) {
+          error.notFatal = true;
         }
-    }
 
-    let process = (err, result) => {
-        if (err) {
-            log.error('Error importing trades:', err);
-            return;
+        if (includes(error.message, ['BitX error 429'])) {
+          error.notFatal = true;
+          error.backoffDelay = 10000;
         }
-        trades = _.map(result.trades, function(t) {
-            return {
-                price: t.price,
-                date: Math.round(t.timestamp / 1000),
-                amount: t.volume,
-                tid: t.timestamp
-            };
-        });
-        callback(null, trades.reverse());
+
+        return callback(error, undefined);
+      }
+
+      return callback(undefined, body);
     }
+  };
 
-    if(moment.isMoment(since)) since = since.valueOf();
-    (_.isNumber(since) && since > 0) ? since : since = null;
+  const process = (err, result) => {
+    if (err) {
+      console.log('Error importing trades:', err);
+      return;
+    }
+    trades = _.map(result.trades, function(t) {
+      return {
+        price: t.price,
+        date: Math.round(t.timestamp / 1000),
+        amount: t.volume,
+        tid: t.timestamp
+      };
+    });
+    callback(null, trades.reverse());
+  }
 
-    let handler = (cb) => this.bitx.getTrades({ since: since, pair: this.pair }, handleResponse(cb));
-    util.retryCustom(retryCritical, _.bind(handler, this), _.bind(process, this));
+  if (moment.isMoment(since)) since = since.valueOf();
+  (_.isNumber(since) && since > 0) ? since: since = 0;
+
+  console.log('importer getting trades from BitX since', moment(since).format('YYYY-MM-DD HH:mm:ss'));
+
+  const handler = cb => this.bitx.getTrades({ since: since, pair: this.pair }, processResponse('getTrades', cb));
+  retry(null, handler, process);
 }
 
-var fetcher = new Fetcher(config.watch);
+const fetcher = new Fetcher(config.watch);
 
-var fetch = () => {
-    fetcher.import = true;
-    setTimeout( () => fetcher.getTrades(from, handleFetch), REQUEST_INTERVAL);
+const fetch = () => {
+  fetcher.import = true;
+  setTimeout(() => fetcher.getTrades(from, handleFetch), REQUEST_INTERVAL);
 };
 
-var handleFetch = (err, trades) => {
-    if (err) {
-        log.error(`There was an error importing from BitX ${err}`);
-        fetcher.emit('done');
-        return fetcher.emit('trades', []);
-    }
+const handleFetch = (err, trades) => {
+  if (err) {
+    console.log(`There was an error importing from BitX ${err}`);
+    fetcher.emit('done');
+    return fetcher.emit('trades', []);
+  }
 
-    if (trades.length > 0) {
-        from = moment.utc(_.last(trades).tid + 1).clone();
-    } else {
-        fetcher.emit('done');
-    }
+  if (trades.length > 0) {
+    from = moment.utc(_.last(trades).tid + 1).clone();
+  } else {
+    fetcher.emit('done');
+  }
 
-    if (from >= end) {
-        fetcher.emit('done');
-        var endUnix = end.unix();
-        trades = _.filter(trades, t => t.date <= endUnix);
-    }
+  if (from >= end) {
+    fetcher.emit('done');
+    const endUnix = end.unix();
+    trades = _.filter(trades, t => t.date <= endUnix);
+  }
 
-    fetcher.emit('trades', trades);
+  fetcher.emit('trades', trades);
 };
 
 module.exports = function(daterange) {
-    from = daterange.from.clone().utc();
-    end = daterange.to.clone().utc();
+  from = daterange.from.clone().utc();
+  end = daterange.to.clone().utc();
 
-    return {
-        bus: fetcher,
-        fetch: fetch,
-    };
+  return {
+    bus: fetcher,
+    fetch: fetch,
+  };
 };
