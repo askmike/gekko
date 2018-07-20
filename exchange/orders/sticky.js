@@ -258,7 +258,7 @@ class StickyOrder extends BaseOrder {
       this.orders[this.id].filled = this.amount;
       this.emit('fill', this.amount);
       this.filled(this.price);
-      return true;
+      return;
     }
 
     // if we have data on partial fills
@@ -278,7 +278,7 @@ class StickyOrder extends BaseOrder {
       }
     }
 
-    return false;
+    return;
   }
 
   move(price) {

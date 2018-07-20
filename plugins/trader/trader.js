@@ -135,18 +135,6 @@ Trader.prototype.processAdvice = function(advice) {
 
     amount = this.portfolio.currency / this.price * 0.95;
 
-    if(amount < this.broker.marketConfig.minimalOrder.amount) {
-      log.info('NOT buying, not enough', this.brokerConfig.currency);
-      return this.deferredEmit('tradeAborted', {
-        id,
-        adviceId: advice.id,
-        action: direction,
-        portfolio: this.portfolio,
-        balance: this.balance,
-        reason: "Not enough to trade."
-      });
-    }
-
     log.info(
       'Trader',
       'Received advice to go long.',
@@ -169,18 +157,6 @@ Trader.prototype.processAdvice = function(advice) {
 
     amount = this.portfolio.asset * 0.95;
 
-    if(amount < this.broker.marketConfig.minimalOrder.amount) {
-      log.info('NOT selling, not enough', this.brokerConfig.currency);
-      return this.deferredEmit('tradeAborted', {
-        id,
-        adviceId: advice.id,
-        action: direction,
-        portfolio: this.portfolio,
-        balance: this.balance,
-        reason: "Not enough to trade."
-      });
-    }
-
     log.info(
       'Trader',
       'Received advice to go short.',
@@ -193,6 +169,25 @@ Trader.prototype.processAdvice = function(advice) {
 
 Trader.prototype.createOrder = function(side, amount, advice, id) {
   const type = 'sticky';
+
+  // NOTE: this is the best check we can do at this point
+  // with the best price we have. The order won't be actually
+  // created with this.price, but it should be close enough to
+  // catch non standard errors (lot size, price filter) on
+  // exchanges that have them.
+  const check = this.broker.isValidOrder(amount, this.price);
+
+  if(!check.valid) {
+    log.debug('NOT creating order! Reason:', check.reason);
+    return this.deferredEmit('tradeAborted', {
+      id,
+      adviceId: advice.id,
+      action: direction,
+      portfolio: this.portfolio,
+      balance: this.balance,
+      reason: check.reason
+    });
+  }
 
   log.debug('Creating order to', side, amount, this.brokerConfig.asset);
 

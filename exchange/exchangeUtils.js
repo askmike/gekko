@@ -2,6 +2,7 @@
 
 const retry = require('retry');
 const errors = require('./exchangeErrors');
+const _ = require('lodash');
 
 const retryInstance = (options, checkFn, callback) => {
   if(!options) {
@@ -56,7 +57,37 @@ const bindAll = (targetClass, methodNames = []) => {
   }
 }
 
+const isValidOrder = ({api, market, amount, price}) => {
+  let reason = false;
+
+  // Check amount
+  if(amount < market.minimalOrder.amount) {
+    reason = 'Amount is too small';
+  }
+
+  // Some exchanges have restrictions on prices
+  if(
+    _.isFunction(api.isValidPrice) &&
+    !api.isValidPrice(price)
+  ) {
+    reason = 'Price is not valid';
+  }
+
+  if(
+    _.isFunction(api.isValidLot) &&
+    !api.isValidLot(price, amount)
+  ) {
+    reason = 'Lot size is too small';
+  }
+
+  return {
+    reason,
+    valid: !reason
+  }
+}
+
 module.exports = {
   retry: retryInstance,
-  bindAll
+  bindAll,
+  isValidOrder
 }
