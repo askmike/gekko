@@ -36,7 +36,7 @@ request(options)
     return { assets: assets, currencies: currencies, markets: pairs };
   })
   .then(markets => {
-    fs.writeFileSync('../../exchanges/coinfalcon-markets.json', JSON.stringify(markets, null, 2));
+    fs.writeFileSync('../../wrappers/coinfalcon-markets.json', JSON.stringify(markets, null, 2));
     console.log(`Done writing CoinFalcon market data`);
   })
   .catch(err => {

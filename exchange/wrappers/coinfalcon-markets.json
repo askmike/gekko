@@ -11,7 +11,7 @@
     "KIN",
     "SPHTX",
     "TRX",
-    "VEN",
+    "VET",
     "CRPT",
     "GNT",
     "DCN",
@@ -32,12 +32,16 @@
     "LDN",
     "DOGE",
     "STQ",
-    "DASC"
+    "DASC",
+    "LET",
+    "EOS",
+    "DTX"
   ],
   "currencies": [
     "BTC",
     "EUR",
-    "ETH"
+    "ETH",
+    "USDT"
   ],
   "markets": [
     {
@@ -230,7 +234,7 @@
     {
       "pair": [
         "BTC",
-        "VEN"
+        "VET"
       ],
       "minimalOrder": {
         "amount": 1e-8,
@@ -241,7 +245,7 @@
     {
       "pair": [
         "ETH",
-        "VEN"
+        "VET"
       ],
       "minimalOrder": {
         "amount": 1e-8,
@@ -741,6 +745,50 @@
       "minimalOrder": {
         "amount": 0.0001,
         "price": 0.0001,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "BTC"
+      ],
+      "minimalOrder": {
+        "amount": 1e-8,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "LET"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "EOS"
+      ],
+      "minimalOrder": {
+        "amount": 0.0001,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "DTX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-8,
         "order": 0
       }
     }
