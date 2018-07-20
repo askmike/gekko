@@ -43,7 +43,7 @@ request({
   return { assets: assets, currencies: currencies, markets: markets };
 })
 .then(markets => {
-  fs.writeFileSync('../../exchanges/bitfinex-markets.json', JSON.stringify(markets, null, 2));
+  fs.writeFileSync('../../wrappers/bitfinex-markets.json', JSON.stringify(markets, null, 2));
   console.log(`Done writing Bitfinex market data`);
 })
 .catch(err => {
