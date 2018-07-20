@@ -1,7 +1,6 @@
 const BitX = require("bitx");
 const _ = require('lodash');
 const moment = require('moment');
-const log = require('../../core/log');
 
 const Errors = require('../exchangeErrors');
 const retry = require('../exchangeUtils').retry;
@@ -76,11 +75,11 @@ const processResponse = function(funcName, callback) {
 };
 
 //------- Gekko Functions ---------//
-                                     
+
 Trader.prototype.getTicker = function(callback) {
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'Error: --> ', err);
+      console.log(name, 'Error: --> ', err);
       return callback(err);
     }
     const ticker = {
@@ -98,7 +97,7 @@ Trader.prototype.getTicker = function(callback) {
 Trader.prototype.getFee = function(callback) {
   // const process = (err, data) => {
   //   if (err) {
-  //     log.error(name, 'Error: --> ', err);
+  //     console.log(name, 'Error: --> ', err);
   //     return callback(err);
   //   }
   //   callback(undefined, data.taker_fee / 100);
@@ -117,7 +116,7 @@ Trader.prototype.getFee = function(callback) {
 Trader.prototype.getPortfolio = function(callback) {
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'Error: --> ', err);
+      console.log(name, 'Error: --> ', err);
       return callback(err);
     }
 
@@ -135,11 +134,11 @@ Trader.prototype.getPortfolio = function(callback) {
         currencyHold = +t.reserved;
       }
     });
-            
+
     if (!_.isNumber(assetAmount) || _.isNaN(assetAmount) ||
         !_.isNumber(currencyAmount) || _.isNaN(currencyAmount)
     ) {
-      return log.error(name, 'account balance error: Gekko is unable to trade with ', this.currency.toUpperCase(), ':', currencyAmount, ' or ', this.asset.toUpperCase(), ':', assetAmount);
+      return console.log(name, 'account balance error: Gekko is unable to trade with ', this.currency.toUpperCase(), ':', currencyAmount, ' or ', this.asset.toUpperCase(), ':', assetAmount);
     }
 
     const portfolio = [
@@ -159,7 +158,7 @@ Trader.prototype.buy = function(amount, price, callback) {
   price = round(price);
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'unable to buy:', err.message);
+      console.log(name, 'unable to buy:', err.message);
       return callback(err);
     }
     callback(err, data.order_id);
@@ -174,7 +173,7 @@ Trader.prototype.sell = function(amount, price, callback) {
   price = round(price);
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'unable to sell:', err.message);
+      console.log(name, 'unable to sell:', err.message);
       return callback(err);
     }
     callback(err, data.order_id);
@@ -199,7 +198,7 @@ Trader.prototype.getOrder = function(order, callback) {
   }
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'Error: --> ', err);
+      console.log(name, 'Error: --> ', err);
       return callback(err);
     }
     let price = 0;
@@ -225,7 +224,7 @@ Trader.prototype.checkOrder = function(order, callback) {
   }
   const process = (err, data) => {
     if (err) {
-      log.error(name, 'Error: --> ', err);
+      console.log(name, 'Error: --> ', err);
       return callback(err);
     }
 
@@ -250,22 +249,22 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const process = (err, data) => {
     if (err) {
       if (_.includes(err.message, 'Cannot stop unknown')) {
-        log.error(name, 'unable to cancel order:', order, '(' + err.message + ') assuming success...');
+        console.log(name, 'unable to cancel order:', order, '(' + err.message + ') assuming success...');
         // return callback(undefined, true);
       } else {
-        log.error(name, 'unable to cancel order:', order, '(' + err.message + ') aborting...');
+        console.log(name, 'unable to cancel order:', order, '(' + err.message + ') aborting...');
         return callback(err);
       }
     }
 
     if (data && !data.success) {
-      log.debug('cancelOrder() --> status:', data.success);
+      console.log('cancelOrder() --> status:', data.success);
       return callback(undefined, false);
     }
 
     this.checkOrder(order, (error, orderStatus) => {
       if (error) {
-        log.debug(name, 'cancelOrder\'s checkOrder failed. What do i do here?');
+        console.log(name, 'cancelOrder\'s checkOrder failed. What do i do here?');
         return callback(error, false);
       }
 
@@ -291,7 +290,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
 Trader.prototype.getTrades = function(since, callback, descending) {
   const process = (err, result) => {
     if (err) {
-      log.error(name, 'Error: --> ', err);
+      console.log(name, 'Error: --> ', err);
       return callback(err);
     }
     let trades = _.map(result.trades, (t) => {
@@ -316,7 +315,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     pair: this.pair,
     since: since
   }
-                                             
+
   const handler = cb => this.bitx.getTrades(options, processResponse('getTrades', cb));
   retry(null, handler, process);
 }
