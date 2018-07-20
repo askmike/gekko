@@ -40,7 +40,8 @@ const recoverableErrors = [
   'Service:Unavailable',
   'Request timed out',
   'Response code 5',
-  'Empty response'
+  'Empty response',
+  'API:Invalid nonce'
 ];
 
 const includes = (str, list) => {
