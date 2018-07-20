@@ -19,11 +19,11 @@ request({
   return body;
 })
 .then(results => {
-  let assets = _.unique(_.map(results, market => {
+  let assets = _.uniq(_.map(results, market => {
     return market.pair.substring(0, 3).toUpperCase();
   }));
 
-  let currencies = _.unique(_.map(results, market => {
+  let currencies = _.uniq(_.map(results, market => {
     return market.pair.substring(3, 6).toUpperCase();
   }));
 

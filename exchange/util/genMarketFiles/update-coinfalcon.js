@@ -18,8 +18,8 @@ request(options)
       throw new Error('Unable to fetch product list, response was empty');
     }
 
-    let assets = _.unique(_.map(body.data, market => market.name.split('-')[0]));
-    let currencies = _.unique(_.map(body.data, market => market.name.split('-')[1]));
+    let assets = _.uniq(_.map(body.data, market => market.name.split('-')[0]));
+    let currencies = _.uniq(_.map(body.data, market => market.name.split('-')[1]));
     let pairs = _.map(body.data, market => {
       var currency = market.name.split('-')[1];
       var asset = market.name.split('-')[0];
