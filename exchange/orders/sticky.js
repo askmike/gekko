@@ -260,7 +260,7 @@ class StickyOrder extends BaseOrder {
       this.orders[this.id].filled = this.amount;
       this.emit('fill', this.amount);
       this.filled(this.price);
-      return true;
+      return;
     }
 
     // if we have data on partial fills
@@ -280,7 +280,7 @@ class StickyOrder extends BaseOrder {
       }
     }
 
-    return false;
+    return;
   }
 
   move(price) {
@@ -498,7 +498,9 @@ class StickyOrder extends BaseOrder {
         orders: trades.length
       }
 
-      if(_.first(trades) && _.first(trades).fees) {
+      const first = _.first(trades);
+
+      if(first && first.fees) {
         summary.fees = {};
 
         _.each(trades, trade => {
@@ -516,12 +518,16 @@ class StickyOrder extends BaseOrder {
         });
       }
 
-      if(_.first(trades) && _.first(trades).feePercent) {
+      if(first && !_.isUndefined(first.feePercent)) {
         summary.feePercent = 0;
         let amount = 0;
 
         _.each(trades, trade => {
-          if(!trade || !trade.feePercent) {
+          if(!trade || _.isUndefined(trade.feePercent)) {
+            return;
+          }
+
+          if(trade.feePercent === 0) {
             return;
           }
 

@@ -66,6 +66,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
       if(err.message) {
         error = err;
       } else {
+        console.log('err but no message,', typeof err, {err, data});
         error = new Error(err);
       }
     } else if(!data) {
@@ -116,7 +117,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
           setTimeout(() => {
             this.getOpenOrders((err, orders) => {
               if(err) {
-                return next(error);
+                return next(err);
               }
 
               const order = _.find(orders, o => o.orderNumber == payload);
@@ -127,7 +128,19 @@ Trader.prototype.processResponse = function(next, fn, payload) {
                 return next(error);
               }
 
-              next(undefined, {success: 1});
+              // it was cancelled, we need to check filled amount..
+              console.log(new Date, '[CANCELFIX] process cancel response');
+              console.log('[CANCELFIX] rechecking fill')
+              setTimeout(this.getOrder((error, order) => {
+                if(error) {
+                  return next(error)
+                }
+
+                console.log('[CANCELFIX] checked, got:', order);
+
+                return next(undefined, { filled: order.amount });
+
+              }), this.checkInterval);
             });
           }, this.checkInterval);
           return;
@@ -135,6 +148,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
       }
 
       if(fn === 'order') {
+        console.log('order', error.message);
 
         if(includes(error.message, ['Not enough'])) {
           error.retry = 2;
@@ -143,7 +157,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
         // we need to check whether the order was actually created
         if(includes(error.message, unknownResultErrors)) {
           return setTimeout(() => {
-            this.findLastOrder(2, payload, (err, lastTrade) => {
+            this.findLastOrder(10, payload, (err, lastTrade) => {
               if(lastTrade) {
                 return next(undefined, lastTrade);
               }
@@ -258,9 +272,15 @@ Trader.prototype.roundPrice = function(price) {
   return +price;
 }
 
+Trader.prototype.isValidLot = function(price, amount) {
+  // Error: Total must be at least 0.0001.
+  return amount * price >= 0.0001;
+}
+
 Trader.prototype.createOrder = function(side, amount, price, callback) {
   const handle = (err, result) => {
     if(err) {
+      console.log('createOrder', {side, amount, price});
       return callback(err);
     }
 
@@ -348,12 +368,10 @@ Trader.prototype.cancelOrder = function(order, callback) {
       return callback(err);
     }
 
+    console.log(new Date, 'cancel', result.amount);
+
     if(result.filled) {
       return callback(undefined, true);
-    }
-
-    if(!result.success) {
-      return callback(undefined, false);
     }
 
     let data;
@@ -361,6 +379,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
     if(result.amount) {
       data = { remaining: result.amount };
     }
+
 
     callback(undefined, false, data);
   };
