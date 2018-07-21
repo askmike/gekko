@@ -1,8 +1,7 @@
-var Bittrex = require('node.bittrex.api');
-var util = require('../core/util.js');
-var _ = require('lodash');
-var moment = require('moment');
-var log = require('../core/log');
+const Bittrex = require('node.bittrex.api');
+const _ = require('lodash');
+const moment = require('moment');
+const retry = require('../exchangeUtils').retry;
 
 // Helper methods
 function joinCurrencies(currencyA, currencyB){
@@ -10,20 +9,18 @@ function joinCurrencies(currencyA, currencyB){
 }
 
 var Trader = function(config) {
-  _.bindAll(this);
+  this.currency = config.currency;
+  this.asset = config.asset;
 
   if(!config.key) {
-    // no api key defined -> we need to set a dummy key, otherwise the Bittrex module will not work even for public requests
-    config.key = 'dummyApiKey';
-    config.secret = 'dummyApiKey';
-  }
-
-  // override if cmd line mode (not --ui)
-  if(_.isObject(config)) {
+    // no api key defined -> we need to set a
+    // dummy key, otherwise the Bittrex module
+    // will not work even for public requests.
+    this.key = 'dummyApiKey';
+    this.secret = 'dummyApiKey';
+  } else {
     this.key = config.key;
     this.secret = config.secret;
-    this.currency = config.currency;
-    this.asset = config.asset;
   }
 
   this.name = 'Bittrex';
@@ -33,56 +30,66 @@ var Trader = function(config) {
   this.pair = [this.currency, this.asset].join('-');
 
   Bittrex.options({
-    'apikey':  this.key,
-    'apisecret': this.secret,
-    'stream': false,
-    'verbose': false,
-    'cleartext': false
+    apikey:  this.key,
+    apisecret: this.secret,
+    stream: false,
+    verbose: false,
+    cleartext: false,
+    inverse_callback_arguments: true
   });
-
-  log.debug('Init', 'New Bittrex Trader', {currency: this.currency, asset: this.asset});
 
   this.bittrexApi = Bittrex;
 }
 
-// if the exchange errors we try the same call again after
-// waiting 10 seconds
-Trader.prototype.retry = function(method, args) {
-  var wait = +moment.duration(10, 'seconds');
-  log.debug(this.name, 'returned an error, retrying.', args);
+const recoverableErrors = [
+  'SOCKETTIMEDOUT',
+  'TIMEDOUT',
+  'CONNRESET',
+  'CONNREFUSED',
+  'NOTFOUND',
+];
 
-  var self = this;
+const includes = (str, list) => {
+  if(!_.isString(str))
+    return false;
 
-  // make sure the callback (and any other fn)
-  // is bound to Trader
-  _.each(args, function(arg, i) {
-    if(_.isFunction(arg))
-      args[i] = _.bind(arg, self);
-  });
+  return _.some(list, item => str.includes(item));
+}
 
-  // run the failed method again with the same
-  // arguments after wait
-  setTimeout(
-    function() { method.apply(self, args) },
-    wait
-  );
+Trader.prototype.processResponse = function(callback) {
+  return (err, response) => {
+
+    if(err) {
+      if(!_.isError(err)) {
+        err = new Error(err.message);
+      }
+
+      if(err.message === 'APIKEY_INVALID') {
+        console.log('APIKEY_INVALID');
+        err.retry = 10;
+      }
+
+      if(includes(err.message, recoverableErrors)) {
+        err.notFatal = true;
+      }
+
+      return callback(err);
+    }
+
+    callback(undefined, response);
+  }
 }
 
 Trader.prototype.getPortfolio = function(callback) {
-  var args = _.toArray(arguments);
-  log.debug('getPortfolio', 'called');
-
-  var set = function(data, err) {
+  const handle = (err, data) => {
     if(err) {
-      log.error('getPortfolio', 'Error', err);
-      return this.retry(this.getPortfolio, args);
+      return callback(err);
     }
-
 
     data = data.result;
 
-    var assetEntry = _.find(data, function(i) { return i.Currency == this.asset}.bind(this));
-    var currencyEntry = _.find(data, function(i) { return i.Currency == this.currency}.bind(this));
+    let assetEntry = _.find(data, i => i.Currency == this.asset);
+    let currencyEntry = _.find(data, i => i.Currency == this.currency);
 
     if(_.isUndefined(assetEntry)) {
       assetEntry = {
@@ -98,214 +105,168 @@ Trader.prototype.getPortfolio = function(callback) {
       }
     }
 
-    var assetAmount = parseFloat( assetEntry.Available );
-    var currencyAmount = parseFloat( currencyEntry.Available );
+    const assetAmount = parseFloat( assetEntry.Available );
+    const currencyAmount = parseFloat( currencyEntry.Available );
 
-    if(
-      !_.isNumber(assetAmount) || _.isNaN(assetAmount) ||
-      !_.isNumber(currencyAmount) || _.isNaN(currencyAmount)
-    ) {
-      log.info('asset:', this.asset);
-      log.info('currency:', this.currency);
-      log.info('exchange data:', data);
-      util.die('Gekko was unable to set the portfolio');
-    }
-
-    var portfolio = [
+    const portfolio = [
       { name: this.asset, amount: assetAmount },
       { name: this.currency, amount: currencyAmount }
     ];
 
-    log.debug('getPortfolio', 'result:', portfolio);
+    callback(undefined, portfolio);
+  }
 
-    callback(err, portfolio);
-  }.bind(this);
+  const fetch = next => this.bittrexApi.getbalances(this.processResponse(next));
+  retry(null, fetch, handle);
+}
 
-  this.bittrexApi.getbalances(set);
+Trader.prototype.roundPrice = function(price) {
+  return _.round(price, 8);
+}
+
+Trader.prototype.roundAmount = function(price) {
+  return _.floor(price, 8);
 }
 
 Trader.prototype.getTicker = function(callback) {
-  var args = _.toArray(arguments);
+  const handle = (err, data) => {
+    if(err) {
+      return callback(err);
+    }
 
-  log.debug('getTicker', 'called');
-
-  this.bittrexApi.getticker({market: this.pair}, function(data, err) {
-    if(err)
-      return this.retry(this.getTicker, args);
-
-    var tick = data.result;
-
-    log.debug('getTicker', 'result', tick);
+    const tick = data.result;
 
     callback(null, {
       bid: parseFloat(tick.Bid),
       ask: parseFloat(tick.Ask),
     })
+  }
 
-  }.bind(this));
+  const fetch = next => this.bittrexApi.getticker({market: this.pair}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.getFee = function(callback) {
-
-  log.debug('getFee', 'called');
-  /*var set = function(data, err) {
-    if(err || data.error)
-      return callback(err || data.error);
-
-    data = data.result;
-
-    var assetEntry = _.find(data, function(c) { return c.Currency == this.asset}.bind(this));
-    //var currencyEntry = _.find(data, function(c) { return c.Currency == this.currency}.bind(this));
-
-    var fee = parseFloat(assetEntry.TxFee);
-
-    callback(false, parseFloat(assetEntry.TxFee));
-  }.bind(this);
-
-  this.bittrexApi.getcurrencies(set); */
-
-   callback(false, parseFloat(0.00025));
+  callback(false, 0.00025);
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
-  var args = _.toArray(arguments);
+  const handle = (err, result) => {
+    console.log('[bittrex buy]', err, result);
 
-  log.debug('buy', 'called', {amount: amount, price: price});
-  var set = function(result, err) {
-    if(err || result.error) {
-      if(err && err.message === 'INSUFFICIENT_FUNDS') {
-          // retry with the already reduced amount, will be reduced again in the recursive call
-          log.error('Error buy ' , 'INSUFFICIENT_FUNDS', err );
-          // correct the amount to avoid an INSUFFICIENT_FUNDS exception
-          var correctedAmount = amount - (0.00255*amount);
-          log.debug('buy', 'corrected amount', {amount: correctedAmount, price: price});
-         return this.retry(this.buy, [correctedAmount, price, callback]);
-      } else if (err && err.message === 'DUST_TRADE_DISALLOWED_MIN_VALUE_50K_SAT') {
-        callback(null, 'dummyOrderId');
-        return;
-      }
-      log.error('unable to buy:', {err: err, result: result});
-      return this.retry(this.buy, args);
+    if(err) {
+      return callback(err);
     }
 
-    log.debug('buy', 'result', result);
-    callback(null, result.result.uuid);
-  }.bind(this);
+    const id = _.get(result, 'result.uuid');
+    if(!id) {
+      console.log('[bittrex buy error]', result);
+      return callback(new Error('Bad response'));
+    }
 
-  this.bittrexApi.buylimit({market: this.pair, quantity: amount, rate: price}, set);
+    callback(undefined, id);
+  }
+
+  const fetch = next => this.bittrexApi.buylimit({market: this.pair, quantity: amount, rate: price}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
-  var args = _.toArray(arguments);
+  const handle = (err, result) => {
+    console.log('[bittrex sell]', err, result);
 
-  log.debug('sell', 'called', {amount: amount, price: price});
-
-  var set = function(result, err) {
-    if(err || result.error) {
-       log.error('unable to sell:',  {err: err, result: result});
-
-       if(err && err.message === 'DUST_TRADE_DISALLOWED_MIN_VALUE_50K_SAT') {
-         callback(null, 'dummyOrderId');
-         return;
-       }
-
-      return this.retry(this.sell, args);
+    if(err) {
+      return callback(err);
     }
 
-    log.debug('sell', 'result', result);
+    const id = _.get(result, 'result.uuid');
+    if(!id) {
+      console.log('[bittrex sell error]', result);
+      return callback(new Error('Bad response'));
+    }
 
-    callback(null, result.result.uuid);
-  }.bind(this);
+    callback(undefined, id);
+  }
 
-  this.bittrexApi.selllimit({market: this.pair, quantity: amount, rate: price}, set);
+  const fetch = next => this.bittrexApi.selllimit({market: this.pair, quantity: amount, rate: price}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
-  var check = function(result, err) {
-    log.debug('checkOrder', 'called');
+  const handle = (err, result) => {
 
-    var stillThere = _.find(result.result, function(o) { return o.OrderUuid === order });
+    if(err) {
+      return callback(err);
+    }
 
-    log.debug('checkOrder', 'result', stillThere);
-    callback(err, !stillThere);
-  }.bind(this);
+    console.log('checkOrder', result);
+    throw 'a';
+  }
 
-  this.bittrexApi.getopenorders({market: this.pair}, check);
+  const fetch = next => this.bittrexApi.getopenorders({market: this.pair}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.getOrder = function(order, callback) {
 
-  var get = function(result, err) {
-
-    log.debug('getOrder', 'called');
+  const handle = (err, result) => {
+    console.log('getOrder', result);
 
     if(err)
       return callback(err);
 
-    var price = 0;
-    var amount = 0;
-    var date = moment(0);
+    let price = 0;
+    let amount = 0;
+    let date = moment(0);
 
-    if(!result.success)
+    if(!result.success) {
       return callback(null, {price, amount, date});
+    }
 
-    var resultOrder = result.result;
+    const resultOrder = result.result;
 
     price = resultOrder.Price;
     amount = resultOrder.Quantity;
 
     if(resultOrder.IsOpen) {
-         date = moment(resultOrder.Opened);
+       date = moment(resultOrder.Opened);
     } else {
        date = moment(resultOrder.Closed);
     }
 
-    log.debug('getOrder', 'result', {price, amount, date});
     callback(err, {price, amount, date});
-  }.bind(this);
+  }
 
-  this.bittrexApi.getorder({uuid: order}, get);
+  const fetch = next => this.bittrexApi.getorder({uuid: order}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.prototype.cancelOrder = function(order, callback) {
-  var args = _.toArray(arguments);
-  var cancel = function(result, err) {
-    log.debug('cancelOrder', 'called', order);
-
+  const handle = (err, result) => {
+    console.log('cancelOrder', err, result);
     if(err) {
-      if(err.success) {
-          log.error('unable to cancel order', order, '(', err, result, '), retrying');
-          return this.retry(this.cancelOrder, args);
-      } else {
-          log.error('unable to cancel order', order, '(', err, result, '), continue');
-          callback();
-          return;
-      }
+      return callback(err);
     }
 
-    if(!result.success && result.message === 'ORDER_NOT_OPEN') {
-      log.debug('getOrder', 'ORDER_NOT_OPEN: assuming already closed or executed');
-    }
+    throw 'a';
 
-    log.debug('getOrder', 'result', result);
+    // if(!result.success && result.message === 'ORDER_NOT_OPEN') {
+    //   log.debug('getOrder', 'ORDER_NOT_OPEN: assuming already closed or executed');
+    // }
 
-    callback();
-  }.bind(this);
+    callback(undefined, true);
+  }
 
-  this.bittrexApi.cancel({uuid: order}, cancel);
+  const fetch = next => this.bittrexApi.cancel({uuid: order}, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
-Trader.prototype.getTrades = function(since, callback, descending) {
-
-  log.debug('getTrades called!', { descending: descending} );
-
+Trader.prototype.getTrades = function(since, callback, descending) {;
   var firstFetch = !!since;
 
-  var args = _.toArray(arguments);
-  var process = function(data, err) {
+  const handle = (err, data) => {
     if(err) {
-      log.error('Error getTrades()', err)
-      return this.retry(this.getTrades, args);
+      return callback(err);
     }
 
     var result = data.result;
@@ -328,20 +289,22 @@ Trader.prototype.getTrades = function(since, callback, descending) {
             timeStamp: trade.TimeStamp,
             price: +trade.Price
         };
-    	return mr;
+      return mr;
     });
 
     callback(null, result.reverse());
-  }.bind(this);
+  }
 
   var params = {
     currencyPair: joinCurrencies(this.currency, this.asset)
   }
 
-  if(since)
+  if(since) {
     params.start = since.unix();
+  }
 
-  this.bittrexApi.getmarkethistory({ market: params.currencyPair }, process);
+  const fetch = next => this.bittrexApi.getmarkethistory({ market: params.currencyPair }, this.processResponse(next));
+  retry(null, fetch, handle);
 }
 
 Trader.getCapabilities = function() {
@@ -658,8 +621,9 @@ Trader.getCapabilities = function() {
     tid: 'tid',
     providesHistory: 'date',
     providesFullHistory: false,
-    tradable: true,
-    forceReorderDelay: true
+    tradable: false,
+    forceReorderDelay: true,
+    gekkoBroker: '0.6.0'
   };
 };
 

@@ -10,7 +10,13 @@ const watchConfig = config.watch;
 const PaperTrader = function() {
   _.bindAll(this);
 
-  this.fee = 1 - (calcConfig['fee' + calcConfig.feeUsing.charAt(0).toUpperCase() + calcConfig.feeUsing.slice(1)] + calcConfig.slippage) / 100;
+  if(calcConfig.feeUsing === 'maker') {
+    this.rawFee = calcConfig.feeMaker;
+  } else {
+    this.rawFee = calcConfig.feeTaker;
+  }
+
+  this.fee = 1 - this.rawFee / 100;
 
   this.currency = watchConfig.currency;
   this.asset = watchConfig.asset;
@@ -62,7 +68,6 @@ PaperTrader.prototype.updatePosition = function(advice) {
 
   let cost;
   let amount;
-  let effectivePrice;
 
   // virtually trade all {currency} to {asset}
   // at the current price (minus fees)
@@ -71,7 +76,6 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.asset += this.extractFee(this.portfolio.currency / this.price);
     amount = this.portfolio.asset;
     this.portfolio.currency = 0;
-    effectivePrice = this.price * (1 + this.fee);
 
     this.exposed = true;
     this.trades++;
@@ -84,11 +88,12 @@ PaperTrader.prototype.updatePosition = function(advice) {
     this.portfolio.currency += this.extractFee(this.portfolio.asset * this.price);
     amount = this.portfolio.currency / this.price;
     this.portfolio.asset = 0;
-    effectivePrice = this.price * (1 - this.fee);
 
     this.exposed = false;
     this.trades++;
   }
+
+  const effectivePrice = this.price * this.fee;
 
   return { cost, amount, effectivePrice };
 }
@@ -133,7 +138,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     balance: this.getBalance(),
     date: advice.date,
     effectivePrice,
-    feePercent: this.fee * 100
+    feePercent: this.rawFee
   });
 }
 

@@ -4,7 +4,7 @@ Gekko uses [technical analysis indicators](http://www.investopedia.com/articles/
 
 This investment advice is going to be either **long** or **short**. Long indicates that Gekko the asset should be bought and short indicates that it should be sold.
 
-Below you can find simple and examplary strategies that come with Gekko. These strategies come with Gekko and serve as examples, **for anything that involves real money we recommend you [write your own](./creating_a_strategy.md).**
+Below you can find simple and exemplary strategies that come with Gekko. These strategies come with Gekko and serve as examples, **for anything that involves real money we recommend you [write your own](./creating_a_strategy.md).**
 
 Gekko currently comes with the following example strategies:
 
@@ -22,7 +22,7 @@ Gekko currently comes with the following example strategies:
 This strategy uses `Exponential Moving Average crossovers` to determine the current trend the
 market is in. Using this information it will suggest to ride the trend. Note that this is
 not MACD because it just checks whether the longEMA and shortEMA are [threshold]% removed
-from eachother.
+from each other.
 
 This strategy is fairly popular in bitcoin trading due to Bitcointalk user Goomboo. Read more about this strategy in [his topic](https://bitcointalk.org/index.php?topic=60501.0) or [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages).
 
@@ -39,7 +39,7 @@ You can configure the following parameters:
 
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
-- the down treshold and the up treshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
+- the down threshold and the up threshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
 
 ### MACD
 
@@ -64,7 +64,7 @@ You can configure the following parameters:
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
 - signal is the EMA weight calculated over the difference from short/long.
-- the down treshold and the up treshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
+- the down threshold and the up threshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
 - persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
 
 ### PPO
@@ -90,7 +90,7 @@ You can configure the following parameters:
 - short is the short EMA that moves closer to the real market (including noise)
 - long is the long EMA that lags behind the market more but is also more resistant to noise.
 - signal is the EMA weight calculated over the difference from short/long.
-- the down treshold and the up treshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
+- the down threshold and the up threshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
 - persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
 
 ### RSI

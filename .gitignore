@@ -49,3 +49,4 @@ config-*.js
 private-*.js
 private-*.toml
 SECRET-api-keys.json
+exchange/nusadua

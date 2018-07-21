@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   props: ['roundtrips'],
   data: () => {
@@ -36,7 +38,23 @@ export default {
   methods: {
     diff: n => moment.duration(n).humanize(),
     humanizeDuration: (n) => window.humanizeDuration(n),
-    fmt: mom => moment(mom).utc().format('YYYY-MM-DD HH:mm'),
+    fmt: date => {
+
+      // roundtrips coming out of a backtest
+      // are unix timestamp, live roundtrips
+      // are date strings.
+      // TODO: normalize
+
+      let mom;
+
+      if(_.isNumber(date)) {
+        mom = moment.unix(date);
+      } else {
+        mom = moment(date).utc();
+      }
+
+      return mom.utc().format('YYYY-MM-DD HH:mm');
+    },
     round: n => (+n).toFixed(3),
   },
 }

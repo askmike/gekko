@@ -19,11 +19,11 @@ request({
   return body;
 })
 .then(results => {
-  let assets = _.unique(_.map(results, market => {
+  let assets = _.uniq(_.map(results, market => {
     return market.pair.substring(0, 3).toUpperCase();
   }));
 
-  let currencies = _.unique(_.map(results, market => {
+  let currencies = _.uniq(_.map(results, market => {
     return market.pair.substring(3, 6).toUpperCase();
   }));
 
@@ -43,7 +43,7 @@ request({
   return { assets: assets, currencies: currencies, markets: markets };
 })
 .then(markets => {
-  fs.writeFileSync('../../exchanges/bitfinex-markets.json', JSON.stringify(markets, null, 2));
+  fs.writeFileSync('../../wrappers/bitfinex-markets.json', JSON.stringify(markets, null, 2));
   console.log(`Done writing Bitfinex market data`);
 })
 .catch(err => {

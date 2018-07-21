@@ -1,7 +1,6 @@
 version: '3'
 services:
   gekko:
-    restart: always
     build: ./
     volumes:
       - ./volumes/gekko/history:/usr/src/app/history

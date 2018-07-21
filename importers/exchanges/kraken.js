@@ -1,4 +1,3 @@
-var KrakenClient = require('kraken-api-es5')
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -42,9 +41,8 @@ var handleFetch = (err, trades) => {
         return fetcher.emit('trades', []);
     }
 
-    var last = moment.unix(_.last(trades).date);
+    var last = moment.unix(_.last(trades).date).utc();
     lastId = _.last(trades).tid
-
     if(last < from) {
         log.debug('Skipping data, they are before from date', last.format());
         return fetch();

@@ -41,7 +41,7 @@ After this you can launch a hot reload version of the app which will automatical
     cd vue
     npm run serve
 
-Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/js/app.xxx.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node server` commmand (on default http://localhost:3000/api).
+Gekko UI is now served from port 8080, the webpack dev server will compile the vue app (in memory) and intercept all calls to the app itself (`/dist/js/app.xxx.js`) and serve the in memory app. It is important to note that this UI still talks to the API served from the `node server` command (on default http://localhost:3000/api).
 
 
 If you have configured Gekko to run on non standards ports (using the UIconfig), you can have your config applied to the development environment by copying `gekko/web/vue/dist/UIconfig.js` to `gekko/web/vue/public/UIconfig.js`.

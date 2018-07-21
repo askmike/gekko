@@ -7,7 +7,7 @@ Every Gekko instance has two core components:
 - A market
 - A GekkoStream
 
-Communicaton between those two components is handled by Node.JS' [Stream API](https://nodejs.org/api/stream.html). The Market implements a Readable Stream interface while the GekkoStream implements a Writeable Stream interface.
+Communication between those two components is handled by Node.JS' [Stream API](https://nodejs.org/api/stream.html). The Market implements a Readable Stream interface while the GekkoStream implements a Writeable Stream interface.
 
 ## A Market
 
@@ -37,8 +37,8 @@ When you run a backtest using Gekko the following things happen:
 
 Those two core components describe the majority of Gekko's flow. A lot "core functionality" like saving candles to disk are simply plugins that push all candles to a database.
 
-## Seperated architecture
+## Separated architecture
 
 The modular nature of Gekko makes it very dynamic and allows for rapidly creating new plugins. However there is an ugly side to this story:
 
-The `tradingAdvisor` runs TA strategies against a market. The problem however is that most TA indicators need some history before thay can give accurate results. If you want to use an EMA (exponential moving average), you need some history to base the initial average on. But because the tradingAdvisor doesn't know what market data is going to be made available later by the market, it needs to do some fetching itself and compare that to locally available market data (stored in the local database) to see if it can stitch the two sources.
+The `tradingAdvisor` runs TA strategies against a market. The problem however is that most TA indicators need some history before they can give accurate results. If you want to use an EMA (exponential moving average), you need some history to base the initial average on. But because the tradingAdvisor doesn't know what market data is going to be made available later by the market, it needs to do some fetching itself and compare that to locally available market data (stored in the local database) to see if it can stitch the two sources.

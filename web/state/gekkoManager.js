@@ -91,15 +91,17 @@ GekkoManager.prototype.handleRawEvent = function(id) {
       return this.handleFatalError(id, err);
     }
 
+    if(!event) {
+      return;
+    }
+
     if(event.log) {
       return logger.write(event.message);
     }
 
-    if(!event || !event.type) {
-      return;
+    if(event.type) {
+      this.handleGekkoEvent(id, event);
     }
-
-    this.handleGekkoEvent(id, event);
   }
 }
 

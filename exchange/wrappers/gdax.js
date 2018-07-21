@@ -9,8 +9,6 @@ const BATCH_SIZE = 100;
 const QUERY_DELAY = 350;
 
 const Trader = function(config) {
-  _.bindAll(this);
-
   this.post_only = true;
   this.use_sandbox = false;
   this.name = 'GDAX';
@@ -60,6 +58,7 @@ const recoverableErrors = [
   'GDAX is currently under maintenance.',
   'HTTP 408 Error',
   'HTTP 504 Error',
+  'HTTP 503 Error',
   'socket hang up',
   'EHOSTUNREACH'
 ];

@@ -91,7 +91,7 @@ Go to the config and configure it like this:
 - reportInCurrency tells Gekko whether it should report in asset or in the currency.
 - simulationBalance tells Gekko with what balance it should start.
 - verbose specifies how often Gekko should log the results (false is after every trade, true is after every candle).
-- fee is the exchange fee (in %) Gekko should take into considarion when simulating orders.
+- fee is the exchange fee (in %) Gekko should take into consideration when simulating orders.
 - slippage is the costs in (in %) associated with not being able to buy / sell at market price.*
 
 *If you are trading a lot and you are buying 100% currency you might not get it all at market price and you have to walk the book in order to take that position. Also note that Gekko uses the candle close price and is unaware of the top asks bids, also take this into account. It is important that you set this number correctly or the resulted calculated profit be very wrong. Read more information [here](http://www.investopedia.com/terms/s/slippage.asp). Take these into consideration when setting a slippage:
@@ -126,7 +126,7 @@ Mailer will automatically email you whenever Gekko has a new advice.
       // fill in your email and password.
       //
       // WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
-      // guarantuee that your email address & password are safe!
+      // guarantee that your email address & password are safe!
 
       password: '',       // Your GMail Password - if not supplied Gekko will prompt on startup.
       tag: '[GEKKO] ',      // Prefix all EMail subject lines with this
@@ -145,7 +145,7 @@ Mailer will automatically email you whenever Gekko has a new advice.
   > fill in your email and password.
   >
   > WARNING: If you have NOT downloaded Gekko from the github page above we CANNOT
-  > guarantuee that your email address & password are safe!
+  > guarantee that your email address & password are safe!
 
 - tag is some text that Gekko will put in all subject lines so you can easily group all advices together.
 
@@ -210,3 +210,4 @@ This is an advanced plugin only for programmers! If you are interested in this r
 - host is the redis host.
 - channelPrefix a string that Gekko will prefix all candles with.
 - broadcast is a list of all events you want Gekko to publish.
+

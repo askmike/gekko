@@ -1,6 +1,7 @@
 var settings = {
   wait: 0,
-  advice: 'short'
+  // advice: 'short'
+  advice: 'long'
 };
 
 // -------
@@ -17,8 +18,10 @@ var method = {
   check: function() {
 
     log.info('iteration:', i);
-    if(settings.wait === i)
+    if(settings.wait === i) {
+      console.log('trigger advice!');
       this.advice(settings.advice);
+    }
 
     i++
 

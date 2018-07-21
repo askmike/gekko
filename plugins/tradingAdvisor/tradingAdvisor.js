@@ -18,9 +18,9 @@ var Actor = function(done) {
 
   this.batcher = new CandleBatcher(config.tradingAdvisor.candleSize);
 
-  this.methodName = config.tradingAdvisor.method;
+  this.strategyName = config.tradingAdvisor.method;
 
-  this.setupTradingMethod();
+  this.setupStrategy();
 
   var mode = util.gekkoMode();
 
@@ -36,29 +36,30 @@ var Actor = function(done) {
     done();
 }
 
-Actor.prototype.setupTradingMethod = function() {
+Actor.prototype.setupStrategy = function() {
 
-  if(!fs.existsSync(dirs.methods + this.methodName + '.js'))
-    util.die('Gekko can\'t find the strategy "' + this.methodName + '"');
+  if(!fs.existsSync(dirs.methods + this.strategyName + '.js'))
+    util.die('Gekko can\'t find the strategy "' + this.strategyName + '"');
 
-  log.info('\t', 'Using the strategy: ' + this.methodName);
+  log.info('\t', 'Using the strategy: ' + this.strategyName);
 
-  var method = require(dirs.methods + this.methodName);
+  const strategy = require(dirs.methods + this.strategyName);
 
-  // bind all trading method specific functions
-  // to the Consultant.
-  var Consultant = require('./baseTradingMethod');
+  // bind all trading strategy specific functions
+  // to the WrappedStrategy.
+  const WrappedStrategy = require('./baseTradingMethod');
 
-  _.each(method, function(fn, name) {
-    Consultant.prototype[name] = fn;
+  _.each(strategy, function(fn, name) {
+    WrappedStrategy.prototype[name] = fn;
   });
 
-  if(config[this.methodName]) {
-    var tradingSettings = config[this.methodName];
+  let stratSettings;
+  if(config[this.strategyName]) {
+    stratSettings = config[this.strategyName];
   }
 
-  this.method = new Consultant(tradingSettings);
-  this.method
+  this.strategy = new WrappedStrategy(stratSettings);
+  this.strategy
     .on('advice', this.relayAdvice)
     .on(
       'stratWarmupCompleted',
@@ -67,10 +68,12 @@ Actor.prototype.setupTradingMethod = function() {
     .on(
       'stratUpdate',
       e => this.deferredEmit('stratUpdate', e)
+    ).on('stratNotification',
+      e => this.deferredEmit('stratNotification', e)
     )
 
-  this.method
-    .on('trade', this.processTrade);
+  this.strategy
+    .on('tradeCompleted', this.processTradeCompleted);
 
   this.batcher
     .on('candle', _candle => {
@@ -94,18 +97,18 @@ Actor.prototype.processCandle = function(candle, done) {
   this.batcher.flush();
 }
 
-// propogate a custom sized candle to the trading method
+// propogate a custom sized candle to the trading strategy
 Actor.prototype.emitStratCandle = function(candle) {
-  this.method.tick(candle, this.next);
+  this.strategy.tick(candle, this.next);
 }
 
-Actor.prototype.processTrade = function(trade) {
-  this.method.processTrade(trade);
+Actor.prototype.processTradeCompleted = function(trade) {
+  this.strategy.processTrade(trade);
 }
 
 // pass through shutdown handler
 Actor.prototype.finish = function(done) {
-  this.method.finish(done);
+  this.strategy.finish(done);
 }
 
 // EMITTERS

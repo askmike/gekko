@@ -51,6 +51,14 @@ module.exports = {
     return useLowerCaseTableNames() ? fullName.toLowerCase() : fullName;
   },
 
+  startconstraint: function (name) {
+    if (useSingleDatabase()) {
+      name = watch.exchange.replace(/\-/g,'') + '_' + name;
+    }
+    var fullName = [name, settings.pair.join('_')].join('_');
+    return useLowerCaseTableNames() ? fullName.toLowerCase() + '_start_key' : fullName + '_start_key';
+  },
+
   // postgres schema name. defaults to 'public'
   schema: function () {
     return config.postgresql.schema ? config.postgresql.schema : 'public';
