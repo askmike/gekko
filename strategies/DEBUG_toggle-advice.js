@@ -15,7 +15,7 @@ var method = {
   update: _.noop,
   log: _.noop,
   processTrade: function(trade) {
-    console.log('TRADE RECEIVED BY processTrade:', trade);
+    log.debug('TRADE RECEIVED BY processTrade:', trade);
   },
   check: function(candle) {
 

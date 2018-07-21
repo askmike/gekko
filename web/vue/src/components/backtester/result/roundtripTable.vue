@@ -50,7 +50,7 @@ export default {
       if(_.isNumber(date)) {
         mom = moment.unix(date);
       } else {
-        mom = moment(mom).utc();
+        mom = moment(date).utc();
       }
 
       return mom.utc().format('YYYY-MM-DD HH:mm');
