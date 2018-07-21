@@ -14,5 +14,6 @@ module.exports = {
         },
       ])
     ]
-  }
+  },
+  baseUrl: ''
 }
