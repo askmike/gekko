@@ -1,10 +1,9 @@
-// Let's create our own method
 var method = {};
 // Prepare everything our method needs
 method.init = function() {
   this.name = 'tulip-adx'
   this.trend = 'none';
-  this.requiredHistory = this.settings.historySize;
+  this.requiredHistory = this.tradingAdvisor.historySize;
   this.addTulipIndicator('myadx', 'adx', this.settings);
 }
 // What happens on every new candle?
