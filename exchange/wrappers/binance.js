@@ -27,6 +27,18 @@ const Trader = function(config) {
     return market.pair[0] === this.currency && market.pair[1] === this.asset
   });
 
+  // Note non standard func:
+  //
+  // On binance we might pay fees in BNB
+  // if we do we CANNOT calculate feePercent
+  // since we don't track BNB price (when we
+  // are not trading on a BNB market).
+  //
+  // Though we can deduce feePercent based
+  // on user fee tracked through `this.getFee`.
+  // Set default here, overwrite in getFee.
+  this.fee = 0.1 / 100;
+
   this.binance = new Binance.BinanceRest({
     key: this.key,
     secret: this.secret,
@@ -160,10 +172,25 @@ Trader.prototype.getPortfolio = function(callback) {
   retry(undefined, fetch, setBalance);
 };
 
-// This uses the base maker fee (0.1%), and does not account for BNB discounts
 Trader.prototype.getFee = function(callback) {
-  const makerFee = 0.1;
-  callback(undefined, makerFee / 100);
+
+  // binance does NOT tell us whether the user is using BNB to pay
+  // for fees, which means a discount (effectively lower fees)
+  const handle = (err, data) => {
+    if(err)  {
+      return callback(err);
+    }
+
+    const basepoints = data.makerCommission;
+
+    // note non standard func, see constructor
+    this.fee = basepoints / 100;
+
+    callback(undefined, basepoints / 100);
+  }
+
+  const fetch = cb => this.binance.account({}, this.handleResponse('getFee', cb));
+  retry(undefined, fetch, handle);
 };
 
 Trader.prototype.getTicker = function(callback) {
@@ -323,23 +350,23 @@ Trader.prototype.getOrder = function(order, callback) {
     let feePercent;
     if(_.keys(fees).length === 1) {
       if(fees.BNB && this.asset !== 'BNB' && this.currency !== 'BNB') {
-        // we paid fees in BNB, right now that means the fee is always 5 basepoints.
-        // we cannot calculate since we do not have the BNB rate.
-        feePercent = 0.05;
+        // we paid fees in BNB, right now that means the fee is always 75%
+        // of base fee. We cannot calculate since we do not have the BNB rate.
+        feePercent = this.fee * 0.75;
       } else {
         if(fees[this.asset]) {
           feePercent = fees[this.asset] / amount * 100;
         } else if(fees.currency) {
           feePercent = fees[this.currency] / price / amount * 100;
         } else {
-          // assume base fee of 10 basepoints
-          feePercent = 0.1;
+          // use user fee of 10 basepoints
+          feePercent = this.fee;
         }
       }
     } else {
       // we paid fees in multiple currencies?
-      // assume base fee of 10 basepoints
-      feePercent = 0.1;
+      // assume user fee
+      feePercent = this.fee;
     }
 
     callback(undefined, { price, amount, date, fees, feePercent });
