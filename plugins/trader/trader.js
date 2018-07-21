@@ -9,6 +9,8 @@ const Broker = require(dirs.gekko + '/exchange/gekkoBroker');
 
 const Trader = function(next) {
 
+  _.bindAll(this);
+
   this.brokerConfig = {
     ...config.trader,
     ...config.watch,
@@ -37,23 +39,49 @@ const Trader = function(next) {
     next();
   });
 
-  this.sendInitialPortfolio = false;
   this.cancellingOrder = false;
+  this.sendInitialPortfolio = false;
 
-  _.bindAll(this);
+  setInterval(this.sync, 1000 * 60 * 10);
 }
 
 // teach our trader events
 util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
-  log.debug('syncing portfolio');
+  log.debug('syncing private data');
   this.broker.syncPrivateData(() => {
-    this.price = this.broker.ticker.bid;
+    if(!this.price) {
+      this.price = this.broker.ticker.bid;
+    }
+
+    const oldPortfolio = this.portfolio;
+
     this.setPortfolio();
+
+    if(this.sendInitialPortfolio && !_.isEqual(oldPortfolio, this.portfolio)) {
+      this.relayPortfolioChange();
+    }
+
+    // balance is relayed every minute
+    // no need to do it here.
+
     if(next) {
       next();
     }
+  });
+}
+
+Trader.prototype.relayPortfolioChange = function() {
+  this.deferredEmit('portfolioChange', {
+    asset: this.portfolio.asset,
+    currency: this.portfolio.currency
+  });
+}
+
+Trader.prototype.relayPortfolioValueChange = function() {
+  this.deferredEmit('portfolioValueChange', {
+    balance: this.balance
   });
 }
 
@@ -68,31 +96,34 @@ Trader.prototype.setPortfolio = function() {
       b => b.name === this.brokerConfig.asset
     ).amount
   }
+}
+
+Trader.prototype.setBalance = function() {
   this.balance = this.portfolio.currency + this.portfolio.asset * this.price;
   this.exposure = (this.portfolio.asset * this.price) / this.balance;
-
   // if more than 10% of balance is in asset we are exposed
   this.exposed = this.exposure > 0.1;
 }
 
 Trader.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
+  const previousBalance = this.balance;
   this.setPortfolio();
+  this.setBalance();
 
-  // on init
   if(!this.sendInitialPortfolio) {
     this.sendInitialPortfolio = true;
     this.deferredEmit('portfolioChange', {
       asset: this.portfolio.asset,
       currency: this.portfolio.currency
     });
-    this.deferredEmit('portfolioValueChange', {
-      balance: this.balance
-    });
-  } else if(this.exposed) {
-    this.deferredEmit('portfolioValueChange', {
-      balance: this.balance
-    });
+  }
+
+  if(this.balance !== previousBalance) {
+    // this can happen because:
+    // A) the price moved and we have > 0 asset
+    // B) portfolio got changed
+    this.relayPortfolioValueChange();
   }
 
   done();
