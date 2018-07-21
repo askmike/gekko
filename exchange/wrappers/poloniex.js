@@ -272,6 +272,11 @@ Trader.prototype.roundPrice = function(price) {
   return +price;
 }
 
+Trader.prototype.isValidLot = function(price, amount) {
+  // Error: Total must be at least 0.0001.
+  return amount * price >= 0.0001;
+}
+
 Trader.prototype.createOrder = function(side, amount, price, callback) {
   const handle = (err, result) => {
     if(err) {
