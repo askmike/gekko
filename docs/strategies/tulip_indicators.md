@@ -10,7 +10,7 @@ Open your terminal. Then:
 
 ```
 cd ~/gekko
-npm install tulind
+npm install tulind --no-save
 ```
 
 ## Example
