@@ -22,7 +22,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [Okcoin.cn][11]*     | ✓          | ✓            | ✕         | China, see [#352][20]     |
 | [Cex.io][12]*        | ✓          | ✕            | ✕         |                           |
 | [BTC Markets][13]*   | ✓          | ✓            | ✕         |                           |
-| [bitX][14]*          | ✓          | ✕            | ✕         |                           |
+| [bitX][14]           | ✓          | ✓            | ✓         | aka Luno                  |
 | [lakeBTC][15]*       | ✓          | ✕            | ✕         |                           |
 | [meXBT][16]*         | ✓          | ✕            | ✕         | see [here][21]            |
 | [zaif][17]*          | ✓          | ✕            | ✕         |                           |
@@ -47,7 +47,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [11]: https://www.okcoin.cn
 [12]: https://cex.io
 [13]: https://btcmarkets.net
-[14]: https://www.bitx.co
+[14]: https://www.luno.com
 [15]: https://lakebtc.com
 [16]: https://mexbt.com
 [17]: https://zaif.jp/trade_btc_jpy
