@@ -26,6 +26,7 @@ const Trader = function(next) {
   }
 
   this.sync(() => {
+    this.setBalance();
     log.info('\t', 'Portfolio:');
     log.info('\t\t', this.portfolio.currency, this.brokerConfig.currency);
     log.info('\t\t', this.portfolio.asset, this.brokerConfig.asset);
@@ -130,7 +131,16 @@ Trader.prototype.processCandle = function(candle, done) {
 }
 
 Trader.prototype.processAdvice = function(advice) {
-  const direction = advice.recommendation === 'long' ? 'buy' : 'sell';
+  let direction;
+
+  if(advice.recommendation === 'long') {
+    direction = 'buy';
+  } else if(advice.recommendation === 'short') {
+    direction = 'sell';
+  } else {
+    log.error('ignoring advice in unknown direction');
+    return;
+  }
 
   const id = 'trade-' + (++this.propogatedTrades);
 
@@ -213,7 +223,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
     return this.deferredEmit('tradeAborted', {
       id,
       adviceId: advice.id,
-      action: direction,
+      action: side,
       portfolio: this.portfolio,
       balance: this.balance,
       reason: check.reason
