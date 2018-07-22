@@ -27,6 +27,15 @@ const Trader = function(config) {
     return market.pair[0] === this.currency && market.pair[1] === this.asset
   });
 
+  this.binance = new Binance.BinanceRest({
+    key: this.key,
+    secret: this.secret,
+    timeout: 15000,
+    recvWindow: 60000, // suggested by binance
+    disableBeautification: false,
+    handleDrift: true,
+  });
+
   // Note non standard func:
   //
   // On binance we might pay fees in BNB
@@ -37,16 +46,9 @@ const Trader = function(config) {
   // Though we can deduce feePercent based
   // on user fee tracked through `this.getFee`.
   // Set default here, overwrite in getFee.
-  this.fee = 0.1 / 100;
-
-  this.binance = new Binance.BinanceRest({
-    key: this.key,
-    secret: this.secret,
-    timeout: 15000,
-    recvWindow: 60000, // suggested by binance
-    disableBeautification: false,
-    handleDrift: true,
-  });
+  this.fee = 0.1;
+  // Set the proper fee asap.
+  this.getFee(_.noop);
 };
 
 const recoverableErrors = [
