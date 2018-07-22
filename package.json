@@ -17,6 +17,7 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "async": "2.1.2",
+    "bitfinex-api-node": "^1.2.1",
     "bitx": "^1.5.0",
     "co-fs": "^1.2.0",
     "commander": "^2.13.0",
