@@ -22,7 +22,7 @@ Fetcher.prototype.getTrades = function(upto, callback, descending) {
           tid: trade.ID,
           date: moment(trade.MTS).format('X'),
           price: +trade.PRICE,
-          amount: +trade.AMOUNT,
+          amount: +Math.abs(trade.AMOUNT),
         };
       });
     }
@@ -82,6 +82,7 @@ var fetch = () => {
     lastTimestamp = from.valueOf();
     batch_start = moment(from);
     batch_end = moment(from).add(stride, 'h');
+
     fetcher.getTrades(batch_end, handleFetch);
   }
 };
