@@ -42,7 +42,6 @@ const recoverableErrors = [
   '443',
   '504',
   '503',
-  '500',
   '502',
   'Empty response',
   'Nonce is too small'
