@@ -76,7 +76,10 @@ var fetch = () => {
   if (lastTimestamp) {
     // We need to slow this down to prevent hitting the rate limits
     setTimeout(() => {
-      fetcher.getTrades(lastTimestamp, handleFetch);
+
+      // make sure we fetch with overlap from last batch
+      const since = lastTimestamp - 1000;
+      fetcher.getTrades(since, handleFetch);
     }, 2500);
   } else {
     lastTimestamp = from.valueOf();
