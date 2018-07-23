@@ -1,11 +1,11 @@
-const BitX = require("bitx");
+const Luno = require("bitx");
 const _ = require('lodash');
 const moment = require('moment');
 
 const Errors = require('../exchangeErrors');
 const retry = require('../exchangeUtils').retry;
 
-const name = 'BitX';
+const name = 'Luno';
 
 const Trader = function(config) {
   if (_.isObject(config)) {
@@ -15,7 +15,7 @@ const Trader = function(config) {
     this.asset = config.asset;
     this.pair = config.asset + config.currency;
   }
-  this.bitx = new BitX(this.key, this.secret, { pair: this.pair });
+  this.luno = new Luno(this.key, this.secret, { pair: this.pair });
   this.market = _.find(Trader.getCapabilities().markets, (market) => {
     return market.pair[0] === this.currency && market.pair[1] === this.asset;
   });
@@ -62,7 +62,7 @@ const processResponse = function(funcName, callback) {
         error.notFatal = true;
       }
 
-      if (includes(error.message, ['BitX error 429'])) {
+      if (includes(error.message, ['error 429'])) {
         error.notFatal = true;
         error.backoffDelay = 10000;
       }
@@ -90,7 +90,7 @@ Trader.prototype.getTicker = function(callback) {
     callback(undefined, ticker);
   };
 
-  const handler = cb => this.bitx.getTicker(processResponse('getTicker', cb));
+  const handler = cb => this.luno.getTicker(processResponse('getTicker', cb));
   retry(null, handler, process);
 }
 
@@ -102,7 +102,7 @@ Trader.prototype.getFee = function(callback) {
   //   }
   //   callback(undefined, data.taker_fee / 100);
   // };
-  // const handler = cb => this.bitx.getFee(processResponse('getFee', cb));
+  // const handler = cb => this.luno.getFee(processResponse('getFee', cb));
   // retry(null, handler, process);
 
   if (this.pair === 'ETHXBT')
@@ -149,7 +149,7 @@ Trader.prototype.getPortfolio = function(callback) {
     callback(err, portfolio);
   };
 
-  const handler = cb => this.bitx.getBalance(processResponse('getPortfolio', cb));
+  const handler = cb => this.luno.getBalance(processResponse('getPortfolio', cb));
   retry(null, handler, process);
 }
 
@@ -164,7 +164,7 @@ Trader.prototype.buy = function(amount, price, callback) {
     callback(err, data.order_id);
   };
 
-  const handler = cb => this.bitx.postBuyOrder(amount, price, processResponse('buy', cb));
+  const handler = cb => this.luno.postBuyOrder(amount, price, processResponse('buy', cb));
   retry(null, handler, process);
 }
 
@@ -179,7 +179,7 @@ Trader.prototype.sell = function(amount, price, callback) {
     callback(err, data.order_id);
   };
 
-  const handler = cb => this.bitx.postSellOrder(amount, price, processResponse('sell', cb));
+  const handler = cb => this.luno.postSellOrder(amount, price, processResponse('sell', cb));
   retry(null, handler, process);
 }
 
@@ -214,7 +214,7 @@ Trader.prototype.getOrder = function(order, callback) {
     callback(err, { price, amount, date });
   };
 
-  const handler = cb => this.bitx.getOrder(order, processResponse('getOrder', cb));
+  const handler = cb => this.luno.getOrder(order, processResponse('getOrder', cb));
   retry(null, handler, process);
 }
 
@@ -238,7 +238,7 @@ Trader.prototype.checkOrder = function(order, callback) {
     callback(undefined, result);
   };
 
-  const handler = cb => this.bitx.getOrder(order, processResponse('checkOrder', cb));
+  const handler = cb => this.luno.getOrder(order, processResponse('checkOrder', cb));
   retry(null, handler, process);
 }
 
@@ -283,7 +283,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
   }
 
-  const handler = cb => this.bitx.stopOrder(order, processResponse('cancelOrder', cb));
+  const handler = cb => this.luno.stopOrder(order, processResponse('cancelOrder', cb));
   retry(null, handler, process);
 }
 
@@ -316,14 +316,14 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     since: since
   }
 
-  const handler = cb => this.bitx.getTrades(options, processResponse('getTrades', cb));
+  const handler = cb => this.luno.getTrades(options, processResponse('getTrades', cb));
   retry(null, handler, process);
 }
 
 Trader.getCapabilities = function() {
   return {
-    name: 'BitX',
-    slug: 'bitx',
+    name: 'Luno',
+    slug: 'luno',
     currencies: ['MYR', 'KES', 'NGN', 'ZAR', 'XBT'],
     assets: ['ETH', 'XBT'],
     markets: [
