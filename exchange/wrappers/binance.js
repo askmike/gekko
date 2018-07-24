@@ -36,19 +36,21 @@ const Trader = function(config) {
     handleDrift: true,
   });
 
-  // Note non standard func:
-  //
-  // On binance we might pay fees in BNB
-  // if we do we CANNOT calculate feePercent
-  // since we don't track BNB price (when we
-  // are not trading on a BNB market).
-  //
-  // Though we can deduce feePercent based
-  // on user fee tracked through `this.getFee`.
-  // Set default here, overwrite in getFee.
-  this.fee = 0.1;
-  // Set the proper fee asap.
-  this.getFee(_.noop);
+  if(config.key && config.secret) {
+    // Note non standard func:
+    //
+    // On binance we might pay fees in BNB
+    // if we do we CANNOT calculate feePercent
+    // since we don't track BNB price (when we
+    // are not trading on a BNB market).
+    //
+    // Though we can deduce feePercent based
+    // on user fee tracked through `this.getFee`.
+    // Set default here, overwrite in getFee.
+    this.fee = 0.1;
+    // Set the proper fee asap.
+    this.getFee(_.noop);
+  }
 };
 
 const recoverableErrors = [
