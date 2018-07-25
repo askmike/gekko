@@ -195,7 +195,13 @@ export default {
         return false;
       }
 
-      const warmupTime = _.get(this.config, 'tradingAdvisor.candleSize') * _.get(this.config, 'tradingAdvisor.historySize');
+      const historySize = _.get(this.config, 'tradingAdvisor.historySize');
+
+      if(!historySize) {
+        return false;
+      }
+
+      const warmupTime = _.get(this.config, 'tradingAdvisor.candleSize') * historySize;
 
       return humanizeDuration(
         moment(this.initialEvents.candle.start).add(warmupTime, 'm').diff(moment()),
