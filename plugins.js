@@ -200,7 +200,8 @@ var plugins = [
     description: 'Logs all gekko events.',
     slug: 'eventLogger',
     async: false,
-    modes: ['realtime', 'backtest']
+    modes: ['realtime', 'backtest'],
+    greedy: true
   },
   {
     name: 'Backtest result export',
