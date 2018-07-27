@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const statslite = require('stats-lite');
 const util = require('../../core/util');
+const log = require(util.dirs().core + 'log')
 const ENV = util.gekkoEnv();
 
 const config = util.getConfig();
@@ -48,13 +49,15 @@ const PerformanceAnalyzer = function() {
 }
 
 PerformanceAnalyzer.prototype.processPortfolioValueChange = function(event) {
-  if(!this.start.balance)
+  if(!this.start.balance) {
     this.start.balance = event.balance;
+  }
 }
 
 PerformanceAnalyzer.prototype.processPortfolioChange = function(event) {
-  if(!this.start.portfolio)
+  if(!this.start.portfolio) {
     this.start.portfolio = event;
+  }
 }
 
 PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
@@ -91,13 +94,13 @@ PerformanceAnalyzer.prototype.processTradeCompleted = function(trade) {
   this.portfolio = trade.portfolio;
   this.balance = trade.balance;
 
-  const report = this.calculateReportStatistics();
-
-  this.logger.handleTrade(trade, report);
-
   this.registerRoundtripPart(trade);
 
-  this.deferredEmit('performanceReport', report);
+  const report = this.calculateReportStatistics();
+  if(report) {
+    this.logger.handleTrade(trade, report);
+    this.deferredEmit('performanceReport', report);
+  }
 }
 
 PerformanceAnalyzer.prototype.registerRoundtripPart = function(trade) {
@@ -163,6 +166,12 @@ PerformanceAnalyzer.prototype.handleCompletedRoundtrip = function() {
 }
 
 PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
+  if(!this.start.balance || !this.start.portfolio) {
+    log.error('Cannot calculate a profit report without having received portfolio data.');
+    log.error('Skipping performanceReport..');
+    return false;
+  }
+
   // the portfolio's balance is measured in {currency}
   const profit = this.balance - this.start.balance;
 
@@ -214,7 +223,9 @@ PerformanceAnalyzer.prototype.finalize = function(done) {
   }
 
   const report = this.calculateReportStatistics();
-  this.logger.finalize(report);
+  if(report) {
+    this.logger.finalize(report);
+  }
   done();
 }
 
