@@ -197,6 +197,10 @@ Stitcher.prototype.checkExchangeTrades = function(since, next) {
 
   var watcher = new DataProvider(exchangeConfig);
   watcher.getTrades(since, function(e, d) {
+    if(e) {
+      util.die(e.message);
+    }
+
     if(_.isEmpty(d))
       return util.die(
         `Gekko tried to retrieve data since ${since.format('YYYY-MM-DD HH:mm:ss')}, however
