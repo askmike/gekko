@@ -4,6 +4,7 @@
 const log = require('../core/log');
 const _ = require('lodash');
 const util = require('../core/util.js');
+const env = util.gekkoEnv();
 const config = util.getConfig();
 const moment = require('moment');
 const fs = require('fs');
@@ -93,23 +94,29 @@ BacktestResultExporter.prototype.finalize = function(done) {
   if(config.backtestResultExporter.data.trades)
     backtest.trades = this.trades;
 
-  process.send({backtest});
+  if(env === 'child-process') {
+    process.send({backtest});
+  }
 
-  if(config.backtestResultExporter.writeToDisk)
-    this.writeToDisk(done)
-  else
+  if(config.backtestResultExporter.writeToDisk) {
+    this.writeToDisk(backtest, done);
+  } else {
     done();
+  }
 };
 
-BacktestResultExporter.prototype.writeToDisk = function(next) {
-  const now = moment().format('YYYY-MM-DD HH:mm:ss');
-  const filename = `backtest-${config.tradingAdvisor.method}-${now}.log`;
+BacktestResultExporter.prototype.writeToDisk = function(backtest, next) {
+  const now = moment().format('YYYY-MM-DD HH-mm-ss');
+  const filename = `backtest-${config.tradingAdvisor.method}-${now}.json`;
   fs.writeFile(
     util.dirs().gekko + filename,
     JSON.stringify(backtest),
     err => {
-      if(err)
+      if(err) {
         log.error('unable to write backtest result', err);
+      } else {
+        log.info('written backtest to: ', util.dirs().gekko + filename);
+      }
 
       next();
     }
