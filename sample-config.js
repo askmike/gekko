@@ -182,6 +182,8 @@ config.ircbot = {
 
 config.telegrambot = {
   enabled: false,
+  // Receive notifications for trades and warnings/errors related to trading
+  emitTrades: false,
   token: 'YOUR_TELEGRAM_BOT_TOKEN',
 };
 
