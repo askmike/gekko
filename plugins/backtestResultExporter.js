@@ -27,10 +27,17 @@ const BacktestResultExporter = function() {
   if(!config.backtestResultExporter.data.stratCandles)
     this.processStratCandles = null;
 
+  if(!config.backtestResultExporter.data.portfolioValues)
+    this.processPortfolioValueChange = null;
+
   if(!config.backtestResultExporter.data.trades)
     this.processTradeCompleted = null;
 
   _.bindAll(this);
+}
+
+BacktestResultExporter.prototype.processPortfolioValueChange = function(portfolio) {
+  this.portfolioValue = portfolio.balance;
 }
 
 BacktestResultExporter.prototype.processStratCandle = function(candle) {
@@ -47,6 +54,9 @@ BacktestResultExporter.prototype.processStratCandle = function(candle) {
       start: candle.start.unix()
     }
   }
+
+  if(config.backtestResultExporter.data.portfolioValues)
+    strippedCandle.portfolioValue = this.portfolioValue;
 
   this.stratCandles.push(strippedCandle);
 };
