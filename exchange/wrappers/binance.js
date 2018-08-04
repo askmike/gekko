@@ -62,6 +62,7 @@ const recoverableErrors = [
   'Error -1021',
   'Response code 429',
   'Response code 5',
+  'Response code 403',
   'ETIMEDOUT'
 ];
 
