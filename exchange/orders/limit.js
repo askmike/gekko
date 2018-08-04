@@ -1,3 +1,8 @@
+// NOTE: this is currently broken, see
+// @link https://github.com/askmike/gekko/issues/2398
+
+throw ':(';
+
 /*
   The limit order is a simple order:
     - It is created at the specified price
