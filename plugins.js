@@ -165,7 +165,11 @@ var plugins = [
     description: 'Sends advice to pushbullet.',
     slug: 'pushbullet',
     async: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'pushbullet',
+      version: '1.4.3'
+    }]
   },
   {
     name: 'Kodi',
@@ -179,7 +183,11 @@ var plugins = [
     description: 'Sends trades to twitter.',
     slug: 'twitter',
     async: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'twitter',
+      version: '1.7.1'
+    }]
   },
   {
     name: 'Slack',
