@@ -131,17 +131,19 @@ Trader.prototype.processResponse = function(next, fn, payload) {
               // it was cancelled, we need to check filled amount..
               console.log(new Date, '[CANCELFIX] process cancel response');
               console.log('[CANCELFIX] rechecking fill')
-              setTimeout(this.getOrder(payload, (error, order) => {
-                if(error) {
-                  return next(error)
-                }
+              setTimeout(() => {
+                this.getOrder(payload, (error, order) => {
+                  if(error) {
+                    return next(error)
+                  }
 
-                console.log('[CANCELFIX] checked, got:', order);
+                  console.log('[CANCELFIX] checked, got:', order);
 
-                return next(undefined, { filled: order.amount });
-
-              }), this.checkInterval);
+                  return next(undefined, { filled: order.amount });
+                });
+              }, this.checkInterval);
             });
+
           }, this.checkInterval);
           return;
         }
