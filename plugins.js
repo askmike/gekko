@@ -186,7 +186,11 @@ var plugins = [
     description: 'Sends trades to slack channel.',
     slug: 'slack',
     async: false,
-    modes: ['realtime']
+    modes: ['realtime'],
+    dependencies: [{
+      module: '@slack/client',
+      version: '3.13.0'
+    }]
   },
   {
     name: 'IFTTT',
