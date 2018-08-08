@@ -203,6 +203,7 @@ class StickyOrder extends BaseOrder {
             throw err;
 
           this.ticker = ticker;
+          this.emit('ticker', ticker);
 
           const bookSide = this.side === 'buy' ? 'bid' : 'ask';
           // note: might be string VS float

@@ -10,7 +10,9 @@ const Binance = require('binance');
 const Trader = function(config) {
   _.bindAll(this, [
     'roundAmount',
-    'roundPrice'
+    'roundPrice',
+    'isValidPrice',
+    'isValidLot'
   ]);
 
   if (_.isObject(config)) {
@@ -18,6 +20,18 @@ const Trader = function(config) {
     this.secret = config.secret;
     this.currency = config.currency.toUpperCase();
     this.asset = config.asset.toUpperCase();
+  }
+
+  let recvWindow = 6000;
+  if(config.optimizedConnection) {
+    // there is a bug in binance's API
+    // where some requests randomly take
+    // over a second, this tells binance
+    // to bail out after 500ms.
+    //
+    // As discussed in binance API
+    // telegram. TODO add link.
+    recvWindow = 500;
   }
 
   this.pair = this.asset + this.currency;
@@ -31,7 +45,7 @@ const Trader = function(config) {
     key: this.key,
     secret: this.secret,
     timeout: 15000,
-    recvWindow: 60000, // suggested by binance
+    recvWindow,
     disableBeautification: false,
     handleDrift: true,
   });
