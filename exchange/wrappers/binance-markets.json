@@ -1,7 +1,6 @@
 {
   "assets": [
     "NULS",
-    "VEN",
     "BNB",
     "NEO",
     "LINK",
@@ -39,6 +38,7 @@
     "AION",
     "AMB",
     "APPC",
+    "ARDR",
     "ARK",
     "ARN",
     "BAT",
@@ -60,6 +60,7 @@
     "DENT",
     "DGD",
     "DLT",
+    "DOCK",
     "EDO",
     "ELF",
     "ENG",
@@ -71,6 +72,7 @@
     "GTO",
     "GVT",
     "GXS",
+    "HOT",
     "HSR",
     "ICX",
     "INS",
@@ -101,6 +103,7 @@
     "PIVX",
     "POA",
     "POE",
+    "POLY",
     "POWR",
     "PPT",
     "QKC",
@@ -125,6 +128,7 @@
     "TRIG",
     "TRX",
     "TUSD",
+    "VET",
     "VIA",
     "VIB",
     "VIBE",
@@ -156,19 +160,8 @@
         "NULS"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
-        "order": 1
-      }
-    },
-    {
-      "pair": [
-        "BNB",
-        "VEN"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 0.0001,
         "order": 1
       }
     },
@@ -684,7 +677,7 @@
         "ADA"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -728,7 +721,7 @@
         "ADX"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -761,7 +754,7 @@
         "AE"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -794,7 +787,7 @@
         "AGI"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -827,7 +820,7 @@
         "AION"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -860,7 +853,7 @@
         "AMB"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -893,7 +886,7 @@
         "APPC"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -917,6 +910,39 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-7,
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "ARDR"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ARDR"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "ARDR"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
         "order": 0.01
       }
     },
@@ -981,7 +1007,7 @@
         "BAT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1102,7 +1128,7 @@
         "BCPT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1135,7 +1161,7 @@
         "BLZ"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1190,7 +1216,7 @@
         "BRD"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1245,7 +1271,7 @@
         "BTS"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1344,7 +1370,7 @@
         "CMT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1410,7 +1436,7 @@
         "CVC"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1531,7 +1557,7 @@
         "DLT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1567,6 +1593,28 @@
         "amount": 1,
         "price": 1e-8,
         "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "DOCK"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "DOCK"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.01
       }
     },
     {
@@ -1795,7 +1843,7 @@
         "GNT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1850,7 +1898,7 @@
         "GTO"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -1918,6 +1966,28 @@
       "minimalOrder": {
         "amount": 0.01,
         "price": 0.000001,
+        "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "HOT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "ETH",
+        "HOT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
         "order": 0.01
       }
     },
@@ -1960,7 +2030,7 @@
         "ICX"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2048,7 +2118,7 @@
         "IOTA"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2158,7 +2228,7 @@
         "LOOM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2323,7 +2393,7 @@
         "MCO"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2488,7 +2558,7 @@
         "NAS"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2521,7 +2591,7 @@
         "NAV"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2587,7 +2657,7 @@
         "NEBL"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2656,6 +2726,17 @@
         "amount": 1,
         "price": 1e-8,
         "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "NULS"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 10
       }
     },
     {
@@ -2708,7 +2789,7 @@
         "ONT"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2785,7 +2866,7 @@
         "PIVX"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2818,7 +2899,7 @@
         "POA"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -2870,10 +2951,32 @@
     {
       "pair": [
         "BNB",
+        "POLY"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "POLY"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "BNB",
         "POWR"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3016,7 +3119,7 @@
         "QTUM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3071,7 +3174,7 @@
         "RDN"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3159,7 +3262,7 @@
         "RLC"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3302,7 +3405,7 @@
         "STEEM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3412,7 +3515,7 @@
         "SYS"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3445,7 +3548,7 @@
         "THETA"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3522,7 +3625,7 @@
         "TRIG"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3588,7 +3691,7 @@
         "TUSD"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3628,8 +3731,19 @@
     },
     {
       "pair": [
+        "BNB",
+        "VET"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
         "BTC",
-        "VEN"
+        "VET"
       ],
       "minimalOrder": {
         "amount": 1,
@@ -3640,7 +3754,7 @@
     {
       "pair": [
         "ETH",
-        "VEN"
+        "VET"
       ],
       "minimalOrder": {
         "amount": 1,
@@ -3651,11 +3765,11 @@
     {
       "pair": [
         "USDT",
-        "VEN"
+        "VET"
       ],
       "minimalOrder": {
-        "amount": 0.01,
-        "price": 0.0001,
+        "amount": 0.1,
+        "price": 0.00001,
         "order": 10
       }
     },
@@ -3665,7 +3779,7 @@
         "VIA"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3742,7 +3856,7 @@
         "WABI"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3775,7 +3889,7 @@
         "WAN"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3896,7 +4010,7 @@
         "XEM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3929,7 +4043,7 @@
         "XLM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
@@ -3962,7 +4076,7 @@
         "XLM"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 10
       }
@@ -3995,7 +4109,7 @@
         "XRP"
       ],
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": 0.1,
         "price": 0.00001,
         "order": 1
       }
