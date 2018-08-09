@@ -77,7 +77,8 @@ const recoverableErrors = [
   'Response code 429',
   'Response code 5',
   'Response code 403',
-  'ETIMEDOUT'
+  'ETIMEDOUT',
+  'EHOSTUNREACH'
 ];
 
 const includes = (str, list) => {
@@ -298,6 +299,7 @@ Trader.prototype.isValidPrice = function(price) {
 }
 
 Trader.prototype.isValidLot = function(price, amount) {
+  console.log('isValidLot', this.market.minimalOrder.order, amount * price >= this.market.minimalOrder.order)
   return amount * price >= this.market.minimalOrder.order;
 }
 
