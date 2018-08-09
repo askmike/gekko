@@ -30,19 +30,7 @@ This library allows you to:
 
 ## Status
 
-Early WIP. All communication is via the REST APIs of exchanges. Not all exchanges are supported.
-
-Currently fully supported exchanges:
-
-- Binance
-- GDAX
-- Poloniex
-- Coinfalcon
-- Kraken
-
-Currently exchanges with limited support:
-
-- bittrex
+Early WIP. All communication is via the REST APIs of exchanges. Not all exchanges are supported, see which ones are in [this doc](../introduction/supported_exchanges.md).
 
 ## Order types
 
