@@ -33,6 +33,6 @@
     "poloniex.js": "git://github.com/askmike/poloniex.js.git#69f5e254353e66d135070844fc3328efcbe3641c",
     "request-promise": "^4.2.2",
     "retry": "^0.12.0",
-    "node.bittrex.api": "git://github.com/askmike/poloniex.js.git#69f5e254353e66d135070844fc3328efcbe3641c"
+    "gekko-bittrex": "^0.8.5"
   }
 }
