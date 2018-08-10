@@ -52,7 +52,7 @@ module.exports = {
     var db = new sqlite3.Database(fullPath);
     db.run('PRAGMA synchronous = ' + syncMode);
     db.run('PRAGMA journal_mode = ' + journalMode);
-    db.configure('busyTimeout', 1500);
+    db.configure('busyTimeout', 10000);
     return db;
   }
 };
