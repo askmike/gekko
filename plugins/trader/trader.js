@@ -19,7 +19,11 @@ const Trader = function(next) {
 
   this.propogatedTrades = 0;
 
-  this.broker = new Broker(this.brokerConfig);
+  try {
+    this.broker = new Broker(this.brokerConfig);
+  } catch(e) {
+    util.die(e.message);
+  }
 
   if(!this.broker.capabilities.gekkoBroker) {
     util.die('This exchange is not yet supported');
