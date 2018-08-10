@@ -14,7 +14,7 @@ var util = require(__dirname + '/util');
 
 var CandleBatcher = function(candleSize) {
   if(!_.isNumber(candleSize))
-    throw 'candleSize is not a number';
+    throw new Error('candleSize is not a number');
 
   this.candleSize = candleSize;
   this.smallCandles = [];
@@ -26,8 +26,9 @@ var CandleBatcher = function(candleSize) {
 util.makeEventEmitter(CandleBatcher);
 
 CandleBatcher.prototype.write = function(candles) {
-  if(!_.isArray(candles))
-    throw 'candles is not an array';
+  if(!_.isArray(candles)) {
+    throw new Error('candles is not an array');
+  }
 
   this.emitted = 0;
 

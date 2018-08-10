@@ -106,7 +106,7 @@ and will start signaling advice.
 
 - What: An object describing new notification from your strategy
 - When: when the strategy emit using `this.notify()` function
-- Subscribe: You can subscribe to this event by registering the `stratNotification` method.
+- Subscribe: You can subscribe to this event by registering the `processStratNotification` method.
 - Example:
       {
         date: [moment object of the start time of the candle],

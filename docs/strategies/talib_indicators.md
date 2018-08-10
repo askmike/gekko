@@ -10,7 +10,7 @@ Open your terminal. Then:
 
 ```
 cd ~/gekko
-npm install talib
+npm install talib --no-save
 ```
 
 ## Example

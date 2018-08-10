@@ -20,7 +20,10 @@ module.exports = function(config, done) {
     if(err)
       return done(err);
 
-    async.eachLimit(markets, os.cpus().length, (market, next) => {
+      let numCPUCores = os.cpus().length;
+      if(numCPUCores === undefined)
+         numCPUCores = 1;
+      async.eachLimit(markets, numCPUCores, (market, next) => {
 
       let marketConfig = _.clone(config);
       marketConfig.watch = market;

@@ -88,6 +88,8 @@ var pipeline = (settings) => {
     _.each(
       pluginSubscriptions.filter(s => _.isArray(s.emitter)),
       subscription => {
+        // cache full list
+        subscription.emitters = subscription.emitter;
         var singleEventEmitters = subscription.emitter
           .filter(
             s => _.size(plugins.filter(p => p.meta.slug === s))
@@ -110,18 +112,28 @@ var pipeline = (settings) => {
       _.each(pluginSubscriptions, function(sub) {
 
         if(plugin[sub.handler]) {
-
           // if a plugin wants to listen
           // to something disabled
           if(!emitters[sub.emitter]) {
             if(!plugin.meta.greedy) {
-              log.warn([
+
+              let emitterMessage;
+              if(sub.emitters) {
+                emitterMessage = 'all of the emitting plugins [ ';
+                emitterMessage += sub.emitters.join(', ');
+                emitterMessage += ' ] are disabled.';
+              } else {
+                emitterMessage += 'the emitting plugin (' + sub.emitter;
+                emitterMessage += ')is disabled.'
+              }
+
+              log.error([
                 plugin.meta.name,
-                'wanted to listen to the',
-                sub.emitter + ',',
-                'however the',
-                sub.emitter,
-                'is disabled.'
+                'wanted to listen to event',
+                sub.event + ',',
+                'however',
+                emitterMessage,
+                plugin.meta.name + ' might malfunction because of it.'
               ].join(' '));
             }
             return;

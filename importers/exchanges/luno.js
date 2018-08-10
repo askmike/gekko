@@ -5,7 +5,7 @@ const retry = require('../../exchange/exchangeUtils').retry;
 
 const config = util.getConfig();
 const dirs = util.dirs();
-const Fetcher = require(dirs.exchanges + 'bitx');
+const Fetcher = require(dirs.exchanges + 'luno');
 
 util.makeEventEmitter(Fetcher);
 
@@ -34,7 +34,7 @@ Fetcher.prototype.getTrades = function(since, callback, descending) {
           error.notFatal = true;
         }
 
-        if (includes(error.message, ['BitX error 429'])) {
+        if (includes(error.message, ['error 429'])) {
           error.notFatal = true;
           error.backoffDelay = 10000;
         }
@@ -65,9 +65,9 @@ Fetcher.prototype.getTrades = function(since, callback, descending) {
   if (moment.isMoment(since)) since = since.valueOf();
   (_.isNumber(since) && since > 0) ? since: since = 0;
 
-  console.log('importer getting trades from BitX since', moment(since).format('YYYY-MM-DD HH:mm:ss'));
+  console.log('importer getting trades from Luno since', moment.utc(since).format('YYYY-MM-DD HH:mm:ss'), 'UTC');
 
-  const handler = cb => this.bitx.getTrades({ since: since, pair: this.pair }, processResponse('getTrades', cb));
+  const handler = cb => this.luno.getTrades({ since: since, pair: this.pair }, processResponse('getTrades', cb));
   retry(null, handler, process);
 }
 
@@ -80,7 +80,7 @@ const fetch = () => {
 
 const handleFetch = (err, trades) => {
   if (err) {
-    console.log(`There was an error importing from BitX ${err}`);
+    console.log(`There was an error importing from Luno: ${err}`);
     fetcher.emit('done');
     return fetcher.emit('trades', []);
   }

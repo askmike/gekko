@@ -19,7 +19,11 @@ const Trader = function(next) {
 
   this.propogatedTrades = 0;
 
-  this.broker = new Broker(this.brokerConfig);
+  try {
+    this.broker = new Broker(this.brokerConfig);
+  } catch(e) {
+    util.die(e.message);
+  }
 
   if(!this.broker.capabilities.gekkoBroker) {
     util.die('This exchange is not yet supported');
@@ -219,7 +223,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
   const check = this.broker.isValidOrder(amount, this.price);
 
   if(!check.valid) {
-    log.debug('NOT creating order! Reason:', check.reason);
+    log.warn('NOT creating order! Reason:', check.reason);
     return this.deferredEmit('tradeAborted', {
       id,
       adviceId: advice.id,
@@ -278,7 +282,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
             effectivePrice = summary.price * (1 - summary.feePercent / 100);
           }
         } else {
-          log.debug('WARNING: exchange did not provide fee information, assuming no fees..');
+          log.warn('WARNING: exchange did not provide fee information, assuming no fees..');
           effectivePrice = summary.price;
         }
 

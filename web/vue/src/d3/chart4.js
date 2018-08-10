@@ -3,10 +3,18 @@ import _ from 'lodash';
 
 export default function(_data, _trades, _height) {
 
+  const toDate = i => {
+    if(_.isNumber(i)) {
+      return moment.unix(i).utc().toDate();
+    } else {
+      return moment.utc(i).toDate();
+    }
+  }
+
   const trades = _trades.map(t => {
     return {
       price: t.price,
-      date: moment.utc(t.date).toDate(),
+      date: toDate(t.date),
       action: t.action
     }
   });
@@ -14,7 +22,7 @@ export default function(_data, _trades, _height) {
   const data = _data.map(c => {
     return {
       price: c.open,
-      date: moment.utc(c.start).toDate()
+      date: toDate(c.start)
     }
   });
 

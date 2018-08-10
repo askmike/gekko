@@ -49,7 +49,9 @@ const recoverableErrors = [
   '408',
   // "The timestamp 1527996378 is invalid, current timestamp is 1527996441."
   'is invalid, current timestamp is',
-  'EHOSTUNREACH'
+  'EHOSTUNREACH',
+  // https://github.com/askmike/gekko/issues/2407
+  'We are fixing a few issues, be back shortly.'
 ];
 
 Trader.prototype.processResponse = function(method, args, next) {

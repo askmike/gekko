@@ -24,16 +24,12 @@ class Broker {
 
     if(config.private) {
       if(this.cantTrade()) {
-        throw this.cantTrade();
+        throw new Error(this.cantTrade());
       }
     } else {
       if(this.cantMonitor()) {
-        throw this.cantMonitor();
+        throw new Error(this.cantMonitor());
       }
-    }
-
-    if(config.private && this.cantTrade()) {
-      throw this.cantTrade();
     }
 
     this.orders = {
@@ -81,8 +77,9 @@ class Broker {
       return;
     }
 
-    if(this.cantTrade())
+    if(this.cantTrade()) {
       throw new errors.ExchangeError(this.cantTrade());
+    }
 
     this.syncPrivateData();
   }
