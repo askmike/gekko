@@ -23,7 +23,7 @@ var method = {
       return;
 
     log.info('iteration:', i);
-    
+
     if(i % settings.each === 0) {
       log.debug('trigger SHORT');
       this.advice('short');
