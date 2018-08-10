@@ -20,7 +20,7 @@ const TradeBatcher = require(util.dirs().budfox + 'tradeBatcher');
 
 const Fetcher = function(config) {
   if(!_.isObject(config))
-    throw 'TradeFetcher expects a config';
+    throw new Error('TradeFetcher expects a config');
 
   const exchangeName = config.watch.exchange.toLowerCase();
   const DataProvider = require(util.dirs().gekko + 'exchange/wrappers/' + exchangeName);

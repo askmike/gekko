@@ -37,7 +37,7 @@ var log = require('../log');
 
 var TradeBatcher = function(tid) {
   if(!_.isString(tid))
-    throw 'tid is not a string';
+    throw new Error('tid is not a string');
 
   _.bindAll(this);
   this.tid = tid;
@@ -49,7 +49,7 @@ util.makeEventEmitter(TradeBatcher);
 TradeBatcher.prototype.write = function(batch) {
 
   if(!_.isArray(batch))
-    throw 'batch is not an array';
+    throw new Error('batch is not an array');
 
   if(_.isEmpty(batch))
     return log.debug('Trade fetch came back empty.');

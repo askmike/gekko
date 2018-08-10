@@ -36,13 +36,15 @@ var verifyParams = (methodName, params) => {
     var requiredParams = methods[methodName].requires;
 
     _.each(requiredParams, paramName => {
-        if(!_.has(params, paramName))
-            throw talibError + methodName + ' requires ' + paramName + '.';
+        if(!_.has(params, paramName)) {
+            throw new Error(talibError + methodName + ' requires ' + paramName + '.');
+        }
 
         var val = params[paramName];
 
-        if(!_.isNumber(val))
-            throw talibError + paramName + ' needs to be a number';
+        if(!_.isNumber(val)) {
+            throw new Error(talibError + paramName + ' needs to be a number');
+        }
     });
 }
 
