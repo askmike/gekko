@@ -123,7 +123,11 @@ and will start signaling advice.
       {
         recommendation: [position to take, either long or short],
         date: [moment object of this advice],
-        id: [string identifying this unique trade]
+        id: [string identifying this unique trade],
+        stop: {
+          type: [type of stop],
+          // optional parameters per type of stop
+        }
       }
 
 ### tradeInitiated event
