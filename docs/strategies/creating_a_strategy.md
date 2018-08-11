@@ -77,9 +77,17 @@ Most strategies need to warmup before the trading strategy can be started. For e
 
 If you find out in the check function that you want to give new advice to the trader you can use the advice function:
 
-    this.advice('short');
-    // or
-    this.advice('long');
+    this.advice({
+      direction: 'long' // or short
+      stop: { // ignored when direction is not "long"
+        type: 'trailing',
+        trailPercentage: 5
+        // or:
+        // trailValue: 100
+      }
+    });
+
+The stop is optional, if the direction is long and the stop is specified this will create a trail stop trigger.
 
 ### candle variable
 
