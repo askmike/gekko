@@ -6,6 +6,10 @@ const ENV = util.gekkoEnv();
 const config = util.getConfig();
 const calcConfig = config.paperTrader;
 const watchConfig = config.watch;
+const dirs = util.dirs();
+const log = require(dirs.core + 'log');
+
+const TrailingStop = require(dirs.core + 'triggers/trailingStop');
 
 const PaperTrader = function() {
   _.bindAll(this);
@@ -63,8 +67,7 @@ PaperTrader.prototype.setStartBalance = function() {
 // after every succesfull trend ride we hopefully end up
 // with more BTC than we started with, this function
 // calculates Gekko's profit in %.
-PaperTrader.prototype.updatePosition = function(advice) {
-  let what = advice.recommendation;
+PaperTrader.prototype.updatePosition = function(what) {
 
   let cost;
   let amount;
@@ -104,12 +107,25 @@ PaperTrader.prototype.getBalance = function() {
 
 PaperTrader.prototype.processAdvice = function(advice) {
   let action;
-  if(advice.recommendation === 'short')
+  if(advice.recommendation === 'short') {
     action = 'sell';
-  else if(advice.recommendation === 'long')
+
+    // clean up potential old stop trigger
+    if(this.activeStopTrigger) {
+      delete this.activeStopTrigger;
+    }
+
+  } else if(advice.recommendation === 'long') {
     action = 'buy';
-  else
-    return;
+
+    if(advice.stop) {
+      this.createStop(advice.stop);
+    }
+  } else {
+    return log.warn(
+      `[Papertrader] ignoring unknown advice recommendation: ${advice.recommendation}`
+    );
+  }
 
   this.tradeId = 'trade-' + (++this.propogatedTrades);
 
@@ -122,7 +138,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     date: advice.date,
   });
 
-  const { cost, amount, effectivePrice } = this.updatePosition(advice);
+  const { cost, amount, effectivePrice } = this.updatePosition(advice.recommendation);
 
   this.relayPortfolioChange();
   this.relayPortfolioValueChange();
@@ -142,6 +158,35 @@ PaperTrader.prototype.processAdvice = function(advice) {
   });
 }
 
+PaperTrader.prototype.createStop = function(stop) {
+  if(stop.type === 'trailing') {
+
+    if(stop.trailPercentage && !stop.trailValue) {
+      stop.trailValue = stop.trailPercentage / 100 * this.price;
+    }
+
+    if(!stop.trailValue) {
+      return log.warn(`[Papertrader] ignoring trailing stop without trail value`);
+    }
+
+    // TODO: emit trigger created
+
+    this.activeStopTrigger = {
+      adviceId: advice.id,
+      instance: new TrailingStop({
+        initialPrice: this.price,
+        trail: stop.trailValue,
+        onTrigger: this.triggerStop
+      });
+    }
+  }
+}
+
+PaperTrader.prototype.triggerStop = function() {
+  // TODO: emit trigger stopped
+  this.updatePosition('short');
+}
+
 PaperTrader.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
 
@@ -153,6 +198,10 @@ PaperTrader.prototype.processCandle = function(candle, done) {
 
   if(this.exposed) {
     this.relayPortfolioValueChange();
+  }
+
+  if(this.activeStopTrigger) {
+    this.activeStopTrigger.updatePrice(this.price);
   }
 
   done();
