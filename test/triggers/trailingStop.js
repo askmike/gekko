@@ -135,4 +135,22 @@ describe('core/trigger/trailingStop', () => {
     expect(spy.called).to.be.true;
   });
 
+  it('should only trigger once', () => {
+    const spy = sinon.spy();
+
+    const ts = new TrailingStop({
+      trail: 10,
+      initialPrice: 100,
+      onTrigger: spy
+    });
+
+    ts.updatePrice(90);
+    expect(spy.called).to.be.true;
+
+    const spy2 = sinon.spy();
+    ts.on('trigger', spy2);
+    ts.updatePrice(80);
+    expect(spy2.called).to.be.false;
+  });
+
 });

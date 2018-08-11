@@ -6,6 +6,7 @@ const EventEmitter = require('events');
 
 // @param initialPrice: initial price, preferably buy price
 // @param trail: fixed offset from the price
+// @param onTrigger: fn to call when the stop triggers
 class TrailingStop extends EventEmitter {
   constructor({trail, initialPrice, onTrigger}) {
     super();
