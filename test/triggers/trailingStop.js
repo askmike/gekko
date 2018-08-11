@@ -130,7 +130,7 @@ describe('core/trigger/trailingStop', () => {
 
     expect(spy.called).to.be.false;
 
-    ts.updatePrice(90);
+    ts.updatePrice(95);
 
     expect(spy.called).to.be.true;
   });
