@@ -154,8 +154,6 @@ Trader.prototype.processResponse = function(next, fn, payload) {
       }
 
       if(fn === 'order') {
-        console.log('order', error.message);
-
         if(includes(error.message, ['Not enough'])) {
           error.retry = 2;
         }
@@ -373,8 +371,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
     if(err) {
       return callback(err);
     }
-
-    console.log(new Date, 'cancel', result.amount);
 
     if(result.filled) {
       return callback(undefined, true);
