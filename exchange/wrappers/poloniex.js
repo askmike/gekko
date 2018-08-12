@@ -1,4 +1,4 @@
-const Poloniex = require("poloniex.js");
+const Poloniex = require("gekko-broker-poloniex");
 const _ = require('lodash');
 const moment = require('moment');
 const retry = require('../exchangeUtils').retry;
@@ -18,7 +18,11 @@ const Trader = function(config) {
 
   this.pair = this.currency + '_' + this.asset;
 
-  this.poloniex = new Poloniex(this.key, this.secret);
+  this.poloniex = new Poloniex({
+    key: this.key,
+    secret: this.secret,
+    userAgent: 'Gekko Broker v' + require('../package.json').version
+  });
 }
 
 const recoverableErrors = [
