@@ -199,8 +199,9 @@ class StickyOrder extends BaseOrder {
         }
 
         this.api.getTicker((err, ticker) => {
-          if(err)
-            throw err;
+          if(this.handleError(err)) {
+            return;
+          }
 
           this.ticker = ticker;
           this.emit('ticker', ticker);
@@ -293,6 +294,10 @@ class StickyOrder extends BaseOrder {
     this.emitStatus();
 
     this.api.cancelOrder(this.id, (err, filled, data) => {
+      if(this.handleError(err)) {
+        return;
+      }
+
       // it got filled before we could cancel
       if(this.handleCancel(filled, data)) {
         return;
@@ -395,7 +400,7 @@ class StickyOrder extends BaseOrder {
         this.filled();
         return false;
       } else {
-        throw new Error("The amount " + this.amount + " is too small.");
+        this.handleError(new Error("The amount " + this.amount + " is too small."));
       }
     }
 
@@ -405,8 +410,8 @@ class StickyOrder extends BaseOrder {
     this.sticking = true;
 
     this.api.cancelOrder(this.id, (err, filled, data) => {
-      if(err) {
-        throw err;
+      if(this.handleError(err)) {
+        return;
       }
 
       // it got filled before we could cancel
@@ -436,8 +441,8 @@ class StickyOrder extends BaseOrder {
     this.completing = true;
     clearTimeout(this.timeout);
     this.api.cancelOrder(this.id, (err, filled, data) => {
-      if(err) {
-        throw err;
+      if(this.handleError(err)) {
+        return;
       }
 
       this.cancelling = false;
