@@ -244,7 +244,22 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const handle = this.processResponse(this.cancelOrder, args, (err, res) => {
     if(err) {
       if(err.message.includes('has wrong status.')) {
-        return callback(undefined, true);
+
+        // see https://github.com/askmike/gekko/issues/2440
+        console.log('CANCELFIX', order, 'order has wrong status...');
+        return this.checkOrder(order, (err, res) => {
+          console.log('CANCELFIX', order, 'checked it:', res);
+
+          if(err) {
+            return callback(err);
+          }
+
+          if(!res.open) {
+            return callback(undefined, true);
+          }
+
+          return this.cancelOrder(order, callback);
+        });
       }
       return callback(err);
     }
