@@ -200,7 +200,7 @@ Trader.prototype.processAdvice = function(advice) {
       });
     }
 
-    amount = this.portfolio.asset * 0.95;
+    amount = this.portfolio.asset;
 
     log.info(
       'Trader',
