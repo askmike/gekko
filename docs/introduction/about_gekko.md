@@ -20,6 +20,10 @@ You can either create your own trading strategy or start with the built-in examp
 
 All the above modes can be run from the user interface, this interface will show charts and performance/risk statistics.
 
+Here is a video that explains Gekko's core concepts:
+
+[![youtube video explaining gekko](https://gekko.wizb.it/_static/yt-gist.jpg)](https://www.youtube.com/watch?v=PKIxZ-Qaphk)
+
 ## Strategies
 
 Gekko comes with some [example strategies](../strategies/introduction.md) (which implement a single indicator). But with some basic javascript you can [create your own strategies](../strategies/creating_a_strategy.md). You can use over 130 indicators to create your perfect prediction model (using [Talib's indicators](../strategies/talib_indicators.md) or [Tulip's indicators](../strategies/tulip_indicators.md)). *Why don't you combine Bollinger Bands, CCI and MACD with a STOCHRSI indicator?*
