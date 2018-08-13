@@ -265,6 +265,20 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
   });
   this.order.on('completed', () => {
     this.order.createSummary((err, summary) => {
+      if(!err && !summary) {
+        err = new Error('GB returned an empty summary.')
+      }
+
+      if(err) {
+        log.error('Error while creating summary:', err);
+        return this.deferredEmit('tradeErrored', {
+          id,
+          adviceId: advice.id,
+          date: moment(),
+          reason: err.message
+        });
+      }
+
       log.info('[ORDER] summary:', summary);
       this.order = null;
       this.sync(() => {
