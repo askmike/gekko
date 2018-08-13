@@ -247,19 +247,24 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
         // see https://github.com/askmike/gekko/issues/2440
         console.log('CANCELFIX', order, 'order has wrong status...');
-        return this.checkOrder(order, (err, res) => {
-          console.log('CANCELFIX', order, 'checked it:', res);
+        return setTimeout(() => {
+          this.checkOrder(order, (err, res) => {
+            console.log('CANCELFIX', order, 'checked it:', res);
 
-          if(err) {
-            return callback(err);
-          }
+            if(err) {
+              return callback(err);
+            }
 
-          if(!res.open) {
-            return callback(undefined, true);
-          }
+            if(!res.open) {
+              return callback(undefined, true);
+            }
 
-          return this.cancelOrder(order, callback);
-        });
+            return setTimeout(
+              () => this.cancelOrder(order, callback),
+              this.interval
+            );
+          });
+        }, this.interval);
       }
       return callback(err);
     }
