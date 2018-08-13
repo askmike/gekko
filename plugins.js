@@ -41,7 +41,7 @@ var plugins = [
     slug: 'tradingAdvisor',
     async: true,
     modes: ['realtime', 'backtest'],
-    emits: ['advice', 'stratWarmupCompleted', 'stratCandle', 'stratUpdate'],
+    emits: true,
     path: config => 'tradingAdvisor/tradingAdvisor.js',
   },
   {
@@ -128,7 +128,7 @@ var plugins = [
     slug: 'trader',
     async: true,
     modes: ['realtime'],
-    emits: ['portfolioUpdate', 'trade'],
+    emits: true,
     path: config => 'trader/trader.js',
   },
   {
@@ -137,7 +137,7 @@ var plugins = [
     slug: 'paperTrader',
     async: false,
     modes: ['realtime', 'backtest'],
-    emits: ['portfolioUpdate', 'trade'],
+    emits: true,
     path: config => 'paperTrader/paperTrader.js',
   },
   {
@@ -146,7 +146,7 @@ var plugins = [
     slug: 'performanceAnalyzer',
     async: false,
     modes: ['realtime', 'backtest'],
-    emits: ['roundtrip', 'roundtripUpdate', 'performanceUpdate'],
+    emits: true,
     path: config => 'performanceAnalyzer/performanceAnalyzer.js',
   },
   {
