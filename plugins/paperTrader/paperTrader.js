@@ -114,7 +114,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     // clean up potential old stop trigger
     if(this.activeStopTrigger) {
       this.deferredEmit('triggerAborted', {
-        id: triggerId,
+        id: this.activeStopTrigger.id,
         at: moment()
       });
 
@@ -191,7 +191,7 @@ PaperTrader.prototype.createStop = function(advice) {
     });
 
     this.activeStopTrigger = {
-      triggerId: this.triggerId,
+      id: triggerId,
       adviceId: advice.id,
       instance: new TrailingStop({
         initialPrice: this.price,
@@ -203,8 +203,12 @@ PaperTrader.prototype.createStop = function(advice) {
 }
 
 PaperTrader.prototype.onTrigger = function() {
-  // TODO: emit trigger stopped
+  this.deferredEmit('triggerFired', {
+    id: this.activeStopTrigger.id,
+    at: moment()
+  });
   this.updatePosition('short');
+  delete this.activeStopTrigger;
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
