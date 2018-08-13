@@ -37,6 +37,7 @@ const PaperTrader = function() {
   }
 
   this.propogatedTrades = 0;
+  this.propogatedTriggers = 0;
 }
 
 PaperTrader.prototype.relayPortfolioChange = function() {
@@ -112,6 +113,11 @@ PaperTrader.prototype.processAdvice = function(advice) {
 
     // clean up potential old stop trigger
     if(this.activeStopTrigger) {
+      this.deferredEmit('triggerAborted', {
+        id: triggerId,
+        at: moment()
+      });
+
       delete this.activeStopTrigger;
     }
 
@@ -119,7 +125,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     action = 'buy';
 
     if(advice.stop) {
-      this.createStop(advice.stop);
+      this.createStop(advice);
     }
   } else {
     return log.warn(
@@ -158,31 +164,45 @@ PaperTrader.prototype.processAdvice = function(advice) {
   });
 }
 
-PaperTrader.prototype.createStop = function(stop) {
+PaperTrader.prototype.createStop = function(advice) {
+  const stop = advice.stop;
+
   if(stop.type === 'trailing') {
 
     if(stop.trailPercentage && !stop.trailValue) {
       stop.trailValue = stop.trailPercentage / 100 * this.price;
+      log.info('Trail value specified as percentage, setting to:', stop.trailValue, this.currency);
     }
 
     if(!stop.trailValue) {
       return log.warn(`[Papertrader] ignoring trailing stop without trail value`);
     }
 
-    // TODO: emit trigger created
+    const triggerId = 'trigger-' + (++this.propogatedTriggers);
+
+    this.deferredEmit('triggerCreated', {
+      id: triggerId,
+      at: moment(),
+      initialPrice: this.price,
+      type: 'trialingStop',
+      proprties: {
+        trail: stop.trailValue
+      }
+    });
 
     this.activeStopTrigger = {
+      triggerId: this.triggerId,
       adviceId: advice.id,
       instance: new TrailingStop({
         initialPrice: this.price,
         trail: stop.trailValue,
-        onTrigger: this.triggerStop
+        onTrigger: this.onTrigger
       });
     }
   }
 }
 
-PaperTrader.prototype.triggerStop = function() {
+PaperTrader.prototype.onTrigger = function() {
   // TODO: emit trigger stopped
   this.updatePosition('short');
 }
