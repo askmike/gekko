@@ -153,4 +153,29 @@ describe('core/trigger/trailingStop', () => {
     expect(spy2.called).to.be.false;
   });
 
+    it('should not trigger when the the price swings above the trail', () => {
+    const spy = sinon.spy();
+
+    const ts = new TrailingStop({
+      trail: 10,
+      initialPrice: 100,
+      onTrigger: spy
+    });
+
+    ts.updatePrice(110);
+    ts.updatePrice(101);
+    ts.updatePrice(111);
+    ts.updatePrice(102);
+    ts.updatePrice(112);
+    ts.updatePrice(103);
+    ts.updatePrice(113);
+    ts.updatePrice(104);
+
+    expect(spy.called).to.be.false;
+
+    ts.updatePrice(103);
+
+    expect(spy.called).to.be.true;
+  });
+
 });
