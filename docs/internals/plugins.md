@@ -6,7 +6,7 @@ Within Gekko most functionality is encapsulated into "plugins". These are simple
 
 Whenever you run a Gekko (live trader, paper trader, backtester or importer) you are simply running a number of plugins and feeding them with market data. For a more detailed explanation, see the [architecture doc](./architecture.md).
 
-For example, there is a plugin called the paperTrader which is responsible for simulating trades (used in [backtests](../features/backtesting.md) and [paper trading](../features/paper_trading.md)). It does this by listening to advice events coming from a strategy, and simulating trades whenever they fire (and firing trade events).
+For example, there is a plugin called the paperTrader which is responsible for simulating trades (used in [backtests](../features/backtesting.md) and [paper trading](../features/paper_trading.md)). It does this by listening to advice events coming from a strategy, and simulating trades whenever they fire (and firing trade events). Find a longer list of plugins that come with Gekko [here](../commandline/plugins.md).
 
 - All plugins are javascript files that expose a constructor function (or ES6 class).
 - All plugins are stored in `gekko/plugins`.
@@ -38,4 +38,4 @@ A plugin can be a very simple module that simply listens to some event:
 
     module.exports = Plugin;
 
-Have a look at the [events doc](./events.md) for all events your plugin can subscribe to.
+Have a look at the [events doc](./events.md) for all events your plugin can subscribe to. For technical inspiration it's easiest to look at the code of Gekko's plugins (here [`gekko/plugins.js`](https://github.com/askmike/gekko/blob/develop/plugins.js)).

@@ -13,6 +13,7 @@ Gekko currently has a couple plugins:
 - Campfire bot
 - Redis beacon
 - XMP Bot
+- and more..
 
 To configure a plugin, open up your `config.js` file with a text editor and configure the appropiate section.
 

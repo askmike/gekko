@@ -1,6 +1,6 @@
 # Events
 
-As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between separate components (like plugins). This makes the codebase scalable, testable and it separates concerns.
+As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between separate components (like [plugins](./plugins.md)). This makes the codebase scalable, testable and it separates concerns.
 
 if you run the Gekko UI events are relayed between core components as well as broadcasted (via the UI server) to the web UI. This means that all events broadcasted by any plugin automatically end up in the web UI.
 
