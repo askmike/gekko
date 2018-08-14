@@ -1,6 +1,6 @@
 # Plugins
 
-*This is a technical document explaining the role of Plugins in the Gekko codebase. For a non technical document about available plugins, see [here](../commandline/plugins.md)*
+*This is a technical document explaining the role of Plugins in the Gekko codebase. For a non technical document about available plugins, see [here](../commandline/plugins.md).*
 
 Within Gekko most functionality is encapsulated into "plugins". These are simple modules that process some data (from [Gekko events](./events.md)) and do something with it. For example emitting a new event or sending a message out to some external service like telegram, or doing a live trade at an exchange.
 
@@ -19,16 +19,12 @@ A plugin can be a very simple module that simply listens to some event:
 
     // A plugin that will buy Champagne when we MOON
 
-    const _ = require('lodash');
-
     // example: doesn't actually work..
     const alexa = require('alexa');
 
     const MOON = 1000000;
 
-    const Plugin = function() {
-      _.bindAll(this);
-    }
+    const Plugin = function() {}
 
     Plugin.prototype.processPortfolioValueChange = function(event) {
       if(event.value > MOON) {
