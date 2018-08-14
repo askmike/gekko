@@ -304,10 +304,6 @@ and will start signaling advice.
         profit: -0.2320439659276161,
       }
 
-- [](#triggerCreated-event): Every time a trader has created a new trigger.
-- [triggerAborted](#triggerAborted-event): Every time a created trigger has been aborted.
-- [triggerFired](#triggerFired-event): Every time a created trigger has fired.
-
 ### triggerCreated event
 
 - What: A summary of a created trigger.
