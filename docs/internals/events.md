@@ -127,9 +127,9 @@ and will start signaling advice.
         recommendation: [position to take, either long or short],
         date: [moment object of this advice],
         id: [string identifying this unique trade],
-        stop: {
-          type: [type of stop],
-          // optional parameters per type of stop
+        trigger: {
+          type: [type of trigger, currently always "trailingStop"],
+          // optional parameters per type of trigger
         }
       }
 
@@ -316,7 +316,7 @@ and will start signaling advice.
 - Example:
       {
         id: [string identifying this trigger],
-        at: Moment<'2017-03-25 19:41:00'>,
+        date: Moment<'2017-03-25 19:41:00'>,
         initialPrice: 10.21315498,
         type: type: "trailingStop",
         properties: {
@@ -332,7 +332,7 @@ and will start signaling advice.
 - Example:
       {
         id: [string identifying this trigger],
-        at: Moment<'2017-03-25 19:41:00'>
+        date: Moment<'2017-03-25 19:41:00'>
       }
 
 ### triggerAborted event
@@ -343,7 +343,7 @@ and will start signaling advice.
 - Example:
       {
         id: [string identifying this trigger],
-        at: Moment<'2017-03-25 19:41:00'>
+        date: Moment<'2017-03-25 19:41:00'>
       }
 
 ### marketStart event

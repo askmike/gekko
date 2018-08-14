@@ -106,6 +106,10 @@ PaperTrader.prototype.getBalance = function() {
   return this.portfolio.currency + this.price * this.portfolio.asset;
 }
 
+PaperTrader.prototype.now = function() {
+  return this.candle.start.clone().add(1, 'minute');
+}
+
 PaperTrader.prototype.processAdvice = function(advice) {
   let action;
   if(advice.recommendation === 'short') {
@@ -115,7 +119,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
     if(this.activeStopTrigger) {
       this.deferredEmit('triggerAborted', {
         id: this.activeStopTrigger.id,
-        at: moment()
+        date: advice.date
       });
 
       delete this.activeStopTrigger;
@@ -124,8 +128,19 @@ PaperTrader.prototype.processAdvice = function(advice) {
   } else if(advice.recommendation === 'long') {
     action = 'buy';
 
-    if(advice.stop) {
-      this.createStop(advice);
+    if(advice.trigger) {
+
+      // clean up potential old stop trigger
+      if(this.activeStopTrigger) {
+        this.deferredEmit('triggerAborted', {
+          id: this.activeStopTrigger.id,
+          date: advice.date
+        });
+
+        delete this.activeStopTrigger;
+      }
+
+      this.createTrigger(advice);
     }
   } else {
     return log.warn(
@@ -164,17 +179,17 @@ PaperTrader.prototype.processAdvice = function(advice) {
   });
 }
 
-PaperTrader.prototype.createStop = function(advice) {
-  const stop = advice.stop;
+PaperTrader.prototype.createTrigger = function(advice) {
+  const trigger = advice.trigger;
 
-  if(stop.type === 'trailing') {
+  if(trigger.type === 'trailingStop') {
 
-    if(stop.trailPercentage && !stop.trailValue) {
-      stop.trailValue = stop.trailPercentage / 100 * this.price;
-      log.info('Trail value specified as percentage, setting to:', stop.trailValue, this.currency);
+    if(trigger.trailPercentage && !trigger.trailValue) {
+      trigger.trailValue = trigger.trailPercentage / 100 * this.price;
+      log.info('[PaperTrader] Trailing stop trail value specified as percentage, setting to:', trigger.trailValue, this.currency);
     }
 
-    if(!stop.trailValue) {
+    if(!trigger.trailValue) {
       return log.warn(`[Papertrader] ignoring trailing stop without trail value`);
     }
 
@@ -182,11 +197,11 @@ PaperTrader.prototype.createStop = function(advice) {
 
     this.deferredEmit('triggerCreated', {
       id: triggerId,
-      at: moment(),
+      at: advice.date,
       initialPrice: this.price,
       type: 'trialingStop',
       proprties: {
-        trail: stop.trailValue
+        trail: trigger.trailValue
       }
     });
 
@@ -195,24 +210,49 @@ PaperTrader.prototype.createStop = function(advice) {
       adviceId: advice.id,
       instance: new TrailingStop({
         initialPrice: this.price,
-        trail: stop.trailValue,
-        onTrigger: this.onTrigger
-      });
+        trail: trigger.trailValue,
+        onTrigger: this.onStopTrigger
+      })
     }
+  } else {
+    log.warn(`[Papertrader] Gekko does not know trigger with type "${trigger.type}".. Ignoring stop.`);
   }
 }
 
-PaperTrader.prototype.onTrigger = function() {
+PaperTrader.prototype.onStopTrigger = function() {
+
+  const date = this.now();
+
   this.deferredEmit('triggerFired', {
     id: this.activeStopTrigger.id,
-    at: moment()
+    date
   });
-  this.updatePosition('short');
+
+  const { cost, amount, effectivePrice } = this.updatePosition('short');
+
+  this.relayPortfolioChange();
+  this.relayPortfolioValueChange();
+
+  this.deferredEmit('tradeCompleted', {
+    id: this.tradeId,
+    adviceId: this.activeStopTrigger.adviceId,
+    action: 'sell',
+    cost,
+    amount,
+    price: this.price,
+    portfolio: this.portfolio,
+    balance: this.getBalance(),
+    date,
+    effectivePrice,
+    feePercent: this.rawFee
+  });
+
   delete this.activeStopTrigger;
 }
 
 PaperTrader.prototype.processCandle = function(candle, done) {
   this.price = candle.close;
+  this.candle = candle;
 
   if(!this.balance) {
     this.setStartBalance();
@@ -225,7 +265,7 @@ PaperTrader.prototype.processCandle = function(candle, done) {
   }
 
   if(this.activeStopTrigger) {
-    this.activeStopTrigger.updatePrice(this.price);
+    this.activeStopTrigger.instance.updatePrice(this.price);
   }
 
   done();

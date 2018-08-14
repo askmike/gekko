@@ -217,22 +217,22 @@ Base.prototype.advice = function(newDirection) {
     return;
   }
 
-  let stop;
+  let trigger;
   if(_.isObject(newDirection)) {
     if(!_.isString(newDirection.direction)) {
       log.error('Strategy emitted unparsable advice:', newDirection);
       return;
     }
 
-    if(_.isObject(newDirection.stop)) {
+    if(_.isObject(newDirection.trigger)) {
       if(newDirection.direction !== 'long') {
         log.warn(
           'Strategy adviced a stop on not long, this is not supported.',
           'As such the stop is ignored'
         );
       } else {
-        // the stop is implemented in a trader
-        stop = newDirection.stop;
+        // the trigger is implemented in a trader
+        trigger = newDirection.trigger;
       }
     }
 
@@ -252,8 +252,8 @@ Base.prototype.advice = function(newDirection) {
     recommendation: newDirection
   };
 
-  if(stop) {
-    advice.stop = stop;
+  if(trigger) {
+    advice.trigger = trigger;
   }
 
   this.emit('advice', advice);
