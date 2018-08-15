@@ -14,9 +14,12 @@ const errors = require('./exchangeErrors');
 const Portfolio = require('./portfolioManager');
 // const Market = require('./market');
 const orders = require('./orders');
+const Trigger = require('./trigger');
 const exchangeUtils = require('./exchangeUtils');
 const bindAll = exchangeUtils.bindAll;
 const isValidOrder = exchangeUtils.isValidOrder;
+
+
 
 class Broker {
   constructor(config) {
@@ -156,6 +159,15 @@ class Broker {
     });
 
     return order;
+  }
+
+  createTrigger({type, onTrigger, props}) {
+    return new Trigger({
+      api: this.api,
+      type,
+      props,
+      onTrigger
+    });
   }
 }
 

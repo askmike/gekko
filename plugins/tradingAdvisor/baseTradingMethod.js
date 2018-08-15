@@ -231,8 +231,14 @@ Base.prototype.advice = function(newDirection) {
           'As such the stop is ignored'
         );
       } else {
+
         // the trigger is implemented in a trader
         trigger = newDirection.trigger;
+
+        if(trigger.trailPercentage && !trigger.trailValue) {
+          trigger.trailValue = (1 - (trigger.trailPercentage / 100)) * this.candle.close;
+          log.info('[StratRunner] Trailing stop trail value specified as percentage, setting to:', trigger.trailValue);
+        }
       }
     }
 
