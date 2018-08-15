@@ -182,12 +182,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
 PaperTrader.prototype.createTrigger = function(advice) {
   const trigger = advice.trigger;
 
-  if(trigger.type === 'trailingStop') {
-
-    if(trigger.trailPercentage && !trigger.trailValue) {
-      trigger.trailValue = trigger.trailPercentage / 100 * this.price;
-      log.info('[PaperTrader] Trailing stop trail value specified as percentage, setting to:', trigger.trailValue, this.currency);
-    }
+  if(trigger && trigger.type === 'trailingStop') {
 
     if(!trigger.trailValue) {
       return log.warn(`[Papertrader] ignoring trailing stop without trail value`);
