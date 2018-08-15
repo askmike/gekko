@@ -37,6 +37,7 @@ const recoverableErrors = [
   '503',
   '500',
   '502',
+  'socket hang up',
   'Empty response',
   'Please try again in a few minutes.',
   'Nonce must be greater than',
