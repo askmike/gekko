@@ -9,7 +9,7 @@ const watchConfig = config.watch;
 const dirs = util.dirs();
 const log = require(dirs.core + 'log');
 
-const TrailingStop = require(dirs.core + 'triggers/trailingStop');
+const TrailingStop = require(dirs.broker + 'triggers/trailingStop');
 
 const PaperTrader = function() {
   _.bindAll(this);

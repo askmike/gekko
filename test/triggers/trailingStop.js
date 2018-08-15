@@ -9,9 +9,9 @@ const moment = require('moment');
 const utils = require(__dirname + '/../../core/util');
 
 const dirs = utils.dirs();
-const TrailingStop = require(dirs.core + 'triggers/trailingStop');
+const TrailingStop = require(dirs.broker + 'triggers/trailingStop');
 
-describe('core/trigger/trailingStop', () => {
+describe('exchange/triggers/trailingStop', () => {
   let cb;
 
   it('should instantiate a trailing stop loss trigger', () => {
