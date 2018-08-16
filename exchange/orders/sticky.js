@@ -473,10 +473,12 @@ class StickyOrder extends BaseOrder {
           return next();
         }
 
-        setTimeout(() => this.api.getOrder(id, next), this.timeout);
+        setTimeout(() => this.api.getOrder(id, next), this.checkInterval);
       });
 
     async.series(checkOrders, (err, trades) => {
+      // note this is a standalone function after the order is
+      // completed, as such we do not use the handleError flow.
       if(err) {
         return next(err);
       }
