@@ -181,34 +181,6 @@ Trader.prototype.processAdvice = function(advice) {
       });
     }
 
-    const trigger = advice.trigger;
-
-    if(trigger && trigger.type === 'trailingStop') {
-      const triggerId = 'trigger-' + (++this.propogatedTriggers);
-
-      this.deferredEmit('triggerCreated', {
-        id: triggerId,
-        at: advice.date,
-        initialPrice: this.price,
-        type: 'trialingStop',
-        proprties: {
-          trail: trigger.trailValue
-        }
-      });
-
-      this.activeStopTrigger = {
-        id: triggerId,
-        adviceId: advice.id,
-        instance: this.broker.createTrigger({
-          type: trigger.type,
-          onTrigger: this.onStopTrigger,
-          props: {
-            trail: trigger.trailValue,
-          }
-        })
-      }
-    }
-
     amount = this.portfolio.currency / this.price * 0.95;
 
     log.info(
@@ -354,6 +326,37 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
           feePercent: summary.feePercent,
           effectivePrice
         });
+
+        if(
+          side === 'buy' &&
+          advice.trigger &&
+          advice.trigger.type === 'trailingStop'
+        ) {
+          const trigger = advice.trigger;
+          const triggerId = 'trigger-' + (++this.propogatedTriggers);
+
+          this.deferredEmit('triggerCreated', {
+            id: triggerId,
+            at: advice.date,
+            initialPrice: this.price,
+            type: 'trialingStop',
+            properties: {
+              trail: trigger.trailValue
+            }
+          });
+
+          this.activeStopTrigger = {
+            id: triggerId,
+            adviceId: advice.id,
+            instance: this.broker.createTrigger({
+              type: 'trailingStop',
+              onTrigger: this.onStopTrigger,
+              props: {
+                trail: trigger.trailValue,
+              }
+            })
+          }
+        }
       });
     })
   });
