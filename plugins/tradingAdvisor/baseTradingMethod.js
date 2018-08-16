@@ -236,7 +236,7 @@ Base.prototype.advice = function(newDirection) {
         trigger = newDirection.trigger;
 
         if(trigger.trailPercentage && !trigger.trailValue) {
-          trigger.trailValue = (1 - (trigger.trailPercentage / 100)) * this.candle.close;
+          trigger.trailValue = trigger.trailPercentage / 100 * this.candle.close;
           log.info('[StratRunner] Trailing stop trail value specified as percentage, setting to:', trigger.trailValue);
         }
       }
