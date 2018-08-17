@@ -15,8 +15,6 @@ class Trigger {
   constructor({api, type, props, onTrigger}) {
     this.onTrigger = onTrigger;
     this.api = api;
-    this.props = props;
-    this.type = type;
 
     this.isLive = true;
 
@@ -31,26 +29,16 @@ class Trigger {
     this.CHECK_INTERVAL = this.api.interval * 10;
 
     bindAll(this);
-
-    this.api.getTicker(this.init);
-  }
-
-  init(err, ticker) {
-    if(err) {
-      return console.log('[GB/trigger] failed to init ticker:', err);
-    }
-
-    this.trigger = new triggers[this.type]({
-      initialPrice: ticker[this.tickerProp],
+    this.trigger = new triggers[type]({
       onTrigger: this.propogateTrigger,
-      ...this.props
+      ...props
     })
 
     this.scheduleFetch();
   }
 
   scheduleFetch() {
-    setTimeout(this.fetch, this.CHECK_INTERVAL);
+    this.timout = setTimeout(this.fetch, this.CHECK_INTERVAL);
   }
 
   fetch() {
@@ -75,9 +63,14 @@ class Trigger {
     this.scheduleFetch();
   }
 
-  propogateTrigger() {
+  cancel() {
+    this.live = false;
+    clearTimeout(this.timout);
+  }
+
+  propogateTrigger(payload) {
     this.isLive = false;
-    this.onTrigger();
+    this.onTrigger(payload);
   }
 }
 

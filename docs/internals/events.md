@@ -313,9 +313,9 @@ and will start signaling advice.
       {
         id: [string identifying this trigger],
         date: Moment<'2017-03-25 19:41:00'>,
-        initialPrice: 10.21315498,
         type: type: "trailingStop",
         properties: {
+          initialPrice: 100,
           trail: 10
         }
       }
