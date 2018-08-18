@@ -25,9 +25,7 @@ const broadcast = data => {
   if(_.isEmpty(data))
     return;
 
-  _.each(
-    wss.clients,
-    client => {
+    wss.clients.forEach(function(client) {
       try {
         client.send(JSON.stringify(data));
       } catch(e) {
