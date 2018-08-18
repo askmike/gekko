@@ -26,7 +26,7 @@ class BaseOrder extends EventEmitter {
 
   submit({side, amount, price, alreadyFilled}) {
     const check = isValidOrder({
-      market: this.data.market,
+      market: this.market,
       api: this.api,
       amount,
       price

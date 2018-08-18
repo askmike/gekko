@@ -134,14 +134,17 @@ class Broker {
     if(!orders[type])
       throw new Error('Unknown order type');
 
-    const order = new orders[type](this.api);
+    const order = new orders[type]({
+      api: this.api,
+      marketConfig: this.marketConfig,
+      capabilities: this.capabilities
+    });
 
     // todo: figure out a smarter generic way
     this.syncPrivateData(() => {
       order.setData({
         balances: this.portfolio.balances,
         ticker: this.ticker,
-        market: this.marketConfig
       });
 
       order.create(side, amount, parameters);

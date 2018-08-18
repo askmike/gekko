@@ -21,8 +21,11 @@ const BaseOrder = require('./order');
 const states = require('./states');
 
 class StickyOrder extends BaseOrder {
-  constructor(api) {
+  constructor({api, marketConfig, capabilities}) {
     super(api);
+
+    this.market = marketConfig;
+    this.capabilities = capabilities;
 
     // global async lock
     this.sticking = false;
@@ -126,7 +129,56 @@ class StickyOrder extends BaseOrder {
     });
   }
 
+  // check if the last order was partially filled
+  // on an exchange that does not pass fill data on cancel
+  // see https://github.com/askmike/gekko/pull/2450
+  handleInsufficientFundsError(err) {
+    if(
+      !err ||
+      err.type !== 'insufficientFunds' ||
+      !this.capabilities.limitedCancelConfirmation ||
+      !this.id
+    ) {
+      return false;
+    }
+
+    const id = this.id;
+
+    setTimeout(
+      () => {
+        this.api.getOrder(id, (innerError, res) => {
+          if(this.handleError(innerError)) {
+            return;
+          }
+
+          const amount = res.amount;
+
+          if(this.orders[id].filled === amount) {
+            // handle original error
+            return this.handleError(err);
+          }
+
+          this.orders[id].filled = amount;
+          this.emit('fill', this.calculateFilled());
+          if(this.calculateFilled() >= this.amount) {
+            return this.filled(this.price);
+          }
+
+          setTimeout(this.createOrder, this.checkInterval);
+        });
+      },
+      this.checkInterval
+    );
+
+    return true;
+  }
+
   handleCreate(err, id) {
+
+    if(this.handleInsufficientFundsError(err)) {
+      return;
+    }
+
     if(this.handleError(err)) {
       return;
     }
@@ -394,7 +446,7 @@ class StickyOrder extends BaseOrder {
 
     this.amount = this.roundAmount(amount - this.calculateFilled());
 
-    if(this.amount < this.data.market.minimalOrder.amount) {
+    if(this.amount < this.market.minimalOrder.amount) {
       if(this.calculateFilled()) {
         // we already filled enough of the order!
         this.filled();
