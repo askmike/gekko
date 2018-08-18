@@ -78,7 +78,9 @@ const recoverableErrors = [
   'Response code 5',
   'Response code 403',
   'ETIMEDOUT',
-  'EHOSTUNREACH'
+  'EHOSTUNREACH',
+  // getaddrinfo EAI_AGAIN api.binance.com api.binance.com:443
+  'EAI_AGAIN'
 ];
 
 const includes = (str, list) => {
