@@ -5,7 +5,10 @@ const marketData = require('./coinfalcon-markets.json');
 const CoinFalcon = require('coinfalcon');
 
 var Trader = function(config) {
-  _.bindAll(this);
+  _.bindAll(this, [
+    'roundAmount',
+    'roundPrice'
+  ]);
 
   if (_.isObject(config)) {
     this.key = config.key;
@@ -37,6 +40,7 @@ const recoverableErrors = [
   'SOCKETTIMEDOUT',
   'TIMEDOUT',
   'CONNRESET',
+  'ECONNRESET',
   'CONNREFUSED',
   'NOTFOUND',
   '429',
@@ -51,7 +55,9 @@ const recoverableErrors = [
   'is invalid, current timestamp is',
   'EHOSTUNREACH',
   // https://github.com/askmike/gekko/issues/2407
-  'We are fixing a few issues, be back shortly.'
+  'We are fixing a few issues, be back shortly.',
+  'Client network socket disconnected before secure TLS connection was established',
+  'socket hang up'
 ];
 
 Trader.prototype.processResponse = function(method, args, next) {
@@ -62,7 +68,7 @@ Trader.prototype.processResponse = function(method, args, next) {
     if(includes(err.message, recoverableErrors))
       return this.retry(method, args);
 
-    console.log(new Date, '[cf] big error!', err);
+    console.log(new Date, '[cf] big error!', err.message);
 
     return next(err);
   }
@@ -166,18 +172,25 @@ const round = function(number, precision) {
   return roundedTempNumber / factor;
 };
 
+// ticksize 0.01 will yield: 2
+Trader.prototype.getPrecision = function(tickSize) {
+  if (!isFinite(tickSize)) {
+    return 0;
+  }
+  var e = 1;
+  var p = 0;
+  while (Math.round(tickSize * e) / e !== tickSize) {
+    e *= 10; p++;
+  }
+  return p;
+};
+
 Trader.prototype.roundAmount = function(amount) {
-  return round(amount, 8);
+  return round(amount, this.getPrecision(this.market.minimalOrder.amount));
 }
 
 Trader.prototype.roundPrice = function(price) {
-  let rounding;
-
-  if(this.pair.includes('EUR'))
-    rounding = 2;
-  else
-    rounding = 5;
-  return round(price, rounding);
+  return round(price, this.getPrecision(this.market.minimalOrder.price));
 }
 
 Trader.prototype.outbidPrice = function(price, isUp) {
