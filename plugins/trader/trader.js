@@ -7,6 +7,8 @@ const moment = require('moment');
 const log = require(dirs.core + 'log');
 const Broker = require(dirs.gekko + '/exchange/gekkoBroker');
 
+require(dirs.gekko + '/exchange/dependencyCheck');
+
 const Trader = function(next) {
 
   _.bindAll(this);
