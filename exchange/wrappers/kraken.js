@@ -41,7 +41,8 @@ const recoverableErrors = [
   'Request timed out',
   'Response code 5',
   'Empty response',
-  'API:Invalid nonce'
+  'API:Invalid nonce',
+  'General:Temporary lockout'
 ];
 
 const includes = (str, list) => {
