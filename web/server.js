@@ -26,7 +26,11 @@ wss.on('connection', ws => {
     ws.isAlive = true;
   });
   ws.ping(_.noop);
+  ws.on('error', e => {
+    console.error(new Date, '[WS] connection error:', e);
+  });
 });
+
 
 setInterval(() => {
   wss.clients.forEach(ws => {
