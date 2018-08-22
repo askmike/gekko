@@ -32,7 +32,6 @@ const Trader = function(next) {
   }
 
   this.sync(() => {
-    this.setBalance();
     log.info('\t', 'Portfolio:');
     log.info('\t\t', this.portfolio.currency, this.brokerConfig.currency);
     log.info('\t\t', this.portfolio.asset, this.brokerConfig.asset);
@@ -65,6 +64,7 @@ Trader.prototype.sync = function(next) {
     const oldPortfolio = this.portfolio;
 
     this.setPortfolio();
+    this.setBalance();
 
     if(this.sendInitialPortfolio && !_.isEqual(oldPortfolio, this.portfolio)) {
       this.relayPortfolioChange();
