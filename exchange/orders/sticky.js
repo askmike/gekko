@@ -525,6 +525,8 @@ class StickyOrder extends BaseOrder {
           return next();
         }
 
+        console.log(new Date, `[DEBUG] fetching ${id} (${this.orders[id].filled} filled)`);
+
         setTimeout(() => this.api.getOrder(id, next), this.checkInterval);
       });
 

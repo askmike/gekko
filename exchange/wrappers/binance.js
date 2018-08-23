@@ -355,6 +355,8 @@ Trader.prototype.getOrder = function(order, callback) {
 
     const fees = {};
 
+    console.log(new Date, `[DEBUG] ${order}: trades`, data);
+
     const trades = _.filter(data, t => {
       // note: the API returns a string after creating
       return t.orderId == order;
