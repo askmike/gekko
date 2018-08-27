@@ -17,10 +17,6 @@ class TrailingStop extends EventEmitter {
 
     this.previousPrice = initialPrice;
     this.trailingPoint = initialPrice - this.trail;
-
-    setInterval(() => {
-      console.log(new Date, 'trail:', this.trailingPoint, 'price:', this.previousPrice);
-    }, 1000 * 60 * 2)
   }
 
   updatePrice(price) {
@@ -28,7 +24,7 @@ class TrailingStop extends EventEmitter {
       return;
     }
 
-    if(price > this.previousPrice) {
+    if(price > this.trailingPoint + this.trail) {
       this.trailingPoint = price - this.trail;
     }
 
