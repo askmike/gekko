@@ -24,7 +24,7 @@ var method = {
         direction: settings.advice,
         trigger: {
           type: 'trailingStop',
-          trailPercentage: 1
+          trailPercentage: 0.5
         }
       });
     }

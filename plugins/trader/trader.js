@@ -370,7 +370,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
 }
 
 Trader.prototype.onStopTrigger = function(price) {
-  log.info(`TrailingStop trigger "${triggerId}" fired! Observed price was ${price}`);
+  log.info(`TrailingStop trigger "${this.activeStopTrigger.id}" fired! Observed price was ${price}`);
 
   this.deferredEmit('triggerFired', {
     id: this.activeStopTrigger.id,

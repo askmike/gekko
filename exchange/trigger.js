@@ -64,11 +64,14 @@ class Trigger {
   }
 
   cancel() {
-    this.live = false;
+    this.isLive = false;
     clearTimeout(this.timout);
   }
 
   propogateTrigger(payload) {
+    if(!this.isLive) {
+      return;
+    }
     this.isLive = false;
     this.onTrigger(payload);
   }
