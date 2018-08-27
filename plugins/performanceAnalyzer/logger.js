@@ -29,10 +29,10 @@ Logger.prototype.logReport = function(trade, report) {
   var start = this.round(report.startBalance);
   var current = this.round(report.balance);
 
-  log.info(`(PROFIT REPORT) original balance:\t ${start} ${this.currency}`);
-  log.info(`(PROFIT REPORT) current balance:\t ${current} ${this.currency}`);
+  log.info(`(PROFIT REPORT) original balance:\t\t ${start} ${this.currency}`);
+  log.info(`(PROFIT REPORT) current balance:\t\t ${current} ${this.currency}`);
   log.info(
-    `(PROFIT REPORT) profit:\t\t ${this.round(report.profit)} ${this.currency}`,
+    `(PROFIT REPORT) profit:\t\t\t\t ${this.round(report.profit)} ${this.currency}`,
     `(${this.round(report.relativeProfit)}%)`
   );
 }

@@ -20,23 +20,49 @@ const cache = require('./state/cache');
 const nodeCommand = _.last(process.argv[1].split('/'));
 const isDevServer = nodeCommand === 'server' || nodeCommand === 'server.js';
 
+wss.on('connection', ws => {
+  ws.isAlive = true;
+  ws.on('pong', () => {
+    ws.isAlive = true;
+  });
+  ws.ping(_.noop);
+  ws.on('error', e => {
+    console.error(new Date, '[WS] connection error:', e);
+  });
+});
+
+
+setInterval(() => {
+  wss.clients.forEach(ws => {
+    if(!ws.isAlive) {
+      console.log(new Date, '[WS] stale websocket client, terminiating..');
+      return ws.terminate();
+    }
+
+    ws.isAlive = false;
+    ws.ping(_.noop);
+  });
+}, 10 * 1000);
+
 // broadcast function
 const broadcast = data => {
-  if(_.isEmpty(data))
+  if(_.isEmpty(data)) {
     return;
+  }
 
-  _.each(
-    wss.clients,
-    client => {
-      try {
-        client.send(JSON.stringify(data));
-      } catch(e) {
-        log.warn('unable to send data to client');
+  const payload = JSON.stringify(data);
+
+  wss.clients.forEach(ws => {
+    ws.send(payload, err => {
+      if(err) {
+        console.log(new Date, '[WS] unable to send data to client:', err);
       }
-    }
+    });
+  }
   );
 }
 cache.set('broadcast', broadcast);
+
 
 const ListManager = require('./state/listManager');
 const GekkoManager = require('./state/gekkoManager');

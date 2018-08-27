@@ -17,10 +17,16 @@ var method = {
   log: _.noop,
   check: function() {
 
-    log.info('iteration:', i);
+    // log.info('iteration:', i);
     if(settings.wait === i) {
       console.log('trigger advice!');
-      this.advice(settings.advice);
+      this.advice({
+        direction: settings.advice,
+        trigger: {
+          type: 'trailingStop',
+          trailPercentage: 0.5
+        }
+      });
     }
 
     i++

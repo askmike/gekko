@@ -62,21 +62,17 @@ The callback needs to have the parameters of `err` and `portfolio`. Portfolio ne
 
 The callback needs to have the parameters of `err` and `lot`. Lot needs to be an object with `amount` and `purchase` size appropriately for the exchange. In the event that the lot is too small, return 0 to both fields and this will generate a lot size warning in the portfolioManager.
 
-Note: This function is currently optional. If not implemented `portfolioManager` will fallback to basic lot sizing mechanism it uses internally. However exchanges are not all the same in how rounding and lot sizing work, it is recommend to implement this function.
+Note: This function is currently optional. If not implemented Gekko Broker will fallback to basic lot sizing mechanism it uses internally. However exchanges are not all the same in how rounding and lot sizing work, it is recommend to implement this function.
 
 ### buy
 
     this.exchange.buy(amount, price, callback);
 
-*Note that this function is a critical function, retry handlers should abort quickly if attempts to dispatch this to the exchange API fail so we don't post out of date orders to the books.*
-
 ### sell
 
     this.exchange.sell(amount, price, callback);
 
-This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. If you have set `direct` to `true` the price will be `false`. The callback needs to have the parameters `err` and `order`. The order needs to be something that can be fed back to the exchange to see whether the order has been filled or not.
-
-*Note that this function is a critical function, retry handlers should abort quickly if attempts to dispatch this to the exchange API fail so we don't post out of date orders to the books.*
+This should create a buy / sell order at the exchange for [amount] of [asset] at [price] per 1 asset. The callback needs to have the parameters `err` and `order`. The order needs to be some id that can be passed back to `checkOrder`, `getOrder` and `cancelOrder`.
 
 ### getOrder
 
@@ -98,7 +94,7 @@ The order will be something that the manager previously received via the `sell` 
 
     this.exchange.cancelOrder(order, callback);
 
-The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err` and `filled`, `filled` last one should be true if the order was filled before it could be cancelled.
+The order will be something that the manager previously received via the `sell` or `buy` methods. The callback should have the parameters `err`, `filled` and optionally a `fill` object, `filled` should be true if the order was fully filled before it could be cancelled. If the exchange provided how much was filled before the cancel this should be passed in the `fill object` as a `amountFilled` property. If the exchange provided how much of the original amount is still remaining, pass this as the `remaining` property instead.
 
 ### roundPrice
 
@@ -157,6 +153,7 @@ Each exchange *must* provide a `getCapabilities()` static method that returns an
 - `requires`: if gekko supports automatic trading, this is an array of required api credentials gekko needs to pass into the constructor.
 - `forceReorderDelay`: if after canceling an order a new one can't be created straight away since the balance is not updated fast enough, set this to true (only required for exchanges where Gekko can trade).
 - `gekkoBroker`: set this to "0.6.2" for now, it indicates the version of Gekko Broker this wrapper is compatible with.
+- `limitedCancelConfirmation` set to true if (in any case) the wrapper does NOT include partial fill information in the response (which is passed as the cancel callback)
 
 Below is a real-case example how `bistamp` exchange provides its `getCapabilities()` method:
 
@@ -177,7 +174,8 @@ Trader.getCapabilities = function () {
     requires: ['key', 'secret', 'username'],
     fetchTimespan: 60,
     tid: 'tid',
-    gekkoBroker: '0.6.2'
+    gekkoBroker: '0.6.2',
+    limitedCancelConfirmation: false
   };
 }
 ```

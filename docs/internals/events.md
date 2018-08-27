@@ -1,6 +1,6 @@
 # Events
 
-As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between separate components (like plugins). This makes the codebase scalable, testable and it separates concerns.
+As described in the [architecture](./architecture.md) events play a key role in the complete system: they relay all information between separate components (like [plugins](./plugins.md)). This makes the codebase scalable, testable and it separates concerns.
 
 if you run the Gekko UI events are relayed between core components as well as broadcasted (via the UI server) to the web UI. This means that all events broadcasted by any plugin automatically end up in the web UI.
 
@@ -12,7 +12,7 @@ Note that all events from Gekko come from a plugin (with the exception of the `c
 
 - [candle](#candle-event): Every time Gekko calculates a new one minute candle from the market.
 - [stratWarmupCompleted](#stratWarmupCompleted-event): When the strategy is done warming up.
-- [advice](#advice-event): Every time the trading strategy is fed a new candle.
+- [advice](#advice-event): Every time the trading strategy has a new trading signal.
 - [stratUpdate](#stratUpdate-event): Every time the strategy has processed a new strat candle.
 - [stratNotification](#stratNotification-event): Every time the strategy emit new strategy notification.
 - [tradeInitiated](#tradeInitiated-event): Every time a trading plugin (either the live trader or the paper trader) is going to start a new trade (buy or sell).
@@ -25,8 +25,11 @@ trader) has NOT acted on new advice (due to unsufficiant funds or a similar reas
 - [portfolioValueChange](#portfolioValueChange-event): Every time value of the portfolio has changed.
 - [performanceReport](#performanceReport-event): Every time the profit report was updated.
 - [roundtrip](#roundtrip-event): Every time a new roundtrip has been completed.
+- [triggerCreated](#triggerCreated-event): Every time a trader has created a new trigger.
+- [triggerFired](#triggerFired-event): Every time a created trigger has fired.
+- [triggerAborted](#triggerAborted-event): Every time a created trigger has been aborted due to new advice.
 
-Beside those there are also two additional market events that are only emitted when Gekko is running in either realtime or importing mode (NOT during a backtest for performance reasons).
+Beside those there are also two additional market events that are only emitted when Gekko is running in realtime mode (NOT during a backtest for performance reasons).
 
 - [marketStart](#marketStart-event): Once, when the market just started.
 - [marketUpdate](#marketUpdate-event): Whenever the market has fetched new raw market data.
@@ -123,7 +126,11 @@ and will start signaling advice.
       {
         recommendation: [position to take, either long or short],
         date: [moment object of this advice],
-        id: [string identifying this unique trade]
+        id: [string identifying this unique trade],
+        trigger: {
+          type: [type of trigger, currently always "trailingStop"],
+          // optional parameters per type of trigger
+        }
       }
 
 ### tradeInitiated event
@@ -295,6 +302,44 @@ and will start signaling advice.
         duration: 3600000,
         pnl: -0.2278603942027786,
         profit: -0.2320439659276161,
+      }
+
+### triggerCreated event
+
+- What: A summary of a created trigger.
+- When: After a buy advice that includes a stop.
+- Subscribe: You can subscribe to this event by registering the `processTriggerCreated` method.
+- Example:
+      {
+        id: [string identifying this trigger],
+        date: Moment<'2017-03-25 19:41:00'>,
+        type: type: "trailingStop",
+        properties: {
+          initialPrice: 100,
+          trail: 10
+        }
+      }
+
+### triggerFired event
+
+- What: A message indicating a created trigger has fired
+- When: As soon as the trigger fired
+- Subscribe: You can subscribe to this event by registering the `processTriggerFired` method.
+- Example:
+      {
+        id: [string identifying this trigger],
+        date: Moment<'2017-03-25 19:41:00'>
+      }
+
+### triggerAborted event
+
+- What: A message indicating a created trigger has been aborted
+- When: After an advice signal indicating a sell
+- Subscribe: You can subscribe to this event by registering the `processTriggerAborted` method.
+- Example:
+      {
+        id: [string identifying this trigger],
+        date: Moment<'2017-03-25 19:41:00'>
       }
 
 ### marketStart event

@@ -1,14 +1,20 @@
 # Backtesting
 
-Gekko supports backtesting strategies over historical data. This means that Gekko will simulate running a strategy in realtime against a live market. Backtesting requires having data locally available already. After a backtest Gekko will provide statistics about the market and the strategy's performance.
+Gekko supports backtesting strategies over historical data. A Backtest is a simulation where you simulate running a strategy over a long time (such as the last 30 days) in a matter of seconds. Backtesting requires having market data locally available already. After a backtest Gekko will provide statistics about the market and the strategy's performance.
 
 ![screen shot of gekko backtesting](https://cloud.githubusercontent.com/assets/969743/24838718/8c790a86-1d45-11e7-99ae-e7e551cb40cb.png)
 
+**Important things to remember:**
+
+- Just because a strategy performed well in the past, does not mean it will perform well in the future.
+- Be careful of overfitting, in other words: don't simply tweak a strategy until you get high profit and assume that will be as profitable when going live. Read more about overfitting in [this article](https://laplaceinsights.com/backtesting-strategies-and-overfitting/).
+- The backtest simulation is limited, this is not really a problem on bigger markets (such as BTC/USD) but the differences between backtests and live traders on very low volume markets might be big. Read more about this below in the simplified simulation below.
+
 ## Simplified simulation
 
-Gekko backtests using a very limited datasource (only OHCL candles). This means that Gekko estimates trades (and thus profits), which depending on the liquidity and market depth might be estimated very wrong. By configuring the paper trader's fee and slippage you can better mimic trading at the real market.
+Simulating trades is done through a module called the paper trader. This module will use market candles together with fee, slippage and spread numbers to estimate trade executions costs. While the default settings work great for most big markets (USD/BTC or BTC/ETH), it becomes a lot less acurate on smaller markets with low volume and liquidity.
 
-In order to backtest with 100% accuracy one would need the exact state of the orderbook (spread and depth) as well as information about orders happening around the time of each advice. With Gekko we made the decision to not store all this information (to simplify importing and storing market data). In voluminous and liquid markets this shouldn't be too much of a problem, but if you are backtesting over a small market (like some altcoins) the estimation will be of poor accuracy.
+In live trading the notion of the "price" is more complicated than a single number. Both `spread` and `slippage` will effect your trade prices: these numbers describe your desired trades in relation to what people are currently offering in the market (this is called the orderbook). Read more about this in [this explanation](https://github.com/askmike/gekko/issues/2380#issuecomment-408744682).
 
 If you look at the following backtest result:
 

@@ -18,6 +18,7 @@ Stitcher.prototype.ago = function(ts) {
 }
 
 Stitcher.prototype.verifyExchange = function() {
+  require(dirs.gekko + 'exchange/dependencyCheck');
   const exchangeChecker = require(dirs.gekko + 'exchange/exchangeChecker');
   const slug = config.watch.exchange.toLowerCase();
   let exchange;

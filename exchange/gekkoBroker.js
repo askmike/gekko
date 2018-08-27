@@ -14,9 +14,12 @@ const errors = require('./exchangeErrors');
 const Portfolio = require('./portfolioManager');
 // const Market = require('./market');
 const orders = require('./orders');
+const Trigger = require('./trigger');
 const exchangeUtils = require('./exchangeUtils');
 const bindAll = exchangeUtils.bindAll;
 const isValidOrder = exchangeUtils.isValidOrder;
+
+
 
 class Broker {
   constructor(config) {
@@ -134,14 +137,17 @@ class Broker {
     if(!orders[type])
       throw new Error('Unknown order type');
 
-    const order = new orders[type](this.api);
+    const order = new orders[type]({
+      api: this.api,
+      marketConfig: this.marketConfig,
+      capabilities: this.capabilities
+    });
 
     // todo: figure out a smarter generic way
     this.syncPrivateData(() => {
       order.setData({
         balances: this.portfolio.balances,
         ticker: this.ticker,
-        market: this.marketConfig
       });
 
       order.create(side, amount, parameters);
@@ -153,6 +159,15 @@ class Broker {
     });
 
     return order;
+  }
+
+  createTrigger({type, onTrigger, props}) {
+    return new Trigger({
+      api: this.api,
+      type,
+      onTrigger,
+      props
+    });
   }
 }
 
