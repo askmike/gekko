@@ -223,6 +223,7 @@ Stitcher.prototype.seedLocalData = function(from, to, next) {
     });
 
     this.batcher.write(rows);
+    this.batcher.flush();
     this.reader.close();
     next();
 
