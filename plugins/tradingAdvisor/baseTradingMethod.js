@@ -188,6 +188,17 @@ Base.prototype.propogateTick = function(candle) {
 }
 
 Base.prototype.processTrade = function(trade) {
+  if(
+    this._pendingTriggerAdvice &&
+    trade.action === 'sell' &&
+    this._pendingTriggerAdvice === trade.adviceId
+  ) {
+    // This trade came from a trigger of the previous advice,
+    // update stored direction
+    this._currentDirection = 'short';
+    this._pendingTriggerAdvice = null;
+  }
+
   this.onTrade(trade);
 }
 
@@ -221,6 +232,10 @@ Base.prototype.advice = function(newDirection) {
   if(_.isObject(newDirection)) {
     if(!_.isString(newDirection.direction)) {
       log.error('Strategy emitted unparsable advice:', newDirection);
+      return;
+    }
+
+    if(newDirection.direction === this._currentDirection) {
       return;
     }
 
@@ -260,6 +275,9 @@ Base.prototype.advice = function(newDirection) {
 
   if(trigger) {
     advice.trigger = trigger;
+    this._pendingTriggerAdvice = 'advice-' + this.propogatedAdvices;
+  } else {
+    this._pendingTriggerAdvice = null;
   }
 
   this.emit('advice', advice);
