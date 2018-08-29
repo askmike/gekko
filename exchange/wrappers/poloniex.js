@@ -42,7 +42,9 @@ const recoverableErrors = [
   'Please try again in a few minutes.',
   'Nonce must be greater than',
   'Internal error. Please try again.',
-  'Connection timed out. Please try again.'
+  'Connection timed out. Please try again.',
+  // getaddrinfo EAI_AGAIN poloniex.com poloniex.com:443
+  'EAI_AGAIN'
 ];
 
 // errors that might mean

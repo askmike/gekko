@@ -57,7 +57,9 @@ const recoverableErrors = [
   // https://github.com/askmike/gekko/issues/2407
   'We are fixing a few issues, be back shortly.',
   'Client network socket disconnected before secure TLS connection was established',
-  'socket hang up'
+  'socket hang up',
+  // getaddrinfo EAI_AGAIN coinfalcon.com coinfalcon.com:443
+  'EAI_AGAIN'
 ];
 
 Trader.prototype.processResponse = function(method, args, next) {
