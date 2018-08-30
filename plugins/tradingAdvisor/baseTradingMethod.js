@@ -264,6 +264,10 @@ Base.prototype.advice = function(newDirection) {
     return;
   }
 
+  if(newDirection === 'short' && this._pendingTriggerAdvice) {
+    this._pendingTriggerAdvice = null;
+  }
+
   this._currentDirection = newDirection;
 
   this.propogatedAdvices++;
