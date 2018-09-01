@@ -82,7 +82,8 @@ const recoverableErrors = [
   'ETIMEDOUT',
   'EHOSTUNREACH',
   // getaddrinfo EAI_AGAIN api.binance.com api.binance.com:443
-  'EAI_AGAIN'
+  'EAI_AGAIN',
+  'ENETUNREACH'
 ];
 
 const includes = (str, list) => {
