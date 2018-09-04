@@ -31,7 +31,7 @@ Store.prototype.writeCandles = function() {
     DO NOTHING; 
     COMMIT; 
     `;
-    
+
     this.db.connect((err,client,done) => {
       client.query(stmt, (err, res) => {
         done();
@@ -49,7 +49,7 @@ Store.prototype.writeCandles = function() {
 
 var processCandle = function(candle, done) {
   this.cache.push(candle);
-  if (this.cache.length > 1) 
+  if (this.cache.length > 1)
     this.writeCandles();
 
   done();
