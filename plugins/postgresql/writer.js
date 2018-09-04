@@ -1,6 +1,7 @@
 var _ = require('lodash');
 const log = require('../../core/log');
-var config = require('../../core/util.js').getConfig();
+const util = require('../../core/util');
+const config = util.getConfig();
 
 var handle = require('./handle');
 var postgresUtil = require('./util');
@@ -33,6 +34,9 @@ Store.prototype.writeCandles = function() {
     `;
 
     this.db.connect((err,client,done) => {
+      if(err) {
+        util.die(err);
+      }
       client.query(stmt, (err, res) => {
         done();
         if (err) {
