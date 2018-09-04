@@ -175,6 +175,18 @@ Base.prototype.propogateTick = function(candle) {
   _.each(this.indicators, (indicator, name) => {
     indicators[name] = indicator.result;
   });
+  
+  _.each(this.tulipIndicators, (indicator, name) => {
+    indicators[name] = indicator.result.result
+      ? indicator.result.result
+      : indicator.result;
+  });
+
+  _.each(this.talibIndicators, (indicator, name) => {
+    indicators[name] = indicator.result.outReal
+      ? indicator.result.outReal
+      : indicator.result;
+  });
 
   this.emit('stratUpdate', {
     date: candle.start.clone(),
