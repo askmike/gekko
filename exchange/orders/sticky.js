@@ -234,6 +234,7 @@ class StickyOrder extends BaseOrder {
   }
 
   checkOrder() {
+
     if(this.completed || this.completing) {
       return console.log(new Date, 'checkOrder called on completed/completing order..', this.completed, this.completing);
     }
@@ -389,6 +390,10 @@ class StickyOrder extends BaseOrder {
 
     if(this.limit === this.roundPrice(limit)) {
       // effectively nothing changed
+      return false;
+    }
+
+    if(this.cancelling) {
       return false;
     }
 
