@@ -27,7 +27,7 @@
     "bluebird": "^3.5.1",
     "coinfalcon": "^1.0.3",
     "gdax": "^0.7.0",
-    "kraken-api": "^1.0.0",
+    "kraken-api": "askmike/npm-kraken-api#a69dfb3eb296b9c795cfa48dd31edcdc1b3d5398",
     "lodash": "^4.17.5",
     "moment": "^2.22.1",
     "gekko-broker-poloniex": "^0.0.12",
