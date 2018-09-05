@@ -83,7 +83,6 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
       }
 
       if(funcName === 'addOrder' && includes(error.message, unknownResultErrors)) {
-        console.log(new Date, 'ADD ORDER UNKOWN RESULT');
 
         const { tradeType, amount, price } = payload;
 
@@ -109,13 +108,11 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
             // string vs float
             if(o.descr.price != price) {
-              console.log(new Date, 'ADD ORDER UNKOWN RESULT, price descrep:', order);
               return false;
             }
 
             // string vs float
             if(o.vol != amount) {
-              console.log(new Date, 'ADD ORDER UNKOWN RESULT, amount descrep:', order);
               return false;
             }
 
@@ -140,7 +137,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
               return callback(err2);
             }
 
-            const order = _.get(data, `result["${order}"]`);
+            const order = _.get(data, `result["${payload}"]`);
 
             if(!_.isObject(order)) {
               console.log('refetched broken cancel, cannot find order...', data);
@@ -380,6 +377,15 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const handle = (err, data) => {
     if(err) {
       if(err.message.includes('Unknown order')) {
+        return callback(undefined, true);
+      }
+
+      // catch race condition:
+      // if we cancel, that request times out
+      // we recheck: it's live BUT then the
+      // timeout request goes through nonetheless
+      // (only times out behind cloudflare)
+      if(err.message.includes('Invalid order')) {
         return callback(undefined, true);
       }
 
