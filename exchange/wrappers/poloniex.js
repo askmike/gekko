@@ -123,7 +123,7 @@ Trader.prototype.processResponse = function(next, fn, payload) {
         // it might be cancelled
         else if(includes(error.message, unknownResultErrors)) {
           setTimeout(() => {
-            this.getOpenOrders((err, orders) => {
+            this.getRawOpenOrders((err, orders) => {
               if(err) {
                 return next(err);
               }
@@ -205,12 +205,24 @@ Trader.prototype.findLastOrder = function(since, side, callback) {
     callback(undefined, order);
   };
 
-  this.getOpenOrders(handle);
+  this.getRawOpenOrders(handle);
+}
+
+Trader.prototype.getRawOpenOrders = function(callback) {
+  const fetch = next => this.poloniex.returnOpenOrders(this.currency, this.asset, this.processResponse(next));
+  retry(null, fetch, callback);
 }
 
 Trader.prototype.getOpenOrders = function(callback) {
-  const fetch = next => this.poloniex.returnOpenOrders(this.currency, this.asset, this.processResponse(next));
-  retry(null, fetch, callback);
+  this.getRawOpenOrders((err, orders) => {
+    if(err) {
+      return callback(err);
+    }
+
+    const ids = orders.map(o => o.orderNumber);
+
+    return callback(undefined, ids);
+  })
 }
 
 Trader.prototype.getPortfolio = function(callback) {
