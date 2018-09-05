@@ -136,14 +136,14 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
         return setTimeout(() => {
           const handle = (err2, data) => {
             if(err2) {
-              cosnole.log('err2', err2);
+              console.log('err2', err2);
               return callback(err2);
             }
 
             const order = _.get(data, `result["${order}"]`);
 
             if(!_.isObject(order)) {
-              console.log('refefetched broken cancel, cannot find order...', data);
+              console.log('refetched broken cancel, cannot find order...', data);
               throw 'a';
             }
 
@@ -159,7 +159,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
           const reqData = {txid: payload};
 
-          const fetch = cb => this.kraken.api('QueryOrders', reqData, this.handleResponse('checkOrder', cb));
+          const fetch = cb => this.kraken.api('QueryOrders', reqData, this.handleResponse('checkOrder', cb, true));
           retry(null, fetch, handle);
         }, 1000)
       }
