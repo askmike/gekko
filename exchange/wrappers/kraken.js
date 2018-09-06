@@ -23,6 +23,8 @@ const Trader = function(config) {
   });
   this.pair = this.market.book;
 
+  this.interval = 1900;
+
   this.kraken = new Kraken(
     this.key,
     this.secret,
@@ -36,7 +38,6 @@ const recoverableErrors = [
   'CONNRESET',
   'CONNREFUSED',
   'NOTFOUND',
-  'API:Rate limit exceeded',
   'Service:Unavailable',
   'Request timed out',
   'Empty response',
@@ -74,7 +75,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
       if(includes(error.message, ['Rate limit exceeded'])) {
         error.notFatal = true;
-        error.backoffDelay = 1000;
+        error.backoffDelay = 2500;
       }
 
       if(nonMutating && includes(error.message, unknownResultErrors)) {
@@ -86,45 +87,48 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
         const { tradeType, amount, price } = payload;
 
-        return this.getRawOpenOrders((err2, orders) => {
-          if(err2) {
-            console.log('err2', err2);
-            return callback(err2);
-          }
+        return setTimeout(() => {
+          this.getRawOpenOrders((err2, orders) => {
+            if(err2) {
+              console.log('err2', err2);
+              return callback(err2);
+            }
 
-          _.each(orders, (o, id) => {
-            o.id = id;
+            _.each(orders, (o, id) => {
+              o.id = id;
+            });
+
+            const order = _.find(orders, o => {
+              if(o.descr.type !== tradeType) {
+                return false;
+              }
+
+              const ts = moment.unix((o.opentm + '').split('.')[0])
+              if(moment().diff(ts, 'm') > 10) {
+                return false;
+              }
+
+              // string vs float
+              if(o.descr.price != price) {
+                return false;
+              }
+
+              // string vs float
+              if(o.vol != amount) {
+                return false;
+              }
+
+              return true;
+            });
+
+            if(!order) {
+              console.log('broken add order, appears not created:', {payload, orders});
+              return this.addOrder(tradeType, amount, price, callback);
+            }
+
+            return callback(undefined, { catched: true, id: order.id });
           });
-
-          const order = _.find(orders, o => {
-            if(o.descr.type !== tradeType) {
-              return false;
-            }
-
-            const ts = moment.unix((o.opentm + '').split('.')[0])
-            if(moment().diff(ts, 'm') > 10) {
-              return false;
-            }
-
-            // string vs float
-            if(o.descr.price != price) {
-              return false;
-            }
-
-            // string vs float
-            if(o.vol != amount) {
-              return false;
-            }
-
-            return true;
-          });
-
-          if(!order) {
-            return callback(err);
-          }
-
-          return callback(undefined, { catched: true, id: order.id });
-        });
+        }, 5000);
       }
 
       if(funcName === 'cancelOrder' && includes(error.message, unknownResultErrors)) {
@@ -146,11 +150,11 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
             if(order.status === 'canceled') {
               console.log(new Date, 'it still exists, retrying cancel');
-              return this.cancelOrder(order, callback);
+              return this.cancelOrder(payload, callback);
             }
 
             console.log(new Date, 'it was canceled');
-            return callback(undefined, true, { catched: true, filled: parseFloat(vol_exec) });
+            return callback(undefined, true, { catched: true, filled: parseFloat(order.vol_exec) });
 
           };
 
@@ -158,7 +162,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
 
           const fetch = cb => this.kraken.api('QueryOrders', reqData, this.handleResponse('checkOrder', cb, true));
           retry(null, fetch, handle);
-        }, 1000)
+        }, 5000);
       }
 
       return callback(error);
@@ -273,7 +277,6 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
 
   const handle = (err, data) => {
     if(err) {
-
       return callback(err);
     }
 
@@ -282,6 +285,10 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     if(data.catched) {
       txid = data.id;
     } else {
+      if(!data.result) {
+        console.log('weird data:', data);
+      }
+
       txid = data.result.txid[0];
     }
 
