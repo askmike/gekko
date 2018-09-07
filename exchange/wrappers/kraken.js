@@ -23,7 +23,7 @@ const Trader = function(config) {
   });
   this.pair = this.market.book;
 
-  this.interval = 1900;
+  this.interval = 3100;
 
   this.kraken = new Kraken(
     this.key,
@@ -51,7 +51,8 @@ const recoverableErrors = [
 // the API call succeeded.
 const unknownResultErrors = [
   'Response code 502',
-  'Response code 504'
+  'Response code 504',
+  'Response code 522',
 ]
 
 const includes = (str, list) => {
@@ -122,7 +123,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
             });
 
             if(!order) {
-              console.log('broken add order, appears not created:', {payload, orders});
+              console.log('broken add order, appears not created:', {payload, orders: JSON.stringify(orders)});
               return this.addOrder(tradeType, amount, price, callback);
             }
 
@@ -283,12 +284,13 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     let txid;
 
     if(data.catched) {
+      // handled timeout, but order was created
       txid = data.id;
+    } else if(_.isString(data)) {
+      // handled timeout, order was NOT created
+      txid = data;
     } else {
-      if(!data.result) {
-        console.log('weird data:', data);
-      }
-
+      // normal flow
       txid = data.result.txid[0];
     }
 
