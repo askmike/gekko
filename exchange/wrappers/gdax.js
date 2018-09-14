@@ -18,8 +18,8 @@ const Trader = function(config) {
   this.asset = config.asset;
   this.currency = config.currency;
 
-  this.api_url = 'https://api.gdax.com';
-  this.api_sandbox_url = 'https://api-public.sandbox.gdax.com';
+  this.api_url = 'https://api.pro.coinbase.com';
+  this.api_sandbox_url = 'https://api-public.sandbox.pro.coinbase.com';
 
   if (_.isObject(config)) {
     this.key = config.key;
@@ -374,7 +374,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         _.bind(handler, this),
         _.bind(process, this)
       );
-    } else {
+    } else if (since) {
       console.log('Scanning back in the history needed...', since);
     }
   }
