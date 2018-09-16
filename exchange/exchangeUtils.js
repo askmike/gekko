@@ -4,7 +4,7 @@ const retry = require('retry');
 const errors = require('./exchangeErrors');
 const _ = require('lodash');
 
-const retryInstance = (options, checkFn, callback) => {
+const retryInstance = (options, checkFn, callback, e) => {
   if(!options) {
     options = {
       retries: 100,
@@ -19,9 +19,12 @@ const retryInstance = (options, checkFn, callback) => {
   const operation = retry.operation(options);
   operation.attempt(function(currentAttempt) {
     checkFn((err, result) => {
+
       if(!err) {
         return callback(undefined, result);
       }
+
+      console.log(new Date, err.message);
 
       let maxAttempts = err.retry;
       if(maxAttempts === true)
