@@ -43,9 +43,13 @@ class StickyOrder extends BaseOrder {
       return false;
     }
 
+    console.log(new Date, 'sticky create', side);
+
     this.side = side;
 
     this.amount = this.roundAmount(rawAmount);
+
+    this.initialLimit = params.initialLimit;
 
     if(side === 'buy') {
       if(params.limit)
@@ -66,9 +70,19 @@ class StickyOrder extends BaseOrder {
 
     this.outbid = params.outbid && _.isFunction(this.outbidPrice);
 
-    this.price = this.calculatePrice(this.data.ticker);
+    if(this.data && this.data.ticker) {
+      this.price = this.calculatePrice(this.data.ticker);
+      this.createOrder();
+    } else {
+      this.api.getTicker((err, ticker) => {
+        if(this.handleError(err)) {
+          return;
+        }
 
-    this.createOrder();
+        this.price = this.calculatePrice(ticker);
+        this.createOrder();
+      });
+    }
 
     return this;
   }
@@ -77,7 +91,13 @@ class StickyOrder extends BaseOrder {
 
     const r = this.roundPrice;
 
+    if(this.initialLimit && !this.id) {
+      console.log('passing initial limit of:', this.limit);
+      return r(this.limit);
+    }
+
     if(this.side === 'buy') {
+
       if(ticker.bid >= this.limit) {
         return r(this.limit);
       }
