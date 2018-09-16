@@ -94,6 +94,7 @@ Gekko.prototype.finalize = function() {
 }
 
 Gekko.prototype.shutdown = function() {
+  this.end();
   async.eachSeries(
     this.plugins,
     function(c, callback) {
