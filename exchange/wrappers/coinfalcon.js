@@ -100,8 +100,6 @@ Trader.prototype.retry = function(method, args) {
 
   // run the failed method again with the same arguments after wait
   setTimeout(() => {
-    console.log('cf retry..');
-    console.log(args);
     method.apply(this, args);
   }, wait);
 };
@@ -257,6 +255,7 @@ Trader.prototype.cancelOrder = function(order, callback) {
   const args = _.toArray(arguments);
 
   const handle = this.processResponse(this.cancelOrder, args, (err, res) => {
+
     if(err) {
       if(err.message.includes('has wrong status.')) {
 
@@ -284,7 +283,9 @@ Trader.prototype.cancelOrder = function(order, callback) {
       return callback(err);
     }
 
-    callback(undefined, false);
+    callback(undefined, false, {
+      filled: res.data.size_filled
+    });
   });
 
   this.coinfalcon.delete('user/orders/' + order).then(handle.success).catch(handle.failure);
