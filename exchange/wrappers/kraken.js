@@ -43,8 +43,8 @@ const recoverableErrors = [
   'Empty response',
   'API:Invalid nonce',
   'General:Temporary lockout',
-  'Response code 520',
-  'Response code 525'
+  'Response code 525',
+  'Service:Busy'
 ];
 
 // errors that might mean
@@ -53,6 +53,7 @@ const unknownResultErrors = [
   'Response code 502',
   'Response code 504',
   'Response code 522',
+  'Response code 520',
 ]
 
 const includes = (str, list) => {
@@ -149,7 +150,9 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
               throw 'a';
             }
 
-            if(order.status === 'canceled') {
+            console.log(order);
+
+            if(order.status !== 'canceled') {
               console.log(new Date, 'it still exists, retrying cancel');
               return this.cancelOrder(payload, callback);
             }
@@ -215,8 +218,8 @@ Trader.prototype.getPortfolio = function(callback) {
   const handle = (err, data) => {
     if(err) return callback(err);
 
-    const assetAmount = parseFloat( data.result[this.market.prefixed[1]] );
-    const currencyAmount = parseFloat( data.result[this.market.prefixed[0]] );
+    let assetAmount = parseFloat( data.result[this.market.prefixed[1]] );
+    let currencyAmount = parseFloat( data.result[this.market.prefixed[0]] );
 
     if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
       console.log(`Kraken did not return portfolio for ${this.asset}, assuming 0.`);
