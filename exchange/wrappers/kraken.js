@@ -1,7 +1,9 @@
 const Kraken = require('kraken-api');
 const moment = require('moment');
 const _ = require('lodash');
-const retry = require('../exchangeUtils').retry;
+const exchangeUtils = require('../exchangeUtils');
+const retry = exchangeUtils.retry;
+const scientificToDecimal = exchangeUtils.scientificToDecimal;
 
 const marketData = require('./kraken-markets.json');
 
@@ -273,7 +275,7 @@ Trader.prototype.roundAmount = function(amount) {
 };
 
 Trader.prototype.roundPrice = function(amount) {
-  return _.round(amount, this.market.pricePrecision);
+  return scientificToDecimal(_.round(amount, this.market.pricePrecision));
 };
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
