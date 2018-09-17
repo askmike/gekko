@@ -736,7 +736,7 @@
       ],
       "book": "XXDGXXBT",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "3000",
         "unit": "asset"
       },
       "pricePrecision": 8,
