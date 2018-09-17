@@ -279,7 +279,7 @@ Trader.prototype.roundPrice = function(amount) {
 };
 
 Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
-  price = this.roundAmount(price); // only round price, not amount
+  price = this.roundPrice(price); // only round price, not amount
 
   const handle = (err, data) => {
     if(err) {
