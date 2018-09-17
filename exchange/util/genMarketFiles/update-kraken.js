@@ -60,6 +60,9 @@ let getMinTradeSize = asset => {
   case 'USDT':
     minTradeSize = '5'
     break;
+  case 'XXDG':
+    minTradeSize = '3000'
+    break;
   default:
     break;
   }
