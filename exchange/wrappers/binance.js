@@ -333,12 +333,17 @@ Trader.prototype.getOrder = function(order, callback) {
 
     const fees = {};
 
+    if(!data.length) {
+      return callback(new Error('Binance did not return any trades'));
+    }
+
     const trades = _.filter(data, t => {
       // note: the API returns a string after creating
       return t.orderId == order;
     });
 
     if(!trades.length) {
+      console.log('cannot find trades!', { order, list: data.map(t => t.orderId) });
       return callback(new Error('Trades not found'));
     }
 
