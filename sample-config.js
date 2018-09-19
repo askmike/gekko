@@ -150,7 +150,7 @@ config.mailer = {
 
 config.pushbullet = {
   // sends pushbullets if true
-  enabled: true,
+  enabled: false,
   // Send 'Gekko starting' message if true
   sendMessageOnStart: true,
   // Send Message for advice?
