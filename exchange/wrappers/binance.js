@@ -343,8 +343,20 @@ Trader.prototype.getOrder = function(order, callback) {
     });
 
     if(!trades.length) {
-      console.log('cannot find trades!', { order, list: data.map(t => t.orderId) });
-      return callback(new Error('Trades not found'));
+      console.log('cannot find trades!', { order, list: data.map(t => t.orderId).reverse() });
+
+      const reqData = {
+        symbol: this.pair,
+        orderId: order,
+      };
+
+      this.binance.queryOrder(reqData, (err, resp) => {
+        console.log('couldnt find any trade for order, here is order:', {err, resp});
+
+         callback(new Error('Trades not found'));
+      });
+
+      return;
     }
 
     _.each(trades, trade => {
