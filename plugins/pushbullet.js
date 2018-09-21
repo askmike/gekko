@@ -66,10 +66,10 @@ Pushbullet.prototype.setup = function(done) {
         exchange +
         ".";
 
-      if(config.trader.enabled){
+      if (config.trader.enabled) {
         body += "\nLive Trading is enabled"
       }
-      if(config.paperTrader.enabled){
+      if (config.paperTrader.enabled) {
         body += "\nPaper Trading is enabled"
       }
       this.mail(title, body);
@@ -91,7 +91,7 @@ Pushbullet.prototype.processAdvice = function(advice) {
   if (advice.recommendation == "soft" && pushbulletConfig.muteSoft) return;
 
   this.advicePrice = this.price;
-  this.adviceTime = moment();
+  this.adviceTime = advice.date;
 
   if (pushbulletConfig.sendOnAdvice) {
 
@@ -126,7 +126,7 @@ Pushbullet.prototype.processTradeCompleted = function(trade) {
       slip = '1234';
     }
 
-    let tradeTime = moment();
+    let tradeTime = trade.date;
     let diff = tradeTime.diff(this.adviceTime);
     let timeToComplete = moment.utc(diff).format("mm:ss");
 
@@ -148,10 +148,8 @@ Pushbullet.prototype.processTradeCompleted = function(trade) {
       slip.toFixed(2), '%',
       '\nAdvice Time: ',
       this.adviceTime.format("h:mm:ss"),
-      'UTC',
       '\nTrade Time: ',
       tradeTime.format("h:mm:ss"),
-      'UTC',
       '\nTime to Fill: ',
       timeToComplete
 
