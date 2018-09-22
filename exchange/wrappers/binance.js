@@ -117,9 +117,8 @@ Trader.prototype.handleResponse = function(funcName, callback) {
       }
 
       if(funcName === 'checkOrder' && error.message.includes('Order does not exist.')) {
-        // order got filled in full before it could be
-        // cancelled, meaning it was NOT cancelled.
-        return callback(false, {filled: true});
+        console.log(new Date, 'Binance doesnt know this order, retrying up to 10 times..');
+        error.retry = 10;
       }
 
       if(funcName === 'addOrder' && error.message.includes('Account has insufficient balance')) {
@@ -284,7 +283,6 @@ Trader.prototype.isValidPrice = function(price) {
 }
 
 Trader.prototype.isValidLot = function(price, amount) {
-  console.log('isValidLot', this.market.minimalOrder.order, amount * price >= this.market.minimalOrder.order)
   return amount * price >= this.market.minimalOrder.order;
 }
 
@@ -464,8 +462,6 @@ Trader.prototype.cancelOrder = function(order, callback) {
     this.oldOrder = order;
 
     if(err) {
-      if(err.message.contains(''))
-
       return callback(err);
     }
 
