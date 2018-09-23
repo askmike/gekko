@@ -52,7 +52,7 @@ let getMinTradeSize = asset => {
     minTradeSize = '30'
     break;
   case 'XXLM':
-    minTradeSize = '300'
+    minTradeSize = '30'
     break;
   case 'XZEC':
     minTradeSize = '0.03'
