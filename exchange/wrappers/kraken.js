@@ -113,7 +113,7 @@ Trader.prototype.handleResponse = function(funcName, callback, nonMutating, payl
               }
 
               // string vs float
-              if(o.descr.price != price) {
+              if(+o.descr.price != price) {
                 return false;
               }
 
