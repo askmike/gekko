@@ -22,7 +22,7 @@ var Trader = function(config) {
   this.pair = this.asset + this.currency;
   this.bitfinex = new Bitfinex.RESTv1({apiKey: this.key, apiSecret: this.secret, transform: true});
 
-  this.interval = 2000;
+  this.interval = 4000;
 }
 
 const includes = (str, list) => {
@@ -49,12 +49,15 @@ const recoverableErrors = [
 
 Trader.prototype.handleResponse = function(funcName, callback) {
   return (error, data) => {
+
     if(!error && _.isEmpty(data)) {
       error = new Error('Empty response');
     }
 
     if(error) {
       const message = error.message;
+
+      console.log('handleResponse', funcName, message);
 
       // in case we just cancelled our balances might not have
       // settled yet, retry.
@@ -226,6 +229,8 @@ Trader.prototype.getOrder = function(order_id, callback) {
     var price = parseFloat(data.avg_execution_price);
     var amount = parseFloat(data.executed_amount);
     var date = moment.unix(data.timestamp);
+
+    console.log('getOrder', data);
 
     // TEMP: Thu May 31 14:49:34 CEST 2018
     // the `past_trades` call is not returning

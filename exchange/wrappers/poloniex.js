@@ -45,7 +45,8 @@ const recoverableErrors = [
   'Connection timed out. Please try again.',
   // getaddrinfo EAI_AGAIN poloniex.com poloniex.com:443
   'EAI_AGAIN',
-  'ENETUNREACH'
+  'ENETUNREACH',
+  'socket hang up'
 ];
 
 // errors that might mean
