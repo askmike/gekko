@@ -78,23 +78,18 @@ var util = {
     + `\nNodejs version: ${process.version}`;
   },
   die: function(m, soft) {
-    if(_gekkoEnv === 'standalone' || !_gekkoEnv)
-      var log = console.log.bind(console);
-    else if(_gekkoEnv === 'child-process')
-      var log = m => process.send({type: 'error', error: m});
 
-    var instanceName;
+    if(_gekkoEnv === 'child-process') {
+      return process.send({type: 'error', error: '\n ERROR: ' + m + '\n'});
+    }
 
-    if(util.gekkoEnv() === 'standalone')
-      instanceName = 'Gekko';
-    else
-      instanceName = 'This Gekko instance';
+    var log = console.log.bind(console);
 
     if(m) {
       if(soft) {
         log('\n ERROR: ' + m + '\n\n');
       } else {
-        log(`\n${instanceName} encountered an error and can\'t continue`);
+        log(`\nGekko encountered an error and can\'t continue`);
         log('\nError:\n');
         log(m, '\n\n');
         log('\nMeta debug info:\n');
