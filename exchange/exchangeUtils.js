@@ -116,9 +116,39 @@ const scientificToDecimal = num => {
   return num;
 }
 
+// TEMP until we have proper scheduling
+const cacheFn = (fn, timeout) => {
+  let nextCall = false;
+  let cache = false;
+  let inflight = false;
+  let callbackQueue = [];
+
+  return next => {
+    if(inflight) {
+      return callbackQueue.push(next);
+    }
+
+    const now = +new Date;
+    if(cache && now >= nextCall) {
+      return next(res.error, res.result);
+    }
+
+    inflight = true;
+    fn((error, result) => {
+      cache = {error, result};
+      nextCall = now + timeout;
+      next(error, result);
+      callbackQueue.forEach(cb => cb(error, result));
+      callbackQueue = [];
+      inflight = false;
+    })
+  }
+}
+
 module.exports = {
   retry: retryInstance,
   bindAll,
   isValidOrder,
-  scientificToDecimal
+  scientificToDecimal,
+  cacheFn
 }
