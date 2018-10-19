@@ -103,6 +103,12 @@ Trader.prototype.processResponse = function(next, fn, payload) {
         error.notFatal = true;
       }
 
+      if(includes(error.message, ['Currently in maintenance mode.'])) {
+        console.log(new Date, '[Poloniex] Currently in maintenance mode. Retrying...');
+        error.notFatal = true;
+        error.backoffDelay = 1000;
+      }
+
       // not actually an error, means order never executed against other trades
       if(fn === 'getOrder' &&
         error.message.includes('Order not found, or you are not the person who placed it.')
