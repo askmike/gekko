@@ -91,6 +91,7 @@ Trader.prototype.processResponse = function(method, next) {
     if(error) {
       if(includes(error.message, recoverableErrors)) {
         error.notFatal = true;
+        error.backoffDelay = 1000;
       }
 
       if(
@@ -99,8 +100,6 @@ Trader.prototype.processResponse = function(method, next) {
       ) {
         error.retry = 10;
       }
-
-      console.log(error.message);
 
       return next(error);
     }
