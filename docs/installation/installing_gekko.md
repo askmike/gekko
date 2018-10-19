@@ -47,6 +47,7 @@ We also need to install Gekko Broker's dependencies, run:
 
     cd exchange
     npm install --only=production
+    cd ..
 
 ## Starting Gekko
 
