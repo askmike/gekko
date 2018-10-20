@@ -63,7 +63,7 @@ const Trader = function(config) {
     // Though we can deduce feePercent based
     // on user fee tracked through `this.getFee`.
     // Set default here, overwrite in getFee.
-    this.fee = 0.1;
+    this.fee = 0.001;
     // Set the proper fee asap.
     this.getFee(_.noop);
 
@@ -212,13 +212,22 @@ Trader.prototype.getFee = function(callback) {
     if(err)  {
       return callback(err);
     }
-
     const basepoints = data.makerCommission;
 
+    /** Binance raw response
+    { makerCommission: 10,
+      takerCommission: 10,
+      buyerCommission: 0,
+      sellerCommission: 0,
+      canTrade: true,
+      canWithdraw: true,
+      canDeposit: true,
+      So to get decimal representation of fee we actually need to divide by 10000
+    */
     // note non standard func, see constructor
-    this.fee = basepoints / 100;
+    this.fee = basepoints / 10000;
 
-    callback(undefined, basepoints / 100);
+    callback(undefined, this.fee);
   }
 
   const fetch = cb => this.binance.account({}, this.handleResponse('getFee', cb));

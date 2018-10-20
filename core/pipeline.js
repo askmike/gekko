@@ -6,7 +6,7 @@
   all enabled plugins are actually supported by that market.
 
   Read more here:
-  https://gekko.wizbit/docs/internals/architecture.html
+  https://gekko.wizb.it/docs/internals/architecture.html
 
 */
 

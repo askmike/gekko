@@ -48,7 +48,7 @@ The callback needs to have the parameters of `err` and `ticker`. Ticker needs to
 
     this.exchange.getFee(callback)
 
-The callback needs to have the parameters of `err` and `fee`. Fee is a float that represents the amount the exchange takes out of the orders Gekko places. If an exchange has a fee of 0.2% this should be `0.0002`.
+The callback needs to have the parameters of `err` and `fee`. Fee is a float that represents the amount the exchange takes out of the orders Gekko places. If an exchange has a fee of 0.2% this should be `0.002`.
 
 ### getPortfolio
 

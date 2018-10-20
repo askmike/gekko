@@ -77,6 +77,11 @@ config.mongodb = {
   }]
 }
 
+config.adviceWriter = {
+  enabled: false,
+  muteSoft: true,
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING BACKTESTING
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
