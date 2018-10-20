@@ -50,7 +50,7 @@ Install Gekko Broker's dependencies:
 
     cd exchange
     npm install --only=production
-	  cd ..
+    cd ..
 
 ### Install Tulip Indicators
 
