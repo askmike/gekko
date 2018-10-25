@@ -32,6 +32,10 @@ if(config.debug && mode !== 'importer') {
   // decorate with more debug information
   Gekko.prototype._write = function(chunk, encoding, _done) {
 
+    if(chunk.isFinished) {
+      return this.finalize();
+    }
+
     const start = moment();
     var relayed = false;
     var at = null;
@@ -58,6 +62,10 @@ if(config.debug && mode !== 'importer') {
 } else {
   // skip decoration
   Gekko.prototype._write = function(chunk, encoding, _done) {
+    if(chunk.isFinished) {
+      return this.finalize();
+    }
+
     const flushEvents = _.after(this.candleConsumers.length, () => {
       this.flushDefferedEvents();
       _done();
@@ -94,6 +102,7 @@ Gekko.prototype.finalize = function() {
 }
 
 Gekko.prototype.shutdown = function() {
+  this.end();
   async.eachSeries(
     this.plugins,
     function(c, callback) {

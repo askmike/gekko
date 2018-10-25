@@ -1,4 +1,4 @@
-var UIconfig = require('../vue/public/UIconfig');
+var UIconfig = require('../vue/dist/UIconfig');
 
 var config = {};
 
@@ -75,6 +75,11 @@ config.mongodb = {
     module: 'mongojs',
     version: '2.4.0'
   }]
+}
+
+config.adviceWriter = {
+  enabled: false,
+  muteSoft: true,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

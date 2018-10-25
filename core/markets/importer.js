@@ -9,12 +9,12 @@ var gekkoEnv = util.gekkoEnv();
 var adapter = config[config.adapter];
 var daterange = config.importer.daterange;
 
-var from = moment(daterange.from);
+var from = moment.utc(daterange.from);
 
 if(daterange.to) {
-  var to = moment(daterange.to);
+  var to = moment.utc(daterange.to);
 } else {
-  var to = moment();
+  var to = moment().utc();
   log.debug(
     'No end date specified for importing, setting to',
     to.format()
@@ -74,7 +74,7 @@ var Market = function() {
   this.candleManager.on(
     'candles',
     this.pushCandles
-  );  
+  );
 
   Readable.call(this, {objectMode: true});
 

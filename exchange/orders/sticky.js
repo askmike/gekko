@@ -43,9 +43,13 @@ class StickyOrder extends BaseOrder {
       return false;
     }
 
+    console.log(new Date, 'sticky create', side);
+
     this.side = side;
 
     this.amount = this.roundAmount(rawAmount);
+
+    this.initialLimit = params.initialLimit;
 
     if(side === 'buy') {
       if(params.limit)
@@ -66,9 +70,19 @@ class StickyOrder extends BaseOrder {
 
     this.outbid = params.outbid && _.isFunction(this.outbidPrice);
 
-    this.price = this.calculatePrice(this.data.ticker);
+    if(this.data && this.data.ticker) {
+      this.price = this.calculatePrice(this.data.ticker);
+      this.createOrder();
+    } else {
+      this.api.getTicker((err, ticker) => {
+        if(this.handleError(err)) {
+          return;
+        }
 
-    this.createOrder();
+        this.price = this.calculatePrice(ticker);
+        this.createOrder();
+      });
+    }
 
     return this;
   }
@@ -77,7 +91,13 @@ class StickyOrder extends BaseOrder {
 
     const r = this.roundPrice;
 
+    if(this.initialLimit && !this.id) {
+      console.log('passing initial limit of:', this.limit);
+      return r(this.limit);
+    }
+
     if(this.side === 'buy') {
+
       if(ticker.bid >= this.limit) {
         return r(this.limit);
       }
@@ -180,6 +200,7 @@ class StickyOrder extends BaseOrder {
     }
 
     if(this.handleError(err)) {
+      console.log(new Date, 'handleCreate error');
       return;
     }
 
@@ -207,24 +228,34 @@ class StickyOrder extends BaseOrder {
     this.status = states.OPEN;
     this.emitStatus();
 
+    this.scheduleNextCheck();
+  }
+
+  scheduleNextCheck() {
+
     // remove lock
     this.sticking = false;
 
     // check whether we had an action pending
-    if(this.cancelling)
+    if(this.cancelling) {
       return this.cancel();
+    }
 
-    if(this.movingLimit)
+    if(this.movingLimit) {
       return this.moveLimit();
+    }
 
-    if(this.movingAmount)
+    if(this.movingAmount) {
       return this.moveAmount();
+    }
 
     // register check
     this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+
   }
 
   checkOrder() {
+
     if(this.completed || this.completing) {
       return console.log(new Date, 'checkOrder called on completed/completing order..', this.completed, this.completing);
     }
@@ -233,6 +264,7 @@ class StickyOrder extends BaseOrder {
 
     this.api.checkOrder(this.id, (err, result) => {
       if(this.handleError(err)) {
+        console.log(new Date, 'checkOrder error');
         return;
       }
 
@@ -245,8 +277,7 @@ class StickyOrder extends BaseOrder {
         // if we are already at limit we dont care where the top is
         // note: might be string VS float
         if(this.price == this.limit) {
-          this.timeout = setTimeout(this.checkOrder, this.checkInterval);
-          this.sticking = false;
+          this.scheduleNextCheck();
           return;
         }
 
@@ -264,16 +295,18 @@ class StickyOrder extends BaseOrder {
             return this.move(this.calculatePrice(ticker));
           }
 
-          this.timeout = setTimeout(this.checkOrder, this.checkInterval);
-          this.sticking = false;
+          this.scheduleNextCheck();
         });
 
         return;
       }
 
+      // it's not open right now
+      // meaning we are done
+      this.sticking = false;
+
       if(!result.executed) {
         // not open and not executed means it never hit the book
-        this.sticking = false;
         this.status = states.REJECTED;
         this.emitStatus();
         this.finish();
@@ -282,10 +315,8 @@ class StickyOrder extends BaseOrder {
 
       // order got filled!
       this.orders[this.id].filled = this.amount;
-      this.sticking = false;
       this.emit('fill', this.amount);
       this.filled(this.price);
-
     });
   }
 
@@ -347,6 +378,7 @@ class StickyOrder extends BaseOrder {
 
     this.api.cancelOrder(this.id, (err, filled, data) => {
       if(this.handleError(err)) {
+        console.log(new Date, 'error move');
         return;
       }
 
@@ -385,6 +417,10 @@ class StickyOrder extends BaseOrder {
       return false;
     }
 
+    if(this.cancelling) {
+      return false;
+    }
+
     if(
       this.status === states.INITIALIZING ||
       this.status === states.SUBMITTED ||
@@ -393,7 +429,7 @@ class StickyOrder extends BaseOrder {
     ) {
       this.moveLimitTo = limit;
       this.movingLimit = true;
-      return;
+      return true;
     }
 
     this.limit = this.roundPrice(limit);
@@ -409,7 +445,7 @@ class StickyOrder extends BaseOrder {
       this.sticking = true;
       this.move(this.limit);
     } else {
-      this.timeout = setTimeout(this.checkOrder, this.checkInterval);
+      this.scheduleNextCheck();
     }
 
     return true;
@@ -492,8 +528,10 @@ class StickyOrder extends BaseOrder {
 
     this.completing = true;
     clearTimeout(this.timeout);
+
     this.api.cancelOrder(this.id, (err, filled, data) => {
       if(this.handleError(err)) {
+        console.log(new Date, 'error cancel');
         return;
       }
 
@@ -532,6 +570,7 @@ class StickyOrder extends BaseOrder {
       // note this is a standalone function after the order is
       // completed, as such we do not use the handleError flow.
       if(err) {
+        console.log(new Date, 'error createSummary (checkOrder)')
         return next(err);
       }
 

@@ -1,9 +1,11 @@
 {
   "assets": [
+    "ADA",
     "BCH",
     "DASH",
     "EOS",
     "GNO",
+    "QTUM",
     "USDT",
     "ETC",
     "ETH",
@@ -11,6 +13,7 @@
     "LTC",
     "MLN",
     "REP",
+    "XTZ",
     "XBT",
     "XDG",
     "XLM",
@@ -19,15 +22,100 @@
     "ZEC"
   ],
   "currencies": [
+    "CAD",
+    "ETH",
     "EUR",
     "USD",
     "XBT",
-    "ETH",
-    "CAD",
     "GBP",
     "JPY"
   ],
   "markets": [
+    {
+      "pair": [
+        "CAD",
+        "ADA"
+      ],
+      "prefixed": [
+        "ZCAD",
+        "ADA"
+      ],
+      "book": "ADACAD",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 6,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "ETH",
+        "ADA"
+      ],
+      "prefixed": [
+        "XETH",
+        "ADA"
+      ],
+      "book": "ADAETH",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 7,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "EUR",
+        "ADA"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "ADA"
+      ],
+      "book": "ADAEUR",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 6,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "USD",
+        "ADA"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "ADA"
+      ],
+      "book": "ADAUSD",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 6,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "ADA"
+      ],
+      "prefixed": [
+        "XXBT",
+        "ADA"
+      ],
+      "book": "ADAXBT",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 8,
+      "amountPrecision": 8
+    },
     {
       "pair": [
         "EUR",
@@ -268,6 +356,91 @@
     },
     {
       "pair": [
+        "CAD",
+        "QTUM"
+      ],
+      "prefixed": [
+        "ZCAD",
+        "QTUM"
+      ],
+      "book": "QTUMCAD",
+      "minimalOrder": {
+        "amount": "0.1",
+        "unit": "asset"
+      },
+      "pricePrecision": 5,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "ETH",
+        "QTUM"
+      ],
+      "prefixed": [
+        "XETH",
+        "QTUM"
+      ],
+      "book": "QTUMETH",
+      "minimalOrder": {
+        "amount": "0.1",
+        "unit": "asset"
+      },
+      "pricePrecision": 7,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "EUR",
+        "QTUM"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "QTUM"
+      ],
+      "book": "QTUMEUR",
+      "minimalOrder": {
+        "amount": "0.1",
+        "unit": "asset"
+      },
+      "pricePrecision": 5,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "USD",
+        "QTUM"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "QTUM"
+      ],
+      "book": "QTUMUSD",
+      "minimalOrder": {
+        "amount": "0.1",
+        "unit": "asset"
+      },
+      "pricePrecision": 5,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "QTUM"
+      ],
+      "prefixed": [
+        "XXBT",
+        "QTUM"
+      ],
+      "book": "QTUMXBT",
+      "minimalOrder": {
+        "amount": "0.1",
+        "unit": "asset"
+      },
+      "pricePrecision": 7,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
         "USD",
         "USDT"
       ],
@@ -464,7 +637,7 @@
       ],
       "book": "XICNXETH",
       "minimalOrder": {
-        "amount": "2.0",
+        "amount": "2",
         "unit": "asset"
       },
       "pricePrecision": 6,
@@ -481,7 +654,7 @@
       ],
       "book": "XICNXXBT",
       "minimalOrder": {
-        "amount": "2.0",
+        "amount": "2",
         "unit": "asset"
       },
       "pricePrecision": 6,
@@ -643,6 +816,91 @@
     {
       "pair": [
         "CAD",
+        "XTZ"
+      ],
+      "prefixed": [
+        "ZCAD",
+        "XTZ"
+      ],
+      "book": "XTZCAD",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 4,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "ETH",
+        "XTZ"
+      ],
+      "prefixed": [
+        "XETH",
+        "XTZ"
+      ],
+      "book": "XTZETH",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 7,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "EUR",
+        "XTZ"
+      ],
+      "prefixed": [
+        "ZEUR",
+        "XTZ"
+      ],
+      "book": "XTZEUR",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 4,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "USD",
+        "XTZ"
+      ],
+      "prefixed": [
+        "ZUSD",
+        "XTZ"
+      ],
+      "book": "XTZUSD",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 4,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "XBT",
+        "XTZ"
+      ],
+      "prefixed": [
+        "XXBT",
+        "XTZ"
+      ],
+      "book": "XTZXBT",
+      "minimalOrder": {
+        "amount": "1",
+        "unit": "asset"
+      },
+      "pricePrecision": 7,
+      "amountPrecision": 8
+    },
+    {
+      "pair": [
+        "CAD",
         "XBT"
       ],
       "prefixed": [
@@ -736,7 +994,7 @@
       ],
       "book": "XXDGXXBT",
       "minimalOrder": {
-        "amount": 0.01,
+        "amount": "3000",
         "unit": "asset"
       },
       "pricePrecision": 8,
@@ -753,7 +1011,7 @@
       ],
       "book": "XXLMXXBT",
       "minimalOrder": {
-        "amount": "300",
+        "amount": "30",
         "unit": "asset"
       },
       "pricePrecision": 8,
@@ -770,7 +1028,7 @@
       ],
       "book": "XXLMZEUR",
       "minimalOrder": {
-        "amount": "300",
+        "amount": "30",
         "unit": "asset"
       },
       "pricePrecision": 6,
@@ -787,7 +1045,7 @@
       ],
       "book": "XXLMZUSD",
       "minimalOrder": {
-        "amount": "300",
+        "amount": "30",
         "unit": "asset"
       },
       "pricePrecision": 6,

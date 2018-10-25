@@ -18,8 +18,14 @@ let getMinTradeSize = asset => {
   case 'BCH':
     minTradeSize = '0.002'
     break;
+  case 'ADA':
+    minTradeSize = '1'
+    break;
   case 'DASH':
     minTradeSize = '0.03'
+    break;
+  case 'XXDG':
+    minTradeSize = '3000'
     break;
   case 'EOS':
     minTradeSize = '3.0'
@@ -34,7 +40,7 @@ let getMinTradeSize = asset => {
     minTradeSize = '0.03'
     break;
   case 'XICN':
-    minTradeSize = '2.0'
+    minTradeSize = '2'
     break;
   case 'XLTC':
     minTradeSize = '0.1'
@@ -42,23 +48,26 @@ let getMinTradeSize = asset => {
   case 'XMLN':
     minTradeSize = '0.1'
     break;
-  case 'XLTC':
+  case 'XXMR':
     minTradeSize = '0.1'
     break;
-  case 'XXMR':
+  case 'QTUM':
     minTradeSize = '0.1'
     break;
   case 'XXRP':
     minTradeSize = '30'
     break;
   case 'XXLM':
-    minTradeSize = '300'
-    break;
-  case 'XZEC':
-    minTradeSize = '0.03'
+    minTradeSize = '30'
     break;
   case 'USDT':
     minTradeSize = '5'
+    break;
+  case 'XTZ':
+    minTradeSize = '1'
+    break;
+  case 'XZEC':
+    minTradeSize = '0.03'
     break;
   default:
     break;

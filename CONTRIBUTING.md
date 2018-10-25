@@ -36,11 +36,11 @@ If you cannot find an existing issue that describes your bug or feature, submit 
 
 ## New Feature and code contributions
 
-- If you want to add an exchange to Gekko, see [this doc](https://github.com/askmike/gekko/blob/develop/docs/internals/exchanges.md) for all the information you need.
-- If you want to Gekko react to anything from the market, you can most likely put this functionality into a plugin. See [this document](https://github.com/askmike/gekko/blob/develop/docs/internals/plugins.md) for details.
-- If you want to add trading strategies / indicators, please see [this document](https://github.com/askmike/gekko/blob/develop/docs/trading_bot/creating_a_trading_method.md).
+- If you want to add an exchange to Gekko, see [this doc](https://gekko.wizb.it/docs/extending/add_an_exchange.html) for all the information you need.
+- If you want to Gekko react to anything from the market, you can most likely put this functionality into a plugin. See [this document](https://gekko.wizb.it/docs/internals/plugins.html) for details.
+- If you want to create a strategy, please see [this page](https://gekko.wizb.it/docs/strategies/creating_a_strategy.html).
 - If you just want to work on Gekko, you can use the open issues with the tag `open-for-pulls` for inspiration.
-- If you want to work on the web interface (Gekko UI), please see [this frontend doc](https://github.com/askmike/gekko/blob/develop/docs/internals/gekko_ui.md) on the Vue.js frontend.
+- If you want to work on the web interface (Gekko UI), please see [this frontend doc](https://gekko.wizb.it/docs/internals/gekko_ui.html) on the Vue.js frontend.
 
 Things to take into consideration when submitting a pull request:
 

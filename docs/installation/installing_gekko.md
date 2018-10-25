@@ -43,10 +43,13 @@ Once you have Gekko downloaded you need to install the dependencies, open your t
 
     npm install --only=production
 
-We also need to install Gekko Broker's dependencies, run:
+*NOTE: You may see a vulnerability warning from NPM, if you run npm audit with --force, Gekko will break. See [here](https://github.com/askmike/gekko/issues/2585#issuecomment-428450997).*
+
+You also need to install Gekko Broker's dependencies, run:
 
     cd exchange
     npm install --only=production
+    cd ..
 
 ## Starting Gekko
 

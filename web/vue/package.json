@@ -17,6 +17,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.15",
     "@vue/cli-service": "^3.0.0-beta.15",
+    "babel-plugin-transform-commonjs-es2015-modules": "^4.0.1",
     "copy-webpack-plugin": "^4.5.2",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",

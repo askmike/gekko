@@ -37,7 +37,6 @@ var Base = function(settings) {
   this.settings = settings;
   this.tradingAdvisor = config.tradingAdvisor;
   // defaults
-  this.requiredHistory = 0;
   this.priceValue = 'close';
   this.indicators = {};
   this.asyncTick = false;
@@ -68,6 +67,11 @@ var Base = function(settings) {
 
   // let's run the implemented starting point
   this.init();
+
+  //if no requiredHistory was provided, set default from tradingAdvisor
+  if (!_.isNumber(this.requiredHistory)){
+    this.requiredHistory = config.tradingAdvisor.historySize;
+  }
 
   if(!config.debug || !this.log)
     this.log = function() {};
@@ -175,6 +179,18 @@ Base.prototype.propogateTick = function(candle) {
   _.each(this.indicators, (indicator, name) => {
     indicators[name] = indicator.result;
   });
+  
+  _.each(this.tulipIndicators, (indicator, name) => {
+    indicators[name] = indicator.result.result
+      ? indicator.result.result
+      : indicator.result;
+  });
+
+  _.each(this.talibIndicators, (indicator, name) => {
+    indicators[name] = indicator.result.outReal
+      ? indicator.result.outReal
+      : indicator.result;
+  });
 
   this.emit('stratUpdate', {
     date: candle.start.clone(),
@@ -188,6 +204,17 @@ Base.prototype.propogateTick = function(candle) {
 }
 
 Base.prototype.processTrade = function(trade) {
+  if(
+    this._pendingTriggerAdvice &&
+    trade.action === 'sell' &&
+    this._pendingTriggerAdvice === trade.adviceId
+  ) {
+    // This trade came from a trigger of the previous advice,
+    // update stored direction
+    this._currentDirection = 'short';
+    this._pendingTriggerAdvice = null;
+  }
+
   this.onTrade(trade);
 }
 
@@ -224,6 +251,10 @@ Base.prototype.advice = function(newDirection) {
       return;
     }
 
+    if(newDirection.direction === this._currentDirection) {
+      return;
+    }
+
     if(_.isObject(newDirection.trigger)) {
       if(newDirection.direction !== 'long') {
         log.warn(
@@ -249,6 +280,10 @@ Base.prototype.advice = function(newDirection) {
     return;
   }
 
+  if(newDirection === 'short' && this._pendingTriggerAdvice) {
+    this._pendingTriggerAdvice = null;
+  }
+
   this._currentDirection = newDirection;
 
   this.propogatedAdvices++;
@@ -260,6 +295,9 @@ Base.prototype.advice = function(newDirection) {
 
   if(trigger) {
     advice.trigger = trigger;
+    this._pendingTriggerAdvice = 'advice-' + this.propogatedAdvices;
+  } else {
+    this._pendingTriggerAdvice = null;
   }
 
   this.emit('advice', advice);

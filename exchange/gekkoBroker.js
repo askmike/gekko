@@ -55,7 +55,13 @@ class Broker {
         _.last(p.pair) === config.asset.toUpperCase();
     });
 
-    this.interval = this.api.interval || 1500;
+    if(config.customInterval) {
+      this.interval = config.customInterval;
+      this.api.interval = config.customInterval;
+      console.log(new Date, '[GB] setting custom interval to', config.customInterval);
+    } else {
+      this.interval = this.api.interval || 1500;
+    }
 
     this.market = config.currency.toUpperCase() + config.asset.toUpperCase();
 

@@ -4,6 +4,6 @@ module.exports = {
   ],
   ignore: [
     'node_modules',
-    '../state/reduceState.js'
-  ]
+  ],
+  plugins : ["transform-commonjs-es2015-modules"]
 }

@@ -74,7 +74,7 @@ Market.prototype.processCandles = function(err, candles) {
     if(this.ended) {
       this.closed = true;
       this.reader.close();
-      this.emit('end');
+      this.push({isFinished: true});
     } else {
       util.die('Query returned no candles (do you have local data for the specified range?)');
     }

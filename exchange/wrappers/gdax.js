@@ -8,6 +8,8 @@ const retry = require('../exchangeUtils').retry;
 const BATCH_SIZE = 100;
 const QUERY_DELAY = 350;
 
+const marketData = require('./coinbase-markets.json');
+
 const Trader = function(config) {
   this.post_only = true;
   this.use_sandbox = false;
@@ -18,8 +20,8 @@ const Trader = function(config) {
   this.asset = config.asset;
   this.currency = config.currency;
 
-  this.api_url = 'https://api.gdax.com';
-  this.api_sandbox_url = 'https://api-public.sandbox.gdax.com';
+  this.api_url = 'https://api.pro.coinbase.com';
+  this.api_sandbox_url = 'https://api-public.sandbox.pro.coinbase.com';
 
   if (_.isObject(config)) {
     this.key = config.key;
@@ -60,7 +62,9 @@ const recoverableErrors = [
   'HTTP 504 Error',
   'HTTP 503 Error',
   'socket hang up',
-  'EHOSTUNREACH'
+  'EHOSTUNREACH',
+  'EAI_AGAIN',
+  'ENETUNREACH'
 ];
 
 const includes = (str, list) => {
@@ -87,6 +91,7 @@ Trader.prototype.processResponse = function(method, next) {
     if(error) {
       if(includes(error.message, recoverableErrors)) {
         error.notFatal = true;
+        error.backoffDelay = 1000;
       }
 
       if(
@@ -95,8 +100,6 @@ Trader.prototype.processResponse = function(method, next) {
       ) {
         error.retry = 10;
       }
-
-      console.log(error.message);
 
       return next(error);
     }
@@ -372,7 +375,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         _.bind(handler, this),
         _.bind(process, this)
       );
-    } else {
+    } else if (since) {
       console.log('Scanning back in the history needed...', since);
     }
   }
@@ -411,22 +414,9 @@ Trader.getCapabilities = function() {
   return {
     name: 'GDAX',
     slug: 'gdax',
-    currencies: ['USD', 'EUR', 'GBP', 'BTC'],
-    assets: ['BTC', 'LTC', 'ETH', 'BCH'],
-    markets: [
-      { pair: ['USD', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['USD', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['USD', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['USD', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['EUR', 'ETH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['EUR', 'LTC'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['EUR', 'BCH'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['GBP', 'BTC'], minimalOrder: { amount: 0.001, unit: 'asset' } },
-      { pair: ['BTC', 'LTC'], minimalOrder: { amount: 0.1, unit: 'asset' } },
-      { pair: ['BTC', 'ETH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-      { pair: ['BTC', 'BCH'], minimalOrder: { amount: 0.01, unit: 'asset' } },
-    ],
+    currencies: marketData.currencies,
+    assets: marketData.assets,
+    markets: marketData.markets,
     requires: ['key', 'secret', 'passphrase'],
     providesHistory: 'date',
     providesFullHistory: true,

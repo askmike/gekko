@@ -29,7 +29,7 @@ Important: Ignore the errors!
 
 The recommended way of downloading Gekko is by using git. This makes keeping Gekko up to date a lot easier. Run this in a terminal:
 
-        sudo apt-get install git
+    sudo apt-get install git
     git clone git://github.com/askmike/gekko.git -b stable
     cd gekko
 
@@ -42,6 +42,7 @@ Once you have Gekko downloaded you need to install the dependencies, open your t
     npm install --only=production
     cd exchange
     npm install --only=production
+    cd ..
 
 ## Configure your Pi as a headless server
 
