@@ -1,6 +1,6 @@
 {
   "name": "gekko-broker",
-  "version": "0.6.4",
+  "version": "0.6.7",
   "description": "Gekko's order execution library for bitcoin & crypto exchanges",
   "main": "gekkoBroker.js",
   "scripts": {
