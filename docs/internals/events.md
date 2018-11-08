@@ -263,7 +263,7 @@ and will start signaling advice.
         entryAt: Moment<'2017-03-25 19:41:00'>,
         entryPrice: 10.21315498,
         entryBalance: 98.19707799420277,
-        exitAt: Moment<'2017-03-25 19:41:00'>
+        exitAt: Moment<'2017-03-25 19:41:00'>,
         exitPrice: 10.22011632,
         exitBalance: 97.9692176,
         duration: 3600000,
@@ -296,7 +296,7 @@ and will start signaling advice.
         entryAt: Moment<'2017-03-25 19:41:00'>,
         entryPrice: 10.21315498,
         entryBalance: 98.19707799420277,
-        exitAt: Moment<'2017-03-25 19:41:00'>
+        exitAt: Moment<'2017-03-25 19:41:00'>,
         exitPrice: 10.22011632,
         exitBalance: 97.9692176,
         duration: 3600000,
