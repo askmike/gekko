@@ -75,7 +75,7 @@ Go to the config and configure it like this:
       simulationBalance: {
         // these are in the unit types configured in the watcher.
         asset: 1,
-        currency: 100,
+        currency: 100
       },
       // only want report after a sell? set to `false`.
       verbose: false,
@@ -130,7 +130,7 @@ Mailer will automatically email you whenever Gekko has a new advice.
       // guarantee that your email address & password are safe!
 
       password: '',       // Your GMail Password - if not supplied Gekko will prompt on startup.
-      tag: '[GEKKO] ',      // Prefix all EMail subject lines with this
+      tag: '[GEKKO] '      // Prefix all EMail subject lines with this
     }
 
 - enabled indicates whether this is on or off.
