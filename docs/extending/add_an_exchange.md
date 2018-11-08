@@ -46,19 +46,19 @@ The callback needs to have the parameters of `err` and `ticker`. Ticker needs to
 
 ### getFee
 
-    this.exchange.getFee(callback)
+    this.exchange.getFee(callback);
 
 The callback needs to have the parameters of `err` and `fee`. Fee is a float that represents the amount the exchange takes out of the orders Gekko places. If an exchange has a fee of 0.2% this should be `0.002`.
 
 ### getPortfolio
 
-    this.exchange.getPortfolio(callback)
+    this.exchange.getPortfolio(callback);
 
 The callback needs to have the parameters of `err` and `portfolio`. Portfolio needs to be an array of all currencies and assets combined in the form of objects, an example object looks like `{name: 'BTC', amount: 1.42131}` (name needs to be an uppercase string, amount needs to be a float).
 
 ### getLotSize
 
-    this.exchange.getLotSize(tradeType, amount, size, callback)
+    this.exchange.getLotSize(tradeType, amount, size, callback);
 
 The callback needs to have the parameters of `err` and `lot`. Lot needs to be an object with `amount` and `purchase` size appropriately for the exchange. In the event that the lot is too small, return 0 to both fields and this will generate a lot size warning in the portfolioManager.
 
