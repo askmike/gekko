@@ -40,9 +40,9 @@ You can now access the Gekko UI by going to `http://x.x.x.x:3000` in a browser (
 
 ## Configuring Gekko to run in the cloud
 
-Important note: if you expose Gekko to the open internet (or on any non trusted network) you are recommended to put a secure reverse proxy (for example with both [SSL](#obtaining-a-ssl-certificate) and [BasicAuth](#create-htpasswd-for-basic-password-authentication)) in front of it. While we believe Gekko is hard to exploit, it allows for 24/7 backtesting which will drain your machine's resources (possible DoS).
+Important note: if you expose Gekko to the open internet (or on any non trusted network) you are recommended to put a secure reverse proxy (for example with both [SSL](#Obtaining-a-SSL-certificate) and [BasicAuth](#Create-htpasswd-for-basic-password-authentication)) in front of it. While we believe Gekko is hard to exploit, it allows for 24/7 backtesting which will drain your machine's resources (possible DoS).
 
-The following assumes you configured a reverse proxy, if you did not simply follow [these instructions](#configuring-nginx-as-a-reverse-proxy) to do so.
+The following assumes you configured a reverse proxy, if you did not simply follow [these instructions](#Configuring-NGINX-as-a-reverse-proxy) to do so.
 
 
     const CONFIG = {
