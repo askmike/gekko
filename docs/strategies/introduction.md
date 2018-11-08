@@ -47,7 +47,17 @@ You can configure the following parameters:
 
 ### MACD
 
-This strategy is similar to DEMA but goes a little further by comparing the difference by an EMA of itself. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_convergence_divergence_macd).
+The MACD is one of the most popular trend watching **indicators** in finance, it was created by Gerald Appel in the late 1970s. By using multiple price averages (EMAs) of different periods (one that follows the market more closely and one that lags behind, only catching bigger price swings). The indicator itself ouputs multiple numbers, when comparing them they can be interepted as signals that show when the trend of the price is changing.
+
+The MACD **strategy** in Gekko is a simple strategy that implements the indicator. By comparing the difference between the EMAs from the signal the strategy triggers buy and sell signals. The strategy does come with additional logic:
+
+- **thresholds**: a signal will be triggered as soon as the difference goes above or below a configurable threshold, making the strategy more flexible than simply checking if the difference is above or below zero. If you set these to 0 each line cross would trigger new advice.
+- **persistance**: instead of trading as soon the difference is above or below the threshold, the strategy will wait a few candles to see if the difference keeps persisting. Only if it does the strategy will actually signal to Gekko to buy or sell. By setting persistance to 0 this behaviour is disabled.
+- **short** is the short EMA that moves closer to the real market (including noise)
+- **long** is the long EMA that lags behind the market more but is also more resistant to noise.
+- **signal** is the EMA weight calculated over the difference from short/long.
+
+Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_average_convergence_divergence_macd).
 
 You can configure the following parameters:
 
@@ -64,12 +74,6 @@ You can configure the following parameters:
     # How many candle intervals should a trend persist
     # before we consider it real?
     persistence = 1
-
-- short is the short EMA that moves closer to the real market (including noise)
-- long is the long EMA that lags behind the market more but is also more resistant to noise.
-- signal is the EMA weight calculated over the difference from short/long.
-- the down threshold and the up threshold tell Gekko how big the difference in the lines needs to be for it to be considered a trend. If you set these to 0 each line cross would trigger new advice.
-- persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
 
 ### PPO
 
@@ -99,7 +103,15 @@ You can configure the following parameters:
 
 ### RSI
 
-The Relative Strength Index is a momentum oscillator that measures the speed and change of price movements. Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:relative_strength_index_rsi).
+The RSI indicator is and old but ever popular trend watching **indicator**, introduced in 1978 by J. Welles Wilder this simple indicator has never stopped to be a popular tool for traders. In its essence RSI follows a simple formula to measure the speed by which the price is changing. When the price keeps going up at an accelarating rate the market might be overbought and a reversal might come next.
+
+The RSI **strategy** in Gekko is a simple strategy that implements the RSI indicator. By calculating the RSI as the market develops this strategy can trigger buy or sell signals based on the RSI going too high (overbought) or too low (oversold). The strategy does come with additional logic:
+
+- **interval** is the amount of periods the RSI should use.
+- **thresholds** determine what level of RSI would trigger an up or downtrend.
+- **persistance**: instead of trading as soon the difference is above or below the threshold, the strategy will wait a few candles to see if the difference keeps persisting. Only if it does the strategy will actually signal to Gekko to buy or sell. By setting persistance to 0 this behaviour is disabled.
+
+Read more about it [here](http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:relative_strength_index_rsi).
 
 You can configure the following parameters:
 
@@ -112,11 +124,15 @@ You can configure the following parameters:
     # before we consider it real?
     persistence = 2
 
-- The interval is the amount of periods the RSI should use.
-- The thresholds determine what level of RSI would trigger an up or downtrend.
-- persistence tells Gekko how long the thresholds needs to be met until Gekko considers the trend to be valid.
-
 ### StochRSI
+
+The StochRSI indicator uses an RSI indicator at its core and as such is similar to the RSI strategy that uses this indicator. The difference is that after the RSI is calculated a stochastic oscillator is calculated over the resulting RSI values. When a market is trending upwards for a long time the RSI values tend to go and stay high. The stochastic oscillator will compare the RSI values from the last period with eachother. This results in the StochRSI indicator therefor indicate how high or low the RSI values have been historically over the last n periods.
+
+The StochRSI **strategy** in Gekko is a simple strategy that implements the StochRSI indicator. By calculating the StochRSI as the market develops this strategy can trigger buy or sell signals based on the signal going too high (overbought) or too low (oversold). The strategy does come with configurables:
+
+- **interval**: This setting defines both the RSI interval used to calculate the RSI values as well as the historical period used by the stochastic oscillator to compare RSI values with.
+- **persistance**: instead of trading as soon the difference is above or below the threshold, the strategy will wait a few candles to see if the difference keeps persisting. Only if it does the strategy will actually signal to Gekko to buy or sell. By setting persistance to 0 this behaviour is disabled.
+- **thresholds**: The high and low thresholds are defined as numbers between 1 and 100. Different from StochRSI in other trading systems, this number indicates a percentage instead of a fraction of 1.
 
 You can configure the following parameters:
 
@@ -126,8 +142,6 @@ You can configure the following parameters:
     low = 20
     high = 80
     persistence = 3
-
-[TODO!]
 
 ### CCI
 
