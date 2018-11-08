@@ -203,7 +203,7 @@ The Balance of Power indicator measures the market strength of buyers against se
 
     Balance of Power = (Close price – Open price) / (High price – Low price) 
     
-   The resulting value can be smoothed by a moving average.
+The resulting value can be smoothed by a moving average.
 
 This indicator does not require any parameters.
 
@@ -224,7 +224,7 @@ The Chande Momentum Oscillator is a technical momentum indicator. The indicator 
 Where:
 
 Sh = Sum of the difference between the current close and previous close on up days for the specified period. Up days are days when the current close is greater than the previous close.
-
+ 
 Sd = Sum of the absolute value of the difference between the current close and the previous close on down days for the specified period. Down days are days when the current close is less than the previous close.
 
 Required parameters:
@@ -233,7 +233,7 @@ Required parameters:
 
 ### cvi
 
-More information about the [Chaikin Volatility Index](https://www.tradingview.com/wiki/Chaikin_Oscillator) also called the Chaikin Oscillator
+More information about the [Chaikin Volatility Index](https://www.tradingview.com/wiki/Chaikin_Oscillator) also called the Chaikin Oscillator.
 
 Required parameters:
 
@@ -285,10 +285,11 @@ Exponential Moving Average (EMA) is similar to Simple Moving Average (SMA), meas
 
     EMA = (K x (C - P)) + P
 
-Where: 
-C = Current Price 
-P = Previous periods EMA (A SMA is used for the first periods calculations) 
-K = Exponential smoothing constant
+Where:
+
+ - C = Current Price 
+ - P = Previous periods EMA (A SMA is used for the first periods calculations) 
+ - K = Exponential smoothing constant
 
 Required parameters:
 
@@ -304,13 +305,12 @@ This indicator does not require any parameters.
 
 The Fisher Transform is a technical indicator that converts prices into a Gaussian normal distribution. The indicator enables traders to create a nearly Gaussian probability density function by normalizing prices. That is, the transformation makes peak swings relatively rare events and unambiguously identifies price reversals on a chart. 
 
-    Y = 0.5 * ln ((1+X)/(1-X)).
+    Y = 0.5 * ln ((1+X)/(1-X))
  
 Where:
 
-"ln" denotes the abbreviated form of the natural logarithm.
-
-"X" denotes the transformation of price to a level between -1 and 1 for ease of calculation
+ - "ln" denotes the abbreviated form of the natural logarithm
+ - "X" denotes the transformation of price to a level between -1 and 1 for ease of calculation
 
 Required parameters:
 
@@ -341,10 +341,11 @@ The Kaufman adaptive moving average belongs to the group of "intelligent" indica
     KAMA(t) = KAMA(t-1) + sc(t) x (Price-KAMA(t-1))
 
 Where:
-KAMA(t) is the new adaptive moving average value
-KAMA(t-1) is the previous adaptive moving average value
-Price is the current price
-sc(t) is the smoothing constant
+
+ - KAMA(t) is the new adaptive moving average value
+ - KAMA(t-1) is the previous adaptive moving average value
+ - Price is the current price
+ - sc(t) is the smoothing constant
 
 Required parameters:
 
@@ -361,7 +362,7 @@ Required parameters:
 
 ### linreg
 
-The Linear Regression is a smoothing functions that works by preforming linear least squares regression over a moving window. It then uses the linear model to predict the value for the current bar
+The Linear Regression is a smoothing functions that works by preforming linear least squares regression over a moving window. It then uses the linear model to predict the value for the current bar.
 
 Required parameters:
 
@@ -441,7 +442,8 @@ Required parameters:
 
 ### natr
 
-The Normalized Average True Range is a measure of volatility. It is calculated as follows:
+The Normalized Average True Range is a measure of volatility.
+It is calculated as follows:
 
     natr = (atr(t) / close(t)) * 100
 
@@ -558,11 +560,12 @@ Required parameters:
 ### tr
 
 True range is a measure of volatility. It represents how much a security changed price on a given day.
+
 True range for each day is the greatest of:
 
-Day's high minus day's low
-The absolute value of the day's high minus the previous day's close
-The absolute value of the day's low minus the previous day's close
+ - Day's high minus day's low
+ - The absolute value of the day's high minus the previous day's close
+ - The absolute value of the day's low minus the previous day's close
 
 This indicator does not require any parameters.
 
@@ -611,7 +614,7 @@ Required parameters:
 
 The Vertical Horizontal Filter determines whether prices are in a trending phase or a congestion phase. It is used to dertermine which other indicators are to be used in the current market trend. For example if the VHF suggests the market is in a range then a [mesa] could be used if the VHF suggests the market is in a range then one could use a [psar] to determine entry and exit points.
 
-Required parameters
+Required parameters:
 
  - optInTimePeriod
 
@@ -619,7 +622,7 @@ Required parameters
 
 The Variable Index Dynamic Average indicator modifies the Exponential Moving Average by varying the smoothness based on recent volatility.
 
-Required parameters
+Required parameters:
 
  - optInFastPeriod
  - optInSlowPeriod
@@ -637,7 +640,7 @@ Required parameters:
 
 The Volume Oscillator identifies trends in volume using two moving averages of volume, one fast and one slow. The fast volume moving average is then subtracted from the slow moving average. 
 
-Required parameters
+Required parameters:
 
  - optInFastPeriod
  - optInSlowPeriod
@@ -660,7 +663,7 @@ To calculate the Williams' Accumulation/Distribution indicator, determine:
     
 The Williams' Accumulation/Distribution indicator is a cumulative total of the daily values:
 
-Williams A/D = Today's A/D + Yesterday's Williams A/D
+ - Williams A/D = Today's A/D + Yesterday's Williams A/D
 
 This indicator does not require any parameters.
 
@@ -672,14 +675,15 @@ This indicator does not require any parameters.
 
 ### wilders
 
-The Welles Wilder Smoothing indicator is basically the same as an [EMA](#ema) and can be used in the same manner. It uses a different calculation but can be easily calculated by simply converting EMA values as follows:
+The Welles Wilder Smoothing indicator is basically the same as an [EMA](#ema) and can be used in the same manner. 
+It uses a different calculation but can be easily calculated by simply converting EMA values as follows:
 
     wilders = (ema + 1) / 2
 
 Required parameters:
 
  - optInTimePeriod
- - 
+
 ### willr
 
 More information about the [Williams R](https://www.tradingview.com/wiki/Williams_%25R_(%25R))
