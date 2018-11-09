@@ -1,5 +1,5 @@
 {
-	"currencies": ["BTC", "ETH", "XMR", "USDT"],
+	"currencies": ["BTC", "ETH", "XMR", "USDT", "USDC"],
 	"assets": [
     "1CR", "ABY", "AC", "ACH", "ADN", "AEON", "AERO", "AIR", "AMP", "APH",
     "ARCH", "AUR", "AXIS", "BALLS", "BANK", "BBL", "BBR", "BCC", "BCH", "BCN",
@@ -30,7 +30,7 @@
     "X13", "XAI", "XAP", "XBC", "XC", "XCH", "XCN", "XCP", "XCR", "XDN",
     "XDP", "XEM", "XHC", "XLB", "XMG", "XMR", "XPB", "XPM", "XRP", "XSI",
     "XST", "XSV", "XUSD", "XVC", "XXC", "BCH", "YACC", "YANG", "YC", "YIN", "ZEC",
-		"ZRX"
+		"ZRX", "BCHSV", "BCHABC"
 	],
 	"markets": [
 	  {
@@ -3187,6 +3187,66 @@
 	    "pair": [
 	      "XMR",
 	      "ZEC"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+	  {
+	    "pair": [
+	      "USDC",
+	      "BTC"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+		{
+	    "pair": [
+	      "USDC",
+	      "USDT"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+	  {
+	    "pair": [
+	      "USDC",
+	      "ETH"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+	  {
+	    "pair": [
+	      "USDC",
+	      "BCHSV"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+	  {
+	    "pair": [
+	      "USDC",
+	      "BCHABC"
+	    ],
+	    "minimalOrder": {
+	      "amount": 0.0001,
+	      "unit": "asset"
+	    }
+	  },
+	  {
+	    "pair": [
+	      "USDC",
+	      "BCH"
 	    ],
 	    "minimalOrder": {
 	      "amount": 0.0001,
