@@ -119,8 +119,15 @@ BacktestResultExporter.prototype.finalize = function(done) {
 };
 
 BacktestResultExporter.prototype.writeToDisk = function(backtest, next) {
-  const now = moment().format('YYYY-MM-DD_HH-mm-ss');
-  const filename = `backtest-${config.tradingAdvisor.method}-${now}.json`;
+  let filename;
+
+  if(config.backtestResultExporter.filename) {
+    filename = config.backtestResultExporter.filename;
+  } else {
+    const now = moment().format('YYYY-MM-DD_HH-mm-ss');
+    filename = `backtest-${config.tradingAdvisor.method}-${now}.json`;
+  }
+
   fs.writeFile(
     util.dirs().gekko + filename,
     JSON.stringify(backtest),
