@@ -4,7 +4,7 @@ Gekko is a free and open source tool that is designed as a starters kit for auto
 
 ## Market data
 
-Gekko aggregates all market data into minutely candles (OHLC, VWP and amount of trades). This means Gekko only has to store candles on disk, which take up a predictable amount of space on your harddrive. The tradebot will use some additional market data (the orderbook) to make efficient execute orders efficiently, but this data is not visible anywhere else.
+Gekko aggregates all market data into minutely candles (OHLC, VWP and amount of trades). This means Gekko only has to store candles on disk, which take up a predictable amount of space on your harddrive. The tradebot will use some additional market data (the orderbook) to execute orders efficiently, but this data is not visible anywhere else.
 
 ## Strategies
 
