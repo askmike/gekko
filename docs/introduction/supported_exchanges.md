@@ -17,6 +17,7 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 | [Bitfinex][7]        | ✓          | ✓            | ✓         |                           |
 | [Bittrex][8]         | ✓          | ✕            | ✕         | API problems ([#2310][26])|
 | [coinfalcon][25]     | ✓          | ✓            | ✓         |                           |
+| [EXMO][27]           | ✓          | ✓            | ✕         |                           |
 | [wex.nz][9]*         | ✓          | ✓            | ✕         |                           |
 | [Gemini][10]*        | ✓          | ✓            | ✕         |                           |
 | [Okcoin.cn][11]*     | ✓          | ✓            | ✕         | China, see [#352][20]     |
@@ -60,3 +61,4 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [24]: https://www.binance.com/?ref=11236330
 [25]: https://coinfalcon.com/?ref=CFJSQBMXZZDS
 [26]: https://github.com/askmike/gekko/pull/2310
+[27]: https://exmo.com
