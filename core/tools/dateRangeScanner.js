@@ -92,13 +92,13 @@ var scan = function(done) {
             iterator.to -= BATCH_SIZE * 60;
           },
           () => {
-            
-            if(!_.size(batches))
-              util.die('Not enough data to work with (please manually set a valid `backtest.daterange`)..', true);
+            if(batches.length === 0) {
+              return done(null, [], reader);
+            }
 
             // batches is now a list like
             // [ {from: unix, to: unix } ]
-            
+
             var ranges = [ batches.shift() ];
 
             _.each(batches, batch => {
@@ -112,6 +112,7 @@ var scan = function(done) {
             // we have been counting chronologically reversed
             // (backwards, from now into the past), flip definitions
             ranges = ranges.reverse();
+
             _.map(ranges, r => {
               return {
                 from: r.to,

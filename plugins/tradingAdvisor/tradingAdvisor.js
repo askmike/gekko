@@ -60,11 +60,11 @@ Actor.prototype.setupStrategy = function() {
 
   this.strategy = new WrappedStrategy(stratSettings);
   this.strategy
-    .on('advice', this.relayAdvice)
     .on(
       'stratWarmupCompleted',
       e => this.deferredEmit('stratWarmupCompleted', e)
     )
+    .on('advice', this.relayAdvice)
     .on(
       'stratUpdate',
       e => this.deferredEmit('stratUpdate', e)

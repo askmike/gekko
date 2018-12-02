@@ -35,6 +35,11 @@ var fetch = () => {
 }
 
 var handleFetch = (err, trades) => {
+    if(!err && !trades.length) {
+        console.log('no trades');
+        err = 'No trades';
+    }
+
     if (err) {
         log.error(`There was an error importing from Kraken ${err}`);
         fetcher.emit('done');

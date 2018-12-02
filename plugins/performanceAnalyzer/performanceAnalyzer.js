@@ -46,12 +46,16 @@ const PerformanceAnalyzer = function() {
 
   this.start = {};
   this.openRoundTrip = false;
+
+  this.warmupCompleted = false;
 }
 
 PerformanceAnalyzer.prototype.processPortfolioValueChange = function(event) {
   if(!this.start.balance) {
     this.start.balance = event.balance;
   }
+
+  this.balance = event.balance;
 }
 
 PerformanceAnalyzer.prototype.processPortfolioChange = function(event) {
@@ -60,7 +64,17 @@ PerformanceAnalyzer.prototype.processPortfolioChange = function(event) {
   }
 }
 
+PerformanceAnalyzer.prototype.processStratWarmupCompleted = function() {
+  this.warmupCompleted = true;
+  this.processCandle(this.warmupCandle, _.noop);
+}
+
 PerformanceAnalyzer.prototype.processCandle = function(candle, done) {
+  if(!this.warmupCompleted) {
+    this.warmupCandle = candle;
+    return done();
+  }
+
   this.price = candle.close;
   this.dates.end = candle.start.clone().add(1, 'minute');
 
@@ -225,6 +239,7 @@ PerformanceAnalyzer.prototype.finalize = function(done) {
   const report = this.calculateReportStatistics();
   if(report) {
     this.logger.finalize(report);
+    this.emit('performanceReport', report);
   }
   done();
 }
