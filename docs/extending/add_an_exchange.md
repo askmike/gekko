@@ -114,13 +114,13 @@ Should return an amount. Rounds the amount into a valid amount Gekko Broker can 
 
     this.exchange.isValidPrice(price);
 
-Should return true or falce. If the exchange has restrictions on the price you can submit limit orders at. If there are no such restrictions you should not implement this method.
+Should return true or false. If the exchange has restrictions on the price you can submit limit orders at. If there are no such restrictions you should not implement this method.
 
 ### isValidLot
 
     this.exchange.isValidLot(price, amount);
 
-Should return true or falce. If the exchange has restrictions on the lot size (order size expressed in "currency" amount) you can check for that here. If there are no such restrictions you should not implement this method.
+Should return true or false. If the exchange has restrictions on the lot size (order size expressed in "currency" amount) you can check for that here. If there are no such restrictions you should not implement this method.
 
 ## Error handling
 
