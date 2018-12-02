@@ -52,15 +52,19 @@ class StickyOrder extends BaseOrder {
     this.initialLimit = params.initialLimit;
 
     if(side === 'buy') {
-      if(params.limit)
+      if(params.limit) {
         this.limit = this.roundPrice(params.limit);
-      else
+      } else {
+        this.noLimit = true;
         this.limit = Infinity;
+      }
     } else {
-      if(params.limit)
+      if(params.limit) {
         this.limit = this.roundPrice(params.limit);
-      else
+      } else {
+        this.noLimit = true;
         this.limit = -Infinity;
+      }
     }
 
     this.status = states.SUBMITTED;
@@ -76,6 +80,7 @@ class StickyOrder extends BaseOrder {
     } else {
       this.api.getTicker((err, ticker) => {
         if(this.handleError(err)) {
+          console.log(new Date, 'error get ticker');
           return;
         }
 
@@ -98,7 +103,7 @@ class StickyOrder extends BaseOrder {
 
     if(this.side === 'buy') {
 
-      if(ticker.bid >= this.limit) {
+      if(!this.noLimit && ticker.bid >= this.limit) {
         return r(this.limit);
       }
 
@@ -116,7 +121,7 @@ class StickyOrder extends BaseOrder {
 
     } else if(this.side === 'sell') {
 
-      if(ticker.ask <= this.limit) {
+      if(!this.noLimit && ticker.ask <= this.limit) {
         return r(this.limit);
       }
 
@@ -283,6 +288,7 @@ class StickyOrder extends BaseOrder {
 
         this.api.getTicker((err, ticker) => {
           if(this.handleError(err)) {
+            console.log(new Date, 'getTicker error');
             return;
           }
 
@@ -499,6 +505,7 @@ class StickyOrder extends BaseOrder {
 
     this.api.cancelOrder(this.id, (err, filled, data) => {
       if(this.handleError(err)) {
+        console.log(new Date, 'error cancel');
         return;
       }
 

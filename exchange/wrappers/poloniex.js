@@ -62,6 +62,20 @@ const includes = (str, list) => {
   return _.some(list, item => str.includes(item));
 }
 
+Trader.prototype.outbidPrice = function(price, isUp) {
+  let newPrice;
+
+  const tickSize = 0.00000001;
+
+  if(isUp) {
+    newPrice = price + 0.00000001;
+  } else {
+    newPrice = price - tickSize;
+  }
+
+  return this.roundPrice(newPrice);
+}
+
 Trader.prototype.processResponse = function(next, fn, payload) {
   // TODO: in very rare cases the callback is
   // called twice (first on ETIMEDOUT later
