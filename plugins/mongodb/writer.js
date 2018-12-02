@@ -47,7 +47,17 @@ Store.prototype.writeCandles = function writeCandles () {
     candles.push(mCandle);
   });
 
-  this.historyCollection.insert(candles);
+  // Fix error when whole batch would failed to insert if one or more duplicate candle
+  this.historyCollection.insert(candles, { ordered: false }, e => {
+    if (e) {
+      let msg = 'mongojs insert() ' + e.writeErrors.length + ' of ' + candles.length + ' failed.';
+      _.forEach(_.countBy(e.writeErrors, 'code'), (c, k) => {
+        msg += ' Code: E' + k + ' count: ' + c;
+      });
+      log.debug(msg);
+    }
+  });
+
   this.candleCache = [];
 }
 
@@ -59,15 +69,18 @@ var processCandle = function processCandle (candle, done) {
   this.marketTime = candle.start;
 
   this.candleCache.push(candle);
-  if (this.candleCache.length > 100) 
+  if (this.candleCache.length >= 100)
     this.writeCandles();
   done();
 }
 
 var finalize = function(done) {
   this.writeCandles();
-  this.db = null;
-  done();
+  // Fix connection closed before all candles was written to db
+  setTimeout( () => {
+    this.db = null;
+    done();
+  }, 1000);
 }
 
 var processAdvice = function processAdvice (advice) {
