@@ -229,7 +229,7 @@ PerformanceAnalyzer.prototype.calculateReportStatistics = function() {
     ratioRoundTrips
   }
 
-  report.alpha = report.profit - report.market;
+  report.alpha = report.relativeProfit - report.market;
 
   return report;
 }
