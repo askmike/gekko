@@ -229,7 +229,18 @@ var plugins = [
     async: false,
     modes: ['realtime'],
     greedy: true
-  }
+  },
+  {
+    name: 'Candle Uploader',
+    description: 'Upload realtime market candles to an external server',
+    slug: 'candleUploader',
+    async: true,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'axios',
+      version: '0.18.0'
+    }]
+  },
 ];
 
 module.exports = plugins;
