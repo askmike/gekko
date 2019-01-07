@@ -10,7 +10,7 @@ const CandleUploader = function(done) {
 };
 
 CandleUploader.prototype.processCandle = function(candle, done) {
-  console.log(new Date, 'uploading', candle);
+  console.log(new Date, 'uploading', candle.start.format());
   axios({
     url: config.candleUploader.url,
     method: 'post',

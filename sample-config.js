@@ -281,6 +281,12 @@ config.backtestResultExporter = {
   }
 }
 
+config.candleUploader = {
+  enabled: false,
+  url: '',
+  apiKey: ''
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING ADAPTER
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
