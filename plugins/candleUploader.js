@@ -29,7 +29,7 @@ CandleUploader.prototype.rawUpload = function(candles, count, next) {
     data: {
       apiKey: config.candleUploader.apiKey,
       watch: config.watch,
-      candles: this.candles
+      candles: candles
     }
   })
     .then(r => {
