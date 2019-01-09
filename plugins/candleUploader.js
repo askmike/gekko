@@ -21,11 +21,7 @@ CandleUploader.prototype.schedule = function() {
   this.timer = setTimeout(this.upload, 10 * 1000);
 }
 
-CandleUploader.prototype.upload = function() {
-  const amount = this.candles.length;
-  if(!amount) {
-    return this.schedule();
-  }
+CandleUploader.prototype.rawUpload = function(candles, count, next) {
 
   axios({
     url: config.candleUploader.url,
@@ -41,12 +37,32 @@ CandleUploader.prototype.upload = function() {
         console.log('error uploading:', r.data);
       }
       console.log(new Date, 'uploaded', amount, 'candles');
-      this.schedule();
+
+      next();
     })
     .catch(e => {
       console.log('error uploading:', e.message);
-      this.schedule();
+
+      count++;
+
+      if(count > 10) {
+        console.log('FINAL error uploading:', e.message);
+        return next();
+      }
+
+      setTimeout(() => this.rawUpload(candles, count, next), 2000);
     });
+}
+
+CandleUploader.prototype.upload = function() {
+  const amount = this.candles.length;
+  if(!amount) {
+    return this.schedule();
+  }
+
+  this.rawUpload(this.candles, 0, () => {
+    this.schedule();
+  });
 
   this.candles = [];
 }
