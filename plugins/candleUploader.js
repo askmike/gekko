@@ -23,7 +23,7 @@ CandleUploader.prototype.schedule = function() {
 
 CandleUploader.prototype.rawUpload = function(candles, count, next) {
 
-  const amount = this.candles.length;
+  const amount = candles.length;
 
   axios({
     url: config.candleUploader.url,
