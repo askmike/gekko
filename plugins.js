@@ -241,6 +241,17 @@ var plugins = [
       version: '0.18.0'
     }]
   },
+  {
+    name: 'Blotter',
+    description: 'Writes all buy/sell trades to a blotter CSV file',
+    slug: 'blotter',
+    async: false,
+    modes: ['realtime'],
+    dependencies: [{
+      module: 'fs',
+      version: '0.0.1-security'
+    }]
+  },
 ];
 
 module.exports = plugins;
