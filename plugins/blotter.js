@@ -72,7 +72,13 @@ Blotter.prototype.processTradeCompleted = function(trade) {
     log.error('Received 1969/1970 error, trade failed to execute, did not record in blotter');
   }
   else {
-    fsw.appendFileSync(this.filename, this.outtxt, encoding='utf8');
+
+    fsw.appendFile(this.filename, this.outtxt, 'utf8', (err) => {
+      if(err) {
+        log.error('Unable to write trade to blotter');
+      }
+    });
+
   }
   this.outtxt = "";
 
