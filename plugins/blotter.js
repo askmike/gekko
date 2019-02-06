@@ -15,6 +15,8 @@ var Blotter = function(done) {
   this.timezone = blotterConfig.timezone;
   this.headertxt = '';
   this.outtxt = '';
+  this.tradeError = false;
+  this.inaccurateData = false;
 
   this.done = done;
   this.setup();
@@ -27,7 +29,11 @@ Blotter.prototype.setup = function(done) {
   fsw.readFile(this.filename, (err, _) => {
     if (err) {
       log.warn('No file with the name', this.filename, 'found. Creating new blotter file');
-      fsw.appendFileSync(this.filename, this.headertxt, encoding='utf8'); 
+      fsw.appendFile(this.filename, this.headertxt, 'utf8', (err) => {
+        if(err) {
+          log.error('Unable to write header text to blotter');
+        }
+      });
     } 
   });
 
@@ -41,47 +47,66 @@ Blotter.prototype.processTradeCompleted = function(trade) {
   } else {
     this.time = trade.date.format(this.dateformat);
   }
-
-  if (trade.action === 'buy') {
-    this.valueAtBuy = this.roundUp(trade.effectivePrice * trade.amount);
-    //time, price, amount, side, fees, value at buy
-    this.outtxt = this.time + "," + trade.effectivePrice.toFixed(2) + "," + trade.amount.toFixed(8) + "," + trade.action + "," + trade.feePercent + "," + this.valueAtBuy;
-  }
-  else if (trade.action === 'sell'){
-    var sellValue = (this.roundUp(trade.effectivePrice * trade.amount));
-    var pl = this.roundUp(this.valueAtBuy - this.roundUp(trade.effectivePrice * trade.amount));
-    log.info('Buy Value', this.valueAtBuy, 'Sell Value', sellValue, 'P&L', pl);
-    //time, price, amount, side, fees, value at sell, P&L
-    this.outtxt = this.time + "," + trade.effectivePrice.toFixed(2) + "," + trade.amount.toFixed(8) + "," + trade.action + "," + trade.feePercent + "," + sellValue + "," + pl;
-    this.valueAtBuy = 0.0;
-  }
-
-  // If trade.price is 0 and trade amount is 0, note the error
-  if (trade.price == 0 && trade.amount == 0 ) {
-    // add extra comma for buy as it doesn't have P&L info
-    if (trade.action === 'buy') {
-      this.outtxt = this.outtxt + ",";
-    }
-    this.outtxt = this.outtxt + "," + "Trade probably went through but didn't receive correct price/amount info\n";
-  } else {
-    this.outtxt = this.outtxt  + "\n";
-  }
-
   // If a trade date is from 1969 or 1970, there was an error with the trade
   if (trade.date.format('YY') == '69' || trade.date.format('YY') == '70') {
     log.error('Received 1969/1970 error, trade failed to execute, did not record in blotter');
+    // Prevent roundTrip from writing error P&L in processRoundtrip method
+    if (trade.action == 'sell') {
+      this.tradeError = true;
+    }
+    return;
   }
-  else {
 
-    fsw.appendFile(this.filename, this.outtxt, 'utf8', (err) => {
-      if(err) {
-        log.error('Unable to write trade to blotter');
-      }
-    });
+  this.valueAtBuy = this.roundUp(trade.effectivePrice * trade.amount);
 
+  if (trade.action === 'buy') {
+    //time, price, amount, side, fees, value at buy
+    this.outtxt = this.time + "," + trade.effectivePrice.toFixed(2) + "," + trade.amount.toFixed(8) + "," + trade.action + "," + trade.feePercent + "," + this.valueAtBuy;
+    if ((trade.price == 0 || isNaN(trade.price)) && (trade.amount == 0|| isNaN(trade.amount))) {
+      this.outtxt = this.outtxt + "," + ",Trade probably went through but didn't receive correct price/amount info\n";
+    } else {
+      this.outtxt = this.outtxt  + "\n";
+    }
+    this.writeBlotter();
+    return;
   }
-  this.outtxt = "";
+  else if (trade.action === 'sell'){
+    var sellValue = (this.roundUp(trade.effectivePrice * trade.amount));
+    //time, price, amount, side, fees, value at sell
+    this.outtxt = this.time + "," + trade.effectivePrice.toFixed(2) + "," + trade.amount.toFixed(8) + "," + trade.action + "," + trade.feePercent + "," + sellValue + ",";
+    if ((trade.price == 0 || isNaN(trade.price)) && (trade.amount == 0|| isNaN(trade.amount))) {
+      this.inaccurateData = true;
+    }
+    this.valueAtBuy = 0.0;
+    // wait til processRoundtrip complete to write to file
+  }
 
+}
+
+Blotter.prototype.writeBlotter = function() {
+  fsw.appendFile(this.filename, this.outtxt, 'utf8', (err) => {
+    if(err) {
+      log.error('Unable to write trade to blotter');
+    }
+  });
+}
+
+Blotter.prototype.processRoundtrip = function(trip) {
+  log.info('Roundtrip', trip);
+  if (!this.tradeError) {
+    this.outtxt = this.outtxt + this.roundUp(trip.pnl) +'\n';
+    this.writeBlotter();
+    return;
+  }
+  if (this.inaccurateData) {
+    this.outtxt = this.outtxt + this.roundUp(trip.pnl) + ",Trade probably went through but didn't receive correct price/amount info\n";
+    this.inaccurateData = false;
+    this.writeBlotter;
+    return;
+  }
+
+  // 1969/1970 sell trade error not written to blotter, resetting flag to false 
+  this.tradeError = false;
 }
 
 Blotter.prototype.roundUp = function(value) {
