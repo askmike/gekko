@@ -6,7 +6,7 @@ Gekko will run your strategy on the live market and automatically trade on your 
 
 ## Preparation
 
-1. Make sure you are fully confident in your strategy! If you want to play around use either the [paper trader](./paper_trader.md) or the [backtester](./backtesting.md). Once you are confident continue with this list.
+1. Make sure you are fully confident in your strategy! If you want to play around use either the [paper trader](./paper_trading.md) or the [backtester](./backtesting.md). Once you are confident continue with this list.
 2. Gekko will need to have API keys to your exchange account that have permissions to view balances and orders and create new orders. Keep in mind:
   - Gekko does NOT need withdrawal access, for your safety DO NOT create API keys that can withdraw.
   - Make sure you only use the API key for Gekko, and for nothing else. If in doubt create a new key (and remove stale ones).
