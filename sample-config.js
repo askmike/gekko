@@ -19,11 +19,6 @@ config.watch = {
   exchange: 'binance',
   currency: 'USDT',
   asset: 'BTC',
-
-  // You can set your own tickrate (refresh rate).
-  // If you don't set it, the defaults are 2 sec for
-  // okcoin and 20 sec for all other exchanges.
-  // tickrate: 20
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -333,6 +328,12 @@ config.mongodb = {
     module: 'mongojs',
     version: '2.4.0'
   }]
+}
+
+config.candleUploader = {
+  enabled: false,
+  url: '',
+  apiKey: ''
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
