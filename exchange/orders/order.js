@@ -62,17 +62,17 @@ class BaseOrder extends EventEmitter {
 
   rejected(reason) {
     this.rejectedReason = reason;
-    this.emitStatus();
     this.status = states.REJECTED;
+    this.emitStatus();
+    console.log(new Date, 'sticky rejected', reason)
     this.finish();
   }
 
   filled(price) {
     this.status = states.FILLED;
     this.emitStatus();
-
     this.completed = true;
-
+    console.log(new Date, 'sticky filled')
     this.finish(true);
   }
 
