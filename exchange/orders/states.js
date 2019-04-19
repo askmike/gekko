@@ -12,6 +12,10 @@ const states = {
   OPEN: 'OPEN',
 
 
+  CHECKING: 'CHECKING',
+
+  CHECKED: 'CHECKED',
+
   // the orders below indicate a fully completed order
 
 
