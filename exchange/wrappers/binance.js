@@ -332,6 +332,24 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
   retry(undefined, handler, setOrder);
 };
 
+Trader.prototype.getOpenOrders = function(callback) {
+
+  const get = (err, data) => {
+    if(err) {
+      return callback(err);
+    }
+
+    callback(null, data.map(o => o.orderId));
+  }
+
+  const reqData = {
+    symbol: this.pair
+  }
+
+  const handler = cb => this.binance.openOrders(reqData, this.handleResponse('getOpenOrders', cb));
+  retry(undefined, handler, get);
+}
+
 Trader.prototype.getOrder = function(order, callback) {
   const get = (err, data) => {
     if (err) return callback(err);
