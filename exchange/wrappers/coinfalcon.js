@@ -64,6 +64,12 @@ const recoverableErrors = [
   'EAI_AGAIN'
 ];
 
+// errors that might mean
+// the API call succeeded.
+const unknownResultErrors = [
+  '524',
+]
+
 Trader.prototype.processResponse = function(method, args, next) {
 
   const requestAt = moment();
@@ -77,11 +83,13 @@ Trader.prototype.processResponse = function(method, args, next) {
   }
 
   const catcher = err => {
-    if(!err || !err.message)
+    if(!err || !err.message) {
       err = new Error(err || 'Empty error');
+    }
 
-    if(includes(err.message, recoverableErrors))
+    if(includes(err.message, recoverableErrors)) {
       return this.retry(method, args);
+    }
 
     console.log(new Date, '[cf] big error!', err.message, method);
 
