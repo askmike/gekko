@@ -68,7 +68,7 @@ var Base = function(settings) {
   // let's run the implemented starting point
   this.init();
 
-  if(_.isNumber(this.requiredHistory)){ {
+  if(_.isNumber(this.requiredHistory)) {
     log.debug('Ignoring strategy\'s required history, using the "config.tradingAdvisor.historySize" instead.');
   }
   this.requiredHistory = config.tradingAdvisor.historySize;
