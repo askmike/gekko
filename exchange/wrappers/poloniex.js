@@ -18,6 +18,8 @@ const Trader = function(config) {
 
   this.pair = this.currency + '_' + this.asset;
 
+  this.fillDataOnCancel = true;
+
   this.poloniex = new Poloniex({
     key: this.key,
     secret: this.secret,
@@ -240,6 +242,8 @@ Trader.prototype.getOpenOrders = function(callback) {
       return callback(err);
     }
 
+    console.log(orders);
+
     const ids = orders.map(o => o.orderNumber);
 
     return callback(undefined, ids);
@@ -272,6 +276,38 @@ Trader.prototype.getPortfolio = function(callback) {
   }
 
   const fetch = next => this.poloniex.myBalances(this.processResponse(next));
+  retry(null, fetch, handle);
+}
+
+Trader.prototype.getFullPortfolio = function(callback) {
+  const handle = (err, data) => {
+    if(err) {
+      return callback(err);
+    }
+
+    const asset = data[this.asset];
+    const currency = data[this.currency];
+
+    let assetAmount = parseFloat(asset.available) + parseFloat(asset.onOrders);
+    let currencyAmount = parseFloat(currency.available) + parseFloat(asset.onOrders);
+
+    if(!_.isNumber(assetAmount) || _.isNaN(assetAmount)) {
+      assetAmount = 0;
+    }
+
+    if(!_.isNumber(currencyAmount) || _.isNaN(currencyAmount)) {
+      currencyAmount = 0;
+    }
+
+    var portfolio = [
+      { name: this.asset, amount: assetAmount },
+      { name: this.currency, amount: currencyAmount }
+    ];
+
+    callback(undefined, portfolio);
+  }
+
+  const fetch = next => this.poloniex.returnCompleteBalances(this.processResponse(next));
   retry(null, fetch, handle);
 }
 
@@ -325,6 +361,8 @@ Trader.prototype.createOrder = function(side, amount, price, callback) {
       return callback(err);
     }
 
+    // console.log(new Date, 'PORDER created', result.orderNumber);
+
     callback(undefined, result.orderNumber);
   }
 
@@ -355,6 +393,7 @@ Trader.prototype.checkOrder = function(id, callback) {
 
     const order = _.find(result, function(o) { return o.orderNumber === id });
     if(!order) {
+      console.log(new Date, 'order not open', id, result);
       // if the order is not open it's fully executed
       return callback(undefined, { executed: true, open: false });
     }
@@ -409,7 +448,10 @@ Trader.prototype.cancelOrder = function(order, callback) {
       return callback(err);
     }
 
+    // console.log(new Date, 'PORDER cancel', order);
+
     if(result.filled) {
+      console.log(new Date, 'result.filled', result);
       return callback(undefined, true);
     }
 
@@ -417,6 +459,8 @@ Trader.prototype.cancelOrder = function(order, callback) {
 
     if(result.amount) {
       data = { remaining: result.amount };
+    } else {
+      console.log(new Date, 'not result.amount', result);
     }
 
 
