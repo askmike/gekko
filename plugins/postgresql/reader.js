@@ -20,11 +20,17 @@ Reader.prototype.mostRecentWindow = function(from, to, next) {
 
   var maxAmount = to - from + 1;
   
-  this.db.connect((err,client,done) => {
+  this.db.connect((err, client, done) => {
+
+    if(err) {
+      log.error(err);
+      return util.die(err.message);
+    }
+
     var query = client.query(new Query(`
-    SELECT start from ${postgresUtil.table('candles')}
-    WHERE start <= ${to} AND start >= ${from}
-    ORDER BY start DESC
+      SELECT start from ${postgresUtil.table('candles')}
+      WHERE start <= ${to} AND start >= ${from}
+      ORDER BY start DESC
     `), function (err, result) {
       if (err) {
         // bail out if the table does not exist
@@ -130,9 +136,14 @@ Reader.prototype.get = function(from, to, what, next) {
 
 Reader.prototype.count = function(from, to, next) {
   this.db.connect((err,client,done) => {
+    if(err) {
+      log.error(err);
+      return util.die(err.message);
+    }
+
     var query = client.query(new Query(`
-    SELECT COUNT(*) as count from ${postgresUtil.table('candles')}
-    WHERE start <= ${to} AND start >= ${from}
+      SELECT COUNT(*) as count from ${postgresUtil.table('candles')}
+      WHERE start <= ${to} AND start >= ${from}
     `));
     var rows = [];
     query.on('row', function(row) {
