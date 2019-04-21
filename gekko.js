@@ -48,6 +48,7 @@ const config = util.getConfig();
 const mode = util.gekkoMode();
 
 if(
+  config.trader &&
   config.trader.enabled &&
   !config['I understand that Gekko only automates MY OWN trading strategies']
 )
