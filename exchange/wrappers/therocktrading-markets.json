@@ -1,0 +1,187 @@
+{
+  "assets": [
+    "ETH",
+    "LTC",
+    "BTC",
+    "BCH",
+    "EUR",
+    "PPC",
+    "ZEC",
+    "NOKU",
+    "FDZ"
+  ],
+  "currencies": [
+    "BTC",
+    "EUR",
+    "ETH",
+    "GUSD",
+    "XRP"
+  ],
+  "markets": [
+    {
+      "pair": [
+        "EUR",
+        "BTC"
+      ],
+      "minimalOrder": {
+        "amount": 0.0005,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "ETH"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "LTC"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "PPC"
+      ],
+      "minimalOrder": {
+        "amount": 0.05,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "ZEC"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "BCH"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "EUR",
+        "GUSD"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ETH"
+      ],
+      "minimalOrder": {
+        "amount": 0.001,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "PPC"
+      ],
+      "minimalOrder": {
+        "amount": 0.05,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "LTC"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "BCH"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ZEC"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 1e-8,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "GUSD",
+        "BTC"
+      ],
+      "minimalOrder": {
+        "amount": 0.0005,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "XRP",
+        "EUR"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.01,
+        "order": 0
+      }
+    },
+    {
+      "pair": [
+        "XRP",
+        "BTC"
+      ],
+      "minimalOrder": {
+        "amount": 0.005,
+        "price": 0.01,
+        "order": 0
+      }
+    }
+  ]
+}
