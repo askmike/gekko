@@ -1,4 +1,4 @@
-const Therocktrading = require('npm-therocktrading');
+const Therocktrading = require('therocktrading');
 const _ = require('lodash');
 const moment = require('moment');
 const retry = require('../exchangeUtils').retry;
