@@ -6,31 +6,32 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 - Live Trading: Gekko is able to automatically execute orders (based on the signals of your strategy). This turns Gekko into a trading bot.
 - Importing: Gekko is able to retrieve historical market data. This way you can easily get a month of market data over which you can [backtest][1] your strategy.
 
-| Exchange             | Monitoring | Live Trading | Importing | Notes                     |
-| -------------------- |:----------:|:------------:|:---------:| ------------------------- |
-| [Binance][24]        | ✓          | ✓            | ✓         |                           |
-| [Poloniex][2]        | ✓          | ✓            | ✓         |                           |
-| [GDAX][3]            | ✓          | ✓            | ✓         |                           |
-| [BTCC][4]*           | ✓          | ✓            | ✓         | (=BTCChina)               |
-| [Bitstamp][5]*       | ✓          | ✓            | ✕         |                           |
-| [Kraken][6]          | ✓          | ✓            | ✓         |                           |
-| [Bitfinex][7]        | ✓          | ✓            | ✓         |                           |
-| [Bittrex][8]         | ✓          | ✕            | ✕         | API problems ([#2310][26])|
-| [coinfalcon][25]     | ✓          | ✓            | ✓         |                           |
-| [EXMO][27]           | ✓          | ✓            | ✕         |                           |
-| [wex.nz][9]*         | ✓          | ✓            | ✕         |                           |
-| [Gemini][10]*        | ✓          | ✓            | ✕         |                           |
-| [Okcoin.cn][11]*     | ✓          | ✓            | ✕         | China, see [#352][20]     |
-| [Cex.io][12]*        | ✓          | ✕            | ✕         |                           |
-| [BTC Markets][13]*   | ✓          | ✓            | ✕         |                           |
-| [Luno][14]           | ✓          | ✓            | ✓         | previously BitX           |
-| [lakeBTC][15]*       | ✓          | ✕            | ✕         |                           |
-| [meXBT][16]*         | ✓          | ✕            | ✕         | see [here][21]            |
-| [zaif][17]*          | ✓          | ✕            | ✕         |                           |
-| [lakeBTC][18]*       | ✓          | ✕            | ✕         |                           |
-| [bx.in.th][19]*      | ✓          | ✕            | ✕         |                           |
-| [bitcoin.co.id][22]* | ✓          | ✓            | ✕         |                           |
-| [Quadriga CX][23]*   | ✓          | ✓            | ✕         |                           | |
+| Exchange              | Monitoring | Live Trading | Importing | Notes                     |
+| --------------------- |:----------:|:------------:|:---------:| ------------------------- |
+| [Binance][24]         | ✓          | ✓            | ✓         |                           |
+| [Poloniex][2]         | ✓          | ✓            | ✓         |                           |
+| [GDAX][3]             | ✓          | ✓            | ✓         |                           |
+| [BTCC][4]*            | ✓          | ✓            | ✓         | (=BTCChina)               |
+| [Bitstamp][5]*        | ✓          | ✓            | ✕         |                           |
+| [Kraken][6]           | ✓          | ✓            | ✓         |                           |
+| [Bitfinex][7]         | ✓          | ✓            | ✓         |                           |
+| [Bittrex][8]          | ✓          | ✕            | ✕         | API problems ([#2310][26])|
+| [coinfalcon][25]      | ✓          | ✓            | ✓         |                           |
+| [The Rock Trading][28]| ✓          | ✓            | ✓         |                           |
+| [EXMO][27]            | ✓          | ✓            | ✕         |                           |
+| [wex.nz][9]*          | ✓          | ✓            | ✕         |                           |
+| [Gemini][10]*         | ✓          | ✓            | ✕         |                           |
+| [Okcoin.cn][11]*      | ✓          | ✓            | ✕         | China, see [#352][20]     |
+| [Cex.io][12]*         | ✓          | ✕            | ✕         |                           |
+| [BTC Markets][13]*    | ✓          | ✓            | ✕         |                           |
+| [Luno][14]            | ✓          | ✓            | ✓         | previously BitX           |
+| [lakeBTC][15]*        | ✓          | ✕            | ✕         |                           |
+| [meXBT][16]*          | ✓          | ✕            | ✕         | see [here][21]            |
+| [zaif][17]*           | ✓          | ✕            | ✕         |                           |
+| [lakeBTC][18]*        | ✓          | ✕            | ✕         |                           |
+| [bx.in.th][19]*       | ✓          | ✕            | ✕         |                           |
+| [bitcoin.co.id][22]*  | ✓          | ✓            | ✕         |                           |
+| [Quadriga CX][23]*    | x          | x            | ✕         | Exchange is down.         | |
 
 
 *Temporary disabled since 0.6! If you were planning on using this exchange please e-mail me (address at the bottom of this page).
@@ -62,3 +63,4 @@ Gekko is able to directly communicate with the APIs of a number of exchanges. Ho
 [25]: https://coinfalcon.com/?ref=CFJSQBMXZZDS
 [26]: https://github.com/askmike/gekko/pull/2310
 [27]: https://exmo.com
+[28]: https://www.therocktrading.com/
