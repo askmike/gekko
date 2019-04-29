@@ -1,5 +1,6 @@
 const moment = require('moment');
-const util = require('../../core/util.js');
+const util = require('../../core/util');
+const log = require('../../core/log');
 const _ = require('lodash');
 const retry = require('../../exchange/exchangeUtils').retry;
 
@@ -52,7 +53,7 @@ var fetcher = new Fetcher(config.watch);
 var fetch = () => {
     fetcher.import = true;
 
-    console.log("IMPORTER: starting fetcher")
+    log.debug("IMPORTER: starting fetcher")
 
     fetcher.getTrades(from, end, page, handleFetch);
 }
@@ -72,8 +73,7 @@ var handleFetch = (err, trades) => {
     if (trades.length > 0) {
         page = page + 1;
     }
-    
-    console.log("IMPORTER handleFetch: emitting trades: ", trades)
+
     fetcher.emit('trades', trades);
 }
 
